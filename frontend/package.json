@@ -1,0 +1,25 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@types/react-dom": "^19.0.4",
+    "minstyle.io": "^2.0.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
