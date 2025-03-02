@@ -1,8 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import 'minstyle.io/dist/css/minstyle.io.css';
-
-// Clear the existing HTML content
-document.body.innerHTML = '<div id="app"></div>';
+import './index.css';
 
 const appElement = document.getElementById('app');
 if (!appElement)

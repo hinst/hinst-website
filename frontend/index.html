@@ -2,9 +2,30 @@
 <html data-theme="dark">
 	<head>
 		<title>...</title>
+		<style>
+			html, body {
+				height: 100%;
+			}
+			body {
+				display: flex;
+				flex-direction: column;
+			}
+			.content {
+				flex: 1 0 auto;
+			}
+			footer {
+				flex-shrink: 0;
+			}
+		</style>
 	</head>
 	<body>
+		<div class="content">
+			<div id="app" style="margin-left: 4px; margin-right: 4px">
+			</div>
+		</div>
+		<footer class="ms-footer">
+			&copy; 2025 Alexander Savinykh
+		</footer>
 		<script src="./src/index.tsx"></script>
-		<div class="container" id="app"></div>
 	</body>
 </html>
