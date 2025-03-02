@@ -1,12 +1,15 @@
 package main
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 func main() {
-	const listenAddress = ":8080"
-	const path = "hinst-website"
-	(&webApp{
-		path: path,
-	}).start()
-	assertError(http.ListenAndServe(listenAddress, nil))
+	const webPath = "/hinst-website"
+	const netAddress = ":8080"
+	log.Printf("Starting... netAddress=%v, webPath=%v", netAddress, webPath)
+	var webApp = &webApp{path: webPath}
+	webApp.start()
+	assertError(http.ListenAndServe(netAddress, nil))
 }
