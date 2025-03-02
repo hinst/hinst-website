@@ -10,9 +10,3 @@ func readJsonFile[T any](filePath string, receiver T) T {
 	assertError(json.Unmarshal(fileContent, receiver))
 	return receiver
 }
-
-func isNormalDir(file os.DirEntry) bool {
-	var name = file.Name()
-	println(name)
-	return file.IsDir() && name != "." && name != ".."
-}
