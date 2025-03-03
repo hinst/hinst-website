@@ -1,11 +1,7 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "main": "index.js",
   "type": "module",
-  "engines": {
-    "node": "22"
-  },
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html"
@@ -15,7 +11,8 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "parcel-bundler": "^1.12.5",
+    "parcel": "^2.13.3",
+    "process": "^0.11.10",
     "typescript": "^5.8.2"
   },
   "dependencies": {
