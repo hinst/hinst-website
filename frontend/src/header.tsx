@@ -1,4 +1,5 @@
 import { useLocation } from 'react-router';
+// @ts-ignore
 import icon from './icon.webp';
 
 export default function Header(props: {title: string}) {

@@ -1,6 +1,7 @@
-import { NavLink, HashRouter } from 'react-router';
+import { HashRouter, Route, Routes } from 'react-router';
 import Header from './header';
 import { useEffect, useState } from 'react';
+import HomePage from './homePage';
 
 const PAGE_TITLE = 'Showcase Website';
 
@@ -13,6 +14,8 @@ export default function App() {
         <div style={{marginBottom: 10}}>
             <Header title={pageTitle}/>
         </div>
-        <NavLink to='/personal-goals' className='ms-btn ms-outline ms-primary'>My Personal Goals</NavLink>
+        <Routes>
+            <Route path='/' element={<HomePage/>}/>
+        </Routes>
     </HashRouter>;
 }
