@@ -10,7 +10,14 @@ type webApp struct {
 }
 
 func (me *webApp) start() {
-	http.HandleFunc(me.path+"/api/goals", me.getGoals)
+	http.HandleFunc(me.path+"/api/goals", me.wrap(me.getGoals))
+}
+
+func (me *webApp) wrap(function func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+	return func(response http.ResponseWriter, request *http.Request) {
+		response.Header().Set("Access-Control-Allow-Origin", "http://localhost:1234")
+		function(response, request)
+	}
 }
 
 func (me *webApp) getGoals(response http.ResponseWriter, request *http.Request) {
@@ -23,6 +30,5 @@ func (me *webApp) getGoals(response http.ResponseWriter, request *http.Request) 
 			headers = append(headers, header)
 		}
 	}
-	response.WriteHeader(http.StatusOK)
 	response.Write(encodeJson(headers))
 }
