@@ -10,12 +10,18 @@ export default function App() {
 	useEffect(() => {
 		document.title = pageTitle;
 	}, [pageTitle]);
-	return <HashRouter>
-		<div style={{ marginBottom: 10 }}>
-			<Header title={pageTitle} />
-		</div>
-		<Routes>
-			<Route path='/' element={<HomePage />} />
-		</Routes>
-	</HashRouter>;
+	useEffect(() => {
+		if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+			document.getElementsByTagName('html')[0].setAttribute('data-theme', 'dark');
+	}, []);
+	return <div style={{marginLeft: 10, marginTop: 10, marginRight: 10}}>
+		<HashRouter>
+			<div style={{ marginBottom: 10 }}>
+				<Header title={pageTitle} />
+			</div>
+			<Routes>
+				<Route path='/' element={<HomePage />} />
+			</Routes>
+		</HashRouter>
+	</div>;
 }
