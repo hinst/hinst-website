@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import 'minstyle.io/dist/css/minstyle.io.css';
+import './minstyle.css';
 import './index.css';
 import App from './app';
 
