@@ -4,3 +4,15 @@
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
 }
+
+.hover-outline {
+	outline: 2px solid transparent;
+	transition-property: outline-color;
+	transition-duration: 0.25s;
+}
+
+.hover-outline:hover {
+	outline: 2px solid rgb(250, 77, 96);
+	transition-property: outline-color;
+	transition-duration: 0.25s;
+}

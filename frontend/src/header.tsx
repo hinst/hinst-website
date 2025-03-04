@@ -12,7 +12,7 @@ export default function Header(props: { title: string }) {
 			height={42}
 			style={{ borderRadius: '50%' }}
 			alt='icon'
-			className=''
+			className='hover-outline'
 		/>
 		</NavLink>
 		<h6 style={{marginTop: 10, marginBottom: 10}}>{props.title}</h6>
