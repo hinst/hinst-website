@@ -6,6 +6,10 @@ import (
 )
 
 func main() {
+	webMain()
+}
+
+func webMain() {
 	const webPath = "/hinst-website"
 	const netAddress = ":8080"
 	log.Printf("Starting: netAddress=%v, webPath=%v", netAddress, webPath)
