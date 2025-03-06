@@ -2,6 +2,7 @@ import { HashRouter, Route, Routes } from 'react-router';
 import Header from './header';
 import { useEffect, useState } from 'react';
 import HomePage from './homePage';
+import GoalPostListPanel from './personalGoals/goalPostListPanel';
 
 const PAGE_TITLE = 'Showcase Website';
 
@@ -21,6 +22,7 @@ export default function App() {
 			</div>
 			<Routes>
 				<Route path='/' element={<HomePage />} />
+				<Route path='/personal-goals/:id' element={<GoalPostListPanel />} />
 			</Routes>
 		</HashRouter>
 	</div>;

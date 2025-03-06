@@ -67,7 +67,7 @@ func (me *webApp) extendHeader(theGoalHeader *goalHeaderExtended) {
 }
 
 func (me *webApp) getGoalPosts(response http.ResponseWriter, request *http.Request) {
-	var goalId = request.URL.Query().Get("goalId")
+	var goalId = request.URL.Query().Get("id")
 	assertCondition(
 		me.checkValidGoalIdString(goalId),
 		webError{"Need valid goal id", http.StatusBadRequest})

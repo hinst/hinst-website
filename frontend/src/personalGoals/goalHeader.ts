@@ -8,3 +8,11 @@ export class GoalHeader {
 	) {
 	}
 }
+
+export class PostHeader {
+	constructor(
+		public id: string,
+		public date: string,
+	) {
+	}
+}
