@@ -11,8 +11,8 @@ func assertResultError[T any](result T, err error) T {
 	return result
 }
 
-func assertCondition(condition bool, message string) {
+func assertCondition(condition bool, exception any) {
 	if !condition {
-		panic(message)
+		panic(exception)
 	}
 }
