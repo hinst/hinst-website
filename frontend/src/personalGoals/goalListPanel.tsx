@@ -18,10 +18,7 @@ export default function GoalListPanel() {
 			setIsLoading(false);
 		}
 	};
-	useEffect(
-		() => { loadGoals(); },
-		[],
-	);
+	useEffect(() => { loadGoals() }, []);
 	return <div
 		className='ms-card ms-border'
 		style={{display: 'flex', flexDirection: 'column', width: 'fit-content', maxWidth: '100%'}}
