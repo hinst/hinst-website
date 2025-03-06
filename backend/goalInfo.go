@@ -13,13 +13,17 @@ type goalHeader struct {
 	Author    string    `json:"author"`
 }
 
+type smartPostHeader struct {
+	Id   string `json:"id"`
+	Date string `json:"date"`
+}
+
 type smartPost struct {
 	Id       string         `json:"id"`
 	Msg      string         `json:"msg"`
 	Date     string         `json:"date"`
 	Username string         `json:"username"`
 	Type     string         `json:"type"`
-	Content  template.HTML  `json:"-"`
 	Comments []smartComment `json:"comments"`
 	Images   []smartImage   `json:"images"`
 }
