@@ -11,12 +11,14 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/lodash": "^4.17.16",
     "parcel": "^2.13.3",
     "process": "^0.11.10",
     "typescript": "^5.8.2"
   },
   "dependencies": {
     "@types/react-dom": "^19.0.4",
+    "lodash": "^4.17.21",
     "minstyle.io": "^2.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
