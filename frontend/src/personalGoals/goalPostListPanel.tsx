@@ -37,7 +37,7 @@ export default function GoalPostListPanel() {
 	useEffect(() => { loadPosts() }, []);
 
 	function getMonthlyPosts() {
-		const sortedPosts = [...posts].sort((a, b) => -compareStrings(a.date, b.date));
+		const sortedPosts = [...posts].sort((a, b) => compareStrings(a.date, b.date));
 		const groups = new Map<string, PostHeader[]>();
 		sortedPosts.forEach(post => {
 			const monthDate = post.date.substring(0, '2025-03'.length);
@@ -53,10 +53,10 @@ export default function GoalPostListPanel() {
 			.sort((a, b) => -compareStrings(a.monthDate, b.monthDate));
 	}
 
-	function getPaddedChunks<T>(posts: T[]) {
-		return lodash.chunk(posts, 3).map(posts => {
+	function getPaddedChunks<T>(posts: T[], size: number) {
+		return lodash.chunk(posts, size).map(posts => {
 			const paddedPosts: (T | undefined)[] = [...posts];
-			while (paddedPosts.length < 3)
+			while (paddedPosts.length < size)
 				paddedPosts.push(undefined);
 			return paddedPosts;
 		});
@@ -73,7 +73,7 @@ export default function GoalPostListPanel() {
 					{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
 				</div>
 				<div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
-					{getPaddedChunks(group.posts).map(posts =>
+					{getPaddedChunks(group.posts, 3).map(posts =>
 						<div style={{display: 'flex', gap: 10, flexWrap: 'wrap'}}>
 							{posts.map(post =>
 								post
@@ -83,14 +83,14 @@ export default function GoalPostListPanel() {
 										className='ms-btn ms-primary ms-outline'
 										style={{fontFamily: 'monospace'}}
 									>
-										{post.date.slice(0, '2025-03-06'.length)}
+										{post.date.slice(8, '2025-03-06'.length)}
 									</NavLink>
 									: <NavLink
 										to={'/personal-goals/posts/'}
 										className='ms-btn ms-primary ms-outline'
 										style={{fontFamily: 'monospace', visibility: 'hidden'}}
 									>
-										{'2025-03-06'.slice(0, '2025-03-06'.length)}
+										{'2025-03-06'.slice(8, '2025-03-06'.length)}
 									</NavLink>
 							)}
 						</div>
