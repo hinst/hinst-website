@@ -5,6 +5,9 @@ import { NavLink, useParams } from 'react-router';
 import { PostHeader } from './goalHeader';
 import { compareStrings } from '../string';
 import { getMonthName, parseMonthlyDate } from '../date';
+import { getPaddedArray } from '../array';
+
+const ROWS_PER_MONTH = 3;
 
 class MonthlyPosts {
 	constructor(
@@ -83,14 +86,14 @@ export default function GoalPostListPanel() {
 						{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
 					</div>
 					<br/>
-					{group.posts.map((post, index) => [
+					{getPaddedArray(group.posts, ROWS_PER_MONTH).map((post, index) => [
 							<div style={{display: 'inline-block', marginRight: 10, marginBottom: 10}}>
 								{post
 									? <NavLinkDay date={post.date} id={post.id}/>
 									: <NavLinkDay date='2025-03-01' id={''}/>
 								}
 							</div>,
-							(index + 1) % 3 === 0 ? <br/> : undefined
+							(index + 1) % ROWS_PER_MONTH === 0 ? <br/> : undefined
 						]
 					)}
 				</div>
