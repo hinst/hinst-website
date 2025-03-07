@@ -7,6 +7,7 @@ import { compareStrings } from '../string';
 import { getMonthName, parseMonthlyDate } from '../date';
 import { getPaddedArray } from '../array';
 import { Calendar } from 'react-feather';
+import { createRandomId } from '../react';
 
 const ROWS_PER_MONTH = 3;
 
@@ -69,49 +70,58 @@ export default function GoalPostListPanel() {
 
 	return <div>
 		{ isLoading ? <div className='ms-loading'></div> : undefined }
-		{getYearlyPosts().map(yearGroup => [
-			<div style={{display: 'flex', gap: 10, alignItems: 'center'}}>
-				<Calendar/>
-				<div style={{whiteSpace: 'nowrap'}}>
-					Year {yearGroup.year}
-				</div>
-				<hr/>
-			</div>,
-			yearGroup.monthlyPosts.map(group =>
-				<div key={group.monthDate}
-					className='ms-card ms-border'
-					style={{
-						display: 'inline-block',
-						width: 'fit-content',
-						verticalAlign: 'top',
-						marginTop: 0,
-						marginRight: 15,
-						paddingBottom: 5,
-						paddingRight: 5,
-					}}
+		{getYearlyPosts().map(yearGroup =>
+			<div key={yearGroup.year}>
+				<div
+
+					style={{display: 'flex', gap: 10, alignItems: 'center'}}
 				>
-					<div className='ms-card-title' style={{display: 'inline-block'}}>
-						{getMonthName(parseMonthlyDate(group.monthDate))},&nbsp;
-						{group.monthDate.slice(0, '2025'.length)}
+					<Calendar/>
+					<div style={{whiteSpace: 'nowrap'}}>
+						Year {yearGroup.year}
 					</div>
-					<br/>
-					<DaysOfMonth posts={group.posts}/>
+					<hr/>
 				</div>
-			),
-			<div/>
-		])}
+				{yearGroup.monthlyPosts.map(group =>
+					<div
+						key={group.monthDate}
+						className='ms-card ms-border'
+						style={{
+							display: 'inline-block',
+							width: 'fit-content',
+							verticalAlign: 'top',
+							marginTop: 0,
+							marginRight: 15,
+							paddingBottom: 5,
+							paddingRight: 5,
+						}}
+					>
+						<div className='ms-card-title' style={{display: 'inline-block'}}>
+							{getMonthName(parseMonthlyDate(group.monthDate))},&nbsp;
+							{group.monthDate.slice(0, '2025'.length)}
+						</div>
+						<br/>
+						<DaysOfMonth posts={group.posts}/>
+					</div>
+				)}
+				<div/>
+			</div>
+		)}
 	</div>;
 }
 
 function DaysOfMonth(props: {posts: PostHeader[]}) {
 	return getPaddedArray(props.posts, ROWS_PER_MONTH).map((post, index) => [
-			<div style={{display: 'inline-block', marginRight: 10, marginBottom: 10}}>
+			<div
+				key={post?.id || createRandomId()}
+				style={{display: 'inline-block', marginRight: 10, marginBottom: 10}}
+			>
 				{post
 					? <NavLinkDay date={post.date} id={post.id}/>
 					: <NavLinkDay date='2025-03-01' id={''}/>
 				}
 			</div>,
-			(index + 1) % ROWS_PER_MONTH === 0 ? <br/> : undefined
+			(index + 1) % ROWS_PER_MONTH === 0 ? <br key={createRandomId()}/> : undefined
 		]
 	);
 }
@@ -119,7 +129,6 @@ function DaysOfMonth(props: {posts: PostHeader[]}) {
 function NavLinkDay(props: {date: string, id: string}) {
 	return <NavLink
 		to={'/personal-goals/posts/' + props.id}
-		key={props.id}
 		className='ms-btn ms-primary ms-outline'
 		style={{fontFamily: 'monospace', visibility: props.id === '' ? 'hidden' : 'visible'}}
 	>
