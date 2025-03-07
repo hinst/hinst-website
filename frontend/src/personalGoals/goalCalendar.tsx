@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import lodash from 'lodash';
-import { API_URL } from '../api';
-import { NavLink, useParams } from 'react-router';
+import { NavLink } from 'react-router';
 import { PostHeader } from './goalHeader';
 import { compareStrings } from '../string';
 import { getMonthName, parseMonthlyDate } from '../date';
@@ -25,31 +23,9 @@ class YearlyPosts {
 	) {}
 }
 
-export default function GoalPostListPanel() {
-	const [isLoading, setIsLoading] = useState(0);
-	const isLoadingRef = useRef(0);
-	isLoadingRef.current = isLoading;
-
-	const params = useParams();
-	const id: string = params.id!;
-
-	const [posts, setPosts] = useState(new Array<PostHeader>());
-
-	async function loadPosts() {
-		setIsLoading(isLoadingRef.current + 1);
-		try {
-			const response = await fetch(API_URL + '/goalPosts?id=' + encodeURIComponent(id));
-			if (!response.ok)
-				throw new Error(response.statusText);
-			setPosts(await response.json());
-		} finally {
-			setIsLoading(isLoadingRef.current - 1);
-		}
-	}
-	useEffect(() => { loadPosts() }, []);
-
+export default function GoalCalendar(props: {posts: PostHeader[]}) {
 	function getSortedPosts() {
-		return [...posts].sort((a, b) => compareStrings(a.date, b.date));
+		return [...props.posts].sort((a, b) => compareStrings(a.date, b.date));
 	}
 
 	function getMonthlyPosts() {
@@ -69,7 +45,6 @@ export default function GoalPostListPanel() {
 	}
 
 	return <div>
-		{ isLoading ? <div className='ms-loading'></div> : undefined }
 		{getYearlyPosts().map(yearGroup =>
 			<div key={yearGroup.year}>
 				<div
