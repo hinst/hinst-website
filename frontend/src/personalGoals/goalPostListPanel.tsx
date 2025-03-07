@@ -63,32 +63,38 @@ export default function GoalPostListPanel() {
 			.sort((a, b) => -compareStrings(a.year, b.year));
 	}
 
-	return <div style={{display: 'flex', flexWrap: 'wrap', gap: 15, alignItems: 'flex-start'}}>
+	return <div>
 		{ isLoading ? <div className='ms-loading'></div> : undefined }
-		{getMonthlyPosts().map(group =>
-			<div key={group.monthDate}
-				className='ms-card ms-border'
-				style={{display: 'flex', flexDirection: 'column', margin: 0, alignItems: 'flex-start', width: 'fit-content'}}
-			>
-				<div className='ms-card-title' style={{}}>
-					{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
-				</div>
-				<div style={{display: 'flex', gap: 10, flexWrap: 'wrap', position: 'relative'}}>
+		<div>
+			{getMonthlyPosts().map(group =>
+				<div key={group.monthDate}
+					className='ms-card ms-border'
+					style={{
+						display: 'inline-block',
+						width: 'fit-content',
+						verticalAlign: 'top',
+						marginTop: 0,
+						marginRight: 15,
+						paddingBottom: 5
+					}}
+				>
+					<div className='ms-card-title' style={{display: 'inline-block'}}>
+						{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
+					</div>
+					<br/>
 					{group.posts.map((post, index) => [
-							<div
-								style={{display: 'flex', gap: 10, breakAfter: 'always'}}
-							>
+							<div style={{display: 'inline-block', marginRight: 10, marginBottom: 10}}>
 								{post
 									? <NavLinkDay date={post.date} id={post.id}/>
 									: <NavLinkDay date='2025-03-01' id={''}/>
 								}
 							</div>,
-							(index + 1) % 3 === 0 ? <div style={{width: '100%', boxSizing: 'border-box'}}></div> : undefined
+							(index + 1) % 3 === 0 ? <br/> : undefined
 						]
 					)}
 				</div>
-			</div>
-		)}
+			)}
+		</div>
 	</div>;
 }
 
