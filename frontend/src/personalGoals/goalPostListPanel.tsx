@@ -5,7 +5,7 @@ import { NavLink, useParams } from 'react-router';
 import { PostHeader } from './goalHeader';
 import { compareStrings } from '../string';
 import { getMonthName, parseMonthlyDate } from '../date';
-import { getPaddedArray } from '../array';
+import { getPaddedArray, getPaddedChunks } from '../array';
 import { Calendar } from 'react-feather';
 import { createRandomId } from '../react';
 
@@ -87,20 +87,16 @@ export default function GoalPostListPanel() {
 						key={group.monthDate}
 						className='ms-card ms-border'
 						style={{
-							display: 'inline-block',
 							width: 'fit-content',
 							verticalAlign: 'top',
 							marginTop: 0,
 							marginRight: 15,
-							paddingBottom: 5,
-							paddingRight: 5,
 						}}
 					>
-						<div className='ms-card-title' style={{display: 'inline-block'}}>
+						<div className='ms-card-title'>
 							{getMonthName(parseMonthlyDate(group.monthDate))},&nbsp;
 							{group.monthDate.slice(0, '2025'.length)}
 						</div>
-						<br/>
 						<DaysOfMonth posts={group.posts}/>
 					</div>
 				)}
@@ -111,19 +107,23 @@ export default function GoalPostListPanel() {
 }
 
 function DaysOfMonth(props: {posts: PostHeader[]}) {
-	return getPaddedArray(props.posts, ROWS_PER_MONTH).map((post, index) => [
+	return <div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
+		{getPaddedChunks(props.posts, ROWS_PER_MONTH).map((posts) =>
 			<div
-				key={post?.id || createRandomId()}
-				style={{display: 'inline-block', marginRight: 10, marginBottom: 10}}
+				key={posts.map(post => post?.id).join(' ')}
+				style={{display: 'flex', gap: 10}}
 			>
-				{post
-					? <NavLinkDay date={post.date} id={post.id}/>
-					: <NavLinkDay date='2025-03-01' id={''}/>
-				}
-			</div>,
-			(index + 1) % ROWS_PER_MONTH === 0 ? <br key={createRandomId()}/> : undefined
-		]
-	);
+				{posts.map(post =>
+					<div key={post?.id || createRandomId()}>
+						{post
+							? <NavLinkDay date={post.date} id={post.id}/>
+							: <NavLinkDay date='2025-03-01' id={''}/>
+						}
+					</div>
+				)}
+			</div>
+		)}
+	</div>;
 }
 
 function NavLinkDay(props: {date: string, id: string}) {
