@@ -6,6 +6,7 @@ import { PostHeader } from './goalHeader';
 import { compareStrings } from '../string';
 import { getMonthName, parseMonthlyDate } from '../date';
 import { getPaddedArray } from '../array';
+import { Calendar } from 'react-feather';
 
 const ROWS_PER_MONTH = 3;
 
@@ -70,8 +71,9 @@ export default function GoalPostListPanel() {
 		{ isLoading ? <div className='ms-loading'></div> : undefined }
 		{getYearlyPosts().map(yearGroup => [
 			<div style={{display: 'flex', gap: 10, alignItems: 'center'}}>
+				<Calendar/>
 				<div style={{whiteSpace: 'nowrap'}}>
-					<b>{yearGroup.year}</b>
+					Year {yearGroup.year}
 				</div>
 				<hr/>
 			</div>,
@@ -89,7 +91,8 @@ export default function GoalPostListPanel() {
 					}}
 				>
 					<div className='ms-card-title' style={{display: 'inline-block'}}>
-						{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
+						{getMonthName(parseMonthlyDate(group.monthDate))},&nbsp;
+						{group.monthDate.slice(0, '2025'.length)}
 					</div>
 					<br/>
 					<DaysOfMonth posts={group.posts}/>
