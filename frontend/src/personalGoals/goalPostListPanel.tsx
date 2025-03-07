@@ -5,7 +5,7 @@ import { NavLink, useParams } from 'react-router';
 import { PostHeader } from './goalHeader';
 import { compareStrings } from '../string';
 import { getMonthName, parseMonthlyDate } from '../date';
-import { getPaddedArray, getPaddedChunks } from '../array';
+import { getPaddedChunks } from '../array';
 import { Calendar } from 'react-feather';
 import { createRandomId } from '../react';
 
