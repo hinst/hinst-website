@@ -75,7 +75,8 @@ export default function GoalPostListPanel() {
 						verticalAlign: 'top',
 						marginTop: 0,
 						marginRight: 15,
-						paddingBottom: 5
+						paddingBottom: 5,
+						paddingRight: 5,
 					}}
 				>
 					<div className='ms-card-title' style={{display: 'inline-block'}}>
