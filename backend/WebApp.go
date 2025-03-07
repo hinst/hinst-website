@@ -16,7 +16,7 @@ type webApp struct {
 func (me *webApp) start() {
 	me.savedGoalsPath = "./saved-goals"
 	me.fileNameMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d`)
-	me.goalIdStringMatcher = regexp.MustCompile(`^\d+$`)
+	me.goalIdStringMatcher = regexp.MustCompile(`^\d{1,10}$`)
 	http.HandleFunc(me.webPath+"/api/goals", me.wrap(me.getGoals))
 	http.HandleFunc(me.webPath+"/api/goalPosts", me.wrap(me.getGoalPosts))
 }
