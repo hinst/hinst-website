@@ -48,14 +48,12 @@ export default function GoalCalendar(props: {posts: PostHeader[]}) {
 		{getYearlyPosts().map(yearGroup =>
 			<div key={yearGroup.year}>
 				<div
-
-					style={{display: 'flex', gap: 10, alignItems: 'center'}}
+					style={{display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10}}
 				>
 					<Calendar/>
 					<div style={{whiteSpace: 'nowrap'}}>
 						Year {yearGroup.year}
 					</div>
-					<hr/>
 				</div>
 				{yearGroup.monthlyPosts.map(group =>
 					<div
@@ -65,7 +63,6 @@ export default function GoalCalendar(props: {posts: PostHeader[]}) {
 							width: 'fit-content',
 							verticalAlign: 'top',
 							marginTop: 0,
-							marginRight: 15,
 						}}
 					>
 						<div className='ms-card-title'>
@@ -88,17 +85,21 @@ function DaysOfMonth(props: {posts: PostHeader[]}) {
 				key={posts.map(post => post?.id).join(' ')}
 				style={{display: 'flex', gap: 10}}
 			>
-				{posts.map(post =>
-					<div key={post?.id || createRandomId()}>
-						{post
-							? <NavLinkDay date={post.date} id={post.id}/>
-							: <NavLinkDay date='2025-03-01' id={''}/>
-						}
-					</div>
-				)}
+				<DaysOfMonthRow posts={posts}/>
 			</div>
 		)}
 	</div>;
+}
+
+function DaysOfMonthRow(props: {posts: (PostHeader | undefined)[]}) {
+	return props.posts.map(post =>
+		<div key={post?.id || createRandomId()}>
+			{post
+				? <NavLinkDay date={post.date} id={post.id}/>
+				: <NavLinkDay date='2025-03-01' id={''}/>
+			}
+		</div>
+	);
 }
 
 function NavLinkDay(props: {date: string, id: string}) {

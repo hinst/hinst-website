@@ -4,23 +4,28 @@ import { useParams } from 'react-router';
 import { PostHeader } from './goalHeader';
 import GoalCalendar from './goalCalendar';
 
-export default function GoalCalendarPanel() {
+export default function GoalCalendarPanel(
+	props: {
+		id: string,
+		receivePosts?: (posts: PostHeader[]) => void,
+	}
+) {
 	const [isLoading, setIsLoading] = useState(0);
 	const isLoadingRef = useRef(0);
 	isLoadingRef.current = isLoading;
-
-	const params = useParams();
-	const id: string = params.id!;
 
 	const [posts, setPosts] = useState(new Array<PostHeader>());
 
 	async function loadPosts() {
 		setIsLoading(isLoadingRef.current + 1);
 		try {
-			const response = await fetch(API_URL + '/goalPosts?id=' + encodeURIComponent(id));
+			const response = await fetch(API_URL + '/goalPosts?id=' + encodeURIComponent(props.id));
 			if (!response.ok)
 				throw new Error(response.statusText);
-			setPosts(await response.json());
+			const posts = await response.json();
+			setPosts(posts);
+			if (props.receivePosts)
+				props.receivePosts(posts);
 		} finally {
 			setIsLoading(isLoadingRef.current - 1);
 		}
