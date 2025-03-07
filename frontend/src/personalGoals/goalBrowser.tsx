@@ -11,14 +11,19 @@ export default function GoalBrowser() {
 	const [activePostDate, setActivePostDate] = useState<string>('');
 
 	function receivePosts(posts: PostHeader[]) {
-		console.log(posts);
 		if (posts.length && !activePostDate) {
 			setActivePostDate(posts[posts.length - 1].date);
 		}
 	}
 
-	return <div style={{display: 'flex'}}>
+	return <div style={{display: 'flex', gap: 20}}>
 		<GoalCalendarPanel id={id} receivePosts={receivePosts}/>
-		{ activePostDate ? <GoalPostView postDate={activePostDate}/> : undefined }
+		{ activePostDate
+			? <GoalPostView
+				goalId={id}
+				postDate={activePostDate}
+				style={{maxWidth: 1000}}
+			  />
+			: undefined }
 	</div>;
 }
