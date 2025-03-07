@@ -98,15 +98,21 @@ func (me *webApp) checkValidGoalIdString(goalId string) bool {
 }
 
 func (me *webApp) readValidGoalIdString(goalId string) string {
-	assertCondition(
-		me.checkValidGoalIdString(goalId),
-		webError{"Need valid goal id. Received: " + goalId, http.StatusBadRequest})
+	var createWebError = func() webError {
+		return webError{"Need goal id. Received: " + goalId, http.StatusBadRequest}
+	}
+	assertCondition(me.checkValidGoalIdString(goalId), createWebError)
 	return goalId
 }
 
 func (me *webApp) readValidPostDateTime(text string) time.Time {
 	var postDateTime, postDateTimeError = parseSmartProgressDateTime(text)
-	assertCondition(nil == postDateTimeError,
-		webError{"Need valid postDateTime. Format: " + SMART_PROGRESS_DATE_TIME_FORMAT, http.StatusBadRequest})
+	var createWebError = func() webError {
+		return webError{
+			"Need valid postDateTime. Format: " + SMART_PROGRESS_DATE_TIME_FORMAT,
+			http.StatusBadRequest,
+		}
+	}
+	assertCondition(nil == postDateTimeError, createWebError)
 	return postDateTime
 }
