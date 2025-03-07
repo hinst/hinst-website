@@ -68,26 +68,35 @@ export default function GoalPostListPanel() {
 
 	return <div>
 		{ isLoading ? <div className='ms-loading'></div> : undefined }
-		{getMonthlyPosts().map(group =>
-			<div key={group.monthDate}
-				className='ms-card ms-border'
-				style={{
-					display: 'inline-block',
-					width: 'fit-content',
-					verticalAlign: 'top',
-					marginTop: 0,
-					marginRight: 15,
-					paddingBottom: 5,
-					paddingRight: 5,
-				}}
-			>
-				<div className='ms-card-title' style={{display: 'inline-block'}}>
-					{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
+		{getYearlyPosts().map(yearGroup => [
+			<div style={{display: 'flex', gap: 10, alignItems: 'center'}}>
+				<div style={{whiteSpace: 'nowrap'}}>
+					<b>{yearGroup.year}</b>
 				</div>
-				<br/>
-				<DaysOfMonth posts={group.posts}/>
-			</div>
-		)}
+				<hr/>
+			</div>,
+			yearGroup.monthlyPosts.map(group =>
+				<div key={group.monthDate}
+					className='ms-card ms-border'
+					style={{
+						display: 'inline-block',
+						width: 'fit-content',
+						verticalAlign: 'top',
+						marginTop: 0,
+						marginRight: 15,
+						paddingBottom: 5,
+						paddingRight: 5,
+					}}
+				>
+					<div className='ms-card-title' style={{display: 'inline-block'}}>
+						{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
+					</div>
+					<br/>
+					<DaysOfMonth posts={group.posts}/>
+				</div>
+			),
+			<div/>
+		])}
 	</div>;
 }
 

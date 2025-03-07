@@ -16,3 +16,7 @@
 	transition-property: outline-color;
 	transition-duration: 0.25s;
 }
+
+hr {
+	background-color: rgba(127, 127, 127, 0.2);
+}
