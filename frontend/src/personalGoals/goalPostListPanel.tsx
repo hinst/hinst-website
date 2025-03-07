@@ -72,21 +72,8 @@ export default function GoalPostListPanel() {
 									<div style={{display: 'flex', gap: 10, flexWrap: 'wrap'}}>
 										{posts.map(post =>
 											post
-												? <NavLink
-													to={'/personal-goals/posts/' + post.id}
-													key={post.id}
-													className='ms-btn ms-primary ms-outline'
-													style={{fontFamily: 'monospace'}}
-												>
-													{post.date.slice(8, '2025-03-06'.length)}
-												</NavLink>
-												: <NavLink
-													to={'/personal-goals/posts/'}
-													className='ms-btn ms-primary ms-outline'
-													style={{fontFamily: 'monospace', visibility: 'hidden'}}
-												>
-													{'2025-03-06'.slice(8, '2025-03-06'.length)}
-												</NavLink>
+												? <NavLinkDay date={post.date} id={post.id}/>
+												: <NavLinkDay date='2025-03-01' id={''}/>
 										)}
 									</div>
 								)}
@@ -97,4 +84,15 @@ export default function GoalPostListPanel() {
 			</div>
 		)}
 	</div>;
+}
+
+function NavLinkDay(props: {date: string, id: string}) {
+	return <NavLink
+		to={'/personal-goals/posts/' + props.id}
+		key={props.id}
+		className='ms-btn ms-primary ms-outline'
+		style={{fontFamily: 'monospace', visibility: props.id === '' ? 'hidden' : 'visible'}}
+	>
+		{props.date.slice('2025-03-'.length, '2025-03-06'.length)}
+	</NavLink>;
 }
