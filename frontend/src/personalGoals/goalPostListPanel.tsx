@@ -64,38 +64,45 @@ export default function GoalPostListPanel() {
 
 	return <div style={{display: 'flex', flexWrap: 'wrap', gap: 20}}>
 		{ isLoading ? <div className='ms-loading'></div> : undefined }
-		{getMonthlyPosts().map(group =>
-			<div key={group.monthDate}
-				className='ms-card ms-border'
-				style={{display: 'flex', flexDirection: 'column', margin: 0, width: 'fit-content'}}
-			>
-				<div className='ms-card-title'>
-					{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
-				</div>
-				<div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
-					{getPaddedChunks(group.posts, 3).map(posts =>
-						<div style={{display: 'flex', gap: 10, flexWrap: 'wrap'}}>
-							{posts.map(post =>
-								post
-									? <NavLink
-										to={'/personal-goals/posts/' + post.id}
-										key={post.id}
-										className='ms-btn ms-primary ms-outline'
-										style={{fontFamily: 'monospace'}}
-									>
-										{post.date.slice(8, '2025-03-06'.length)}
-									</NavLink>
-									: <NavLink
-										to={'/personal-goals/posts/'}
-										className='ms-btn ms-primary ms-outline'
-										style={{fontFamily: 'monospace', visibility: 'hidden'}}
-									>
-										{'2025-03-06'.slice(8, '2025-03-06'.length)}
-									</NavLink>
-							)}
+		{getPaddedChunks(getMonthlyPosts(), 6).map(rowGroup =>
+			<div style={{display: 'flex', gap: 10, flexWrap: 'wrap'}}>
+				{rowGroup.map(group =>
+					group
+					?
+						<div key={group.monthDate}
+							className='ms-card ms-border'
+							style={{display: 'flex', flexDirection: 'column', margin: 0, width: 'fit-content'}}
+						>
+							<div className='ms-card-title'>
+								{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
+							</div>
+							<div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
+								{getPaddedChunks(group.posts, 3).map(posts =>
+									<div style={{display: 'flex', gap: 10, flexWrap: 'wrap'}}>
+										{posts.map(post =>
+											post
+												? <NavLink
+													to={'/personal-goals/posts/' + post.id}
+													key={post.id}
+													className='ms-btn ms-primary ms-outline'
+													style={{fontFamily: 'monospace'}}
+												>
+													{post.date.slice(8, '2025-03-06'.length)}
+												</NavLink>
+												: <NavLink
+													to={'/personal-goals/posts/'}
+													className='ms-btn ms-primary ms-outline'
+													style={{fontFamily: 'monospace', visibility: 'hidden'}}
+												>
+													{'2025-03-06'.slice(8, '2025-03-06'.length)}
+												</NavLink>
+										)}
+									</div>
+								)}
+							</div>
 						</div>
-					)}
-				</div>
+					: undefined
+				)}
 			</div>
 		)}
 	</div>;
