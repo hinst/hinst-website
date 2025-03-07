@@ -1,15 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
+import lodash from 'lodash';
 import { API_URL } from '../api';
 import { NavLink, useParams } from 'react-router';
 import { PostHeader } from './goalHeader';
 import { compareStrings } from '../string';
 import { getMonthName, parseMonthlyDate } from '../date';
-import { getPaddedChunks } from '../array';
 
-class GroupedPosts {
+class MonthlyPosts {
 	constructor(
 		public readonly monthDate: string,
 		public readonly posts: PostHeader[],
+	) {}
+}
+
+class YearlyPosts {
+	constructor(
+		public readonly year: string,
+		public readonly monthlyPosts: MonthlyPosts[],
 	) {}
 }
 
@@ -36,51 +43,50 @@ export default function GoalPostListPanel() {
 	}
 	useEffect(() => { loadPosts() }, []);
 
+	function getSortedPosts() {
+		return [...posts].sort((a, b) => compareStrings(a.date, b.date));
+	}
+
 	function getMonthlyPosts() {
-		const sortedPosts = [...posts].sort((a, b) => compareStrings(a.date, b.date));
-		const groups = new Map<string, PostHeader[]>();
-		sortedPosts.forEach(post => {
-			const monthDate = post.date.substring(0, '2025-03'.length);
-			let group = groups.get(monthDate);
-			if (!group) {
-				group = new Array<PostHeader>();
-				groups.set(monthDate, group);
-			}
-			group.push(post);
-		});
-		return Array.from(groups.entries())
-			.map(([monthDate, posts]) => new GroupedPosts(monthDate, posts))
+		const posts = getSortedPosts();
+		const groups = lodash.groupBy(posts, post => post.date.substring(0, '2025-03'.length));
+		return Array.from(Object.entries(groups))
+			.map(([monthDate, posts]) => new MonthlyPosts(monthDate, posts))
 			.sort((a, b) => -compareStrings(a.monthDate, b.monthDate));
 	}
 
-	return <div style={{display: 'flex', flexWrap: 'wrap', gap: 20}}>
+	function getYearlyPosts() {
+		const monthlyPosts = getMonthlyPosts();
+		const groups = lodash.groupBy(monthlyPosts, monthlyPost => monthlyPost.monthDate.substring(0, '2025'.length));
+		return Array.from(Object.entries(groups))
+			.map(([year, monthlyPosts]) => new YearlyPosts(year, monthlyPosts))
+			.sort((a, b) => -compareStrings(a.year, b.year));
+	}
+
+	return <div style={{display: 'flex', flexWrap: 'wrap', gap: 15, alignItems: 'flex-start'}}>
 		{ isLoading ? <div className='ms-loading'></div> : undefined }
-		{getPaddedChunks(getMonthlyPosts(), 6).map(rowGroup =>
-			<div style={{display: 'flex', gap: 10, flexWrap: 'wrap'}}>
-				{rowGroup.map(group =>
-					group
-					?
-						<div key={group.monthDate}
-							className='ms-card ms-border'
-							style={{display: 'flex', flexDirection: 'column', margin: 0, width: 'fit-content'}}
-						>
-							<div className='ms-card-title'>
-								{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
-							</div>
-							<div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
-								{getPaddedChunks(group.posts, 3).map(posts =>
-									<div style={{display: 'flex', gap: 10, flexWrap: 'wrap'}}>
-										{posts.map(post =>
-											post
-												? <NavLinkDay date={post.date} id={post.id}/>
-												: <NavLinkDay date='2025-03-01' id={''}/>
-										)}
-									</div>
-								)}
-							</div>
-						</div>
-					: undefined
-				)}
+		{getMonthlyPosts().map(group =>
+			<div key={group.monthDate}
+				className='ms-card ms-border'
+				style={{display: 'flex', flexDirection: 'column', margin: 0, alignItems: 'flex-start', width: 'fit-content'}}
+			>
+				<div className='ms-card-title' style={{}}>
+					{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
+				</div>
+				<div style={{display: 'flex', gap: 10, flexWrap: 'wrap', position: 'relative'}}>
+					{group.posts.map((post, index) => [
+							<div
+								style={{display: 'flex', gap: 10, breakAfter: 'always'}}
+							>
+								{post
+									? <NavLinkDay date={post.date} id={post.id}/>
+									: <NavLinkDay date='2025-03-01' id={''}/>
+								}
+							</div>,
+							(index + 1) % 3 === 0 ? <div style={{width: '100%', boxSizing: 'border-box'}}></div> : undefined
+						]
+					)}
+				</div>
 			</div>
 		)}
 	</div>;
