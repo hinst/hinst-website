@@ -4,21 +4,26 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"time"
 )
 
 type webApp struct {
-	savedGoalsPath      string
-	webPath             string
-	fileNameMatcher     *regexp.Regexp
-	goalIdStringMatcher *regexp.Regexp
+	savedGoalsPath        string
+	webPath               string
+	fileNameMatcher       *regexp.Regexp
+	goalIdStringMatcher   *regexp.Regexp
+	goalDateStringMatcher *regexp.Regexp
 }
 
 func (me *webApp) start() {
 	me.savedGoalsPath = "./saved-goals"
 	me.fileNameMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d`)
 	me.goalIdStringMatcher = regexp.MustCompile(`^\d{1,10}$`)
+	me.goalDateStringMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$`)
+
 	http.HandleFunc(me.webPath+"/api/goals", me.wrap(me.getGoals))
 	http.HandleFunc(me.webPath+"/api/goalPosts", me.wrap(me.getGoalPosts))
+	http.HandleFunc(me.webPath+"/api/goalPost", me.wrap(me.getGoalPost))
 }
 
 func (me *webApp) wrap(function func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
@@ -67,10 +72,7 @@ func (me *webApp) extendHeader(theGoalHeader *goalHeaderExtended) {
 }
 
 func (me *webApp) getGoalPosts(response http.ResponseWriter, request *http.Request) {
-	var goalId = request.URL.Query().Get("id")
-	assertCondition(
-		me.checkValidGoalIdString(goalId),
-		webError{"Need valid goal id", http.StatusBadRequest})
+	var goalId = me.readValidGoalIdString(request.URL.Query().Get("id"))
 	var files = assertResultError(os.ReadDir(me.savedGoalsPath + "/" + goalId))
 	sortFilesByName(files)
 	var posts = make([]*smartPostHeader, 0, len(files))
@@ -83,6 +85,28 @@ func (me *webApp) getGoalPosts(response http.ResponseWriter, request *http.Reque
 	response.Write(encodeJson(posts))
 }
 
+func (me *webApp) getGoalPost(response http.ResponseWriter, request *http.Request) {
+	var goalId = me.readValidGoalIdString(request.URL.Query().Get("goalId"))
+	var postDateTime = me.readValidPostDateTime(request.URL.Query().Get("postDateTime"))
+	var postFileName = goalId + "/" + postDateTime.Format("2006-01-02_15-04-05") + ".json"
+	var post = readJsonFile(me.savedGoalsPath+"/"+postFileName, &smartPost{})
+	response.Write(encodeJson(post))
+}
+
 func (me *webApp) checkValidGoalIdString(goalId string) bool {
 	return me.goalIdStringMatcher.MatchString(goalId)
+}
+
+func (me *webApp) readValidGoalIdString(goalId string) string {
+	assertCondition(
+		me.checkValidGoalIdString(goalId),
+		webError{"Need valid goal id. Received: " + goalId, http.StatusBadRequest})
+	return goalId
+}
+
+func (me *webApp) readValidPostDateTime(text string) time.Time {
+	var postDateTime, postDateTimeError = parseSmartProgressDateTime(text)
+	assertCondition(nil == postDateTimeError,
+		webError{"Need valid postDateTime. Format: " + SMART_PROGRESS_DATE_TIME_FORMAT, http.StatusBadRequest})
+	return postDateTime
 }
