@@ -11,7 +11,7 @@ export function getPaddedChunks<T>(items: T[], size: number) {
 
 export function getPaddedArray<T>(items: T[], size: number) {
 	const paddedItems: (T | undefined)[] = [...items];
-	while (paddedItems.length % size !== 0)
+	while (paddedItems.length < size)
 		paddedItems.push(undefined);
 	return paddedItems;
 }

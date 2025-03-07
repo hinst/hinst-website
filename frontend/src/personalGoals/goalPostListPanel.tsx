@@ -68,38 +68,40 @@ export default function GoalPostListPanel() {
 
 	return <div>
 		{ isLoading ? <div className='ms-loading'></div> : undefined }
-		<div>
-			{getMonthlyPosts().map(group =>
-				<div key={group.monthDate}
-					className='ms-card ms-border'
-					style={{
-						display: 'inline-block',
-						width: 'fit-content',
-						verticalAlign: 'top',
-						marginTop: 0,
-						marginRight: 15,
-						paddingBottom: 5,
-						paddingRight: 5,
-					}}
-				>
-					<div className='ms-card-title' style={{display: 'inline-block'}}>
-						{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
-					</div>
-					<br/>
-					{getPaddedArray(group.posts, ROWS_PER_MONTH).map((post, index) => [
-							<div style={{display: 'inline-block', marginRight: 10, marginBottom: 10}}>
-								{post
-									? <NavLinkDay date={post.date} id={post.id}/>
-									: <NavLinkDay date='2025-03-01' id={''}/>
-								}
-							</div>,
-							(index + 1) % ROWS_PER_MONTH === 0 ? <br/> : undefined
-						]
-					)}
+		{getMonthlyPosts().map(group =>
+			<div key={group.monthDate}
+				className='ms-card ms-border'
+				style={{
+					display: 'inline-block',
+					width: 'fit-content',
+					verticalAlign: 'top',
+					marginTop: 0,
+					marginRight: 15,
+					paddingBottom: 5,
+					paddingRight: 5,
+				}}
+			>
+				<div className='ms-card-title' style={{display: 'inline-block'}}>
+					{group.monthDate.slice(0, '2025'.length)} &bull; {getMonthName(parseMonthlyDate(group.monthDate))}
 				</div>
-			)}
-		</div>
+				<br/>
+				<DaysOfMonth posts={group.posts}/>
+			</div>
+		)}
 	</div>;
+}
+
+function DaysOfMonth(props: {posts: PostHeader[]}) {
+	return getPaddedArray(props.posts, ROWS_PER_MONTH).map((post, index) => [
+			<div style={{display: 'inline-block', marginRight: 10, marginBottom: 10}}>
+				{post
+					? <NavLinkDay date={post.date} id={post.id}/>
+					: <NavLinkDay date='2025-03-01' id={''}/>
+				}
+			</div>,
+			(index + 1) % ROWS_PER_MONTH === 0 ? <br/> : undefined
+		]
+	);
 }
 
 function NavLinkDay(props: {date: string, id: string}) {
