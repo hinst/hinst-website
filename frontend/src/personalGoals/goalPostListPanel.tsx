@@ -4,7 +4,7 @@ import { NavLink, useParams } from 'react-router';
 import { PostHeader } from './goalHeader';
 import { compareStrings } from '../string';
 import { getMonthName, parseMonthlyDate } from '../date';
-import lodash from 'lodash';
+import { getPaddedChunks } from '../array';
 
 class GroupedPosts {
 	constructor(
@@ -51,15 +51,6 @@ export default function GoalPostListPanel() {
 		return Array.from(groups.entries())
 			.map(([monthDate, posts]) => new GroupedPosts(monthDate, posts))
 			.sort((a, b) => -compareStrings(a.monthDate, b.monthDate));
-	}
-
-	function getPaddedChunks<T>(posts: T[], size: number) {
-		return lodash.chunk(posts, size).map(posts => {
-			const paddedPosts: (T | undefined)[] = [...posts];
-			while (paddedPosts.length < size)
-				paddedPosts.push(undefined);
-			return paddedPosts;
-		});
 	}
 
 	return <div style={{display: 'flex', flexWrap: 'wrap', gap: 20}}>
