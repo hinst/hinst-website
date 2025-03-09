@@ -26,7 +26,7 @@ export default function GoalPostView(props: {
 
 	useEffect(() => {
 		load();
-	}, []);
+	}, [props.goalId, props.postDate]);
 
 	return <div style={props.style}>
 		{ isLoading ? <div className='ms-loading' /> : undefined }
