@@ -1,7 +1,7 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import GoalCalendarPanel from './goalCalendarPanel';
 import { PostHeader } from './goalHeader';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import GoalPostView from './goalPostView';
 
 export default function GoalBrowser() {
@@ -18,6 +18,10 @@ export default function GoalBrowser() {
 			setActivePostDate(newActivePostDate);
 		}
 	}
+
+	useEffect(() => {
+		setActivePostDate(searchParams.get('activePostDate') || '');
+	}, [searchParams]);
 
 	return <div style={{display: 'flex', gap: 20}}>
 		<GoalCalendarPanel id={id} receivePosts={receivePosts} activePostDate={activePostDate}/>

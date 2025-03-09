@@ -13,6 +13,8 @@ export class PostHeader {
 	constructor(
 		public id: string,
 		public date: string,
+		/** Goal id */
+		public obj_id: string,
 	) {
 	}
 }

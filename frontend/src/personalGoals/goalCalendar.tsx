@@ -91,21 +91,37 @@ function DaysOfMonth(props: {posts: PostHeader[], activePostDate: string}) {
 	</div>;
 }
 
-function DaysOfMonthRow(props: {posts: (PostHeader | undefined)[], activePostDate: string}) {
-
+function DaysOfMonthRow(props: {
+	posts: (PostHeader | undefined)[],
+	activePostDate: string,
+}) {
 	return props.posts.map(post =>
 		<div key={post?.id || createRandomId()}>
 			{post
-				? <NavLinkDay date={post.date} id={post.id} isActive={props.activePostDate === post.date} />
-				: <NavLinkDay date='2025-03-01' id={''} isActive={false} />
+				? <NavLinkDay
+					date={post.date}
+					id={post.id}
+					goalId={post.obj_id}
+					isActive={props.activePostDate === post.date}
+					/>
+				: <NavLinkDay
+					date='2025-03-01'
+					id={''}
+					goalId={''}
+					isActive={false}
+					/>
 			}
 		</div>
 	);
 }
 
-function NavLinkDay(props: {date: string, id: string, isActive: boolean}) {
+function NavLinkDay(props: {date: string, id: string, goalId: string, isActive: boolean}) {
+	let url = '';
+	if (props.id !== '')
+		url = '/personal-goals/' + encodeURIComponent(props.goalId) +
+			'?activePostDate=' + encodeURIComponent(props.date);
 	return <NavLink
-		to={'/personal-goals/posts/' + props.id}
+		to={url}
 		className={'ms-btn ms-outline ms-primary ' + (props.isActive ? 'ms-btn-active' : '')}
 		style={{fontFamily: 'monospace', visibility: props.id === '' ? 'hidden' : 'visible'}}
 	>

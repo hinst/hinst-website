@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { API_URL } from '../api';
-import { useParams } from 'react-router';
 import { PostHeader } from './goalHeader';
 import GoalCalendar from './goalCalendar';
 
