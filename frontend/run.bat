@@ -1,1 +1,1 @@
-npm run start
+rd /s /q .parcel-cache && rd /s /q dist && npm run start
