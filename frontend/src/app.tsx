@@ -15,7 +15,7 @@ export default function App() {
 		if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
 			document.getElementsByTagName('html')[0].setAttribute('data-theme', 'dark');
 	}, []);
-	return <div style={{marginLeft: 10, marginTop: 10, marginRight: 10}}>
+	return <div style={{margin: 10}}>
 		<HashRouter>
 			<div style={{ marginBottom: 10 }}>
 				<Header title={pageTitle} />
