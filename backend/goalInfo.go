@@ -14,8 +14,9 @@ type goalHeader struct {
 }
 
 type smartPostHeader struct {
-	Id   string `json:"id"`
-	Date string `json:"date"`
+	Id     string `json:"id"`
+	Date   string `json:"date"`
+	GoalId string `json:"obj_id"`
 }
 
 type smartPost struct {
