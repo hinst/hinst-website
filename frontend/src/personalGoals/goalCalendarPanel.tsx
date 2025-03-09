@@ -7,6 +7,7 @@ import GoalCalendar from './goalCalendar';
 export default function GoalCalendarPanel(
 	props: {
 		id: string,
+		activePostDate: string,
 		receivePosts?: (posts: PostHeader[]) => void,
 	}
 ) {
@@ -35,6 +36,6 @@ export default function GoalCalendarPanel(
 	return <div>
 		{ isLoading
 			? <div className='ms-loading'></div>
-			: <GoalCalendar posts={posts} /> }
+			: <GoalCalendar posts={posts} activePostDate={props.activePostDate} /> }
 	</div>;
 }

@@ -17,7 +17,7 @@ export default function GoalBrowser() {
 	}
 
 	return <div style={{display: 'flex', gap: 20}}>
-		<GoalCalendarPanel id={id} receivePosts={receivePosts}/>
+		<GoalCalendarPanel id={id} receivePosts={receivePosts} activePostDate={activePostDate}/>
 		{ activePostDate
 			? <GoalPostView
 				goalId={id}
