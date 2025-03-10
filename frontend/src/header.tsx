@@ -43,13 +43,14 @@ export default function Header(props: { title: string }) {
 				flexShrink: 1,
 				gap: 10,
 			}}
-			className='blurry-shadow'
+			className='ms-bg-main blurry-main-background'
 		>
 			<div
 				className='ms-bg-main'
 				style={{
 					display: isCopyrightVisible ? 'block' : 'none',
 					textWrap: 'nowrap',
+					marginLeft: 5,
 				}}
 			>
 				&copy; {COPYRIGHT_YEAR} {AUTHOR_NAME}
