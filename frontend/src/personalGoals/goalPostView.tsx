@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { SmartPost } from './smartPost';
-import { API_URL } from '../api';
+import { API_URL } from '../global';
 import SafeHtmlView from '../safeHtmlView';
 
 export default function GoalPostView(props: {

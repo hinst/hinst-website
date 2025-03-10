@@ -15,7 +15,15 @@ export default function App() {
 		if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
 			document.getElementsByTagName('html')[0].setAttribute('data-theme', 'dark');
 	}, []);
-	return <div style={{margin: 10}}>
+	return <div
+		style={{
+			padding: 10,
+			display: 'flex',
+			flexDirection: 'column',
+			width: '100%',
+			maxWidth: '100%'
+		}}
+	>
 		<HashRouter>
 			<div style={{ marginBottom: 10 }}>
 				<Header title={pageTitle} />

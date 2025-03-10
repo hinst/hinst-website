@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { GoalHeader } from './goalHeader';
-import { API_URL } from '../api';
+import { API_URL } from '../global';
 import GoalList from './goalList';
 
 export default function GoalListPanel() {

@@ -24,7 +24,13 @@ export default function GoalBrowser() {
 	}, [searchParams]);
 
 	return <div style={{display: 'flex', gap: 20}}>
-		<GoalCalendarPanel id={id} receivePosts={receivePosts} activePostDate={activePostDate}/>
+		<div style={{display: 'flex', overflowY: 'scroll'}}>
+			<GoalCalendarPanel
+				id={id}
+				receivePosts={receivePosts}
+				activePostDate={activePostDate}
+			/>
+		</div>
 		{ activePostDate
 			? <GoalPostView
 				goalId={id}
