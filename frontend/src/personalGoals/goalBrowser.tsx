@@ -23,20 +23,22 @@ export default function GoalBrowser() {
 		setActivePostDate(searchParams.get('activePostDate') || '');
 	}, [searchParams]);
 
-	return <div style={{display: 'flex', gap: 20}}>
-		<div style={{display: 'flex', overflowY: 'scroll'}}>
+	return <div style={{display: 'flex', gap: 20, minHeight: 0}}>
+		<div style={{display: 'flex', overflowY: 'scroll', paddingRight: 10}}>
 			<GoalCalendarPanel
 				id={id}
 				receivePosts={receivePosts}
 				activePostDate={activePostDate}
 			/>
 		</div>
-		{ activePostDate
-			? <GoalPostView
-				goalId={id}
-				postDate={activePostDate}
-				style={{maxWidth: 1000}}
-			  />
-			: undefined }
+		<div style={{display: 'flex', overflowY: 'scroll'}}>
+			{ activePostDate
+				? <GoalPostView
+					goalId={id}
+					postDate={activePostDate}
+					style={{maxWidth: 1000}}
+				/>
+				: undefined }
+		</div>
 	</div>;
 }
