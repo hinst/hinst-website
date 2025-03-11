@@ -1,0 +1,10 @@
+export enum SupportedLanguages {
+	ENGLISH,
+	RUSSIAN
+}
+
+export function getCurrentLanguage() {
+	if (navigator.languages.some(l => l.startsWith('ru')))
+		return SupportedLanguages.RUSSIAN;
+	return SupportedLanguages.ENGLISH;
+}

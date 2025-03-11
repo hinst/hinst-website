@@ -4,6 +4,7 @@ import { GoalHeader, PostHeader } from './goalHeader';
 import { useEffect, useState } from 'react';
 import GoalPostView from './goalPostView';
 import { API_URL } from '../global';
+import { translateGoalTitle } from './goalTitle';
 
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
@@ -29,7 +30,7 @@ export default function GoalBrowser(props: {
 		const response = await fetch(API_URL + '/goal?id=' + encodeURIComponent(id));
 		if (response.ok) {
 			const goalHeader: GoalHeader = await response.json();
-			props.setPageTitle(goalHeader.title);
+			props.setPageTitle(translateGoalTitle(goalHeader.title));
 		}
 	}
 
