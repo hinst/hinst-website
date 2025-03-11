@@ -1,20 +1,17 @@
 package main
 
 import (
-	"context"
+	"bytes"
+	"io"
+	"log"
+	"net/http"
 	"os"
-
-	"cloud.google.com/go/translate"
-	_ "cloud.google.com/go/translate"
-	"golang.org/x/text/language"
 )
 
-type Translator struct {
-	_context        context.Context
-	translateClient *translate.Client
+type translator struct {
 }
 
-func (me *Translator) run() {
+func (me *translator) run() {
 	var savedGoalsPath = "./saved-goals"
 	var goalFiles = assertResultError(os.ReadDir(savedGoalsPath))
 	for _, goalFile := range goalFiles {
@@ -26,7 +23,7 @@ func (me *Translator) run() {
 	}
 }
 
-func (me *Translator) translateGoal(directoryPath string) {
+func (me *translator) translateGoal(directoryPath string) {
 	var files = assertResultError(os.ReadDir(directoryPath))
 	for _, file := range files {
 		if !file.IsDir() && GoalFileNameMatcher.MatchString(file.Name()) {
@@ -37,28 +34,22 @@ func (me *Translator) translateGoal(directoryPath string) {
 	}
 }
 
-func (me *Translator) getContext() context.Context {
-	if nil == me._context {
-		me._context = context.Background()
-	}
-	return me._context
-}
-
-func (me *Translator) getClient() *translate.Client {
-	if nil == me.translateClient {
-		me.translateClient = assertResultError(translate.NewClient(me.getContext()))
-	}
-	return me.translateClient
-}
-
-func (me *Translator) translateFile(filePath string) {
+func (me *translator) translateFile(filePath string) {
 	var article = readJsonFile(filePath, &smartPost{})
-	var translation = assertResultError(me.getClient().Translate(
-		me.getContext(),
-		[]string{article.Msg},
-		language.English,
-		&translate.Options{Format: translate.HTML},
+	var request = encodeJson(libreTranslateRequest{
+		Query:  article.Msg,
+		Source: "ru",
+		Target: "en",
+		Format: "html",
+	})
+	var response = assertResultError(http.Post(
+		"http://localhost:5000/translate", "application/json", bytes.NewBuffer(request),
 	))
-	article.Msg = translation[0].Text
-	println(article.Msg)
+	defer func() {
+		assertError(response.Body.Close())
+	}()
+	var responseText = assertResultError(io.ReadAll(response.Body))
+	log.Printf("Response text: %s\n", responseText)
+	var translatedArticle = decodeJson(responseText, new(libreTranslateResponse))
+	log.Printf("Translated article: %s\n", translatedArticle.TranslatedText)
 }

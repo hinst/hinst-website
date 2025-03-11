@@ -28,5 +28,5 @@ func webMain() {
 }
 
 func translateMain() {
-	new(Translator).run()
+	new(translator).run()
 }
