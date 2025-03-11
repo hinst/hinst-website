@@ -1,11 +1,12 @@
-import { useNavigate, useParams, useSearchParams } from 'react-router';
+import { useParams, useSearchParams } from 'react-router';
 import GoalCalendarPanel from './goalCalendarPanel';
 import { PostHeader } from './goalHeader';
 import { useEffect, useState } from 'react';
 import GoalPostView from './goalPostView';
 
-export default function GoalBrowser() {
-	const navigate = useNavigate();
+export default function GoalBrowser(props: {
+	setPageTitle: (title: string) => void
+}) {
 	const params = useParams();
 	const [searchParams, setSearchParams] = useSearchParams();
 	const id: string = params.id!;

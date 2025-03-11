@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router';
+import { NavLink } from 'react-router';
 // @ts-ignore
 import icon from './icon.webp';
 import { useState } from 'react';
@@ -7,7 +7,6 @@ import { AUTHOR_NAME, COPYRIGHT_YEAR } from './global';
 
 export default function Header(props: { title: string }) {
 	const [isCopyrightVisible, setCopyrightVisible] = useState(false);
-	const location = useLocation();
 	return <div style={{ display: 'flex', alignItems: 'center', gap: 10, maxWidth: '100%' }}>
 		<NavLink to='/'>
 			<img
@@ -19,20 +18,21 @@ export default function Header(props: { title: string }) {
 				className='hover-outline'
 			/>
 		</NavLink>
-		<h6
-			style={{
-				marginTop: 10,
-				marginBottom: 10,
-				textWrap: 'nowrap',
-				overflowY: 'clip',
-				textOverflow: 'ellipsis',
-				flexShrink: 0,
-				flexBasis: 0,
-				minWidth: 0,
-			}}
-		>
+		<div style={{display: 'flex', flexDirection: 'column', gap: 4}}>
+			<b
+				style={{
+					textWrap: 'nowrap',
+					overflowY: 'clip',
+					textOverflow: 'ellipsis',
+					flexShrink: 0,
+					flexBasis: 0,
+					minWidth: 0,
+				}}
+			>
+				Showcase Website
+			</b>
 			{props.title}
-		</h6>
+		</div>
 
 		<div style={{flexGrow: 1}}></div>
 

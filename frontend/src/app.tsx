@@ -30,8 +30,8 @@ export default function App() {
 				<Header title={pageTitle} />
 			</div>
 			<Routes>
-				<Route path='/' element={<HomePage />} />
-				<Route path='/personal-goals/:id' element={<GoalBrowser />} />
+				<Route path='/' element={<HomePage setPageTitle={setPageTitle} />} />
+				<Route path='/personal-goals/:id' element={<GoalBrowser setPageTitle={setPageTitle} />} />
 			</Routes>
 		</HashRouter>
 	</div>;
