@@ -19,13 +19,7 @@ export default function GoalListPanel() {
 		}
 	};
 	useEffect(() => { loadGoals() }, []);
-	return <div
-		className='ms-card ms-border'
-		style={{display: 'flex', flexDirection: 'column', width: 'fit-content', maxWidth: '100%'}}
-	>
-		<div className='ms-card-title'>
-			My personal goals
-		</div>
+	return <div>
 		{ isLoading ? <div className='ms-loading'></div> : undefined }
 		<GoalList goals={goals}/>
 	</div>;

@@ -4,7 +4,7 @@ import { GoalHeader, PostHeader } from './goalHeader';
 import { useEffect, useState } from 'react';
 import GoalPostView from './goalPostView';
 import { API_URL } from '../global';
-import { translateGoalTitle } from './goalTitle';
+import { translateGoalTitle } from './goalInfo';
 
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
