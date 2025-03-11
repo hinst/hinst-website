@@ -1,8 +1,9 @@
 import { useParams, useSearchParams } from 'react-router';
 import GoalCalendarPanel from './goalCalendarPanel';
-import { PostHeader } from './goalHeader';
+import { GoalHeader, PostHeader } from './goalHeader';
 import { useEffect, useState } from 'react';
 import GoalPostView from './goalPostView';
+import { API_URL } from '../global';
 
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
@@ -23,6 +24,18 @@ export default function GoalBrowser(props: {
 	useEffect(() => {
 		setActivePostDate(searchParams.get('activePostDate') || '');
 	}, [searchParams]);
+
+	async function loadGoal() {
+		const response = await fetch(API_URL + '/goal?id=' + encodeURIComponent(id));
+		if (response.ok) {
+			const goalHeader: GoalHeader = await response.json();
+			props.setPageTitle(goalHeader.title);
+		}
+	}
+
+	useEffect(() => {
+		loadGoal();
+	}, [params]);
 
 	return <div style={{display: 'flex', gap: 20, minHeight: 0}}>
 		<div style={{

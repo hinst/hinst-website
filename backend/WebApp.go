@@ -22,6 +22,7 @@ func (me *webApp) start() {
 	me.goalDateStringMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$`)
 
 	http.HandleFunc(me.webPath+"/api/goals", me.wrap(me.getGoals))
+	http.HandleFunc(me.webPath+"/api/goal", me.wrap(me.getGoal))
 	http.HandleFunc(me.webPath+"/api/goalPosts", me.wrap(me.getGoalPosts))
 	http.HandleFunc(me.webPath+"/api/goalPost", me.wrap(me.getGoalPost))
 }
@@ -57,6 +58,12 @@ func (me *webApp) getGoals(response http.ResponseWriter, request *http.Request) 
 		}
 	}
 	response.Write(encodeJson(headers))
+}
+
+func (me *webApp) getGoal(response http.ResponseWriter, request *http.Request) {
+	var goalId = me.readValidGoalIdString(request.URL.Query().Get("id"))
+	var goal = readJsonFile(me.savedGoalsPath+"/"+goalId+"/_header.json", &goalHeader{})
+	response.Write(encodeJson(goal))
 }
 
 func (me *webApp) extendHeader(theGoalHeader *goalHeaderExtended) {
