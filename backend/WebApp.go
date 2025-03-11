@@ -10,14 +10,14 @@ import (
 type webApp struct {
 	savedGoalsPath        string
 	webPath               string
-	fileNameMatcher       *regexp.Regexp
 	goalIdStringMatcher   *regexp.Regexp
 	goalDateStringMatcher *regexp.Regexp
 }
 
 func (me *webApp) start() {
-	me.savedGoalsPath = "./saved-goals"
-	me.fileNameMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d`)
+	if "" == me.webPath {
+		me.webPath = "/hinst-website"
+	}
 	me.goalIdStringMatcher = regexp.MustCompile(`^\d{1,10}$`)
 	me.goalDateStringMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$`)
 
@@ -70,7 +70,7 @@ func (me *webApp) extendHeader(theGoalHeader *goalHeaderExtended) {
 	var files = assertResultError(os.ReadDir(me.savedGoalsPath + "/" + theGoalHeader.Id))
 	sortFilesByName(files)
 	for i := len(files) - 1; i >= 0; i-- {
-		if me.fileNameMatcher.MatchString(files[i].Name()) {
+		if GoalFileNameMatcher.MatchString(files[i].Name()) {
 			var lastFileName = files[i].Name()
 			theGoalHeader.LastPostDate = lastFileName[:len("2025-01-02")]
 			break
@@ -84,7 +84,7 @@ func (me *webApp) getGoalPosts(response http.ResponseWriter, request *http.Reque
 	sortFilesByName(files)
 	var posts = make([]*smartPostHeader, 0, len(files))
 	for _, file := range files {
-		if me.fileNameMatcher.MatchString(file.Name()) {
+		if GoalFileNameMatcher.MatchString(file.Name()) {
 			var post = readJsonFile(me.savedGoalsPath+"/"+goalId+"/"+file.Name(), &smartPostHeader{})
 			posts = append(posts, post)
 		}
