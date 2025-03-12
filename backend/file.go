@@ -4,7 +4,11 @@ import (
 	"encoding/json"
 	"io/fs"
 	"os"
+	"path/filepath"
 	"slices"
+	"strings"
+
+	"github.com/hinst/hinst-website/file_mode"
 )
 
 func readJsonFile[T any](filePath string, receiver T) T {
@@ -15,7 +19,11 @@ func readJsonFile[T any](filePath string, receiver T) T {
 
 func writeJsonFile[T any](filePath string, data T) {
 	var jsonBytes = assertResultError(json.Marshal(data))
-	assertError(os.WriteFile(filePath, jsonBytes, 0644))
+	assertError(os.WriteFile(filePath, jsonBytes, file_mode.OS_USER_RW))
+}
+
+func writeTextFile(filePath string, text string) {
+	assertError(os.WriteFile(filePath, []byte(text), file_mode.OS_USER_RW))
 }
 
 func sortFilesByName(files []fs.DirEntry) {
@@ -28,4 +36,10 @@ func sortFilesByName(files []fs.DirEntry) {
 			return 1
 		}
 	})
+}
+
+func getFileNameWithoutExtension(filePath string) string {
+	var fileName = filepath.Base(filePath)
+	var extension = filepath.Ext(fileName)
+	return strings.TrimSuffix(fileName, extension)
 }
