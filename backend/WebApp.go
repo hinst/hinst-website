@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"path/filepath"
 	"regexp"
 	"time"
 )
@@ -51,7 +52,7 @@ func (me *webApp) getGoals(response http.ResponseWriter, request *http.Request) 
 	var headers = make([]*goalHeaderExtended, 0, len(files))
 	for _, file := range files {
 		if file.IsDir() {
-			var headerFilePath = me.savedGoalsPath + "/" + file.Name() + "/_header.json"
+			var headerFilePath = filepath.Join(me.savedGoalsPath, file.Name(), me.getHeaderFileName())
 			var header = readJsonFile(headerFilePath, &goalHeaderExtended{})
 			me.extendHeader(header)
 			headers = append(headers, header)
@@ -116,10 +117,14 @@ func (me *webApp) readValidPostDateTime(text string) time.Time {
 	var postDateTime, postDateTimeError = parseSmartProgressDateTime(text)
 	var createWebError = func() webError {
 		return webError{
-			"Need valid postDateTime. Format: " + SMART_PROGRESS_DATE_TIME_FORMAT,
+			"Need valid postDateTime. Format: " + smartProgressDateTimeFormat,
 			http.StatusBadRequest,
 		}
 	}
 	assertCondition(nil == postDateTimeError, createWebError)
 	return postDateTime
+}
+
+func (me *webApp) getHeaderFileName() string {
+	return "_header.json"
 }
