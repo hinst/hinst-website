@@ -44,7 +44,10 @@ func (me *translator) translateGoal(directoryPath string) {
 	for _, file := range files {
 		if !file.IsDir() && GoalFileNameMatcher.MatchString(file.Name()) {
 			var filePath = filepath.Join(directoryPath, file.Name())
-			me.translateFile(filePath)
+			var translatedFilePath = me.getTranslatedFilePath(filePath, language.English)
+			if !checkFileExists(translatedFilePath) {
+				me.translateFile(filePath)
+			}
 		}
 	}
 }
@@ -53,7 +56,7 @@ func (me *translator) getTranslatedFilePath(smartPostFilePath string, tag langua
 	var targetFilePath = filepath.Join(
 		filepath.Dir(smartPostFilePath),
 		translatedGoalDirectoryName,
-		filepath.Base(smartPostFilePath),
+		getFileNameWithoutExtension(smartPostFilePath),
 	)
 	switch tag {
 	case language.Russian:
