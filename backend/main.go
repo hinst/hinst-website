@@ -13,6 +13,8 @@ func main() {
 		new(program).init().runWeb()
 	case "translate":
 		new(program).init().runTranslate()
+	case "migrate":
+		new(program).init().runMigrate()
 	default:
 		log.Fatalf("Unknown mode: %v", *modePointer)
 	}

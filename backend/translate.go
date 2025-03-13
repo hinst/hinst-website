@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,16 +13,45 @@ import (
 )
 
 type translator struct {
-	savedGoalsPath string
+	savedGoalsPath          string
+	translatedDirectoryName string
+}
+
+func (me *translator) init() *translator {
+	me.translatedDirectoryName = "translated"
+	return me
+}
+
+func (me *translator) migrate() {
+	var goalFiles = assertResultError(os.ReadDir(me.savedGoalsPath))
+	for _, goalDirectory := range goalFiles {
+		if !goalDirectory.IsDir() {
+			continue
+		}
+		var translatedFilesDir = filepath.Join(
+			me.savedGoalsPath, goalDirectory.Name(), me.translatedDirectoryName,
+		)
+		var files = assertResultError(os.ReadDir(translatedFilesDir))
+		for _, file := range files {
+			if file.IsDir() {
+				continue
+			}
+			var filePath = filepath.Join(translatedFilesDir, file.Name())
+			var newFilePath = getFilePathWithoutExtension(filePath) + ".html"
+			log.Println("Migrating " + filePath + " -> " + newFilePath)
+			os.Rename(filePath, newFilePath)
+		}
+	}
 }
 
 func (me *translator) run() {
 	var goalFiles = assertResultError(os.ReadDir(me.savedGoalsPath))
 	for _, goalFile := range goalFiles {
-		if goalFile.IsDir() {
-			var goalFilePath = me.savedGoalsPath + "/" + goalFile.Name()
-			me.translateGoal(goalFilePath)
+		if !goalFile.IsDir() {
+			continue
 		}
+		var goalFilePath = filepath.Join(me.savedGoalsPath, goalFile.Name())
+		me.translateGoal(goalFilePath)
 	}
 }
 
@@ -33,14 +63,13 @@ func (me *translator) translateGoal(directoryPath string) {
 	var files = assertResultError(os.ReadDir(directoryPath))
 	for _, file := range files {
 		if !file.IsDir() && GoalFileNameMatcher.MatchString(file.Name()) {
-			var filePath = directoryPath + "/" + file.Name()
+			var filePath = filepath.Join(directoryPath, file.Name())
 			me.translateFile(filePath)
 		}
 	}
 }
 
 func (me *translator) getTranslatedFilePath() {
-
 }
 
 func (me *translator) translateFile(filePath string) {
