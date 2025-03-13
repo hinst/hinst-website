@@ -14,13 +14,13 @@ import (
 )
 
 type translator struct {
-	savedGoalsPath          string
-	translatedDirectoryName string
-	apiUrl                  string
+	savedGoalsPath string
+	apiUrl         string
 }
 
+const translatedGoalDirectoryName = "translated"
+
 func (me *translator) init() *translator {
-	me.translatedDirectoryName = "translated"
 	me.apiUrl = "http://localhost:1235/v1/chat/completions"
 	return me
 }
@@ -32,7 +32,7 @@ func (me *translator) migrate() {
 			continue
 		}
 		var translatedFilesDir = filepath.Join(
-			me.savedGoalsPath, goalDirectory.Name(), me.translatedDirectoryName,
+			me.savedGoalsPath, goalDirectory.Name(), translatedGoalDirectoryName,
 		)
 		var files = assertResultError(os.ReadDir(translatedFilesDir))
 		for _, file := range files {
@@ -60,7 +60,7 @@ func (me *translator) run() {
 
 func (me *translator) translateGoal(directoryPath string) {
 	assertError(os.MkdirAll(
-		filepath.Join(directoryPath, me.translatedDirectoryName),
+		filepath.Join(directoryPath, translatedGoalDirectoryName),
 		file_mode.OS_USER_RWX,
 	))
 	var files = assertResultError(os.ReadDir(directoryPath))
@@ -73,11 +73,16 @@ func (me *translator) translateGoal(directoryPath string) {
 }
 
 func (me *translator) getTranslatedFilePath(smartPostFilePath string, tag language.Tag) string {
+	var targetFilePath = filepath.Join(
+		filepath.Dir(smartPostFilePath),
+		translatedGoalDirectoryName,
+		filepath.Base(smartPostFilePath),
+	)
 	switch tag {
 	case language.Russian:
-		return smartPostFilePath + ".ru.html"
+		return targetFilePath + ".ru.html"
 	case language.English:
-		return smartPostFilePath + ".en.html"
+		return targetFilePath + ".en.html"
 	default:
 		panic(errors.New("Unknown language tag: " + tag.String()))
 	}
