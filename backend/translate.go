@@ -10,15 +10,18 @@ import (
 	"path/filepath"
 
 	"github.com/hinst/hinst-website/file_mode"
+	"golang.org/x/text/language"
 )
 
 type translator struct {
 	savedGoalsPath          string
 	translatedDirectoryName string
+	apiUrl                  string
 }
 
 func (me *translator) init() *translator {
 	me.translatedDirectoryName = "translated"
+	me.apiUrl = "http://localhost:1235/v1/chat/completions"
 	return me
 }
 
@@ -57,7 +60,7 @@ func (me *translator) run() {
 
 func (me *translator) translateGoal(directoryPath string) {
 	assertError(os.MkdirAll(
-		filepath.Join(directoryPath, "translated"),
+		filepath.Join(directoryPath, me.translatedDirectoryName),
 		file_mode.OS_USER_RWX,
 	))
 	var files = assertResultError(os.ReadDir(directoryPath))
@@ -69,17 +72,22 @@ func (me *translator) translateGoal(directoryPath string) {
 	}
 }
 
-func (me *translator) getTranslatedFilePath() {
+func (me *translator) getTranslatedFilePath(smartPostFilePath string, tag language.Tag) string {
+	switch tag {
+	case language.Russian:
+		return smartPostFilePath + ".ru.html"
+	case language.English:
+		return smartPostFilePath + ".en.html"
+	default:
+		panic(errors.New("Unknown language tag: " + tag.String()))
+	}
 }
 
-func (me *translator) translateFile(filePath string) {
-	var article = readJsonFile(filePath, &smartPost{})
+func (me *translator) translateFile(smartPostFilePath string) {
+	var article = readJsonFile(smartPostFilePath, &smartPost{})
 	var englishMessage = assertResultError(me.translateText(article.Msg))
-	var targetFilePath = filepath.Join(
-		filepath.Dir(filePath), "translated",
-		getFileNameWithoutExtension(filePath))
-	writeTextFile(targetFilePath+".ru.txt", article.Msg)
-	writeTextFile(targetFilePath+".en.txt", englishMessage)
+	writeTextFile(me.getTranslatedFilePath(smartPostFilePath, language.Russian), article.Msg)
+	writeTextFile(me.getTranslatedFilePath(smartPostFilePath, language.English), englishMessage)
 }
 
 func (me *translator) translateText(text string) (string, error) {
@@ -91,9 +99,7 @@ func (me *translator) translateText(text string) (string, error) {
 		},
 		Stream: false,
 	})
-	var response = assertResultError(http.Post(
-		"http://localhost:1235/v1/chat/completions", "application/json", bytes.NewBuffer(request),
-	))
+	var response = assertResultError(http.Post(me.apiUrl, "application/json", bytes.NewBuffer(request)))
 	defer func() {
 		assertError(response.Body.Close())
 	}()
