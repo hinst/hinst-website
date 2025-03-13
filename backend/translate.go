@@ -99,7 +99,7 @@ func (me *translator) translateText(text string) (string, error) {
 		},
 		Stream: false,
 	})
-	var response = assertResultError(http.Post(me.apiUrl, "application/json", bytes.NewBuffer(request)))
+	var response = assertResultError(http.Post(me.apiUrl, contentTypeJson, bytes.NewBuffer(request)))
 	defer func() {
 		assertError(response.Body.Close())
 	}()
