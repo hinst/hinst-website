@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -23,28 +22,6 @@ const translatedGoalDirectoryName = "translated"
 func (me *translator) init() *translator {
 	me.apiUrl = "http://localhost:1235/v1/chat/completions"
 	return me
-}
-
-func (me *translator) migrate() {
-	var goalFiles = assertResultError(os.ReadDir(me.savedGoalsPath))
-	for _, goalDirectory := range goalFiles {
-		if !goalDirectory.IsDir() {
-			continue
-		}
-		var translatedFilesDir = filepath.Join(
-			me.savedGoalsPath, goalDirectory.Name(), translatedGoalDirectoryName,
-		)
-		var files = assertResultError(os.ReadDir(translatedFilesDir))
-		for _, file := range files {
-			if file.IsDir() {
-				continue
-			}
-			var filePath = filepath.Join(translatedFilesDir, file.Name())
-			var newFilePath = getFilePathWithoutExtension(filePath) + ".html"
-			log.Println("Migrating " + filePath + " -> " + newFilePath)
-			os.Rename(filePath, newFilePath)
-		}
-	}
 }
 
 func (me *translator) run() {

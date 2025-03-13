@@ -25,7 +25,3 @@ func (me *program) runWeb() {
 func (me *program) runTranslate() {
 	(&translator{savedGoalsPath: me.savedGoalsPath}).init().run()
 }
-
-func (me *program) runMigrate() {
-	(&translator{savedGoalsPath: me.savedGoalsPath}).init().migrate()
-}
