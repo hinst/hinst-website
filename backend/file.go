@@ -43,3 +43,8 @@ func getFileNameWithoutExtension(filePath string) string {
 	var extension = filepath.Ext(fileName)
 	return strings.TrimSuffix(fileName, extension)
 }
+
+func getFilePathWithoutExtension(filePath string) string {
+	var extension = filepath.Ext(filePath)
+	return strings.TrimSuffix(filePath, extension)
+}
