@@ -15,6 +15,8 @@ type webApp struct {
 	goalDateStringMatcher *regexp.Regexp
 }
 
+const savedGoalHeaderFileName = "_header.json"
+
 func (me *webApp) init() {
 	if me.webPath == "" {
 		me.webPath = "/hinst-website"
@@ -52,7 +54,7 @@ func (me *webApp) getGoals(response http.ResponseWriter, request *http.Request) 
 	var headers = make([]*goalHeaderExtended, 0, len(files))
 	for _, file := range files {
 		if file.IsDir() {
-			var headerFilePath = filepath.Join(me.savedGoalsPath, file.Name(), me.getHeaderFileName())
+			var headerFilePath = filepath.Join(me.savedGoalsPath, file.Name(), savedGoalHeaderFileName)
 			var header = readJsonFile(headerFilePath, &goalHeaderExtended{})
 			me.extendHeader(header)
 			headers = append(headers, header)
@@ -63,17 +65,19 @@ func (me *webApp) getGoals(response http.ResponseWriter, request *http.Request) 
 
 func (me *webApp) getGoal(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.readValidGoalIdString(request.URL.Query().Get("id"))
-	var goal = readJsonFile(me.savedGoalsPath+"/"+goalId+"/_header.json", &goalHeader{})
+	var headerFilePath = filepath.Join(me.savedGoalsPath, goalId, savedGoalHeaderFileName)
+	var goal = readJsonFile(headerFilePath, &goalHeader{})
 	response.Write(encodeJson(goal))
 }
 
-func (me *webApp) extendHeader(theGoalHeader *goalHeaderExtended) {
-	var files = assertResultError(os.ReadDir(me.savedGoalsPath + "/" + theGoalHeader.Id))
+func (me *webApp) extendHeader(goalHeader *goalHeaderExtended) {
+	var goalDirectoryPath = filepath.Join(me.savedGoalsPath, goalHeader.Id)
+	var files = assertResultError(os.ReadDir(goalDirectoryPath))
 	sortFilesByName(files)
 	for i := len(files) - 1; i >= 0; i-- {
 		if GoalFileNameMatcher.MatchString(files[i].Name()) {
 			var lastFileName = files[i].Name()
-			theGoalHeader.LastPostDate = lastFileName[:len("2025-01-02")]
+			goalHeader.LastPostDate = lastFileName[:len("2025-01-02")]
 			break
 		}
 	}
@@ -81,7 +85,8 @@ func (me *webApp) extendHeader(theGoalHeader *goalHeaderExtended) {
 
 func (me *webApp) getGoalPosts(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.readValidGoalIdString(request.URL.Query().Get("id"))
-	var files = assertResultError(os.ReadDir(me.savedGoalsPath + "/" + goalId))
+	var goalDirectoryPath = filepath.Join(me.savedGoalsPath, goalId)
+	var files = assertResultError(os.ReadDir(goalDirectoryPath))
 	sortFilesByName(files)
 	var posts = make([]*smartPostHeader, 0, len(files))
 	for _, file := range files {
@@ -96,7 +101,7 @@ func (me *webApp) getGoalPosts(response http.ResponseWriter, request *http.Reque
 func (me *webApp) getGoalPost(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.readValidGoalIdString(request.URL.Query().Get("goalId"))
 	var postDateTime = me.readValidPostDateTime(request.URL.Query().Get("postDateTime"))
-	var postFileName = goalId + "/" + postDateTime.Format("2006-01-02_15-04-05") + ".json"
+	var postFileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
 	var post = readJsonFile(me.savedGoalsPath+"/"+postFileName, &smartPost{})
 	response.Write(encodeJson(post))
 }
@@ -117,14 +122,10 @@ func (me *webApp) readValidPostDateTime(text string) time.Time {
 	var postDateTime, postDateTimeError = parseSmartProgressDateTime(text)
 	var createWebError = func() webError {
 		return webError{
-			"Need valid postDateTime. Format: " + smartProgressDateTimeFormat,
+			"Need valid postDateTime. Format: " + smartProgressTimeFormat,
 			http.StatusBadRequest,
 		}
 	}
 	assertCondition(nil == postDateTimeError, createWebError)
 	return postDateTime
-}
-
-func (me *webApp) getHeaderFileName() string {
-	return "_header.json"
 }
