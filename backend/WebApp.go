@@ -91,7 +91,8 @@ func (me *webApp) getGoalPosts(response http.ResponseWriter, request *http.Reque
 	var posts = make([]*smartPostHeader, 0, len(files))
 	for _, file := range files {
 		if GoalFileNameMatcher.MatchString(file.Name()) {
-			var post = readJsonFile(me.savedGoalsPath+"/"+goalId+"/"+file.Name(), &smartPostHeader{})
+			var filePath = filepath.Join(me.savedGoalsPath, goalId, file.Name())
+			var post = readJsonFile(filePath, &smartPostHeader{})
 			posts = append(posts, post)
 		}
 	}
@@ -102,7 +103,8 @@ func (me *webApp) getGoalPost(response http.ResponseWriter, request *http.Reques
 	var goalId = me.readValidGoalIdString(request.URL.Query().Get("goalId"))
 	var postDateTime = me.readValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var postFileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
-	var post = readJsonFile(me.savedGoalsPath+"/"+postFileName, &smartPost{})
+	var filePath = filepath.Join(me.savedGoalsPath, postFileName)
+	var post = readJsonFile(filePath, &smartPost{})
 	response.Write(encodeJson(post))
 }
 
