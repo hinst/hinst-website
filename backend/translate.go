@@ -12,14 +12,14 @@ import (
 )
 
 type translator struct {
+	savedGoalsPath string
 }
 
 func (me *translator) run() {
-	var savedGoalsPath = "./saved-goals"
-	var goalFiles = assertResultError(os.ReadDir(savedGoalsPath))
+	var goalFiles = assertResultError(os.ReadDir(me.savedGoalsPath))
 	for _, goalFile := range goalFiles {
 		if goalFile.IsDir() {
-			var goalFilePath = savedGoalsPath + "/" + goalFile.Name()
+			var goalFilePath = me.savedGoalsPath + "/" + goalFile.Name()
 			me.translateGoal(goalFilePath)
 		}
 	}
@@ -37,6 +37,10 @@ func (me *translator) translateGoal(directoryPath string) {
 			me.translateFile(filePath)
 		}
 	}
+}
+
+func (me *translator) getTranslatedFilePath() {
+
 }
 
 func (me *translator) translateFile(filePath string) {

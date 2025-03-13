@@ -14,8 +14,8 @@ type webApp struct {
 	goalDateStringMatcher *regexp.Regexp
 }
 
-func (me *webApp) start() {
-	if "" == me.webPath {
+func (me *webApp) init() {
+	if me.webPath == "" {
 		me.webPath = "/hinst-website"
 	}
 	me.goalIdStringMatcher = regexp.MustCompile(`^\d{1,10}$`)
@@ -47,7 +47,7 @@ func (me *webApp) wrap(function func(http.ResponseWriter, *http.Request)) func(h
 }
 
 func (me *webApp) getGoals(response http.ResponseWriter, request *http.Request) {
-	var files = assertResultError(os.ReadDir("./saved-goals"))
+	var files = assertResultError(os.ReadDir(me.savedGoalsPath))
 	var headers = make([]*goalHeaderExtended, 0, len(files))
 	for _, file := range files {
 		if file.IsDir() {
