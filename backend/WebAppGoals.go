@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -80,9 +81,17 @@ func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.
 func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.readValidGoalIdString(request.URL.Query().Get("goalId"))
 	var postDateTime = me.readValidPostDateTime(request.URL.Query().Get("postDateTime"))
-	var postFileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
-	var filePath = filepath.Join(me.savedGoalsPath, postFileName)
+	var fileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
+	var filePath = filepath.Join(me.savedGoalsPath, fileName)
 	var post = readJsonFile(filePath, &smartPost{})
+
+	var requestedLanguage = getWebLanguage(request)
+	log.Printf("Requested language: %v", requestedLanguage)
+	var translatedFilePath = translatorPresets.getTranslatedFilePath(filePath, requestedLanguage)
+	if checkFileExists(translatedFilePath) {
+		post.Msg = readTextFile(translatedFilePath)
+	}
+
 	response.Write(encodeJson(post))
 }
 

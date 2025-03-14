@@ -18,6 +18,7 @@ func getWebLanguage(request *http.Request) language.Tag {
 	var acceptLanguage = request.Header.Get("Accept-Language")
 	var tags, _, parsedError = language.ParseAcceptLanguage(acceptLanguage)
 	assertError(parsedError)
-	var tag, _, _ = supportedLanguagesMatcher.Match(tags...)
+	var _, index, _ = supportedLanguagesMatcher.Match(tags...)
+	var tag = supportedLanguages[index]
 	return tag
 }

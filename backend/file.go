@@ -17,6 +17,11 @@ func readJsonFile[T any](filePath string, receiver T) T {
 	return receiver
 }
 
+func readTextFile(filePath string) string {
+	var fileContent = assertResultError(os.ReadFile(filePath))
+	return string(fileContent)
+}
+
 func writeJsonFile[T any](filePath string, data T) {
 	var jsonBytes = assertResultError(json.Marshal(data))
 	assertError(os.WriteFile(filePath, jsonBytes, file_mode.OS_USER_RW))
