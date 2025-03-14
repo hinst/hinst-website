@@ -3,7 +3,6 @@ import { GoalHeader } from './goalHeader';
 import { GOAL_INFOS, translateGoalTitle } from './goalInfo';
 
 export function GoalCard(props: {goal: GoalHeader}) {
-	const {goal} = props;
 	return <div
 		style={{
 			width: 'fit-content',
@@ -14,8 +13,8 @@ export function GoalCard(props: {goal: GoalHeader}) {
 		className='ms-card ms-border grayscale'
 	>
 		<NavLink
-			to={'/personal-goals/' + goal.id}
-			key={goal.id}
+			to={'/personal-goals/' + props.goal.id}
+			key={props.goal.id}
 			className='ms-text-main'
 		>
 			<div
@@ -25,13 +24,16 @@ export function GoalCard(props: {goal: GoalHeader}) {
 				<img
 					width={200}
 					height={100}
-					src={GOAL_INFOS.get(goal.title)?.coverImage}
-					alt={goal.title}
+					src={GOAL_INFOS.get(props.goal.title)?.coverImage}
+					alt={props.goal.title}
 				/>
 				<div
-					style={{margin: 8}}
+					style={{
+						padding: 8,
+						maxWidth: 200,
+					}}
 				>
-					{translateGoalTitle(goal.title)}
+					{translateGoalTitle(props.goal.title)}
 				</div>
 			</div>
 		</NavLink>
