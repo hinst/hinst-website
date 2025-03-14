@@ -17,7 +17,6 @@ import (
 type translator struct {
 	apiUrl                string
 	translatedGoalDirName string
-	supportedLanguages    []language.Tag
 
 	savedGoalsPath string
 }
@@ -25,7 +24,6 @@ type translator struct {
 var translatorPresets = translator{
 	apiUrl:                "http://localhost:1235/v1/chat/completions",
 	translatedGoalDirName: "translated",
-	supportedLanguages:    []language.Tag{language.Russian, language.English, language.German},
 }
 
 func (me *translator) run() {
@@ -64,7 +62,7 @@ func (me *translator) getTranslatedFilePath(smartPostFilePath string, tag langua
 
 func (me *translator) translateFile(smartPostFilePath string) {
 	var article = readJsonFile(smartPostFilePath, &smartPost{})
-	for _, languageTag := range me.supportedLanguages {
+	for _, languageTag := range supportedLanguages {
 		var targetFilePath = me.getTranslatedFilePath(smartPostFilePath, languageTag)
 		if !checkFileExists(targetFilePath) {
 			var message = article.Msg
