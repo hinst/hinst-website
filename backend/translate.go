@@ -7,21 +7,24 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
 
 	"github.com/hinst/hinst-website/file_mode"
 	"golang.org/x/text/language"
 )
 
 type translator struct {
+	apiUrl                string
+	translatedGoalDirName string
+	supportedLanguages    []language.Tag
+
 	savedGoalsPath string
-	apiUrl         string
 }
 
-const translatedGoalDirectoryName = "translated"
-
-func (me *translator) init() *translator {
-	me.apiUrl = "http://localhost:1235/v1/chat/completions"
-	return me
+var translatorPresets = translator{
+	apiUrl:                "http://localhost:1235/v1/chat/completions",
+	translatedGoalDirName: "translated",
+	supportedLanguages:    []language.Tag{language.Russian, language.English, language.German},
 }
 
 func (me *translator) run() {
@@ -37,7 +40,7 @@ func (me *translator) run() {
 
 func (me *translator) translateGoal(directoryPath string) {
 	assertError(os.MkdirAll(
-		filepath.Join(directoryPath, translatedGoalDirectoryName),
+		filepath.Join(directoryPath, me.translatedGoalDirName),
 		file_mode.OS_USER_RWX,
 	))
 	var files = assertResultError(os.ReadDir(directoryPath))
@@ -53,19 +56,15 @@ func (me *translator) translateGoal(directoryPath string) {
 }
 
 func (me *translator) getTranslatedFilePath(smartPostFilePath string, tag language.Tag) string {
+	if !slices.Contains(me.supportedLanguages, tag) {
+		panic(errors.New("Language is not supported: " + tag.String()))
+	}
 	var targetFilePath = filepath.Join(
 		filepath.Dir(smartPostFilePath),
-		translatedGoalDirectoryName,
+		me.translatedGoalDirName,
 		getFileNameWithoutExtension(smartPostFilePath),
 	)
-	switch tag {
-	case language.Russian:
-		return targetFilePath + ".ru.html"
-	case language.English:
-		return targetFilePath + ".en.html"
-	default:
-		panic(errors.New("Unknown language tag: " + tag.String()))
-	}
+	return targetFilePath + "." + tag.String() + ".html"
 }
 
 func (me *translator) translateFile(smartPostFilePath string) {
