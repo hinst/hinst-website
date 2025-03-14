@@ -1,12 +1,13 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
 	"time"
+
+	"golang.org/x/text/language"
 )
 
 type webAppGoals struct {
@@ -83,15 +84,18 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	var postDateTime = me.readValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var fileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
 	var filePath = filepath.Join(me.savedGoalsPath, fileName)
-	var post = readJsonFile(filePath, &smartPost{})
+	var post = readJsonFile(filePath, &smartPostExtended{})
 
 	var requestedLanguage = getWebLanguage(request)
-	log.Printf("Requested language: %v", requestedLanguage)
 	var translatedFilePath = translatorPresets.getTranslatedFilePath(filePath, requestedLanguage)
 	if checkFileExists(translatedFilePath) {
 		post.Msg = readTextFile(translatedFilePath)
+		if requestedLanguage != language.Russian {
+			post.IsAutoTranslated = true
+		}
 	}
 
+	post.Images = nil
 	response.Write(encodeJson(post))
 }
 
