@@ -1,6 +1,6 @@
 export enum SupportedLanguages {
-	ENGLISH,
-	RUSSIAN
+	ENGLISH = 'ENGLISH',
+	RUSSIAN = 'RUSSIAN',
 }
 
 export function getCurrentLanguage() {
