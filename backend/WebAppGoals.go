@@ -20,10 +20,10 @@ func (me *webAppGoals) init() []namedWebFunction {
 	me.goalIdStringMatcher = regexp.MustCompile(`^\d{1,10}$`)
 	me.goalDateStringMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$`)
 	return []namedWebFunction{
-		namedWebFunction{"/api/goals", me.getGoals},
-		namedWebFunction{"/api/goal", me.getGoal},
-		namedWebFunction{"/api/goalPosts", me.getGoalPosts},
-		namedWebFunction{"/api/goalPost", me.getGoalPost},
+		{"/api/goals", me.getGoals},
+		{"/api/goal", me.getGoal},
+		{"/api/goalPosts", me.getGoalPosts},
+		{"/api/goalPost", me.getGoalPost},
 	}
 }
 
