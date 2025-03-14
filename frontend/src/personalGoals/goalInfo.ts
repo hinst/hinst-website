@@ -1,4 +1,4 @@
-import { getCurrentLanguage, SupportedLanguages } from '../language';
+import { getCurrentLanguage, SupportedLanguages as SupportedLanguage } from '../language';
 //@ts-ignore
 import codingWeekly from '../../images/codingWeekly.jpg';
 //@ts-ignore
@@ -20,8 +20,8 @@ export const GOAL_INFOS = new Map<string, GoalInfo>([
 	}],
 ]);
 
-export function translateGoalTitle(text: string) {
-	if (getCurrentLanguage() === SupportedLanguages.ENGLISH) {
+export function translateGoalTitle(language: SupportedLanguage, text: string) {
+	if (language === SupportedLanguage.ENGLISH) {
 		const info = GOAL_INFOS.get(text);
 		if (info)
 			return info.englishTitle;

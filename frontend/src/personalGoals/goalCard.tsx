@@ -1,8 +1,10 @@
 import { NavLink } from 'react-router';
 import { GoalHeader } from './goalHeader';
 import { GOAL_INFOS, translateGoalTitle } from './goalInfo';
+import { getCurrentLanguage } from '../language';
 
 export function GoalCard(props: {goal: GoalHeader}) {
+	const currentLanguage = getCurrentLanguage();
 	return <div
 		style={{
 			width: 'fit-content',
@@ -33,7 +35,7 @@ export function GoalCard(props: {goal: GoalHeader}) {
 						maxWidth: 200,
 					}}
 				>
-					{translateGoalTitle(props.goal.title)}
+					{translateGoalTitle(currentLanguage, props.goal.title)}
 				</div>
 			</div>
 		</NavLink>
