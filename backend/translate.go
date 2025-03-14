@@ -7,10 +7,11 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"slices"
+	"strings"
 
 	"github.com/hinst/hinst-website/file_mode"
 	"golang.org/x/text/language"
+	"golang.org/x/text/language/display"
 )
 
 type translator struct {
@@ -47,18 +48,12 @@ func (me *translator) translateGoal(directoryPath string) {
 	for _, file := range files {
 		if !file.IsDir() && GoalFileNameMatcher.MatchString(file.Name()) {
 			var filePath = filepath.Join(directoryPath, file.Name())
-			var translatedFilePath = me.getTranslatedFilePath(filePath, language.English)
-			if !checkFileExists(translatedFilePath) {
-				me.translateFile(filePath)
-			}
+			me.translateFile(filePath)
 		}
 	}
 }
 
 func (me *translator) getTranslatedFilePath(smartPostFilePath string, tag language.Tag) string {
-	if !slices.Contains(me.supportedLanguages, tag) {
-		panic(errors.New("Language is not supported: " + tag.String()))
-	}
 	var targetFilePath = filepath.Join(
 		filepath.Dir(smartPostFilePath),
 		me.translatedGoalDirName,
@@ -69,16 +64,25 @@ func (me *translator) getTranslatedFilePath(smartPostFilePath string, tag langua
 
 func (me *translator) translateFile(smartPostFilePath string) {
 	var article = readJsonFile(smartPostFilePath, &smartPost{})
-	var englishMessage = assertResultError(me.translateText(article.Msg))
-	writeTextFile(me.getTranslatedFilePath(smartPostFilePath, language.Russian), article.Msg)
-	writeTextFile(me.getTranslatedFilePath(smartPostFilePath, language.English), englishMessage)
+	for _, languageTag := range me.supportedLanguages {
+		var targetFilePath = me.getTranslatedFilePath(smartPostFilePath, languageTag)
+		if !checkFileExists(targetFilePath) {
+			var message = article.Msg
+			if languageTag != language.Russian {
+				message = assertResultError(me.translateText(article.Msg, languageTag))
+			}
+			writeTextFile(targetFilePath, message)
+		}
+	}
 }
 
-func (me *translator) translateText(text string) (string, error) {
+func (me *translator) translateText(text string, tag language.Tag) (string, error) {
+	var prompt = prompt_russian_to_something
+	prompt = strings.Replace(prompt, "{something}", display.English.Languages().Name(tag), -1)
 	var request = encodeJson(lmStudioRequest{
 		Model: "aya-expanse-8B",
 		Messages: []lmStudioMessage{
-			{Role: lm_studio_role_system, Content: prompt_russian_to_english},
+			{Role: lm_studio_role_system, Content: prompt},
 			{Role: lm_studio_role_user, Content: text},
 		},
 		Stream: false,
