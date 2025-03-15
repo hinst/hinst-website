@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SmartPostExtended } from './smartPost';
+import { SmartPostExtended, SmartPostImage } from './smartPost';
 import { API_URL } from '../global';
 import SafeHtmlView from '../safeHtmlView';
 import { Info } from 'react-feather';
@@ -11,6 +11,7 @@ export default function GoalPostView(props: {
 }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [postData, setPostData] = useState<SmartPostExtended | undefined>(undefined);
+	const [images, setImages] = useState<string[]>([]);
 
 	async function load() {
 		setIsLoading(true);
@@ -20,10 +21,19 @@ export default function GoalPostView(props: {
 				'&postDateTime=' + props.postDate);
 			const postData: SmartPostExtended = await response.json();
 			setPostData(postData);
+			loadImages();
 		} finally {
 			setIsLoading(false);
 		}
 	};
+
+	async function loadImages() {
+		const response = await fetch(API_URL + '/goalPost/images' +
+			'?goalId=' + encodeURIComponent(props.goalId) +
+			'&postDateTime=' + props.postDate);
+		const images: SmartPostImage[] = await response.json();
+		setImages(images.map(image => image.dataUrl));
+	}
 
 	useEffect(() => {
 		load();
@@ -40,6 +50,9 @@ export default function GoalPostView(props: {
 					: undefined
 				}
 				<SafeHtmlView htmlText={postData.msg} />
+				{images.map((image, index) => <div key={index} style={{marginTop: '10px'}}>
+					<img src={image} alt='' style={{maxWidth: '100%'}} />
+				</div>)}
 			</div>
 			: undefined}
 	</div>;
