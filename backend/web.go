@@ -2,6 +2,8 @@ package main
 
 import (
 	"net/http"
+	"strconv"
+	"time"
 
 	"golang.org/x/text/language"
 )
@@ -21,4 +23,8 @@ func getWebLanguage(request *http.Request) language.Tag {
 	var _, index, _ = supportedLanguagesMatcher.Match(tags...)
 	var tag = supportedLanguages[index]
 	return tag
+}
+
+func setCacheAge(response http.ResponseWriter, duration time.Duration) {
+	response.Header().Set("Cache-Control", "max-age="+strconv.Itoa(int(duration.Seconds())))
 }
