@@ -11,7 +11,6 @@ import (
 
 	"github.com/hinst/hinst-website/file_mode"
 	"golang.org/x/text/language"
-	"golang.org/x/text/language/display"
 )
 
 type translator struct {
@@ -76,7 +75,7 @@ func (me *translator) translateFile(smartPostFilePath string) {
 
 func (me *translator) translateText(text string, tag language.Tag) (string, error) {
 	var prompt = prompt_russian_to_something
-	prompt = strings.Replace(prompt, "{something}", display.English.Languages().Name(tag), -1)
+	prompt = strings.Replace(prompt, "{something}", getLanguageName(tag), -1)
 	var request = encodeJson(lmStudioRequest{
 		Model: "aya-expanse-8B",
 		Messages: []lmStudioMessage{

@@ -91,7 +91,8 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	var translatedFilePath = translatorPresets.getTranslatedFilePath(filePath, requestedLanguage)
 	if checkFileExists(translatedFilePath) {
 		post.Msg = readTextFile(translatedFilePath)
-		post.Language = requestedLanguage.String()
+		post.LanguageTag = requestedLanguage.String()
+		post.LanguageName = getLanguageName(requestedLanguage)
 		if requestedLanguage != language.Russian {
 			post.IsAutoTranslated = true
 		}
