@@ -7,5 +7,6 @@ type goalHeaderExtended struct {
 
 type smartPostExtended struct {
 	smartPost
-	IsAutoTranslated bool `json:"isAutoTranslated"`
+	IsAutoTranslated bool   `json:"isAutoTranslated"`
+	Language         string `json:"language"`
 }

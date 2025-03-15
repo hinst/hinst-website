@@ -47,6 +47,7 @@ func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Reque
 	var goalId = me.readValidGoalIdString(request.URL.Query().Get("id"))
 	var headerFilePath = filepath.Join(me.savedGoalsPath, goalId, savedGoalHeaderFileName)
 	var goal = readJsonFile(headerFilePath, &goalHeader{})
+	setCacheAge(response, time.Minute)
 	response.Write(encodeJson(goal))
 }
 
@@ -90,6 +91,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	var translatedFilePath = translatorPresets.getTranslatedFilePath(filePath, requestedLanguage)
 	if checkFileExists(translatedFilePath) {
 		post.Msg = readTextFile(translatedFilePath)
+		post.Language = requestedLanguage.String()
 		if requestedLanguage != language.Russian {
 			post.IsAutoTranslated = true
 		}
