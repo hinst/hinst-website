@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import { SmartPost } from './smartPost';
+import { useEffect, useState } from 'react';
+import { SmartPostExtended } from './smartPost';
 import { API_URL } from '../global';
 import SafeHtmlView from '../safeHtmlView';
+import { Info } from 'react-feather';
 
 export default function GoalPostView(props: {
 	goalId: string,
@@ -9,7 +10,7 @@ export default function GoalPostView(props: {
 	style?: React.CSSProperties
 }) {
 	const [isLoading, setIsLoading] = useState(false);
-	const [postData, setPostData] = useState<SmartPost | undefined>(undefined);
+	const [postData, setPostData] = useState<SmartPostExtended | undefined>(undefined);
 
 	async function load() {
 		setIsLoading(true);
@@ -17,7 +18,7 @@ export default function GoalPostView(props: {
 			const response = await fetch(API_URL + '/goalPost' +
 				'?goalId=' + encodeURIComponent(props.goalId) +
 				'&postDateTime=' + props.postDate);
-			const postData = await response.json();
+			const postData: SmartPostExtended = await response.json();
 			setPostData(postData);
 		} finally {
 			setIsLoading(false);
@@ -31,7 +32,15 @@ export default function GoalPostView(props: {
 	return <div style={props.style}>
 		{ isLoading ? <div className='ms-loading' /> : undefined }
 		{postData
-			? <SafeHtmlView htmlText={postData.msg} />
+			? <div>
+				{postData.isAutoTranslated
+					? <div className='ms-alert ms-light' style={{display: 'flex', alignItems: 'center'}}>
+						<Info/> &nbsp; This text was automatically converted into {postData.languageName} language using AI translator tool.
+					  </div>
+					: undefined
+				}
+				<SafeHtmlView htmlText={postData.msg} />
+			</div>
 			: undefined}
 	</div>;
 }

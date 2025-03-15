@@ -13,3 +13,8 @@ export interface SmartPost {
     count_comments: string;
     username: string;
 }
+
+export interface SmartPostExtended extends SmartPost {
+    isAutoTranslated: boolean;
+    languageName?: string;
+}
