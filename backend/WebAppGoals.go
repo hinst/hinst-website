@@ -26,6 +26,7 @@ func (me *webAppGoals) init() []namedWebFunction {
 		{"/api/goal", me.getGoal},
 		{"/api/goalPosts", me.getGoalPosts},
 		{"/api/goalPost", me.getGoalPost},
+		{"/api/goalPost/images", me.getGoalPostImages},
 	}
 }
 
@@ -100,6 +101,15 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 
 	post.Images = nil
 	response.Write(encodeJson(post))
+}
+
+func (me *webAppGoals) getGoalPostImages(response http.ResponseWriter, request *http.Request) {
+	var goalId = me.readValidGoalIdString(request.URL.Query().Get("goalId"))
+	var postDateTime = me.readValidPostDateTime(request.URL.Query().Get("postDateTime"))
+	var fileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
+	var filePath = filepath.Join(me.savedGoalsPath, fileName)
+	var post = readJsonFile(filePath, &smartPostExtended{})
+	response.Write(encodeJson(post.Images))
 }
 
 func (me *webAppGoals) checkValidGoalIdString(goalId string) bool {
