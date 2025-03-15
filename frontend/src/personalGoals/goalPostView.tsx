@@ -32,7 +32,7 @@ export default function GoalPostView(props: {
 			'?goalId=' + encodeURIComponent(props.goalId) +
 			'&postDateTime=' + props.postDate);
 		const images: SmartPostImage[] = await response.json();
-		setImages(images.map(image => image.dataUrl));
+		setImages(images?.map(image => image.dataUrl) || []);
 	}
 
 	useEffect(() => {
