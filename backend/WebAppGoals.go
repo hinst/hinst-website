@@ -109,6 +109,7 @@ func (me *webAppGoals) getGoalPostImages(response http.ResponseWriter, request *
 	var fileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
 	var filePath = filepath.Join(me.savedGoalsPath, fileName)
 	var post = readJsonFile(filePath, &smartPostExtended{})
+	setCacheAge(response, time.Minute)
 	response.Write(encodeJson(post.Images))
 }
 

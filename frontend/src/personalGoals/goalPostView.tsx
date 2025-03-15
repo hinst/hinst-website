@@ -50,10 +50,37 @@ export default function GoalPostView(props: {
 					: undefined
 				}
 				<SafeHtmlView htmlText={postData.msg} />
-				{images.map((image, index) => <div key={index} style={{marginTop: '10px'}}>
-					<img src={image} alt='' style={{maxWidth: '100%'}} />
-				</div>)}
 			</div>
 			: undefined}
+		<div
+			style={{
+				display: 'flex',
+				flexWrap: 'wrap',
+				gap: 10,
+			}}
+		>
+			{images.map(image => <GoalImage key={image} data={image} />)}
+		</div>
 	</div>;
+}
+
+function GoalImage(props: { data: string }) {
+	return <a
+		href={props.data}
+	>
+		<img
+			className='ms-card ms-border'
+			width={240}
+			height={240}
+			style={{
+				width: 240,
+				height: 240,
+				objectFit: 'cover',
+				margin: 0,
+				padding: 0,
+			}}
+			src={props.data}
+			alt='Image'
+		/>
+	</a>;
 }
