@@ -7,10 +7,13 @@ import (
 
 func main() {
 	var modePointer = flag.String("mode", "web", "")
+	var wwwPointer = flag.String("www", "./www", "")
 	flag.Parse()
 	switch *modePointer {
 	case "web":
-		new(program).init().runWeb()
+		var theProgram = new(program).init()
+		theProgram.webFilesPath = *wwwPointer
+		theProgram.runWeb()
 	case "translate":
 		new(program).init().runTranslate()
 	default:

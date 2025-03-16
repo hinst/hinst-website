@@ -1,1 +1,1 @@
-go build && hinst-website.exe
+go build && hinst-website.exe --www=../frontend/dist
