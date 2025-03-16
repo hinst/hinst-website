@@ -1,0 +1,1 @@
+docker build -t hinst/hinst-website --progress=plain .
