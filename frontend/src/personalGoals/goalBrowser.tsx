@@ -1,14 +1,16 @@
 import { useParams, useSearchParams } from 'react-router';
 import GoalCalendarPanel from './goalCalendarPanel';
 import { GoalHeader, PostHeader } from './goalHeader';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import GoalPostView from './goalPostView';
 import { API_URL } from '../global';
 import { translateGoalTitle } from './goalInfo';
+import { LanguageContext } from '../context';
 
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
 }) {
+	const currentLanguage = useContext(LanguageContext);
 	const params = useParams();
 	const [searchParams, setSearchParams] = useSearchParams();
 	const id: string = params.id!;
@@ -30,7 +32,7 @@ export default function GoalBrowser(props: {
 		const response = await fetch(API_URL + '/goal?id=' + encodeURIComponent(id));
 		if (response.ok) {
 			const goalHeader: GoalHeader = await response.json();
-			props.setPageTitle(translateGoalTitle(goalHeader.title));
+			props.setPageTitle(translateGoalTitle(currentLanguage, goalHeader.title));
 		}
 	}
 

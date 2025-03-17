@@ -74,9 +74,7 @@ export default function GoalPostView(props: {
 }
 
 function GoalImage(props: { data: string }) {
-	return <a
-		href={props.data}
-	>
+	return <a href={props.data}>
 		<img
 			className='ms-card ms-border'
 			width={240}
