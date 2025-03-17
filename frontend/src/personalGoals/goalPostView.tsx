@@ -45,17 +45,23 @@ export default function GoalPostView(props: {
 		{postData
 			? <div>
 				{postData.isAutoTranslated
-					? <div className='ms-alert ms-light' style={{display: 'flex', alignItems: 'center'}}>
-						<Info/> &nbsp; This text was automatically converted to {postData.languageName} language using AI translator tool.
+					? <div
+						className='ms-alert ms-light'
+						style={{display: 'flex', alignItems: 'center', gap: 8}}
+					>
+						<div><Info/></div>
+						<div>This text was automatically converted to {postData.languageName} language using AI translator tool.</div>
 					  </div>
 					: undefined
 				}
 				{postData.languageNamePending
-					? <div className='ms-alert ms-light' style={{display: 'flex', alignItems: 'center'}}>
-						<Info className='ms-text-secondary'/>
-						&nbsp;
-						The automatic translation of this text to {postData.languageNamePending} language is not available yet.
-						Please come back later or check older posts.
+					? <div
+						className='ms-alert ms-light'
+						style={{display: 'flex', alignItems: 'center', gap: 8}}
+					>
+						<div><Info className='ms-text-secondary'/></div>
+						<div>The automatic translation of this text to {postData.languageNamePending} language is not available yet.
+						Please come back later or check older posts.</div>
 					  </div>
 					: undefined
 				}
