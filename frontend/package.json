@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "start": "parcel --public-url=/hinst-website index.html",
+    "build": "parcel build --public-url=/hinst-website index.html"
   },
   "keywords": [],
   "author": "",

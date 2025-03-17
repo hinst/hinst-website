@@ -20,7 +20,8 @@ func (me *program) runWeb() {
 	const netAddress = ":8080"
 	var webApp = &webApp{savedGoalsPath: me.savedGoalsPath}
 	webApp.init()
-	http.Handle("/", http.FileServer(http.Dir(me.webFilesPath)))
+	var fileServer = http.FileServer(http.Dir(me.webFilesPath))
+	http.Handle("/hinst-website/", http.StripPrefix("/hinst-website/", fileServer))
 	log.Printf("Starting: netAddress=%v, webPath=%v", netAddress, webApp.webPath)
 	assertError(http.ListenAndServe(netAddress, nil))
 }
