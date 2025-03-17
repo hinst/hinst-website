@@ -3,6 +3,7 @@ import { SmartPostExtended, SmartPostImage } from './smartPost';
 import { API_URL } from '../global';
 import SafeHtmlView from '../safeHtmlView';
 import { Info } from 'react-feather';
+import { sleep } from '../sleep';
 
 export default function GoalPostView(props: {
 	goalId: string,
@@ -15,6 +16,7 @@ export default function GoalPostView(props: {
 
 	async function load() {
 		setIsLoading(true);
+		setPostData(undefined);
 		try {
 			const response = await fetch(API_URL + '/goalPost' +
 				'?goalId=' + encodeURIComponent(props.goalId) +
@@ -67,7 +69,7 @@ export default function GoalPostView(props: {
 						gap: 10,
 					}}
 				>
-					{images.map(image => <GoalImage key={image} data={image} />)}
+					{images.map(image => <GoalImage data={image} />)}
 				</div>
 			</div>
 			: undefined}
