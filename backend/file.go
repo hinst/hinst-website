@@ -19,28 +19,32 @@ func readJsonFile[T any](filePath string, receiver T) T {
 }
 
 func readJsonFiles[T any](filePaths []string, threadCount int) (items []*T) {
-	var fileNames = make(chan string, 1)
-	var results = make(chan T, 1)
+	type filePathItem struct {
+		filePath string
+		index    int
+	}
+	var inputs = make(chan filePathItem, 1)
+	var ready = make(chan struct{}, threadCount)
+	items = make([]*T, len(filePaths))
 	var reader = func() {
-		for filePath := range fileNames {
+		for input := range inputs {
 			var item T
-			readJsonFile(filePath, &item)
-			results <- item
+			readJsonFile(input.filePath, &item)
+			items[input.index] = &item
 		}
+		ready <- struct{}{}
 	}
-	var collector = func() {
-		for item := range results {
-			items = append(items, &item)
-		}
-	}
-	go collector()
 	for range threadCount {
 		go reader()
 	}
-	for _, filePath := range filePaths {
-		fileNames <- filePath
+	for index, filePath := range filePaths {
+		inputs <- filePathItem{filePath, index}
 	}
-	close(fileNames)
+	close(inputs)
+	for range threadCount {
+		<-ready
+	}
+	close(ready)
 	return
 }
 
