@@ -59,17 +59,18 @@ export default function GoalPostView(props: {
 					: undefined
 				}
 				<SafeHtmlView htmlText={postData.msg} />
+				<div
+					key={postData.id}
+					style={{
+						display: 'flex',
+						flexWrap: 'wrap',
+						gap: 10,
+					}}
+				>
+					{images.map(image => <GoalImage key={image} data={image} />)}
+				</div>
 			</div>
 			: undefined}
-		<div
-			style={{
-				display: 'flex',
-				flexWrap: 'wrap',
-				gap: 10,
-			}}
-		>
-			{images.map(image => <GoalImage key={image} data={image} />)}
-		</div>
 	</div>;
 }
 
