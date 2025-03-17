@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"time"
 
 	"golang.org/x/text/language"
@@ -68,16 +69,16 @@ func (me *webAppGoals) extendHeader(goalHeader *goalHeaderExtended) {
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.readValidGoalIdString(request.URL.Query().Get("id"))
 	var goalDirectoryPath = filepath.Join(me.savedGoalsPath, goalId)
-	var files = assertResultError(os.ReadDir(goalDirectoryPath))
-	sortFilesByName(files)
-	var posts = make([]*smartPostHeader, 0, len(files))
-	for _, file := range files {
+	var fileNames = assertResultError(os.ReadDir(goalDirectoryPath))
+	sortFilesByName(fileNames)
+	var filePaths = make([]string, 0, len(fileNames))
+	for _, file := range fileNames {
 		if GoalFileNameMatcher.MatchString(file.Name()) {
 			var filePath = filepath.Join(me.savedGoalsPath, goalId, file.Name())
-			var post = readJsonFile(filePath, &smartPostHeader{})
-			posts = append(posts, post)
+			filePaths = append(filePaths, filePath)
 		}
 	}
+	var posts = readJsonFiles[smartPostHeader](filePaths, runtime.NumCPU())
 	setCacheAge(response, time.Minute)
 	response.Write(encodeJson(posts))
 }

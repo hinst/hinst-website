@@ -19,8 +19,8 @@ func readJsonFile[T any](filePath string, receiver T) T {
 }
 
 func readJsonFiles[T any](filePaths []string, threadCount int) (items []*T) {
-	var fileNames = make(chan string)
-	var results = make(chan T)
+	var fileNames = make(chan string, 1)
+	var results = make(chan T, 1)
 	var reader = func() {
 		for filePath := range fileNames {
 			var item T
