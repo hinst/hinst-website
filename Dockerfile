@@ -12,7 +12,7 @@ RUN rm -rf node_modules
 RUN rm -rf dist
 RUN rm -rf .parcel-cache
 RUN npm install
-RUN npm run build
+RUN npm run build -- --public-url=/hinst-website
 
 FROM debian:bookworm
 COPY --from=backend /app/hinst-website /app/hinst-website
