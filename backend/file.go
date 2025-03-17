@@ -18,6 +18,32 @@ func readJsonFile[T any](filePath string, receiver T) T {
 	return receiver
 }
 
+func readJsonFiles[T any](filePaths []string, threadCount int) (items []*T) {
+	var fileNames = make(chan string)
+	var results = make(chan T)
+	var reader = func() {
+		for filePath := range fileNames {
+			var item T
+			readJsonFile(filePath, &item)
+			results <- item
+		}
+	}
+	var collector = func() {
+		for item := range results {
+			items = append(items, &item)
+		}
+	}
+	go collector()
+	for range threadCount {
+		go reader()
+	}
+	for _, filePath := range filePaths {
+		fileNames <- filePath
+	}
+	close(fileNames)
+	return
+}
+
 func readTextFile(filePath string) string {
 	var fileContent = assertResultError(os.ReadFile(filePath))
 	return string(fileContent)
