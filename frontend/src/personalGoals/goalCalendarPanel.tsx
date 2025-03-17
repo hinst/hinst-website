@@ -22,7 +22,8 @@ export default function GoalCalendarPanel(
 			const response = await fetch(API_URL + '/goalPosts?id=' + encodeURIComponent(props.id));
 			if (!response.ok)
 				throw new Error(response.statusText);
-			const posts = await response.json();
+			let posts: PostHeader[]= await response.json();
+			posts = posts.filter(post => post.type === 'post');
 			setPosts(posts);
 			if (props.receivePosts)
 				props.receivePosts(posts);

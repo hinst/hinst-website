@@ -17,6 +17,7 @@ type smartPostHeader struct {
 	Id     string `json:"id"`
 	Date   string `json:"date"`
 	GoalId string `json:"obj_id"`
+	Type   string `json:"type"`
 }
 
 type smartPost struct {

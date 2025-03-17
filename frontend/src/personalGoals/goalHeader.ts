@@ -15,6 +15,7 @@ export class PostHeader {
 		public date: string,
 		/** Goal id */
 		public obj_id: string,
+		public type: string,
 	) {
 	}
 }
