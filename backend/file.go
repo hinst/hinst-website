@@ -12,8 +12,9 @@ import (
 )
 
 func readJsonFile[T any](filePath string, receiver T) T {
-	var fileContent = assertResultError(os.ReadFile(filePath))
-	assertError(json.Unmarshal(fileContent, receiver))
+	var file = assertResultError(os.Open(filePath))
+	defer file.Close()
+	json.NewDecoder(file).Decode(receiver)
 	return receiver
 }
 
