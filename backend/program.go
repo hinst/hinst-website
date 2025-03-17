@@ -21,8 +21,8 @@ func (me *program) runWeb() {
 	var webApp = &webApp{savedGoalsPath: me.savedGoalsPath}
 	webApp.init()
 	var fileServer = http.FileServer(http.Dir(me.webFilesPath))
-	http.Handle("/hinst-website/", http.StripPrefix("/hinst-website/", fileServer))
-	log.Printf("Starting: netAddress=%v, webPath=%v", netAddress, webApp.webPath)
+	http.Handle(webApp.webPath+"/", http.StripPrefix(webApp.webPath+"/", fileServer))
+	log.Printf("Starting: netAddress=%v, webPath=%v, filesPath=%v", netAddress, webApp.webPath, me.webFilesPath)
 	assertError(http.ListenAndServe(netAddress, nil))
 }
 
