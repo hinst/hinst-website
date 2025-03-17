@@ -3,7 +3,6 @@ import { SmartPostExtended, SmartPostImage } from './smartPost';
 import { API_URL } from '../global';
 import SafeHtmlView from '../safeHtmlView';
 import { Info } from 'react-feather';
-import { sleep } from '../sleep';
 
 export default function GoalPostView(props: {
 	goalId: string,
