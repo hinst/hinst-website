@@ -97,6 +97,8 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 		if requestedLanguage != language.Russian {
 			post.IsAutoTranslated = true
 		}
+	} else {
+		post.LanguageNamePending = getLanguageName(requestedLanguage)
 	}
 
 	post.Images = nil
