@@ -4,6 +4,7 @@ import "net/http"
 
 type webApp struct {
 	savedGoalsPath string
+	allowOrigin    string
 	webPath        string
 }
 
@@ -19,7 +20,7 @@ func (me *webApp) init() {
 
 func (me *webApp) wrap(function func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 	return func(response http.ResponseWriter, request *http.Request) {
-		response.Header().Set("Access-Control-Allow-Origin", "http://localhost:1234")
+		response.Header().Set("Access-Control-Allow-Origin", me.allowOrigin)
 		defer func() {
 			var exception = recover()
 			if exception != nil {

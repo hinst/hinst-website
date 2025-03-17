@@ -7,6 +7,7 @@ import (
 
 type program struct {
 	webFilesPath   string
+	allowOrigin    string
 	savedGoalsPath string
 }
 
@@ -18,7 +19,10 @@ func (me *program) init() *program {
 
 func (me *program) runWeb() {
 	const netAddress = ":8080"
-	var webApp = &webApp{savedGoalsPath: me.savedGoalsPath}
+	var webApp = &webApp{
+		savedGoalsPath: me.savedGoalsPath,
+		allowOrigin:    me.allowOrigin,
+	}
 	webApp.init()
 	var fileServer = http.FileServer(http.Dir(me.webFilesPath))
 	http.Handle(webApp.webPath+"/", http.StripPrefix(webApp.webPath+"/", fileServer))

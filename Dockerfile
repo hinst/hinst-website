@@ -19,4 +19,4 @@ COPY --from=backend /app/hinst-website /app/hinst-website
 COPY --from=frontend /app/dist /app/www
 WORKDIR /app
 EXPOSE 8080
-ENTRYPOINT ["/app/hinst-website"]
+ENTRYPOINT ["/app/hinst-website", "--allowOrigin=https://hinst.github.io"]
