@@ -18,20 +18,33 @@ export default function Header(props: { title: string }) {
 				className='hover-outline'
 			/>
 		</NavLink>
-		<div style={{display: 'flex', flexDirection: 'column', gap: 4}}>
+		<div style={{
+			display: 'flex',
+			flexDirection: 'column',
+			overflowY: 'clip',
+			gap: 4,
+			flexShrink: 0,
+			flexBasis: 0,
+			minWidth: 0,
+		}}>
 			<b
 				style={{
 					textWrap: 'nowrap',
-					overflowY: 'clip',
 					textOverflow: 'ellipsis',
-					flexShrink: 0,
-					flexBasis: 0,
-					minWidth: 0,
+					overflowY: 'clip',
 				}}
 			>
 				Showcase Website
 			</b>
-			{props.title}
+			<span
+				style={{
+					textWrap: 'nowrap',
+					textOverflow: 'ellipsis',
+					overflowY: 'clip',
+				}}
+			>
+				{props.title}
+			</span>
 		</div>
 
 		<div style={{flexGrow: 1}}></div>
