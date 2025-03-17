@@ -78,6 +78,7 @@ func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.
 			posts = append(posts, post)
 		}
 	}
+	setCacheAge(response, time.Minute)
 	response.Write(encodeJson(posts))
 }
 
