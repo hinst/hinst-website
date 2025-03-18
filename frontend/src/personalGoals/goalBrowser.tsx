@@ -5,16 +5,18 @@ import { useContext, useEffect, useState } from 'react';
 import GoalPostView from './goalPostView';
 import { API_URL } from '../global';
 import { translateGoalTitle } from './goalInfo';
-import { LanguageContext } from '../context';
+import { DisplayWidthContext, LanguageContext } from '../context';
 
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
 }) {
 	const currentLanguage = useContext(LanguageContext);
+	const displayWidth = useContext(DisplayWidthContext);
 	const params = useParams();
 	const [searchParams, setSearchParams] = useSearchParams();
 	const id: string = params.id!;
-	const [activePostDate, setActivePostDate] = useState<string>(searchParams.get('activePostDate') || '');
+	const [activePostDate, setActivePostDate] =
+		useState<string>(searchParams.get('activePostDate') || '');
 
 	function receivePosts(posts: PostHeader[]) {
 		if (posts.length && !activePostDate) {
@@ -41,19 +43,22 @@ export default function GoalBrowser(props: {
 	}, [params]);
 
 	return <div style={{display: 'flex', gap: 20, minHeight: 0}}>
-		<div style={{
-			display: 'flex',
-			overflowY: 'auto',
-			paddingRight: 10,
-			flexShrink: 0,
-			flexBasis: 'fit-content',
-		}}>
-			<GoalCalendarPanel
-				id={id}
-				receivePosts={receivePosts}
-				activePostDate={activePostDate}
-			/>
-		</div>
+		{displayWidth > 700
+			? <div style={{
+				display: 'flex',
+				overflowY: 'auto',
+				paddingRight: 10,
+				flexShrink: 0,
+				flexBasis: 'fit-content',
+			}}>
+				<GoalCalendarPanel
+					id={id}
+					receivePosts={receivePosts}
+					activePostDate={activePostDate}
+				/>
+			</div>
+			: undefined
+		}
 		<div style={{display: 'flex', overflowY: 'auto', flexGrow: 1}}>
 			{ activePostDate
 				? <GoalPostView
