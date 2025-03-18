@@ -10,4 +10,4 @@ fs.readdirSync(targetDirectory).forEach(file => {
 		fs.unlinkSync(filePath);
 });
 
-execSync('npm run build -- --dist-dir=' + targetDirectory, { stdio: 'inherit', env: {API_URL} });
+execSync('npm run build -- --no-cache --dist-dir=' + targetDirectory, { stdio: 'inherit', env: {API_URL} });
