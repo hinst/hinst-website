@@ -92,7 +92,7 @@ export default function GoalBrowser(props: {
 			overflowY: 'hidden',
 		}}>
 			<button
-				className='ms-btn ms-shape-circle blurry-main-background'
+				className='ms-btn ms-shape-circle blurry-main-background ms-bg-light'
 				style={{
 					position: 'absolute',
 					width: 40,
