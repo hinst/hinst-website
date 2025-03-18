@@ -33,3 +33,7 @@ hr {
 	transition-property: filter;
 	transition-duration: 0.5s;
 }
+
+.ms-bg-light:active {
+  background-color: rgba(var(--light-bg-color), 1);
+}
