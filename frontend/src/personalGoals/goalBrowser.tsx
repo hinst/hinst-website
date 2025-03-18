@@ -6,6 +6,7 @@ import GoalPostView from './goalPostView';
 import { API_URL } from '../global';
 import { translateGoalTitle } from './goalInfo';
 import { DisplayWidthContext, LanguageContext } from '../context';
+import { Calendar } from 'react-feather';
 
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
@@ -13,35 +14,25 @@ export default function GoalBrowser(props: {
 	const currentLanguage = useContext(LanguageContext);
 	const displayWidth = useContext(DisplayWidthContext);
 	const params = useParams();
+	const goalId: string = params.id!;
 	const [searchParams, setSearchParams] = useSearchParams();
-	const postId: string = params.id!;
+	const activePostDate = searchParams.get('activePostDate') || '';
 
 	function isFullMode() {
 		return displayWidth >= 700;
 	}
 
-	const [activePostDate, setActivePostDate] =
-		useState<string>(searchParams.get('activePostDate') || '');
 	const [calendarEnabled, setCalendarEnabled] = useState(true);
-
-	function isCalendarVisible() {
-		return isFullMode() || calendarEnabled;
-	}
 
 	function receivePosts(posts: PostHeader[]) {
 		if (posts.length && !activePostDate) {
 			const newActivePostDate = posts[posts.length - 1].date;
 			setSearchParams({activePostDate: newActivePostDate});
-			setActivePostDate(newActivePostDate);
 		}
 	}
 
-	useEffect(() => {
-		setActivePostDate(searchParams.get('activePostDate') || '');
-	}, [searchParams]);
-
 	async function loadGoal() {
-		const response = await fetch(API_URL + '/goal?id=' + encodeURIComponent(postId));
+		const response = await fetch(API_URL + '/goal?id=' + encodeURIComponent(goalId));
 		if (response.ok) {
 			const goalHeader: GoalHeader = await response.json();
 			const goalTitle = translateGoalTitle(currentLanguage, goalHeader.title);
@@ -51,7 +42,12 @@ export default function GoalBrowser(props: {
 
 	useEffect(() => {
 		loadGoal();
-	}, [params]);
+	}, [goalId]);
+
+	useEffect(() => {
+		if (activePostDate)
+			setCalendarEnabled(false);
+	}, [activePostDate]);
 
 	function getWideLayout() {
 		return <div style={{display: 'flex', gap: 20, minHeight: 0}}>
@@ -63,7 +59,7 @@ export default function GoalBrowser(props: {
 				flexBasis: 'fit-content',
 			}}>
 				<GoalCalendarPanel
-					id={postId}
+					id={goalId}
 					receivePosts={receivePosts}
 					activePostDate={activePostDate}
 				/>
@@ -75,7 +71,7 @@ export default function GoalBrowser(props: {
 			}}>
 				{ activePostDate
 					? <GoalPostView
-						goalId={postId}
+						goalId={goalId}
 						postDate={activePostDate}
 						style={{maxWidth: 1000}}
 					/>
@@ -95,9 +91,31 @@ export default function GoalBrowser(props: {
 			maxWidth: '100%',
 			overflowY: 'hidden',
 		}}>
+			<button
+				className='ms-btn ms-shape-circle blurry-main-background'
+				style={{
+					position: 'absolute',
+					width: 40,
+					height: 40,
+					bottom: 10,
+					right: 10,
+					zIndex: 2,
+				}}
+				onClick={() => setCalendarEnabled(!calendarEnabled)}
+			>
+				<Calendar
+					style={{
+						position: 'absolute',
+						left: '50%',
+						top: '50%',
+						transform: 'translate(-50%, -50%)',
+					}}
+				/>
+			</button>
 			<div
 				className='ms-bg-light ms-shape-round ms-box-shadow'
 				style={{
+					display: calendarEnabled ? 'block' : 'none',
 					position: 'absolute',
 					zIndex: 1,
 					overflowY: 'auto',
@@ -106,7 +124,7 @@ export default function GoalBrowser(props: {
 				}}
 			>
 				<GoalCalendarPanel
-					id={postId}
+					id={goalId}
 					receivePosts={receivePosts}
 					activePostDate={activePostDate}
 				/>
@@ -117,7 +135,7 @@ export default function GoalBrowser(props: {
 			}}>
 				{ activePostDate
 					? <GoalPostView
-						goalId={postId}
+						goalId={goalId}
 						postDate={activePostDate}
 						style={{maxWidth: 1000}}
 					/>
