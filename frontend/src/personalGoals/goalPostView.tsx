@@ -65,7 +65,9 @@ export default function GoalPostView(props: {
 					  </div>
 					: undefined
 				}
-				<SafeHtmlView htmlText={postData.msg} />
+				<div className='goalPostViewText'>
+					<SafeHtmlView htmlText={postData.msg} />
+				</div>
 				<div
 					key={postData.id}
 					style={{
