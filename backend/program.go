@@ -6,9 +6,10 @@ import (
 )
 
 type program struct {
-	webFilesPath   string
-	allowOrigin    string
-	savedGoalsPath string
+	webFilesPath     string
+	allowOrigin      string
+	translatorApiUrl string
+	savedGoalsPath   string
 }
 
 func (me *program) init() *program {
@@ -32,6 +33,9 @@ func (me *program) runWeb() {
 
 func (me *program) runTranslate() {
 	var translator = translatorPresets
+	if me.translatorApiUrl != "" {
+		translator.apiUrl = me.translatorApiUrl + "/v1/chat/completions"
+	}
 	translator.savedGoalsPath = me.savedGoalsPath
 	translator.run()
 }
