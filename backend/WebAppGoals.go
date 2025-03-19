@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strings"
 	"time"
 
 	"golang.org/x/text/language"
@@ -139,4 +140,25 @@ func (me *webAppGoals) readValidPostDateTime(text string) time.Time {
 	}
 	assertCondition(nil == postDateTimeError, createWebError)
 	return postDateTime
+}
+
+func (me *webAppGoals) checkPostAvailable(goalId string, postDateTimeText string) bool {
+	var postDateTime, postDateTimeError = parseSmartProgressDateTime(postDateTimeText)
+	assertCondition(nil == postDateTimeError, func() webError {
+		return webError{
+			"Need valid postDateTime. Format: " + smartProgressTimeFormat + "; input: " + postDateTimeText,
+			http.StatusBadRequest,
+		}
+	})
+	var postFileName = postDateTime.Format(storedGoalFileTimeFormat) + ".json"
+	var availablePostsText = readTextFile(
+		filepath.Join(me.savedGoalsPath, goalId, "available-posts.txt"),
+	)
+	var availablePosts = strings.Split(availablePostsText, "\n")
+	for _, availablePost := range availablePosts {
+		if strings.TrimSpace(availablePost) == postFileName {
+			return true
+		}
+	}
+	return false
 }
