@@ -23,6 +23,7 @@ export default function GoalBrowser(props: {
 	}
 
 	const [calendarEnabled, setCalendarEnabled] = useState(true);
+	const [calendarTransition, setCalendarTransition] = useState('');
 
 	function receivePosts(posts: PostHeader[]) {
 		if (posts.length && !activePostDate) {
@@ -47,6 +48,7 @@ export default function GoalBrowser(props: {
 	useEffect(() => {
 		if (activePostDate)
 			setCalendarEnabled(false);
+		setTimeout(() => setCalendarTransition('transform 0.3s'));
 	}, [activePostDate]);
 
 	function getWideLayout() {
@@ -129,7 +131,7 @@ export default function GoalBrowser(props: {
 			<div
 				className='ms-bg-light ms-shape-round ms-box-shadow ms-border-main'
 				style={{
-					display: calendarEnabled ? 'block' : 'none',
+					display: calendarEnabled ? 'block' : 'block',
 					position: 'absolute',
 					zIndex: 1,
 					overflowY: 'auto',
@@ -137,6 +139,8 @@ export default function GoalBrowser(props: {
 					padding: 8,
 					borderWidth: 1,
 					borderStyle: 'solid',
+					transform: calendarEnabled ? 'translate(0,0)' : 'translate(-100%, 0)',
+					transition: calendarTransition,
 				}}
 			>
 				<GoalCalendarPanel
