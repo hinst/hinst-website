@@ -34,10 +34,6 @@ hr {
 	transition-duration: 0.5s;
 }
 
-.ms-bg-light:active {
-  background-color: rgba(var(--light-bg-color), 1);
-}
-
 .goalPostViewText h1 {
   font-size: 1.6rem;
 }
