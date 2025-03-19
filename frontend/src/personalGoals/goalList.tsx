@@ -1,6 +1,4 @@
-import { NavLink } from 'react-router';
 import { GoalHeader } from './goalHeader';
-import { GOAL_INFOS, translateGoalTitle } from './goalInfo';
 import { GoalCard } from './goalCard';
 
 export default function GoalList(props: {goals: GoalHeader[]}) {
