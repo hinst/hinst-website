@@ -127,7 +127,7 @@ export default function GoalBrowser(props: {
 				</button>
 			</div>
 			<div
-				className='ms-bg-light ms-shape-round ms-box-shadow'
+				className='ms-bg-light ms-shape-round ms-box-shadow ms-border-main'
 				style={{
 					display: calendarEnabled ? 'block' : 'none',
 					position: 'absolute',
@@ -135,6 +135,8 @@ export default function GoalBrowser(props: {
 					overflowY: 'auto',
 					maxHeight: '100%',
 					padding: 8,
+					borderWidth: 1,
+					borderStyle: 'solid',
 				}}
 			>
 				<GoalCalendarPanel
@@ -143,10 +145,13 @@ export default function GoalBrowser(props: {
 					activePostDate={activePostDate}
 				/>
 			</div>
-			<div style={{
-				display: 'flex',
-				overflowY: 'auto',
-			}}>
+			<div
+				onClick={() => setCalendarEnabled(false)}
+				style={{
+					display: 'flex',
+					overflowY: 'auto',
+				}}
+			>
 				{ activePostDate
 					? <GoalPostView
 						goalId={goalId}
