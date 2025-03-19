@@ -81,37 +81,51 @@ export default function GoalBrowser(props: {
 	};
 
 	function getNarrowLayout() {
-		return <div style={{
-			position: 'relative',
-			display: 'flex',
-			minHeight: 0,
-			height: '100%',
-			maxHeight: '100%',
-			width: '100%',
-			maxWidth: '100%',
-			overflowY: 'hidden',
-		}}>
-			<button
-				className='ms-btn ms-shape-circle blurry-main-background ms-bg-light'
+		return <div
+			style={{
+				position: 'relative',
+				display: 'flex',
+				minHeight: 0,
+				height: '100%',
+				maxHeight: '100%',
+				width: '100%',
+				maxWidth: '100%',
+				overflowY: 'hidden',
+			}}
+		>
+			<div
+				className='ms-bg-light ms-shape-circle'
 				style={{
 					position: 'absolute',
 					width: 40,
 					height: 40,
-					bottom: 10,
-					right: 10,
+					bottom: 0,
+					right: 0,
 					zIndex: 2,
 				}}
-				onClick={() => setCalendarEnabled(!calendarEnabled)}
 			>
-				<Calendar
+				<button
+					className={
+						'ms-btn ms-primary ms-rounded ms-box-shadow' +
+						(calendarEnabled ? ' ms-btn-active' : '')
+					}
+					onClick={() => setCalendarEnabled(!calendarEnabled)}
 					style={{
-						position: 'absolute',
-						left: '50%',
-						top: '50%',
-						transform: 'translate(-50%, -50%)',
+						margin: 0,
+						width: 40,
+						height: 40,
 					}}
-				/>
-			</button>
+				>
+					<Calendar
+						style={{
+							position: 'absolute',
+							left: '50%',
+							top: '50%',
+							transform: 'translate(-50%, -50%)',
+						}}
+					/>
+				</button>
+			</div>
 			<div
 				className='ms-bg-light ms-shape-round ms-box-shadow'
 				style={{

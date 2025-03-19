@@ -1,1 +1,2 @@
-call clean && npm run start
+call clean
+npm run start
