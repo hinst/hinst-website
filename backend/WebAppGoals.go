@@ -16,13 +16,16 @@ type webAppGoals struct {
 	savedGoalsPath        string
 	goalIdStringMatcher   *regexp.Regexp
 	goalDateStringMatcher *regexp.Regexp
+	adminPassword         string
 }
 
 const savedGoalHeaderFileName = "_header.json"
+const cookieKeyAdminPassword = "adminPassword"
 
 func (me *webAppGoals) init() []namedWebFunction {
 	me.goalIdStringMatcher = regexp.MustCompile(`^\d{1,10}$`)
 	me.goalDateStringMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$`)
+	me.adminPassword = readTextFile("./adminPassword.txt")
 	return []namedWebFunction{
 		{"/api/goals", me.getGoals},
 		{"/api/goal", me.getGoal},
@@ -34,12 +37,11 @@ func (me *webAppGoals) init() []namedWebFunction {
 
 func (me *webAppGoals) getGoals(response http.ResponseWriter, request *http.Request) {
 	var files = assertResultError(os.ReadDir(me.savedGoalsPath))
-	var headers = make([]*goalHeaderExtended, 0, len(files))
+	var headers = make([]*goalHeader, 0, len(files))
 	for _, file := range files {
 		if file.IsDir() {
 			var headerFilePath = filepath.Join(me.savedGoalsPath, file.Name(), savedGoalHeaderFileName)
-			var header = readJsonFile(headerFilePath, &goalHeaderExtended{})
-			me.extendHeader(header)
+			var header = readJsonFile(headerFilePath, &goalHeader{})
 			headers = append(headers, header)
 		}
 	}
@@ -47,7 +49,7 @@ func (me *webAppGoals) getGoals(response http.ResponseWriter, request *http.Requ
 }
 
 func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.readValidGoalIdString(request.URL.Query().Get("id"))
+	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("id"))
 	var headerFilePath = filepath.Join(me.savedGoalsPath, goalId, savedGoalHeaderFileName)
 	var goal = readJsonFile(headerFilePath, &goalHeader{})
 	setCacheAge(response, time.Minute)
@@ -68,13 +70,15 @@ func (me *webAppGoals) extendHeader(goalHeader *goalHeaderExtended) {
 }
 
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.readValidGoalIdString(request.URL.Query().Get("id"))
+	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("id"))
 	var goalDirectoryPath = filepath.Join(me.savedGoalsPath, goalId)
 	var fileNames = assertResultError(os.ReadDir(goalDirectoryPath))
 	sortFilesByName(fileNames)
 	var filePaths = make([]string, 0, len(fileNames))
+	var allowedPosts = me.getAvailablePosts(goalId)
 	for _, file := range fileNames {
-		if GoalFileNameMatcher.MatchString(file.Name()) {
+		var fileNameBase = getFileNameWithoutExtension(file.Name())
+		if GoalFileNameMatcher.MatchString(file.Name()) && (allowedPosts[fileNameBase] || true) {
 			var filePath = filepath.Join(me.savedGoalsPath, goalId, file.Name())
 			filePaths = append(filePaths, filePath)
 		}
@@ -85,8 +89,8 @@ func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.
 }
 
 func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.readValidGoalIdString(request.URL.Query().Get("goalId"))
-	var postDateTime = me.readValidPostDateTime(request.URL.Query().Get("postDateTime"))
+	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("goalId"))
+	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var fileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
 	var filePath = filepath.Join(me.savedGoalsPath, fileName)
 	var post = readJsonFile(filePath, &smartPostExtended{})
@@ -109,8 +113,8 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 }
 
 func (me *webAppGoals) getGoalPostImages(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.readValidGoalIdString(request.URL.Query().Get("goalId"))
-	var postDateTime = me.readValidPostDateTime(request.URL.Query().Get("postDateTime"))
+	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("goalId"))
+	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var fileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
 	var filePath = filepath.Join(me.savedGoalsPath, fileName)
 	var post = readJsonFile(filePath, &smartPostExtended{})
@@ -122,7 +126,7 @@ func (me *webAppGoals) checkValidGoalIdString(goalId string) bool {
 	return me.goalIdStringMatcher.MatchString(goalId)
 }
 
-func (me *webAppGoals) readValidGoalIdString(goalId string) string {
+func (me *webAppGoals) inputValidGoalIdString(goalId string) string {
 	var createWebError = func() webError {
 		return webError{"Need goal id. Received: " + goalId, http.StatusBadRequest}
 	}
@@ -130,7 +134,7 @@ func (me *webAppGoals) readValidGoalIdString(goalId string) string {
 	return goalId
 }
 
-func (me *webAppGoals) readValidPostDateTime(text string) time.Time {
+func (me *webAppGoals) inputValidPostDateTime(text string) time.Time {
 	var postDateTime, postDateTimeError = parseSmartProgressDateTime(text)
 	var createWebError = func() webError {
 		return webError{
@@ -142,7 +146,18 @@ func (me *webAppGoals) readValidPostDateTime(text string) time.Time {
 	return postDateTime
 }
 
-func (me *webAppGoals) checkPostAvailable(goalId string, postDateTimeText string) bool {
+func (me *webAppGoals) inputCheckAdminPassword(request *http.Request) bool {
+	if me.adminPassword == "" {
+		return false
+	}
+	var adminPassword, _ = request.Cookie(cookieKeyAdminPassword)
+	if adminPassword != nil {
+		return me.adminPassword == adminPassword.Value
+	}
+	return false
+}
+
+func (me *webAppGoals) checkPostAvailableByDateTime(goalId string, postDateTimeText string) bool {
 	var postDateTime, postDateTimeError = parseSmartProgressDateTime(postDateTimeText)
 	assertCondition(nil == postDateTimeError, func() webError {
 		return webError{
@@ -150,15 +165,29 @@ func (me *webAppGoals) checkPostAvailable(goalId string, postDateTimeText string
 			http.StatusBadRequest,
 		}
 	})
-	var postFileName = postDateTime.Format(storedGoalFileTimeFormat) + ".json"
+	var fileName = postDateTime.Format(storedGoalFileTimeFormat)
+	return me.getAvailablePosts(goalId)[fileName]
+}
+
+func (me *webAppGoals) getAvailablePosts(goalId string) (fileNames map[string]bool) {
 	var availablePostsText = readTextFile(
 		filepath.Join(me.savedGoalsPath, goalId, "available-posts.txt"),
 	)
 	var availablePosts = strings.Split(availablePostsText, "\n")
+	fileNames = make(map[string]bool, len(availablePosts))
 	for _, availablePost := range availablePosts {
-		if strings.TrimSpace(availablePost) == postFileName {
-			return true
+		availablePost = strings.TrimSpace(availablePost)
+		if len(availablePost) > 0 {
+			fileNames[availablePost] = true
 		}
 	}
-	return false
+	return
+}
+
+func (me *webAppGoals) getAdminPassword(request *http.Request) string {
+	var adminPassword, _ = request.Cookie("adminPassword")
+	if adminPassword != nil {
+		return adminPassword.Value
+	}
+	return ""
 }
