@@ -80,11 +80,6 @@ func getFileNameWithoutExtension(filePath string) string {
 	return strings.TrimSuffix(fileName, extension)
 }
 
-func getFilePathWithoutExtension(filePath string) string {
-	var extension = filepath.Ext(filePath)
-	return strings.TrimSuffix(filePath, extension)
-}
-
 func checkFileExists(filePath string) bool {
 	_, err := os.Stat(filePath)
 	return err == nil
