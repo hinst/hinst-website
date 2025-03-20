@@ -1,12 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"slices"
 	"strings"
+
+	"github.com/goccy/go-json"
 
 	"github.com/hinst/hinst-website/file_mode"
 )

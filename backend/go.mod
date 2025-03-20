@@ -2,4 +2,7 @@ module github.com/hinst/hinst-website
 
 go 1.24.0
 
-require golang.org/x/text v0.21.0
+require (
+	github.com/goccy/go-json v0.10.5
+	golang.org/x/text v0.21.0
+)
