@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/lodash": "^4.17.16",
     "@types/node": "^22.13.10",
     "parcel": "^2.13.3",
@@ -19,6 +20,7 @@
   },
   "dependencies": {
     "@types/react-dom": "^19.0.4",
+    "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "minstyle.io": "^2.0.2",
     "react": "^19.0.0",

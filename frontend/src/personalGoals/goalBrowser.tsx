@@ -7,6 +7,7 @@ import { API_URL } from '../global';
 import { translateGoalTitle } from './goalInfo';
 import { DisplayWidthContext, LanguageContext } from '../context';
 import { Calendar } from 'react-feather';
+import Cookie from 'js-cookie';
 
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
@@ -53,8 +54,9 @@ export default function GoalBrowser(props: {
 	}, [activePostDate]);
 
 	useEffect(() => {
-		const components = [goalTitle, activePostDate.slice(0, '2025-03-10'.length)]
-			.filter(s => s.length);
+		const allEnabled = Cookie.get('allGoalPostsEnabled') === '1';
+		const dateText = allEnabled ? activePostDate : activePostDate.slice(0, '2025-03-10'.length);
+		const components = [goalTitle, dateText].filter(s => s.length);
 		props.setPageTitle(components.join(' • '));
 	}, [goalTitle, activePostDate]);
 
