@@ -16,7 +16,6 @@ type webAppGoals struct {
 	savedGoalsPath        string
 	goalIdStringMatcher   *regexp.Regexp
 	goalDateStringMatcher *regexp.Regexp
-	adminPassword         string
 }
 
 const savedGoalHeaderFileName = "_header.json"
@@ -25,7 +24,6 @@ const cookieKeyAdminPassword = "adminPassword"
 func (me *webAppGoals) init() []namedWebFunction {
 	me.goalIdStringMatcher = regexp.MustCompile(`^\d{1,10}$`)
 	me.goalDateStringMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$`)
-	me.adminPassword = readTextFile("./adminPassword.txt")
 	return []namedWebFunction{
 		{"/api/goals", me.getGoals},
 		{"/api/goal", me.getGoal},
@@ -168,12 +166,13 @@ func (me *webAppGoals) inputValidPostDateTime(text string) time.Time {
 }
 
 func (me *webAppGoals) inputCheckAdminPassword(request *http.Request) bool {
-	if me.adminPassword == "" {
+	var actualAdminPassword = me.getAdminPassword()
+	if actualAdminPassword == "" {
 		return false
 	}
 	var adminPassword, _ = request.Cookie(cookieKeyAdminPassword)
 	if adminPassword != nil {
-		return me.adminPassword == adminPassword.Value
+		return adminPassword.Value == actualAdminPassword
 	}
 	return false
 }
@@ -205,10 +204,6 @@ func (me *webAppGoals) getAvailablePosts(goalId string) (fileNames map[string]bo
 	return
 }
 
-func (me *webAppGoals) getAdminPassword(request *http.Request) string {
-	var adminPassword, _ = request.Cookie("adminPassword")
-	if adminPassword != nil {
-		return adminPassword.Value
-	}
-	return ""
+func (me *webAppGoals) getAdminPassword() string {
+	return os.Getenv("ADMIN_PASSWORD")
 }
