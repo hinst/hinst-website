@@ -24,7 +24,7 @@ func readJsonFiles[T any](filePaths []string, threadCount int) (items []*T) {
 		filePath string
 		index    int
 	}
-	var inputs = make(chan filePathItem, 1)
+	var inputs = make(chan filePathItem)
 	var ready = make(chan struct{}, threadCount)
 	items = make([]*T, len(filePaths))
 	var reader = func() {
