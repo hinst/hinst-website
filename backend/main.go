@@ -3,9 +3,12 @@ package main
 import (
 	"flag"
 	"log"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	godotenv.Load()
 	var modePointer = flag.String("mode", "web", "")
 	var wwwPointer = flag.String("www", "./www", "")
 	var allowOriginPointer = flag.String("allowOrigin", "http://localhost:1234", "")
