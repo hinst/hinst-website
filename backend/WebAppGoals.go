@@ -114,6 +114,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	var fileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
 	var filePath = filepath.Join(me.savedGoalsPath, fileName)
 	var post = readJsonFile(filePath, &smartPostExtended{})
+	post.FileName = getFileNameWithoutExtension(fileName)
 
 	var requestedLanguage = getWebLanguage(request)
 	var translatedFilePath = translatorPresets.getTranslatedFilePath(filePath, requestedLanguage)
