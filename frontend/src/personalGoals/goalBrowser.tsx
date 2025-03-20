@@ -18,6 +18,8 @@ export default function GoalBrowser(props: {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const activePostDate = searchParams.get('activePostDate') || '';
 
+	const [goalTitle, setGoalTitle] = useState('');
+
 	function isFullMode() {
 		return displayWidth >= 700;
 	}
@@ -36,8 +38,7 @@ export default function GoalBrowser(props: {
 		const response = await fetch(API_URL + '/goal?id=' + encodeURIComponent(goalId));
 		if (response.ok) {
 			const goalHeader: GoalHeader = await response.json();
-			const goalTitle = translateGoalTitle(currentLanguage, goalHeader.title);
-			props.setPageTitle(goalTitle);
+			setGoalTitle(translateGoalTitle(currentLanguage, goalHeader.title));
 		}
 	}
 
@@ -50,6 +51,12 @@ export default function GoalBrowser(props: {
 			setCalendarEnabled(false);
 		setTimeout(() => setCalendarTransition('transform 0.3s'));
 	}, [activePostDate]);
+
+	useEffect(() => {
+		const components = [goalTitle, activePostDate.slice(0, '2025-03-10'.length)]
+			.filter(s => s.length);
+		props.setPageTitle(components.join(' • '));
+	}, [goalTitle, activePostDate]);
 
 	function getWideLayout() {
 		return <div style={{display: 'flex', gap: 20, minHeight: 0}}>
