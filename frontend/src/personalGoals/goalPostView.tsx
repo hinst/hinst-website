@@ -50,7 +50,7 @@ export default function GoalPostView(props: {
 						style={{display: 'flex', alignItems: 'center', gap: 8}}
 					>
 						<div><Info/></div>
-						<div>This text was automatically converted to {postData.languageName} language using AI translator tool.</div>
+						<div>This text was automatically translated to {postData.languageName} language by LLM tool.</div>
 					  </div>
 					: undefined
 				}
