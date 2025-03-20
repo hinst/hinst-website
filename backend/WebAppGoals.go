@@ -179,20 +179,8 @@ func (me *webAppGoals) inputCheckAdminPassword(request *http.Request) bool {
 	return false
 }
 
-func (me *webAppGoals) checkPostAvailableByDateTime(goalId string, postDateTimeText string) bool {
-	var postDateTime, postDateTimeError = parseSmartProgressDate(postDateTimeText)
-	assertCondition(nil == postDateTimeError, func() webError {
-		return webError{
-			"Need valid postDateTime. Format: " + smartProgressTimeFormat + "; input: " + postDateTimeText,
-			http.StatusBadRequest,
-		}
-	})
-	var fileName = postDateTime.Format(storedGoalFileTimeFormat)
-	return me.getAvailablePosts(goalId)[fileName]
-}
-
-func (me *webAppGoals) getAvailablePosts(goalId string) (fileNames map[string]bool) {
-	fileNames = make(map[string]bool)
+func (me *webAppGoals) getAvailablePosts(goalId string) (dates map[string]bool) {
+	dates = make(map[string]bool)
 	var publicPostsFilePath = filepath.Join(me.savedGoalsPath, goalId, publicPostsFileName)
 	if !checkFileExists(publicPostsFilePath) {
 		return
@@ -202,7 +190,7 @@ func (me *webAppGoals) getAvailablePosts(goalId string) (fileNames map[string]bo
 	for _, availablePost := range availablePosts {
 		availablePost = strings.TrimSpace(availablePost)
 		if len(availablePost) > 0 {
-			fileNames[availablePost] = true
+			dates[availablePost] = true
 		}
 	}
 	return
