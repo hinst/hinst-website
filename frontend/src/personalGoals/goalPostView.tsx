@@ -76,7 +76,7 @@ export default function GoalPostView(props: {
 						gap: 10,
 					}}
 				>
-					{images.map(image => <GoalImage data={image} />)}
+					{images.map(image => <GoalImage key={image} data={image} />)}
 				</div>
 			</div>
 			: undefined}
