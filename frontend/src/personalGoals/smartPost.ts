@@ -17,7 +17,6 @@ export interface SmartPost {
 }
 
 export interface SmartPostExtended extends SmartPost {
-    fileName: string;
     isAutoTranslated: boolean;
     languageName?: string;
     languageNamePending?: string;

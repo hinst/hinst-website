@@ -19,6 +19,7 @@ type webAppGoals struct {
 }
 
 const savedGoalHeaderFileName = "_header.json"
+const publicPostsFileName = "public-posts.txt"
 const cookieKeyAdminPassword = "adminPassword"
 
 func (me *webAppGoals) init() []namedWebFunction {
@@ -95,7 +96,9 @@ func (me *webAppGoals) getGoalPostFiles(goalId string, allEnabled bool) (filePat
 			isAllowed = true
 		} else {
 			var fileNameBase = getFileNameWithoutExtension(file.Name())
-			isAllowed = allowedPosts[fileNameBase]
+			var date = assertResultError(parseStoredGoalFileDate(fileNameBase))
+			var dateText = date.Format(storedGoalFileTimeFormat)
+			isAllowed = allowedPosts[dateText]
 		}
 		if !isAllowed {
 			continue
@@ -112,7 +115,6 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	var fileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
 	var filePath = filepath.Join(me.savedGoalsPath, fileName)
 	var post = readJsonFile(filePath, &smartPostExtended{})
-	post.FileName = getFileNameWithoutExtension(fileName)
 
 	var requestedLanguage = getWebLanguage(request)
 	var translatedFilePath = translatorPresets.getTranslatedFilePath(filePath, requestedLanguage)
@@ -154,7 +156,7 @@ func (me *webAppGoals) inputValidGoalIdString(goalId string) string {
 }
 
 func (me *webAppGoals) inputValidPostDateTime(text string) time.Time {
-	var postDateTime, postDateTimeError = parseSmartProgressDateTime(text)
+	var postDateTime, postDateTimeError = parseSmartProgressDate(text)
 	var createWebError = func() webError {
 		return webError{
 			"Need valid postDateTime. Format: " + smartProgressTimeFormat,
@@ -178,7 +180,7 @@ func (me *webAppGoals) inputCheckAdminPassword(request *http.Request) bool {
 }
 
 func (me *webAppGoals) checkPostAvailableByDateTime(goalId string, postDateTimeText string) bool {
-	var postDateTime, postDateTimeError = parseSmartProgressDateTime(postDateTimeText)
+	var postDateTime, postDateTimeError = parseSmartProgressDate(postDateTimeText)
 	assertCondition(nil == postDateTimeError, func() webError {
 		return webError{
 			"Need valid postDateTime. Format: " + smartProgressTimeFormat + "; input: " + postDateTimeText,
@@ -190,11 +192,13 @@ func (me *webAppGoals) checkPostAvailableByDateTime(goalId string, postDateTimeT
 }
 
 func (me *webAppGoals) getAvailablePosts(goalId string) (fileNames map[string]bool) {
-	var availablePostsText = readTextFile(
-		filepath.Join(me.savedGoalsPath, goalId, "available-posts.txt"),
-	)
+	fileNames = make(map[string]bool)
+	var publicPostsFilePath = filepath.Join(me.savedGoalsPath, goalId, publicPostsFileName)
+	if !checkFileExists(publicPostsFilePath) {
+		return
+	}
+	var availablePostsText = readTextFile(publicPostsFilePath)
 	var availablePosts = strings.Split(availablePostsText, "\n")
-	fileNames = make(map[string]bool, len(availablePosts))
 	for _, availablePost := range availablePosts {
 		availablePost = strings.TrimSpace(availablePost)
 		if len(availablePost) > 0 {
