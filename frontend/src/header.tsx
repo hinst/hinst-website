@@ -13,7 +13,11 @@ export default function Header(props: { title: string }) {
 				src={icon}
 				width={42}
 				height={42}
-				style={{ borderRadius: '50%' }}
+				style={{
+					width: 42,
+					height: 42,
+					borderRadius: '50%',
+				}}
 				alt='icon'
 				className='hover-outline'
 			/>

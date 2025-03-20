@@ -71,21 +71,41 @@ func (me *webAppGoals) extendHeader(goalHeader *goalHeaderExtended) {
 
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("id"))
-	var goalDirectoryPath = filepath.Join(me.savedGoalsPath, goalId)
-	var fileNames = assertResultError(os.ReadDir(goalDirectoryPath))
-	sortFilesByName(fileNames)
-	var filePaths = make([]string, 0, len(fileNames))
-	var allowedPosts = me.getAvailablePosts(goalId)
-	for _, file := range fileNames {
-		var fileNameBase = getFileNameWithoutExtension(file.Name())
-		if GoalFileNameMatcher.MatchString(file.Name()) && (allowedPosts[fileNameBase] || true) {
-			var filePath = filepath.Join(me.savedGoalsPath, goalId, file.Name())
-			filePaths = append(filePaths, filePath)
-		}
-	}
+	var allGoalPostsEnabled, _ = request.Cookie("allGoalPostsEnabled")
+	var allEnabled = me.inputCheckAdminPassword(request) &&
+		allGoalPostsEnabled != nil && allGoalPostsEnabled.Value == "1"
+	var filePaths = me.getGoalPostFiles(goalId, allEnabled)
 	var posts = readJsonFiles[smartPostHeader](filePaths, runtime.NumCPU())
 	setCacheAge(response, time.Minute)
 	response.Write(encodeJson(posts))
+}
+
+func (me *webAppGoals) getGoalPostFiles(goalId string, allEnabled bool) (filePaths []string) {
+	var goalDirectoryPath = filepath.Join(me.savedGoalsPath, goalId)
+	var fileNames = assertResultError(os.ReadDir(goalDirectoryPath))
+	sortFilesByName(fileNames)
+	var allowedPosts = make(map[string]bool)
+	if !allEnabled {
+		allowedPosts = me.getAvailablePosts(goalId)
+	}
+	for _, file := range fileNames {
+		if !GoalFileNameMatcher.MatchString(file.Name()) {
+			continue
+		}
+		var isAllowed = false
+		if allEnabled {
+			isAllowed = true
+		} else {
+			var fileNameBase = getFileNameWithoutExtension(file.Name())
+			isAllowed = allowedPosts[fileNameBase]
+		}
+		if !isAllowed {
+			continue
+		}
+		var filePath = filepath.Join(me.savedGoalsPath, goalId, file.Name())
+		filePaths = append(filePaths, filePath)
+	}
+	return
 }
 
 func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.Request) {
