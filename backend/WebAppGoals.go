@@ -97,7 +97,7 @@ func (me *webAppGoals) getGoalPostFiles(goalId string, allEnabled bool) (filePat
 		} else {
 			var fileNameBase = getFileNameWithoutExtension(file.Name())
 			var date = assertResultError(parseStoredGoalFileDate(fileNameBase))
-			var dateText = date.Format(storedGoalFileTimeFormat)
+			var dateText = date.Format(smartProgressTimeFormat)
 			isAllowed = allowedPosts[dateText]
 		}
 		if !isAllowed {
