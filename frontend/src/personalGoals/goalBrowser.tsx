@@ -2,12 +2,12 @@ import { useParams, useSearchParams } from 'react-router';
 import GoalCalendarPanel from './goalCalendarPanel';
 import { GoalHeader, PostHeader } from './goalHeader';
 import { useContext, useEffect, useState } from 'react';
-import GoalPostView from './goalPostView';
 import { API_URL } from '../global';
 import { translateGoalTitle } from './goalInfo';
 import { DisplayWidthContext, LanguageContext } from '../context';
 import { Calendar } from 'react-feather';
 import Cookie from 'js-cookie';
+import GoalPostPanel from './goalPostPanel';
 
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
@@ -78,13 +78,13 @@ export default function GoalBrowser(props: {
 			<div style={{
 				display: 'flex',
 				overflowY: 'auto',
-				flexGrow: 1
+				flexGrow: 1,
+				maxWidth: 1000,
 			}}>
 				{ activePostDate
-					? <GoalPostView
+					? <GoalPostPanel
 						goalId={goalId}
 						postDate={activePostDate}
-						style={{maxWidth: 1000}}
 					/>
 					: undefined }
 			</div>
@@ -163,13 +163,13 @@ export default function GoalBrowser(props: {
 				style={{
 					display: 'flex',
 					overflowY: 'auto',
+					maxWidth: 1000,
 				}}
 			>
 				{ activePostDate
-					? <GoalPostView
+					? <GoalPostPanel
 						goalId={goalId}
 						postDate={activePostDate}
-						style={{maxWidth: 1000}}
 					/>
 					: undefined }
 			</div>
