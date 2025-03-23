@@ -6,20 +6,27 @@ import (
 )
 
 type program struct {
+	netAddress       string
 	webFilesPath     string
 	savedGoalsPath   string
 	allowOrigin      string
 	translatorApiUrl string
 }
 
-func (me *program) init() *program {
-	me.webFilesPath = "./www"
-	me.savedGoalsPath = "./saved-goals"
+var programTemplate = program{
+	netAddress:       ":8080",
+	webFilesPath:     "./www",
+	savedGoalsPath:   "./saved-goals",
+	allowOrigin:      "http://localhost:1234",
+	translatorApiUrl: "http://localhost:1235",
+}
+
+func (me *program) create() *program {
+	*me = programTemplate
 	return me
 }
 
 func (me *program) runWeb() {
-	const netAddress = ":8080"
 	var webApp = &webApp{
 		savedGoalsPath: me.savedGoalsPath,
 		allowOrigin:    me.allowOrigin,
@@ -27,8 +34,9 @@ func (me *program) runWeb() {
 	webApp.init()
 	var fileServer = http.FileServer(http.Dir(me.webFilesPath))
 	http.Handle(webApp.webPath+"/", http.StripPrefix(webApp.webPath+"/", fileServer))
-	log.Printf("Starting: netAddress=%v, webPath=%v, filesPath=%v", netAddress, webApp.webPath, me.webFilesPath)
-	assertError(http.ListenAndServe(netAddress, nil))
+	log.Printf("Starting: netAddress=%v, webPath=%v, filesPath=%v",
+		me.netAddress, webApp.webPath, me.webFilesPath)
+	assertError(http.ListenAndServe(me.netAddress, nil))
 }
 
 func (me *program) runTranslate() {

@@ -10,19 +10,19 @@ import (
 func main() {
 	godotenv.Load()
 	var modePointer = flag.String("mode", "web", "")
-	var wwwPointer = flag.String("www", "./www", "")
-	var allowOriginPointer = flag.String("allowOrigin", "http://localhost:1234", "")
-	var translatorApiPointer = flag.String("translatorApi", "http://localhost:1235", "")
+	var wwwPointer = flag.String("www", programTemplate.webFilesPath, "")
+	var allowOriginPointer = flag.String("allowOrigin", programTemplate.allowOrigin, "")
+	var translatorApiPointer = flag.String("translatorApi", programTemplate.translatorApiUrl, "")
 	flag.Parse()
 
 	switch *modePointer {
 	case "web":
-		var theProgram = new(program).init()
+		var theProgram = new(program).create()
 		theProgram.webFilesPath = *wwwPointer
 		theProgram.allowOrigin = *allowOriginPointer
 		theProgram.runWeb()
 	case "translate":
-		var theProgram = new(program).init()
+		var theProgram = new(program).create()
 		theProgram.translatorApiUrl = *translatorApiPointer
 		theProgram.runTranslate()
 	default:
