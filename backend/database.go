@@ -2,8 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -68,10 +70,15 @@ func (me *Database) migrate() {
 		if checkFileExists(publicPostsPath) {
 			var publicPostsText = readTextFile(publicPostsPath)
 			var publicPosts = strings.Split(publicPostsText, "\n")
-			for _, publicPostDateTimeText := range publicPosts {
-				publicPostDateTimeText = strings.TrimSpace(publicPostDateTimeText)
-				var publicPostDateTime = assertResultError(parseSmartProgressDate(publicPostDateTimeText))
-				publicPostDateTime = publicPostDateTime
+			for i := range publicPosts {
+				publicPosts[i] = strings.TrimSpace(publicPosts[i])
+			}
+			var fileNames = getGoalFiles(goalDirectory)
+			for _, fileName := range fileNames {
+				var dateTime = assertResultError(parseStoredGoalFileDate(getFileNameWithoutExtension(fileName)))
+				var dateTimeText = dateTime.Format(smartProgressTimeFormat)
+				var isPublic = slices.Contains(publicPosts, dateTimeText)
+				log.Printf("%v %v %v\n", goalId, dateTimeText, isPublic)
 			}
 		}
 	}
