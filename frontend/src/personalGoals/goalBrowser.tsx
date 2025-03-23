@@ -9,6 +9,8 @@ import { Calendar } from 'react-feather';
 import Cookie from 'js-cookie';
 import GoalPostPanel from './goalPostPanel';
 
+const ARTICLE_WIDTH = 1000;
+
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
 }) {
@@ -79,7 +81,7 @@ export default function GoalBrowser(props: {
 				display: 'flex',
 				overflowY: 'auto',
 				flexGrow: 1,
-				maxWidth: 1000,
+				maxWidth: ARTICLE_WIDTH,
 			}}>
 				{ activePostDate
 					? <GoalPostPanel
@@ -163,7 +165,7 @@ export default function GoalBrowser(props: {
 				style={{
 					display: 'flex',
 					overflowY: 'auto',
-					maxWidth: 1000,
+					maxWidth: ARTICLE_WIDTH,
 				}}
 			>
 				{ activePostDate
