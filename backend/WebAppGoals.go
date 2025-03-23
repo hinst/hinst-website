@@ -14,7 +14,6 @@ import (
 
 type webAppGoals struct {
 	savedGoalsPath        string
-	goalIdStringMatcher   *regexp.Regexp
 	goalDateStringMatcher *regexp.Regexp
 }
 
@@ -23,7 +22,6 @@ const publicPostsFileName = "public-posts.txt"
 const cookieKeyAdminPassword = "adminPassword"
 
 func (me *webAppGoals) init() []namedWebFunction {
-	me.goalIdStringMatcher = regexp.MustCompile(`^\d{1,10}$`)
 	me.goalDateStringMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$`)
 	return []namedWebFunction{
 		{"/api/goals", me.getGoals},
@@ -144,7 +142,7 @@ func (me *webAppGoals) getGoalPostImages(response http.ResponseWriter, request *
 }
 
 func (me *webAppGoals) checkValidGoalIdString(goalId string) bool {
-	return me.goalIdStringMatcher.MatchString(goalId)
+	return goalIdStringMatcher.MatchString(goalId)
 }
 
 func (me *webAppGoals) inputValidGoalIdString(goalId string) string {

@@ -9,23 +9,26 @@ import (
 
 func main() {
 	godotenv.Load()
-	var modePointer = flag.String("mode", "web", "")
-	var wwwPointer = flag.String("www", programTemplate.webFilesPath, "")
-	var allowOriginPointer = flag.String("allowOrigin", programTemplate.allowOrigin, "")
-	var translatorApiPointer = flag.String("translatorApi", programTemplate.translatorApiUrl, "")
+	var modePtr = flag.String("mode", "web", "")
+	var wwwPtr = flag.String("www", programTemplate.webFilesPath, "")
+	var allowOriginPtr = flag.String("allowOrigin", programTemplate.allowOrigin, "")
+	var translatorApiPtr = flag.String("translatorApi", programTemplate.translatorApiUrl, "")
 	flag.Parse()
 
-	switch *modePointer {
+	switch *modePtr {
 	case "web":
 		var theProgram = new(program).create()
-		theProgram.webFilesPath = *wwwPointer
-		theProgram.allowOrigin = *allowOriginPointer
+		theProgram.webFilesPath = *wwwPtr
+		theProgram.allowOrigin = *allowOriginPtr
 		theProgram.runWeb()
 	case "translate":
 		var theProgram = new(program).create()
-		theProgram.translatorApiUrl = *translatorApiPointer
-		theProgram.runTranslate()
+		theProgram.translatorApiUrl = *translatorApiPtr
+		theProgram.translate()
+	case "migrate":
+		var theProgram = new(program).create()
+		theProgram.migrate()
 	default:
-		log.Fatalf("Unknown mode: %v", *modePointer)
+		log.Fatalf("Unknown mode: %v", *modePtr)
 	}
 }

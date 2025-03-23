@@ -11,6 +11,7 @@ type program struct {
 	savedGoalsPath   string
 	allowOrigin      string
 	translatorApiUrl string
+	database         *Database
 }
 
 var programTemplate = program{
@@ -23,10 +24,13 @@ var programTemplate = program{
 
 func (me *program) create() *program {
 	*me = programTemplate
+	me.database = new(Database)
 	return me
 }
 
 func (me *program) runWeb() {
+	me.database.init(me.savedGoalsPath + "/hinst-website.db")
+
 	var webApp = &webApp{
 		savedGoalsPath: me.savedGoalsPath,
 		allowOrigin:    me.allowOrigin,
@@ -39,11 +43,16 @@ func (me *program) runWeb() {
 	assertError(http.ListenAndServe(me.netAddress, nil))
 }
 
-func (me *program) runTranslate() {
+func (me *program) translate() {
 	var translator = translatorPresets
 	if me.translatorApiUrl != "" {
 		translator.apiUrl = me.translatorApiUrl + "/v1/chat/completions"
 	}
 	translator.savedGoalsPath = me.savedGoalsPath
 	translator.run()
+}
+
+func (me *program) migrate() {
+	me.database.init(me.savedGoalsPath)
+	me.database.migrate()
 }
