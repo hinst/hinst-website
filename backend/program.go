@@ -7,9 +7,9 @@ import (
 
 type program struct {
 	webFilesPath     string
+	savedGoalsPath   string
 	allowOrigin      string
 	translatorApiUrl string
-	savedGoalsPath   string
 }
 
 func (me *program) init() *program {
