@@ -54,19 +54,6 @@ func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Reque
 	response.Write(encodeJson(goal))
 }
 
-func (me *webAppGoals) extendHeader(goalHeader *goalHeaderExtended) {
-	var goalDirectoryPath = filepath.Join(me.savedGoalsPath, goalHeader.Id)
-	var files = assertResultError(os.ReadDir(goalDirectoryPath))
-	sortFilesByName(files)
-	for i := len(files) - 1; i >= 0; i-- {
-		if goalFileNameMatcher.MatchString(files[i].Name()) {
-			var lastFileName = files[i].Name()
-			goalHeader.LastPostDate = lastFileName[:len("2025-01-02")]
-			break
-		}
-	}
-}
-
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("id"))
 	var allGoalPostsEnabled, _ = request.Cookie("allGoalPostsEnabled")
