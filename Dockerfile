@@ -14,7 +14,7 @@ RUN rm -rf .parcel-cache
 RUN npm install
 RUN npm run build -- --public-url=/hinst-website
 
-FROM debian:bookworm
+FROM --platform=linux/arm64 debian:bookworm
 COPY --from=backend /app/hinst-website /app/hinst-website
 COPY --from=frontend /app/dist /app/www
 WORKDIR /app
