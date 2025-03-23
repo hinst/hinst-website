@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS goalPostVisibility (
+CREATE TABLE IF NOT EXISTS goalPosts (
 	goalId INTEGER NOT NULL,
 	dateTime INTEGER NOT NULL,
 	isPublic INTEGER,

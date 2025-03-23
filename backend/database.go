@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"log"
 	"os"
 	"path/filepath"
 	"slices"
@@ -31,11 +30,18 @@ func (me *Database) init(dataDirectory string) {
 	defer me.close(db)
 	assertError(db.Ping())
 	assertResultError(db.Exec(DB_SCHEMA))
+	me.collectGarbage()
 }
 
 func (me *Database) open() *sql.DB {
-	return assertResultError(sql.Open("sqlite3", "file:"+me.getFilePath()+
-		"?_journal_mode=WAL&_busy_timeout="+strconv.Itoa(int(DB_TIMEOUT))))
+	const journalMode = "_journal_mode=WAL"
+	var busyTimeout = "_busy_timeout=" + strconv.Itoa(int(DB_TIMEOUT))
+	return assertResultError(sql.Open(
+		"sqlite3",
+		"file:"+me.getFilePath()+
+			"?"+journalMode+
+			"&"+busyTimeout,
+	))
 }
 
 func (me *Database) close(db *sql.DB) *sql.DB {
@@ -78,8 +84,19 @@ func (me *Database) migrate() {
 				var dateTime = assertResultError(parseStoredGoalFileDate(getFileNameWithoutExtension(fileName)))
 				var dateTimeText = dateTime.Format(smartProgressTimeFormat)
 				var isPublic = slices.Contains(publicPosts, dateTimeText)
-				log.Printf("%v %v %v\n", goalId, dateTimeText, isPublic)
+				assertResultError(
+					db.Exec("INSERT INTO goalPosts (goalId, dateTime, isPublic) VALUES (?, ?, ?) RETURNING rowid",
+						goalId, dateTime.UTC().Unix(), isPublic))
 			}
 		}
 	}
+}
+
+func (me *Database) collectGarbage() {
+	var db = me.open()
+	defer me.close(db)
+
+	assertResultError(db.Exec("PRAGMA wal_checkpoint(TRUNCATE);"))
+	assertResultError(db.Exec("VACUUM;"))
+	assertResultError(db.Exec("PRAGMA wal_checkpoint(TRUNCATE);"))
 }
