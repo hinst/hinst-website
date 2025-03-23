@@ -1,7 +1,7 @@
-FROM golang AS backend
+FROM --platform=linux/arm64 golang AS backend
 ADD backend /app
 WORKDIR /app
-ENV GOARCH=arm64
+ENV CGO_ENABLED=1
 RUN go mod download
 RUN go build
 
