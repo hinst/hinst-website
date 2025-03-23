@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"sort"
 	"strings"
 	"time"
 
@@ -58,7 +59,7 @@ func (me *webAppGoals) extendHeader(goalHeader *goalHeaderExtended) {
 	var files = assertResultError(os.ReadDir(goalDirectoryPath))
 	sortFilesByName(files)
 	for i := len(files) - 1; i >= 0; i-- {
-		if GoalFileNameMatcher.MatchString(files[i].Name()) {
+		if goalFileNameMatcher.MatchString(files[i].Name()) {
 			var lastFileName = files[i].Name()
 			goalHeader.LastPostDate = lastFileName[:len("2025-01-02")]
 			break
@@ -78,22 +79,19 @@ func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.
 }
 
 func (me *webAppGoals) getGoalPostFiles(goalId string, allEnabled bool) (filePaths []string) {
-	var goalDirectoryPath = filepath.Join(me.savedGoalsPath, goalId)
-	var fileNames = assertResultError(os.ReadDir(goalDirectoryPath))
-	sortFilesByName(fileNames)
+	var goalDirectory = filepath.Join(me.savedGoalsPath, goalId)
+	var fileNames = getGoalFiles(goalDirectory)
+	sort.Strings(fileNames)
 	var allowedPosts = make(map[string]bool)
 	if !allEnabled {
 		allowedPosts = me.getAvailablePosts(goalId)
 	}
-	for _, file := range fileNames {
-		if !GoalFileNameMatcher.MatchString(file.Name()) {
-			continue
-		}
+	for _, fileName := range fileNames {
 		var isAllowed = false
 		if allEnabled {
 			isAllowed = true
 		} else {
-			var fileNameBase = getFileNameWithoutExtension(file.Name())
+			var fileNameBase = getFileNameWithoutExtension(fileName)
 			var date = assertResultError(parseStoredGoalFileDate(fileNameBase))
 			var dateText = date.Format(smartProgressTimeFormat)
 			isAllowed = allowedPosts[dateText]
@@ -101,7 +99,7 @@ func (me *webAppGoals) getGoalPostFiles(goalId string, allEnabled bool) (filePat
 		if !isAllowed {
 			continue
 		}
-		var filePath = filepath.Join(me.savedGoalsPath, goalId, file.Name())
+		var filePath = filepath.Join(me.savedGoalsPath, goalId, fileName)
 		filePaths = append(filePaths, filePath)
 	}
 	return

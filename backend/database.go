@@ -70,8 +70,8 @@ func (me *Database) migrate() {
 			var publicPosts = strings.Split(publicPostsText, "\n")
 			for _, publicPostDateTimeText := range publicPosts {
 				publicPostDateTimeText = strings.TrimSpace(publicPostDateTimeText)
-				var publicPostDateTime = parseSmartProgressDate(publicPostDateTimeText)
-				 
+				var publicPostDateTime = assertResultError(parseSmartProgressDate(publicPostDateTimeText))
+				publicPostDateTime = publicPostDateTime
 			}
 		}
 	}

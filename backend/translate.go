@@ -43,7 +43,7 @@ func (me *translator) translateGoal(directoryPath string) {
 	))
 	var files = assertResultError(os.ReadDir(directoryPath))
 	for _, file := range files {
-		if !file.IsDir() && GoalFileNameMatcher.MatchString(file.Name()) {
+		if !file.IsDir() && goalFileNameMatcher.MatchString(file.Name()) {
 			var filePath = filepath.Join(directoryPath, file.Name())
 			me.translateFile(filePath)
 		}
