@@ -36,12 +36,8 @@ func (me *Database) init(dataDirectory string) {
 func (me *Database) open() *sql.DB {
 	const journalMode = "_journal_mode=WAL"
 	var busyTimeout = "_busy_timeout=" + strconv.Itoa(int(DB_TIMEOUT))
-	return assertResultError(sql.Open(
-		"sqlite3",
-		"file:"+me.getFilePath()+
-			"?"+journalMode+
-			"&"+busyTimeout,
-	))
+	var url = "file:" + me.getFilePath() + "?" + journalMode + "&" + busyTimeout
+	return assertResultError(sql.Open("sqlite3", url))
 }
 
 func (me *Database) close(db *sql.DB) *sql.DB {
@@ -85,11 +81,27 @@ func (me *Database) migrate() {
 				var dateTimeText = dateTime.Format(smartProgressTimeFormat)
 				var isPublic = slices.Contains(publicPosts, dateTimeText)
 				assertResultError(
-					db.Exec("INSERT INTO goalPosts (goalId, dateTime, isPublic) VALUES (?, ?, ?) RETURNING rowid",
+					db.Exec("INSERT INTO goalPosts (goalId, dateTime, isPublic) VALUES (?, ?, ?)",
 						goalId, dateTime.UTC().Unix(), isPublic))
 			}
 		}
 	}
+}
+
+func (me *Database) getAvailablePosts(goalId int) (dates map[string]bool) {
+	var db = me.open()
+	defer me.close(db)
+	var rows = assertResultError(
+		db.Query("SELECT dateTime FROM goalPosts WHERE isPublic = 1 AND goalId = ?", goalId),
+	)
+	dates = make(map[string]bool)
+	for rows.Next() {
+		var dateTimeMilliseconds int64
+		assertError(rows.Scan(&dateTimeMilliseconds))
+		var dateTime = time.Unix(dateTimeMilliseconds, 0)
+		dates[dateTime.UTC().Format(smartProgressTimeFormat)] = true
+	}
+	return
 }
 
 func (me *Database) collectGarbage() {

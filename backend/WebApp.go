@@ -3,17 +3,19 @@ package main
 import "net/http"
 
 type webApp struct {
+	db             *Database
 	savedGoalsPath string
 	allowOrigin    string
 	webPath        string
 }
 
-func (me *webApp) init() {
+func (me *webApp) init(db *Database) {
+	me.db = db
 	if me.webPath == "" {
 		me.webPath = "/hinst-website"
 	}
 	var goals = webAppGoals{savedGoalsPath: me.savedGoalsPath}
-	for _, namedWebFunction := range goals.init() {
+	for _, namedWebFunction := range goals.init(me.db) {
 		http.HandleFunc(me.webPath+namedWebFunction.Name, me.wrap(namedWebFunction.Function))
 	}
 }

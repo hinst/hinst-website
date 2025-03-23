@@ -29,13 +29,13 @@ func (me *program) create() *program {
 }
 
 func (me *program) runWeb() {
-	me.database.init(me.savedGoalsPath + "/hinst-website.db")
+	me.database.init(me.savedGoalsPath)
 
 	var webApp = &webApp{
 		savedGoalsPath: me.savedGoalsPath,
 		allowOrigin:    me.allowOrigin,
 	}
-	webApp.init()
+	webApp.init(me.database)
 	var fileServer = http.FileServer(http.Dir(me.webFilesPath))
 	http.Handle(webApp.webPath+"/", http.StripPrefix(webApp.webPath+"/", fileServer))
 	log.Printf("Starting: netAddress=%v, webPath=%v, filesPath=%v",

@@ -7,13 +7,13 @@ import (
 	"regexp"
 	"runtime"
 	"sort"
-	"strings"
 	"time"
 
 	"golang.org/x/text/language"
 )
 
 type webAppGoals struct {
+	db                    *Database
 	savedGoalsPath        string
 	goalDateStringMatcher *regexp.Regexp
 }
@@ -22,7 +22,8 @@ const savedGoalHeaderFileName = "_header.json"
 const publicPostsFileName = "public-posts.txt"
 const cookieKeyAdminPassword = "adminPassword"
 
-func (me *webAppGoals) init() []namedWebFunction {
+func (me *webAppGoals) init(db *Database) []namedWebFunction {
+	me.db = db
 	me.goalDateStringMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$`)
 	return []namedWebFunction{
 		{"/api/goals", me.getGoals},
@@ -71,7 +72,7 @@ func (me *webAppGoals) getGoalPostFiles(goalId string, allEnabled bool) (filePat
 	sort.Strings(fileNames)
 	var allowedPosts = make(map[string]bool)
 	if !allEnabled {
-		allowedPosts = me.getAvailablePosts(goalId)
+		allowedPosts = me.db.getAvailablePosts(getIntFromString(goalId))
 	}
 	for _, fileName := range fileNames {
 		var isAllowed = false
@@ -160,23 +161,6 @@ func (me *webAppGoals) inputCheckAdminPassword(request *http.Request) bool {
 		return adminPassword.Value == actualAdminPassword
 	}
 	return false
-}
-
-func (me *webAppGoals) getAvailablePosts(goalId string) (dates map[string]bool) {
-	dates = make(map[string]bool)
-	var publicPostsFilePath = filepath.Join(me.savedGoalsPath, goalId, publicPostsFileName)
-	if !checkFileExists(publicPostsFilePath) {
-		return
-	}
-	var availablePostsText = readTextFile(publicPostsFilePath)
-	var availablePosts = strings.Split(availablePostsText, "\n")
-	for _, availablePost := range availablePosts {
-		availablePost = strings.TrimSpace(availablePost)
-		if len(availablePost) > 0 {
-			dates[availablePost] = true
-		}
-	}
-	return
 }
 
 func (me *webAppGoals) getAdminPassword() string {
