@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -22,13 +21,9 @@ func (me *webAppGoalsBase) getGoalPostFiles(goalId string, allEnabled bool) (fil
 	var goalDirectory = filepath.Join(me.savedGoalsPath, goalId)
 	var fileNames = getGoalFiles(goalDirectory)
 	sort.Strings(fileNames)
-	var allowedPosts = make(map[time.Time]bool)
+	var visibilities = make(map[time.Time]bool)
 	if !allEnabled {
-		var goalPostRows = me.db.getGoalPostRows(getIntFromString(goalId))
-		for _, goalPostRow := range goalPostRows {
-			allowedPosts[goalPostRow.dateTime.UTC()] = goalPostRow.isPublic
-		}
-		log.Printf("allowedPosts %v\n", allowedPosts)
+		visibilities = me.db.getGoalPostVisibilities(getIntFromString(goalId))
 	}
 	for _, fileName := range fileNames {
 		var isAllowed = false
@@ -37,7 +32,7 @@ func (me *webAppGoalsBase) getGoalPostFiles(goalId string, allEnabled bool) (fil
 		} else {
 			var fileNameBase = getFileNameWithoutExtension(fileName)
 			var date = assertResultError(parseStoredGoalFileDate(fileNameBase))
-			isAllowed = allowedPosts[date.UTC()]
+			isAllowed = visibilities[date.UTC()]
 		}
 		if !isAllowed {
 			continue
