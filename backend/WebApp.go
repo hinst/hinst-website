@@ -14,8 +14,9 @@ func (me *webApp) init(db *Database) {
 	if me.webPath == "" {
 		me.webPath = "/hinst-website"
 	}
-	var goals = webAppGoals{savedGoalsPath: me.savedGoalsPath}
-	for _, namedWebFunction := range goals.init(me.db) {
+	var webApp = new(webAppGoals)
+	webApp.savedGoalsPath = me.savedGoalsPath
+	for _, namedWebFunction := range webApp.init(me.db) {
 		http.HandleFunc(me.webPath+namedWebFunction.Name, me.wrap(namedWebFunction.Function))
 	}
 }

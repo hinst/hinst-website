@@ -6,20 +6,15 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"sort"
 	"time"
 
 	"golang.org/x/text/language"
 )
 
 type webAppGoals struct {
-	db                    *Database
-	savedGoalsPath        string
-	goalDateStringMatcher *regexp.Regexp
+	webAppGoalsBase
 }
 
-const savedGoalHeaderFileName = "_header.json"
-const publicPostsFileName = "public-posts.txt"
 const cookieKeyAdminPassword = "adminPassword"
 
 func (me *webAppGoals) init(db *Database) []namedWebFunction {
@@ -31,6 +26,7 @@ func (me *webAppGoals) init(db *Database) []namedWebFunction {
 		{"/api/goalPosts", me.getGoalPosts},
 		{"/api/goalPost", me.getGoalPost},
 		{"/api/goalPost/images", me.getGoalPostImages},
+		{"/api/goalPost/setPublic", me.setGoalPostPublic},
 	}
 }
 
@@ -62,33 +58,6 @@ func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.
 	var posts = readJsonFiles[smartPostHeader](filePaths, runtime.NumCPU())
 	setCacheAge(response, time.Minute)
 	response.Write(encodeJson(posts))
-}
-
-func (me *webAppGoals) getGoalPostFiles(goalId string, allEnabled bool) (filePaths []string) {
-	var goalDirectory = filepath.Join(me.savedGoalsPath, goalId)
-	var fileNames = getGoalFiles(goalDirectory)
-	sort.Strings(fileNames)
-	var allowedPosts = make(map[string]bool)
-	if !allEnabled {
-		allowedPosts = me.db.getAvailablePosts(getIntFromString(goalId))
-	}
-	for _, fileName := range fileNames {
-		var isAllowed = false
-		if allEnabled {
-			isAllowed = true
-		} else {
-			var fileNameBase = getFileNameWithoutExtension(fileName)
-			var date = assertResultError(parseStoredGoalFileDate(fileNameBase))
-			var dateText = date.Format(smartProgressTimeFormat)
-			isAllowed = allowedPosts[dateText]
-		}
-		if !isAllowed {
-			continue
-		}
-		var filePath = filepath.Join(me.savedGoalsPath, goalId, fileName)
-		filePaths = append(filePaths, filePath)
-	}
-	return
 }
 
 func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.Request) {
@@ -129,48 +98,5 @@ func (me *webAppGoals) getGoalPostImages(response http.ResponseWriter, request *
 	response.Write(encodeJson(post.Images))
 }
 
-func (me *webAppGoals) checkValidGoalIdString(goalId string) bool {
-	return goalIdStringMatcher.MatchString(goalId)
-}
-
-func (me *webAppGoals) inputValidGoalIdString(goalId string) string {
-	var createWebError = func() webError {
-		return webError{"Need goal id. Received: " + goalId, http.StatusBadRequest}
-	}
-	assertCondition(me.checkValidGoalIdString(goalId), createWebError)
-	return goalId
-}
-
-func (me *webAppGoals) inputValidPostDateTime(text string) time.Time {
-	var postDateTime, postDateTimeError = parseSmartProgressDate(text)
-	var createWebError = func() webError {
-		return webError{
-			"Need valid postDateTime. Format: " + smartProgressTimeFormat,
-			http.StatusBadRequest,
-		}
-	}
-	assertCondition(nil == postDateTimeError, createWebError)
-	return postDateTime
-}
-
-func (me *webAppGoals) inputCheckAdminPassword(request *http.Request) bool {
-	var actualAdminPassword = me.getAdminPassword()
-	if actualAdminPassword == "" {
-		return false
-	}
-	var adminPassword, _ = request.Cookie(cookieKeyAdminPassword)
-	if adminPassword != nil {
-		return adminPassword.Value == actualAdminPassword
-	}
-	return false
-}
-
-func (me *webAppGoals) inputCheckGoalManagerMode(request *http.Request) bool {
-	var goalManagerModeCookie, _ = request.Cookie("goalManagerMode")
-	return me.inputCheckAdminPassword(request) &&
-		goalManagerModeCookie != nil && goalManagerModeCookie.Value == "1"
-}
-
-func (me *webAppGoals) getAdminPassword() string {
-	return os.Getenv("ADMIN_PASSWORD")
+func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *http.Request) {
 }

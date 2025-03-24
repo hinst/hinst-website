@@ -12,6 +12,8 @@ const storedGoalFileTimeFormat = "2006-01-02_15-04-05"
 var goalIdStringMatcher = regexp.MustCompile(`^\d{1,10}$`)
 var goalFileNameMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d`)
 
+const savedGoalHeaderFileName = "_header.json"
+
 func parseSmartProgressDate(text string) (time.Time, error) {
 	return time.Parse(smartProgressTimeFormat, text)
 }
