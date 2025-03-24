@@ -91,17 +91,16 @@ func (me *database) migrate() {
 func (me *database) getGoalPost(goalId int, dateTime time.Time) (result *goalPostRow) {
 	var db = me.open()
 	defer me.close(db)
-	var dateTimeMilliseconds = dateTime.UTC().Unix()
-	var row = assertResultError(
+	var rows = assertResultError(
 		db.Query("SELECT * FROM goalPosts WHERE goalId = ? AND dateTime = ?",
-			goalId, dateTimeMilliseconds),
+			goalId, dateTime.UTC().Unix()),
 	)
-	if row.Next() {
-		assertError(row.Err())
+	if rows.Next() {
+		assertError(rows.Err())
 		result = new(goalPostRow)
-		result.scan(row)
+		result.scan(rows)
 	}
-	return nil
+	return
 }
 
 func (me *database) getGoalPostRows(goalId int) (goalPostRows []goalPostRow) {
@@ -114,6 +113,22 @@ func (me *database) getGoalPostRows(goalId int) (goalPostRows []goalPostRow) {
 		var row goalPostRow
 		row.scan(rows)
 		goalPostRows = append(goalPostRows, row)
+	}
+	return
+}
+
+func (me *database) getGoalPostVisibilities(goalId int) (result map[time.Time]bool) {
+	var db = me.open()
+	defer me.close(db)
+	var rows = assertResultError(
+		db.Query("SELECT dateTime, isPublic FROM goalPosts WHERE goalId = ?", goalId),
+	)
+	result = make(map[time.Time]bool)
+	for rows.Next() {
+		var dateTimeMilliseconds int64
+		var isPublic bool
+		assertError(rows.Scan(&dateTimeMilliseconds, &isPublic))
+		result[time.Unix(dateTimeMilliseconds, 0).UTC()] = isPublic
 	}
 	return
 }
