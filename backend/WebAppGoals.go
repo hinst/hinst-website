@@ -57,10 +57,8 @@ func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Reque
 
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("id"))
-	var allGoalPostsEnabled, _ = request.Cookie("allGoalPostsEnabled")
-	var allEnabled = me.inputCheckAdminPassword(request) &&
-		allGoalPostsEnabled != nil && allGoalPostsEnabled.Value == "1"
-	var filePaths = me.getGoalPostFiles(goalId, allEnabled)
+	var goalManagerMode = me.inputCheckGoalManagerMode(request)
+	var filePaths = me.getGoalPostFiles(goalId, goalManagerMode)
 	var posts = readJsonFiles[smartPostHeader](filePaths, runtime.NumCPU())
 	setCacheAge(response, time.Minute)
 	response.Write(encodeJson(posts))
@@ -99,6 +97,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	var fileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
 	var filePath = filepath.Join(me.savedGoalsPath, fileName)
 	var post = readJsonFile(filePath, &smartPostExtended{})
+	var goalManagerMode = me.inputCheckGoalManagerMode(request)
 
 	var requestedLanguage = getWebLanguage(request)
 	var translatedFilePath = translatorPresets.getTranslatedFilePath(filePath, requestedLanguage)
@@ -111,6 +110,9 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 		}
 	} else {
 		post.LanguageNamePending = getLanguageName(requestedLanguage)
+	}
+	if goalManagerMode {
+		post.IsPublic = me.db.getAvailablePosts(getIntFromString(goalId))[post.Date]
 	}
 
 	post.Images = nil
@@ -161,6 +163,12 @@ func (me *webAppGoals) inputCheckAdminPassword(request *http.Request) bool {
 		return adminPassword.Value == actualAdminPassword
 	}
 	return false
+}
+
+func (me *webAppGoals) inputCheckGoalManagerMode(request *http.Request) bool {
+	var goalManagerModeCookie, _ = request.Cookie("goalManagerMode")
+	return me.inputCheckAdminPassword(request) &&
+		goalManagerModeCookie != nil && goalManagerModeCookie.Value == "1"
 }
 
 func (me *webAppGoals) getAdminPassword() string {

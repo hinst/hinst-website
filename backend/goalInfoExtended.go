@@ -11,4 +11,5 @@ type smartPostExtended struct {
 	LanguageTag         string `json:"languageTag"`
 	LanguageName        string `json:"languageName"`
 	LanguageNamePending string `json:"languageNamePending"`
+	IsPublic            bool   `json:"isPublic"`
 }

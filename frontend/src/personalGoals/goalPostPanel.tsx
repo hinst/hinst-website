@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { SmartPostExtended, SmartPostImage } from './smartPost';
 import { API_URL } from '../global';
 import GoalPostView from './goalPostView';
+import { Tool } from 'react-feather';
 
 export default function GoalPostPanel(props: {
 	goalId: string,
@@ -38,8 +39,22 @@ export default function GoalPostPanel(props: {
 		load();
 	}, [props.goalId, props.postDate]);
 
+	function RenderGoalManagement() {
+		return <div
+			style={{
+				display: 'flex',
+				gap: 10,
+				alignItems: 'center',
+			}}
+		>
+			<Tool/>
+			<pre>public={''+ postData?.isPublic}</pre>
+		</div>;
+	}
+
 	return <div>
 		{ isLoading ? <div className='ms-loading' /> : undefined }
+		{ props.goalManagerMode ? RenderGoalManagement() : undefined }
 		{ postData ? <GoalPostView postData={postData} />: undefined }
 	</div>;
 }
