@@ -17,7 +17,7 @@ type webAppGoals struct {
 
 const cookieKeyAdminPassword = "adminPassword"
 
-func (me *webAppGoals) init(db *Database) []namedWebFunction {
+func (me *webAppGoals) init(db *database) []namedWebFunction {
 	me.db = db
 	me.goalDateStringMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$`)
 	return []namedWebFunction{

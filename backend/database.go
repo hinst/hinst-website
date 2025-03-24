@@ -15,43 +15,43 @@ import (
 )
 
 // Measured in milliseconds
-var DB_TIMEOUT = time.Hour / time.Millisecond
+var dbTimeout = time.Hour / time.Millisecond
 
 //go:embed schema.sql
-var DB_SCHEMA string
+var dbSchema string
 
-type Database struct {
+type database struct {
 	dataDirectory string
 }
 
-func (me *Database) init(dataDirectory string) {
+func (me *database) init(dataDirectory string) {
 	me.dataDirectory = dataDirectory
 	var db = me.open()
 	defer me.close(db)
 	assertError(db.Ping())
-	assertResultError(db.Exec(DB_SCHEMA))
+	assertResultError(db.Exec(dbSchema))
 	me.collectGarbage()
 }
 
-func (me *Database) open() *sql.DB {
+func (me *database) open() *sql.DB {
 	const journalMode = "_journal_mode=WAL"
-	var busyTimeout = "_busy_timeout=" + strconv.Itoa(int(DB_TIMEOUT))
+	var busyTimeout = "_busy_timeout=" + strconv.Itoa(int(dbTimeout))
 	var url = "file:" + me.getFilePath() + "?" + journalMode + "&" + busyTimeout
 	return assertResultError(sql.Open("sqlite3", url))
 }
 
-func (me *Database) close(db *sql.DB) *sql.DB {
+func (me *database) close(db *sql.DB) *sql.DB {
 	if db != nil {
 		assertError(db.Close())
 	}
 	return nil
 }
 
-func (me *Database) getFilePath() string {
+func (me *database) getFilePath() string {
 	return me.dataDirectory + "/hinst-website.db"
 }
 
-func (me *Database) getGoalIds() (goalIds []int) {
+func (me *database) getGoalIds() (goalIds []int) {
 	var files = assertResultError(os.ReadDir(me.dataDirectory))
 	for _, file := range files {
 		if file.IsDir() && goalIdStringMatcher.MatchString(file.Name()) {
@@ -62,7 +62,7 @@ func (me *Database) getGoalIds() (goalIds []int) {
 	return
 }
 
-func (me *Database) migrate() {
+func (me *database) migrate() {
 	var goalIds = me.getGoalIds()
 	var db = me.open()
 	defer me.close(db)
@@ -88,7 +88,7 @@ func (me *Database) migrate() {
 	}
 }
 
-func (me *Database) getAvailablePosts(goalId int) (dates map[string]bool) {
+func (me *database) getAvailablePosts(goalId int) (dates map[string]bool) {
 	var db = me.open()
 	defer me.close(db)
 	var rows = assertResultError(
@@ -104,7 +104,7 @@ func (me *Database) getAvailablePosts(goalId int) (dates map[string]bool) {
 	return
 }
 
-func (me *Database) collectGarbage() {
+func (me *database) collectGarbage() {
 	var db = me.open()
 	defer me.close(db)
 

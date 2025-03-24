@@ -3,13 +3,13 @@ package main
 import "net/http"
 
 type webApp struct {
-	db             *Database
+	db             *database
 	savedGoalsPath string
 	allowOrigin    string
 	webPath        string
 }
 
-func (me *webApp) init(db *Database) {
+func (me *webApp) init(db *database) {
 	me.db = db
 	if me.webPath == "" {
 		me.webPath = "/hinst-website"

@@ -10,7 +10,7 @@ import (
 )
 
 type webAppGoalsBase struct {
-	db                    *Database
+	db                    *database
 	savedGoalsPath        string
 	goalDateStringMatcher *regexp.Regexp
 }

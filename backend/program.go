@@ -11,7 +11,7 @@ type program struct {
 	savedGoalsPath   string
 	allowOrigin      string
 	translatorApiUrl string
-	database         *Database
+	database         *database
 }
 
 var programTemplate = program{
@@ -24,7 +24,7 @@ var programTemplate = program{
 
 func (me *program) create() *program {
 	*me = programTemplate
-	me.database = new(Database)
+	me.database = new(database)
 	return me
 }
 
