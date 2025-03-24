@@ -99,4 +99,13 @@ func (me *webAppGoals) getGoalPostImages(response http.ResponseWriter, request *
 }
 
 func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *http.Request) {
+	var isAdmin = me.inputCheckAdminPassword(request)
+	if !isAdmin {
+		panic(webError{"Need administrator access", http.StatusUnauthorized})
+	}
+	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("goalId"))
+	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
+	var isPublic = request.URL.Query().Get("isPublic") == "true"
+	var row = goalPostRow{goalId: getIntFromString(goalId), dateTime: postDateTime, isPublic: isPublic}
+	me.db.setGoalPostPublic(&row)
 }

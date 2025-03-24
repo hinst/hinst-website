@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"time"
 )
 
@@ -20,7 +19,6 @@ const publicPostsFileName = "public-posts.txt"
 func (me *webAppGoalsBase) getGoalPostFiles(goalId string, allEnabled bool) (filePaths []string) {
 	var goalDirectory = filepath.Join(me.savedGoalsPath, goalId)
 	var fileNames = getGoalFiles(goalDirectory)
-	sort.Strings(fileNames)
 	var visibilities = make(map[time.Time]bool)
 	if !allEnabled {
 		visibilities = me.db.getGoalPostVisibilities(getIntFromString(goalId))

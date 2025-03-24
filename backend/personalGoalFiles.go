@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"regexp"
+	"sort"
 	"time"
 )
 
@@ -29,5 +30,6 @@ func getGoalFiles(goalDirectory string) (files []string) {
 			files = append(files, file.Name())
 		}
 	}
+	sort.Strings(files)
 	return
 }

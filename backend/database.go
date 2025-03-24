@@ -133,6 +133,16 @@ func (me *database) getGoalPostVisibilities(goalId int) (result map[time.Time]bo
 	return
 }
 
+func (me *database) setGoalPostPublic(row *goalPostRow) {
+	var db = me.open()
+	defer me.close(db)
+	assertResultError(
+		db.Exec("INSERT INTO goalPosts (goalId, dateTime, isPublic) VALUES (?, ?, ?) "+
+			"ON CONFLICT(goalId, dateTime) DO UPDATE SET isPublic = ?",
+			row.goalId, row.dateTime.UTC().Unix(), row.isPublic, row.isPublic),
+	)
+}
+
 func (me *database) collectGarbage() {
 	var db = me.open()
 	defer me.close(db)
