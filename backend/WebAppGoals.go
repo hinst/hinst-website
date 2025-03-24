@@ -81,7 +81,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 		post.LanguageNamePending = getLanguageName(requestedLanguage)
 	}
 	if goalManagerMode {
-		post.IsPublic = me.db.getAvailablePosts(getIntFromString(goalId))[post.Date]
+		// post.IsPublic = me.db.getGoalPosts(getIntFromString(goalId))[post.Date]
 	}
 
 	post.Images = nil

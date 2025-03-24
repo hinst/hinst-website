@@ -88,18 +88,32 @@ func (me *database) migrate() {
 	}
 }
 
-func (me *database) getAvailablePosts(goalId int) (dates map[string]bool) {
+func (me *database) getGoalPost(goalId int, dateTime time.Time) (result *goalPostRow) {
+	var db = me.open()
+	defer me.close(db)
+	var dateTimeMilliseconds = dateTime.UTC().Unix()
+	var row = assertResultError(
+		db.Query("SELECT * FROM goalPosts WHERE goalId = ? AND dateTime = ?",
+			goalId, dateTimeMilliseconds),
+	)
+	if row.Next() {
+		assertError(row.Err())
+		result = new(goalPostRow)
+		result.scan(row)
+	}
+	return nil
+}
+
+func (me *database) getGoalPostRows(goalId int) (goalPostRows []goalPostRow) {
 	var db = me.open()
 	defer me.close(db)
 	var rows = assertResultError(
-		db.Query("SELECT dateTime FROM goalPosts WHERE isPublic = 1 AND goalId = ?", goalId),
+		db.Query("SELECT * FROM goalPosts WHERE isPublic = 1 AND goalId = ?", goalId),
 	)
-	dates = make(map[string]bool)
 	for rows.Next() {
-		var dateTimeMilliseconds int64
-		assertError(rows.Scan(&dateTimeMilliseconds))
-		var dateTime = time.Unix(dateTimeMilliseconds, 0)
-		dates[dateTime.UTC().Format(smartProgressTimeFormat)] = true
+		var row goalPostRow
+		row.scan(rows)
+		goalPostRows = append(goalPostRows, row)
 	}
 	return
 }
