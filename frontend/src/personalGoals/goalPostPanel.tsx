@@ -6,6 +6,7 @@ import GoalPostView from './goalPostView';
 export default function GoalPostPanel(props: {
 	goalId: string,
 	postDate: string,
+	goalManagerMode: boolean,
 }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [postData, setPostData] = useState<SmartPostExtended | undefined>(undefined);

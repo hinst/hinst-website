@@ -25,6 +25,10 @@ export default function GoalBrowser(props: {
 
 	function isFullMode() {
 		return displayWidth >= 700;
+	};
+
+	function isGoalManagerMode() {
+		return Cookie.get('goalManagerMode') === '1';
 	}
 
 	const [calendarEnabled, setCalendarEnabled] = useState(true);
@@ -35,7 +39,7 @@ export default function GoalBrowser(props: {
 			const newActivePostDate = posts[posts.length - 1].date;
 			setSearchParams({activePostDate: newActivePostDate});
 		}
-	}
+	};
 
 	async function loadGoal() {
 		const response = await fetch(API_URL + '/goal?id=' + encodeURIComponent(goalId));
@@ -43,7 +47,7 @@ export default function GoalBrowser(props: {
 			const goalHeader: GoalHeader = await response.json();
 			setGoalTitle(translateGoalTitle(currentLanguage, goalHeader.title));
 		}
-	}
+	};
 
 	useEffect(() => {
 		loadGoal();
@@ -56,8 +60,9 @@ export default function GoalBrowser(props: {
 	}, [activePostDate]);
 
 	useEffect(() => {
-		const allEnabled = Cookie.get('allGoalPostsEnabled') === '1';
-		const dateText = allEnabled ? activePostDate : activePostDate.slice(0, '2025-03-10'.length);
+		const dateText = isGoalManagerMode()
+			? activePostDate
+			: activePostDate.slice(0, '2025-03-10'.length);
 		const components = [goalTitle, dateText].filter(s => s.length);
 		props.setPageTitle(components.join(' • '));
 	}, [goalTitle, activePostDate]);
@@ -78,17 +83,20 @@ export default function GoalBrowser(props: {
 				/>
 			</div>
 			<div style={{
-				display: 'flex',
 				overflowY: 'auto',
 				flexGrow: 1,
+				justifyContent: 'center',
 				maxWidth: ARTICLE_WIDTH,
 			}}>
-				{ activePostDate
-					? <GoalPostPanel
-						goalId={goalId}
-						postDate={activePostDate}
-					/>
-					: undefined }
+				<div style={{}}>
+					{ activePostDate
+						? <GoalPostPanel
+							goalId={goalId}
+							postDate={activePostDate}
+							goalManagerMode={isGoalManagerMode()}
+						/>
+						: undefined }
+				</div>
 			</div>
 		</div>;
 	};
@@ -165,15 +173,17 @@ export default function GoalBrowser(props: {
 				style={{
 					display: 'flex',
 					overflowY: 'auto',
-					maxWidth: ARTICLE_WIDTH,
 				}}
 			>
-				{ activePostDate
-					? <GoalPostPanel
-						goalId={goalId}
-						postDate={activePostDate}
-					/>
-					: undefined }
+				<div style={{maxWidth: ARTICLE_WIDTH}}>
+					{ activePostDate
+						? <GoalPostPanel
+							goalId={goalId}
+							postDate={activePostDate}
+							goalManagerMode={isGoalManagerMode()}
+						/>
+						: undefined }
+				</div>
 			</div>
 		</div>;
 	};
