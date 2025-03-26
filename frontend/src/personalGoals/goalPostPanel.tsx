@@ -39,8 +39,21 @@ export default function GoalPostPanel(props: {
 		load();
 	}, [props.goalId, props.postDate]);
 
+	async function setPublic(isPublic: boolean) {
+		const url = API_URL + '/goalPost/setPublic' +
+			'?goalId=' + encodeURIComponent(props.goalId) +
+			'&postDateTime=' + encodeURIComponent(props.postDate) +
+			'&isPublic=' + encodeURIComponent('' + isPublic);
+		const response = await fetch(url);
+		if (!response.ok)
+			throw new Error('Cannot update post visibility. Status: ' + response.statusText);
+		if (postData)
+			setPostData({...postData, isPublic});
+	}
+
 	function RenderGoalManagement() {
 		return <div
+			className='ms-alert ms-light'
 			style={{
 				display: 'flex',
 				gap: 10,
@@ -48,32 +61,20 @@ export default function GoalPostPanel(props: {
 			}}
 		>
 			<Tool/>
-			<pre>public={''+ postData?.isPublic}</pre>
+			<input
+				type='checkbox'
+				checked={postData?.isPublic}
+				onChange={() => setPublic(!postData?.isPublic)}
+			/>
+			public
 		</div>;
 	}
 
 	return <div>
 		{ isLoading ? <div className='ms-loading' /> : undefined }
-		{ props.goalManagerMode ? RenderGoalManagement() : undefined }
-		{ postData ? <GoalPostView postData={postData} />: undefined }
+		{ postData ? [
+			RenderGoalManagement(),
+			<GoalPostView postData={postData} />
+		] : undefined }
 	</div>;
-}
-
-function GoalImage(props: { data: string }) {
-	return <a href={props.data}>
-		<img
-			className='ms-card ms-border'
-			width={240}
-			height={240}
-			style={{
-				width: 240,
-				height: 240,
-				objectFit: 'cover',
-				margin: 0,
-				padding: 0,
-			}}
-			src={props.data}
-			alt='Image'
-		/>
-	</a>;
 }
