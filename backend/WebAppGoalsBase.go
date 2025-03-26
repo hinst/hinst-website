@@ -70,7 +70,7 @@ func (me *webAppGoalsBase) inputCheckAdminPassword(request *http.Request) bool {
 	if actualAdminPassword == "" {
 		return false
 	}
-	var adminPassword, _ = request.Cookie(cookieKeyAdminPassword)
+	var adminPassword, _ = request.Cookie("adminPassword")
 	if adminPassword != nil {
 		return adminPassword.Value == actualAdminPassword
 	}

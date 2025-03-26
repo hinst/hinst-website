@@ -103,16 +103,30 @@ func (me *database) getGoalPost(goalId int, dateTime time.Time) (result *goalPos
 	return
 }
 
-func (me *database) getGoalPostRows(goalId int) (goalPostRows []goalPostRow) {
+func (me *database) getGoalPosts(goalId int, times []time.Time) (results map[time.Time]goalPostRow) {
 	var db = me.open()
 	defer me.close(db)
 	var rows = assertResultError(
-		db.Query("SELECT * FROM goalPosts WHERE isPublic = 1 AND goalId = ?", goalId),
+		db.Query("SELECT * FROM goalPosts WHERE goalId = ? AND dateTime IN ?", goalId, times),
 	)
 	for rows.Next() {
 		var row goalPostRow
 		row.scan(rows)
-		goalPostRows = append(goalPostRows, row)
+		results[row.dateTime.UTC()] = row
+	}
+	return
+}
+
+func (me *database) getPostsByDates(ids []int64) (results map[time.Time]goalPostRow) {
+	var db = me.open()
+	defer me.close(db)
+	var queryText = "SELECT * FROM goalPosts WHERE dateTime IN (" + convertInt64ArrayToSequelString(ids) + ")"
+	var rows = assertResultError(db.Query(queryText))
+	results = make(map[time.Time]goalPostRow)
+	for rows.Next() {
+		var row goalPostRow
+		row.scan(rows)
+		results[row.dateTime.UTC()] = row
 	}
 	return
 }

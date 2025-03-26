@@ -15,8 +15,6 @@ type webAppGoals struct {
 	webAppGoalsBase
 }
 
-const cookieKeyAdminPassword = "adminPassword"
-
 func (me *webAppGoals) init(db *database) []namedWebFunction {
 	me.db = db
 	me.goalDateStringMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$`)
@@ -55,7 +53,12 @@ func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.
 	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("id"))
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
 	var filePaths = me.getGoalPostFiles(goalId, goalManagerMode)
-	var posts = readJsonFiles[smartPostHeader](filePaths, runtime.NumCPU())
+	var posts = readJsonFiles[smartPostHeaderExtended](filePaths, runtime.NumCPU())
+	var postInfos = me.db.getPostsByDates(smartPostHeaderExtended{}.getDatesSeconds(posts))
+	for _, post := range posts {
+		var postInfo = postInfos[assertResultError(parseSmartProgressDate(post.Date)).UTC()]
+		post.IsPublic = postInfo.isPublic
+	}
 	setCacheAge(response, time.Minute)
 	response.Write(encodeJson(posts))
 }

@@ -13,3 +13,16 @@ type smartPostExtended struct {
 	LanguageNamePending string `json:"languageNamePending"`
 	IsPublic            bool   `json:"isPublic"`
 }
+
+type smartPostHeaderExtended struct {
+	smartPostHeader
+	IsPublic bool `json:"isPublic"`
+}
+
+func (smartPostHeaderExtended) getDatesSeconds(array []*smartPostHeaderExtended) (dates []int64) {
+	for _, item := range array {
+		var date = assertResultError(parseSmartProgressDate(item.Date))
+		dates = append(dates, date.UTC().Unix())
+	}
+	return
+}
