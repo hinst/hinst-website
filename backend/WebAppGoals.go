@@ -59,7 +59,6 @@ func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.
 		var postInfo = postInfos[assertResultError(parseSmartProgressDate(post.Date)).UTC()]
 		post.IsPublic = postInfo.isPublic
 	}
-	setCacheAge(response, time.Minute)
 	response.Write(encodeJson(posts))
 }
 

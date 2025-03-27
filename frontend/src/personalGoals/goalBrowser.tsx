@@ -22,6 +22,7 @@ export default function GoalBrowser(props: {
 	const activePostDate = searchParams.get('activePostDate') || '';
 
 	const [goalTitle, setGoalTitle] = useState('');
+	const [reloadGoalCalendar, setReloadGoalCalendar] = useState(0);
 
 	function isFullMode() {
 		return displayWidth >= 700;
@@ -67,6 +68,24 @@ export default function GoalBrowser(props: {
 		props.setPageTitle(components.join(' • '));
 	}, [goalTitle, activePostDate]);
 
+	function getGoalCalendarPanel() {
+		return <GoalCalendarPanel
+			id={goalId}
+			receivePosts={receivePosts}
+			activePostDate={activePostDate}
+			reload={reloadGoalCalendar}
+		/>;
+	};
+
+	function getGoalPostPanel() {
+		return <GoalPostPanel
+			goalId={goalId}
+			postDate={activePostDate}
+			goalManagerMode={isGoalManagerMode()}
+			onChange={() => setReloadGoalCalendar(Math.random())}
+		/>;
+	};
+
 	function getWideLayout() {
 		return <div style={{display: 'flex', gap: 20, minHeight: 0}}>
 			<div style={{
@@ -76,11 +95,7 @@ export default function GoalBrowser(props: {
 				flexShrink: 0,
 				flexBasis: 'fit-content',
 			}}>
-				<GoalCalendarPanel
-					id={goalId}
-					receivePosts={receivePosts}
-					activePostDate={activePostDate}
-				/>
+				{ getGoalCalendarPanel() }
 			</div>
 			<div style={{
 				overflowY: 'auto',
@@ -88,15 +103,7 @@ export default function GoalBrowser(props: {
 				justifyContent: 'center',
 				maxWidth: ARTICLE_WIDTH,
 			}}>
-				<div style={{}}>
-					{ activePostDate
-						? <GoalPostPanel
-							goalId={goalId}
-							postDate={activePostDate}
-							goalManagerMode={isGoalManagerMode()}
-						/>
-						: undefined }
-				</div>
+				{ activePostDate ? getGoalPostPanel() : undefined }
 			</div>
 		</div>;
 	};
@@ -162,11 +169,7 @@ export default function GoalBrowser(props: {
 					transition: calendarTransition,
 				}}
 			>
-				<GoalCalendarPanel
-					id={goalId}
-					receivePosts={receivePosts}
-					activePostDate={activePostDate}
-				/>
+				{ getGoalCalendarPanel() }
 			</div>
 			<div
 				onClick={() => setCalendarEnabled(false)}
@@ -176,13 +179,7 @@ export default function GoalBrowser(props: {
 				}}
 			>
 				<div style={{maxWidth: ARTICLE_WIDTH}}>
-					{ activePostDate
-						? <GoalPostPanel
-							goalId={goalId}
-							postDate={activePostDate}
-							goalManagerMode={isGoalManagerMode()}
-						/>
-						: undefined }
+					{ activePostDate ? getGoalPostPanel() : undefined }
 				</div>
 			</div>
 		</div>;

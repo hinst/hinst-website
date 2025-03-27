@@ -8,6 +8,7 @@ export default function GoalCalendarPanel(
 		id: string,
 		activePostDate: string,
 		receivePosts?: (posts: PostHeader[]) => void,
+		reload: number,
 	}
 ) {
 	const [isLoading, setIsLoading] = useState(0);
@@ -31,11 +32,13 @@ export default function GoalCalendarPanel(
 			setIsLoading(isLoadingRef.current - 1);
 		}
 	}
-	useEffect(() => { loadPosts() }, []);
+	useEffect(
+		() => { loadPosts() },
+		[props.reload]
+	);
 
 	return <div>
-		{ isLoading
-			? <div className='ms-loading'></div>
-			: <GoalCalendar posts={posts} activePostDate={props.activePostDate} /> }
+		{ isLoading ? <div className='ms-loading'/> : undefined }
+		<GoalCalendar posts={posts} activePostDate={props.activePostDate} />
 	</div>;
 }

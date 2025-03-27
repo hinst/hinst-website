@@ -8,6 +8,7 @@ export default function GoalPostPanel(props: {
 	goalId: string,
 	postDate: string,
 	goalManagerMode: boolean,
+	onChange: () => void,
 }) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [postData, setPostData] = useState<SmartPostExtended | undefined>(undefined);
@@ -44,8 +45,9 @@ export default function GoalPostPanel(props: {
 		{ postData ? <>
 			<GoalPostManagementPanel
 				postData={postData}
-				setPostData={setPostData}	
-			/>,
+				setPostData={setPostData}
+				onChange={props.onChange}
+			/>
 			<GoalPostView postData={postData} />
 		</> : undefined }
 	</div>;
