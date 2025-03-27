@@ -7,6 +7,8 @@ export interface SmartPost {
     /** Can be: 'post' */
     type: string;
     id: string;
+    /** Goal id */
+    obj_id: string;
     msg: string;
     /** Example: 2023-04-28 09:12:21 */
     date: string;

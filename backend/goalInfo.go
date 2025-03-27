@@ -21,7 +21,9 @@ type smartPostHeader struct {
 }
 
 type smartPost struct {
-	Id       string         `json:"id"`
+	Id string `json:"id"`
+	// Goal id
+	ObjId    string         `json:"obj_id"`
 	Msg      string         `json:"msg"`
 	Date     string         `json:"date"`
 	Username string         `json:"username"`
