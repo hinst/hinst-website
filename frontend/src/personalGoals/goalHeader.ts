@@ -16,6 +16,7 @@ export class PostHeader {
 		/** Goal id */
 		public obj_id: string,
 		public type: string,
+		public isPublic: boolean,
 	) {
 	}
 }

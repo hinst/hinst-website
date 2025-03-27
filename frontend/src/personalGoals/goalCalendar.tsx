@@ -103,26 +103,38 @@ function DaysOfMonthRow(props: {
 					id={post.id}
 					goalId={post.obj_id}
 					isActive={props.activePostDate === post.date}
-					/>
+					isPublic={post.isPublic}
+				/>
 				: <NavLinkDay
 					date='2025-03-01'
 					id={''}
 					goalId={''}
 					isActive={false}
-					/>
+					isPublic={false}
+				/>
 			}
 		</div>
 	);
 }
 
-function NavLinkDay(props: {date: string, id: string, goalId: string, isActive: boolean}) {
+function NavLinkDay(props: {
+	date: string,
+	id: string,
+	goalId: string,
+	isActive: boolean,
+	isPublic: boolean,
+}) {
 	let url = '';
 	if (props.id !== '')
 		url = '/personal-goals/' + encodeURIComponent(props.goalId) +
 			'?activePostDate=' + encodeURIComponent(props.date);
+	const classNames =  ['ms-btn', 'ms-outline', ];
+	classNames.push(props.isPublic ? 'ms-primary' : 'ms-secondary ms-text-secondary');
+	if (props.isActive)
+		classNames.push('ms-btn-active');
 	return <NavLink
 		to={url}
-		className={'ms-btn ms-outline ms-primary ' + (props.isActive ? 'ms-btn-active' : '')}
+		className={classNames.join(' ')}
 		style={{fontFamily: 'monospace', visibility: props.id === '' ? 'hidden' : 'visible'}}
 	>
 		{props.date.slice('2025-03-'.length, '2025-03-06'.length)}
