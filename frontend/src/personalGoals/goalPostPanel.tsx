@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { SmartPostExtended, SmartPostImage } from './smartPost';
 import { API_URL } from '../global';
 import GoalPostView from './goalPostView';
-import { Tool } from 'react-feather';
 import GoalPostManagementPanel from './goalPostManagementPanel';
 
 export default function GoalPostPanel(props: {
@@ -42,9 +41,12 @@ export default function GoalPostPanel(props: {
 
 	return <div>
 		{ isLoading ? <div className='ms-loading' /> : undefined }
-		{ postData ? [
-			<GoalPostManagementPanel postData={postData} setPostData={setPostData} />,
+		{ postData ? <>
+			<GoalPostManagementPanel
+				postData={postData}
+				setPostData={setPostData}	
+			/>,
 			<GoalPostView postData={postData} />
-		] : undefined }
+		</> : undefined }
 	</div>;
 }
