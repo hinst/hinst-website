@@ -9,7 +9,15 @@ import { Calendar } from 'react-feather';
 import Cookie from 'js-cookie';
 import GoalPostPanel from './goalPostPanel';
 
-const ARTICLE_WIDTH = 1000;
+const ARTICLE_WIDTH = 1040;
+const STRIPES_BACKGROUND = `
+repeating-linear-gradient(
+	45deg,
+	rgba(var(--main-bg), 1),
+	rgba(var(--main-bg), 1) 10px,
+	rgba(var(--light-bg-color), 1) 10px,
+	rgba(var(--light-bg-color), 1) 20px
+)`;
 
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
@@ -98,12 +106,26 @@ export default function GoalBrowser(props: {
 				{ getGoalCalendarPanel() }
 			</div>
 			<div style={{
-				overflowY: 'auto',
 				flexGrow: 1,
 				justifyContent: 'center',
-				maxWidth: ARTICLE_WIDTH,
+				display: 'flex',
+				minHeight: 0,
+				maxHeight: '100%',
+				background: STRIPES_BACKGROUND,
 			}}>
-				{ activePostDate ? getGoalPostPanel() : undefined }
+				<div
+					className='ms-bg-main'
+					style={{
+						paddingLeft: 20,
+						paddingRight: 20,
+						maxWidth: ARTICLE_WIDTH,
+						backgroundAttachment: 'fixed',
+						minHeight: 0,
+						overflowY: 'auto',
+					}}
+				>
+					{ activePostDate ? getGoalPostPanel() : undefined }
+				</div>
 			</div>
 		</div>;
 	};

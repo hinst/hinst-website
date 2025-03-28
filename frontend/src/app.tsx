@@ -38,6 +38,7 @@ export default function App() {
 			<div
 				style={{
 					padding: 10,
+					paddingBottom: 0,
 					display: 'flex',
 					flexDirection: 'column',
 					width: '100%',
