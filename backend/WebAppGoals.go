@@ -67,27 +67,30 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var fileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
 	var filePath = filepath.Join(me.savedGoalsPath, fileName)
-	var post = readJsonFile(filePath, &smartPostExtended{})
+	var goalPost = readJsonFile(filePath, &smartPostExtended{})
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
 
 	var requestedLanguage = getWebLanguage(request)
 	var translatedFilePath = translatorPresets.getTranslatedFilePath(filePath, requestedLanguage)
 	if checkFileExists(translatedFilePath) {
-		post.Msg = readTextFile(translatedFilePath)
-		post.LanguageTag = requestedLanguage.String()
-		post.LanguageName = getLanguageName(requestedLanguage)
+		goalPost.Msg = readTextFile(translatedFilePath)
+		goalPost.LanguageTag = requestedLanguage.String()
+		goalPost.LanguageName = getLanguageName(requestedLanguage)
 		if requestedLanguage != language.Russian {
-			post.IsAutoTranslated = true
+			goalPost.IsAutoTranslated = true
 		}
 	} else {
-		post.LanguageNamePending = getLanguageName(requestedLanguage)
+		goalPost.LanguageNamePending = getLanguageName(requestedLanguage)
 	}
 	if goalManagerMode {
-		post.IsPublic = me.db.getGoalPost(getIntFromString(goalId), postDateTime).isPublic
+		var goalPostRow = me.db.getGoalPost(getIntFromString(goalId), postDateTime)
+		if goalPostRow != nil {
+			goalPost.IsPublic = goalPostRow.isPublic
+		}
 	}
 
-	post.Images = nil
-	response.Write(encodeJson(post))
+	goalPost.Images = nil
+	response.Write(encodeJson(goalPost))
 }
 
 func (me *webAppGoals) getGoalPostImages(response http.ResponseWriter, request *http.Request) {
