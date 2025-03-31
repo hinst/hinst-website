@@ -18,7 +18,7 @@ const STRIPES_BACKGROUND = `repeating-linear-gradient(
 	rgba(var(--light-bg-color), 1) 10px,
 	rgba(var(--light-bg-color), 1) 20px
 )`;
-const STRIPES_MIN_WIDTH = 50;
+const STRIPES_MIN_WIDTH = 100;
 
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
@@ -29,6 +29,8 @@ export default function GoalBrowser(props: {
 	const goalId: string = params.id!;
 	const [searchParams, setSearchParams] = useSearchParams();
 	const activePostDate = searchParams.get('activePostDate') || '';
+	const [articleContainerId] = useState('id-' + Math.random().toString(16));
+	const [articleContainerWidth, setArticleContainerWidth] = useState(0);
 
 	const [goalTitle, setGoalTitle] = useState('');
 	const [reloadGoalCalendar, setReloadGoalCalendar] = useState(0);
@@ -77,6 +79,14 @@ export default function GoalBrowser(props: {
 		props.setPageTitle(components.join(' • '));
 	}, [goalTitle, activePostDate]);
 
+	useEffect(() => {
+		const timer = setInterval(() => {
+			const container = document.getElementById(articleContainerId);
+			setArticleContainerWidth(container?.clientWidth || 0);
+		});
+		return () => clearInterval(timer);
+	}, []);
+
 	function getGoalCalendarPanel() {
 		return <GoalCalendarPanel
 			id={goalId}
@@ -106,14 +116,19 @@ export default function GoalBrowser(props: {
 			}}>
 				{ getGoalCalendarPanel() }
 			</div>
-			<div style={{
-				flexGrow: 1,
-				justifyContent: 'center',
-				display: 'flex',
-				minHeight: 0,
-				maxHeight: '100%',
-				background: STRIPES_BACKGROUND,
-			}}>
+			<div
+				id={articleContainerId}
+				style={{
+					flexGrow: 1,
+					justifyContent: 'center',
+					display: 'flex',
+					minHeight: 0,
+					maxHeight: '100%',
+					background: articleContainerWidth > ARTICLE_WIDTH + STRIPES_MIN_WIDTH
+						? STRIPES_BACKGROUND
+						: undefined,
+				}}
+			>
 				<div
 					className='ms-bg-main'
 					style={{
