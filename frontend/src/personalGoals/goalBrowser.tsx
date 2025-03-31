@@ -9,15 +9,16 @@ import { Calendar } from 'react-feather';
 import Cookie from 'js-cookie';
 import GoalPostPanel from './goalPostPanel';
 
-const ARTICLE_WIDTH = 1040;
-const STRIPES_BACKGROUND = `
-repeating-linear-gradient(
+const ARTICLE_PADDING = 20;
+const ARTICLE_WIDTH = 1000 + ARTICLE_PADDING * 2;
+const STRIPES_BACKGROUND = `repeating-linear-gradient(
 	45deg,
 	rgba(var(--main-bg), 1),
 	rgba(var(--main-bg), 1) 10px,
 	rgba(var(--light-bg-color), 1) 10px,
 	rgba(var(--light-bg-color), 1) 20px
 )`;
+const STRIPES_MIN_WIDTH = 50;
 
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
@@ -116,8 +117,8 @@ export default function GoalBrowser(props: {
 				<div
 					className='ms-bg-main'
 					style={{
-						paddingLeft: 20,
-						paddingRight: 20,
+						paddingLeft: ARTICLE_PADDING,
+						paddingRight: ARTICLE_PADDING,
 						maxWidth: ARTICLE_WIDTH,
 						backgroundAttachment: 'fixed',
 						minHeight: 0,
@@ -127,6 +128,42 @@ export default function GoalBrowser(props: {
 					{ activePostDate ? getGoalPostPanel() : undefined }
 				</div>
 			</div>
+		</div>;
+	};
+
+	function getFloatingCalendarButton() {
+		return <div
+			className='ms-bg-light ms-shape-circle'
+			style={{
+				position: 'absolute',
+				width: 40,
+				height: 40,
+				bottom: 0,
+				right: 0,
+				zIndex: 2,
+			}}
+		>
+			<button
+				className={
+					'ms-btn ms-primary ms-rounded ms-box-shadow' +
+					(calendarEnabled ? ' ms-btn-active' : '')
+				}
+				onClick={() => setCalendarEnabled(!calendarEnabled)}
+				style={{
+					margin: 0,
+					width: 40,
+					height: 40,
+				}}
+			>
+				<Calendar
+					style={{
+						position: 'absolute',
+						left: '50%',
+						top: '50%',
+						transform: 'translate(-50%, -50%)',
+					}}
+				/>
+			</button>
 		</div>;
 	};
 
@@ -143,39 +180,7 @@ export default function GoalBrowser(props: {
 				overflowY: 'hidden',
 			}}
 		>
-			<div
-				className='ms-bg-light ms-shape-circle'
-				style={{
-					position: 'absolute',
-					width: 40,
-					height: 40,
-					bottom: 0,
-					right: 0,
-					zIndex: 2,
-				}}
-			>
-				<button
-					className={
-						'ms-btn ms-primary ms-rounded ms-box-shadow' +
-						(calendarEnabled ? ' ms-btn-active' : '')
-					}
-					onClick={() => setCalendarEnabled(!calendarEnabled)}
-					style={{
-						margin: 0,
-						width: 40,
-						height: 40,
-					}}
-				>
-					<Calendar
-						style={{
-							position: 'absolute',
-							left: '50%',
-							top: '50%',
-							transform: 'translate(-50%, -50%)',
-						}}
-					/>
-				</button>
-			</div>
+			{ getFloatingCalendarButton() }
 			<div
 				className='ms-bg-light ms-shape-round ms-box-shadow ms-border-main'
 				style={{
