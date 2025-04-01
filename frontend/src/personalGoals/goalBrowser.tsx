@@ -106,7 +106,14 @@ export default function GoalBrowser(props: {
 	};
 
 	function getWideLayout() {
-		return <div style={{display: 'flex', gap: 20, minHeight: 0}}>
+		return <div
+			style={{
+				display: 'flex',
+				gap: 20,
+				minHeight: 0,
+				height: '100%',
+			}}
+		>
 			<div style={{
 				display: 'flex',
 				overflowY: 'auto',
