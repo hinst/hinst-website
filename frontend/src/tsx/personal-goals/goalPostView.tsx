@@ -1,4 +1,4 @@
-import { SmartPostExtended } from './smartPost';
+import { SmartPostExtended } from 'src/typescript/personal-goals/smartPost';
 import SafeHtmlView from '../safeHtmlView';
 import { Info } from 'react-feather';
 

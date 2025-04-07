@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { API_URL } from 'src/typescript/global';
-import { PostHeader } from './goalHeader';
+import { PostHeader } from 'src/typescript/personal-goals/goalHeader';
 import GoalCalendar from './goalCalendar';
 
 export default function GoalCalendarPanel(

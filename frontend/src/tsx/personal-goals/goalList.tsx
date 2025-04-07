@@ -1,4 +1,4 @@
-import { GoalHeader } from './goalHeader';
+import { GoalHeader } from 'src/typescript/personal-goals/goalHeader';
 import { GoalCard } from './goalCard';
 
 export default function GoalList(props: {goals: GoalHeader[]}) {

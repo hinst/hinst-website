@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SmartPostExtended, SmartPostImage } from './smartPost';
+import { SmartPostExtended, SmartPostImage } from 'src/typescript/personal-goals/smartPost';
 import { API_URL } from 'src/typescript/global';
 import GoalPostView from './goalPostView';
 import GoalPostManagementPanel from './goalPostManagementPanel';

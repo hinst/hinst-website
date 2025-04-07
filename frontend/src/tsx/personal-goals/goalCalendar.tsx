@@ -1,6 +1,6 @@
 import lodash from 'lodash';
 import { NavLink } from 'react-router';
-import { PostHeader } from './goalHeader';
+import { PostHeader } from 'src/typescript/personal-goals/goalHeader';
 import { compareStrings } from 'src/typescript/string';
 import { getMonthName, parseMonthlyDate } from 'src/typescript/date';
 import { getPaddedChunks } from 'src/typescript/array';

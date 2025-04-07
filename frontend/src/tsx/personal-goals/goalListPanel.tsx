@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { GoalHeader } from './goalHeader';
+import { GoalHeader } from 'src/typescript/personal-goals/goalHeader';
 import { API_URL } from 'src/typescript/global';
 import GoalList from './goalList';
 
