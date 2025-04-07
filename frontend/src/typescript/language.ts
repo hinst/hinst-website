@@ -4,7 +4,11 @@ export enum SupportedLanguages {
 }
 
 export function getCurrentLanguage() {
-	if (navigator.languages.some(l => l.startsWith('ru')))
-		return SupportedLanguages.RUSSIAN;
+	for (const lang of navigator.languages) {
+		if (lang.startsWith('ru'))
+			return SupportedLanguages.RUSSIAN;
+		if (lang.startsWith('en'))
+			return SupportedLanguages.ENGLISH;
+	}
 	return SupportedLanguages.ENGLISH;
 }

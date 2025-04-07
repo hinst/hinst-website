@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import HomePage from './homePage';
 import GoalBrowser from './personal-goals/goalBrowser';
 import { getCurrentLanguage, SupportedLanguages } from 'src/typescript/language';
-import { DisplayWidthContext, LanguageContext } from './context';
+import { AppContext } from './context';
 
 const PAGE_TITLE = 'Showcase Website';
 
@@ -20,42 +20,39 @@ export default function App() {
 	}, [pageTitle]);
 
 	const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguages>(getCurrentLanguage());
-	setInterval(() => {
-		const newLanguage = getCurrentLanguage();
-		if (newLanguage !== currentLanguage)
-			setCurrentLanguage(newLanguage);
-	}, 1000);
+	useEffect(() => {
+		const timer = setInterval(() => {
+			const newLanguage = getCurrentLanguage();
+			if (newLanguage !== currentLanguage)
+				setCurrentLanguage(newLanguage);
+		}, 1000);
+		return () => clearInterval(timer);
+	}, []);
 
-	const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
-	setInterval(() => {
-		const newWidth = window.innerWidth;
-		if (newWidth !== displayWidth)
-			setDisplayWidth(newWidth);
-	}, 1000);
-
-	return <LanguageContext.Provider value={getCurrentLanguage()}>
-		<DisplayWidthContext.Provider value={window.innerWidth}>
-			<div
-				style={{
-					padding: 10,
-					paddingBottom: 0,
-					display: 'flex',
-					flexDirection: 'column',
-					width: '100%',
-					maxWidth: '100%',
-					maxHeight: '100%',
-				}}
-			>
-				<HashRouter>
-					<div style={{ marginBottom: 10 }}>
-						<Header title={pageTitle} />
-					</div>
-					<Routes>
-						<Route path='/' element={<HomePage setPageTitle={setPageTitle} />} />
-						<Route path='/personal-goals/:id' element={<GoalBrowser setPageTitle={setPageTitle} />} />
-					</Routes>
-				</HashRouter>
-			</div>
-		</DisplayWidthContext.Provider>
-	</LanguageContext.Provider>;
+	return <AppContext.Provider value={{
+		currentLanguage,
+		displayWidth: window.innerWidth,
+	}}>
+		<div
+			style={{
+				padding: 10,
+				paddingBottom: 0,
+				display: 'flex',
+				flexDirection: 'column',
+				width: '100%',
+				maxWidth: '100%',
+				maxHeight: '100%',
+			}}
+		>
+			<HashRouter>
+				<div style={{ marginBottom: 10 }}>
+					<Header title={pageTitle} />
+				</div>
+				<Routes>
+					<Route path='/' element={<HomePage setPageTitle={setPageTitle} />} />
+					<Route path='/personal-goals/:id' element={<GoalBrowser setPageTitle={setPageTitle} />} />
+				</Routes>
+			</HashRouter>
+		</div>
+	</AppContext.Provider>;
 }

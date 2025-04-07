@@ -8,5 +8,5 @@ export function parseMonthlyDate(text: string) {
 }
 
 export function getMonthName(date: Date) {
-	return date.toLocaleString('default', { month: 'long' });
+	return date.toLocaleString('en', { month: 'long' });
 }

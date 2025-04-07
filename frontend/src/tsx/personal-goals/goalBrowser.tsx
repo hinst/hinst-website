@@ -4,7 +4,7 @@ import { GoalHeader, PostHeader } from 'src/typescript/personal-goals/goalHeader
 import { useContext, useEffect, useState } from 'react';
 import { API_URL } from 'src/typescript/global';
 import { translateGoalTitle } from 'src/typescript/personal-goals/goalInfo';
-import { DisplayWidthContext, LanguageContext } from '../context';
+import { AppContext } from 'src/tsx/context';
 import { Calendar } from 'react-feather';
 import Cookie from 'js-cookie';
 import GoalPostPanel from './goalPostPanel';
@@ -23,8 +23,7 @@ const STRIPES_MIN_WIDTH = 100;
 export default function GoalBrowser(props: {
 	setPageTitle: (title: string) => void
 }) {
-	const currentLanguage = useContext(LanguageContext);
-	const displayWidth = useContext(DisplayWidthContext);
+	const context = useContext(AppContext);
 	const params = useParams();
 	const goalId: string = params.id!;
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -36,7 +35,7 @@ export default function GoalBrowser(props: {
 	const [reloadGoalCalendar, setReloadGoalCalendar] = useState(0);
 
 	function isFullMode() {
-		return displayWidth >= 700;
+		return context.displayWidth >= 700;
 	};
 
 	function isGoalManagerMode() {
@@ -57,7 +56,7 @@ export default function GoalBrowser(props: {
 		const response = await fetch(API_URL + '/goal?id=' + encodeURIComponent(goalId));
 		if (response.ok) {
 			const goalHeader: GoalHeader = await response.json();
-			setGoalTitle(translateGoalTitle(currentLanguage, goalHeader.title));
+			setGoalTitle(translateGoalTitle(context.currentLanguage, goalHeader.title));
 		}
 	};
 
