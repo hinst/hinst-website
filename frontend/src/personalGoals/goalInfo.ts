@@ -1,4 +1,4 @@
-import { getCurrentLanguage, SupportedLanguages as SupportedLanguage } from '../language';
+import { getCurrentLanguage, SupportedLanguages as SupportedLanguage } from 'src/typescript/language';
 //@ts-ignore
 import codingWeekly from '../../images/codingWeekly.jpg';
 //@ts-ignore

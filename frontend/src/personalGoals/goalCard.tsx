@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router';
 import { GoalHeader } from './goalHeader';
 import { GOAL_INFOS, translateGoalTitle } from './goalInfo';
-import { getCurrentLanguage } from '../language';
+import { getCurrentLanguage } from 'src/typescript/language';
 
 export function GoalCard(props: {goal: GoalHeader}) {
 	const currentLanguage = getCurrentLanguage();

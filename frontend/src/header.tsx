@@ -3,7 +3,7 @@ import { NavLink } from 'react-router';
 import icon from './icon.webp';
 import { useState } from 'react';
 import { Info } from 'react-feather';
-import { AUTHOR_NAME, COPYRIGHT_YEAR } from './global';
+import { AUTHOR_NAME, COPYRIGHT_YEAR } from 'src/typescript/global';
 
 export default function Header(props: { title: string }) {
 	const [isCopyrightVisible, setCopyrightVisible] = useState(false);

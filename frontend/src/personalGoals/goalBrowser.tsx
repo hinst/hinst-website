@@ -2,7 +2,7 @@ import { useParams, useSearchParams } from 'react-router';
 import GoalCalendarPanel from './goalCalendarPanel';
 import { GoalHeader, PostHeader } from './goalHeader';
 import { useContext, useEffect, useState } from 'react';
-import { API_URL } from '../global';
+import { API_URL } from 'src/typescript/global';
 import { translateGoalTitle } from './goalInfo';
 import { DisplayWidthContext, LanguageContext } from '../context';
 import { Calendar } from 'react-feather';

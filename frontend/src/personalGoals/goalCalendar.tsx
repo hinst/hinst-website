@@ -1,11 +1,11 @@
 import lodash from 'lodash';
 import { NavLink } from 'react-router';
 import { PostHeader } from './goalHeader';
-import { compareStrings } from '../string';
-import { getMonthName, parseMonthlyDate } from '../date';
-import { getPaddedChunks } from '../array';
+import { compareStrings } from 'src/typescript/string';
+import { getMonthName, parseMonthlyDate } from 'src/typescript/date';
+import { getPaddedChunks } from 'src/typescript/array';
 import { Calendar } from 'react-feather';
-import { createRandomId } from '../react';
+import { createRandomId } from 'src/typescript/react';
 
 const ROWS_PER_MONTH = 3;
 

@@ -1,6 +1,6 @@
 import { Tool } from 'react-feather';
 import { SmartPostExtended } from './smartPost';
-import { API_URL } from '../global';
+import { API_URL } from 'src/typescript/global';
 import { useState } from 'react';
 
 export default function GoalPostManagementPanel(props: {

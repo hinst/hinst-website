@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { API_URL } from '../global';
+import { API_URL } from 'src/typescript/global';
 import { PostHeader } from './goalHeader';
 import GoalCalendar from './goalCalendar';
 
