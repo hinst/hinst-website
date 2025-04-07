@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import GoalListPanel from './personalGoals/goalListPanel';
+import GoalListPanel from './personal-goals/goalListPanel';
 
 export default function HomePage(props: {
 	setPageTitle: (title: string) => void

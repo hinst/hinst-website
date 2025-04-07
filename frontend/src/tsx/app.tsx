@@ -2,7 +2,7 @@ import { HashRouter, Route, Routes } from 'react-router';
 import Header from './header';
 import { useEffect, useState } from 'react';
 import HomePage from './homePage';
-import GoalBrowser from './personalGoals/goalBrowser';
+import GoalBrowser from './personal-goals/goalBrowser';
 import { getCurrentLanguage, SupportedLanguages } from 'src/typescript/language';
 import { DisplayWidthContext, LanguageContext } from './context';
 
