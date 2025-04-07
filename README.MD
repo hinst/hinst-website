@@ -1,7 +1,9 @@
 # Changelog
-* 2025.07
-    * Moved source files to separated folders:
-		* src/typescript
-		* src/tsx
-		* src/css
-* Refactored context: use one AppContext instead of two different contexts: LanguageContext and DisplayWidthContext
+
+## 2025.07
+
+* Moved source files to separated folders:
+	* src/typescript
+	* src/tsx
+	* src/css
+* Refactoring: merged LanguageContext and DisplayWidthContext into one AppContext
