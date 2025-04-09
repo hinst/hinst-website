@@ -40,7 +40,7 @@ export default function GoalBrowser(props: {
 
 	function isGoalManagerMode() {
 		return Cookie.get('goalManagerMode') === '1';
-	}
+	};
 
 	const [calendarEnabled, setCalendarEnabled] = useState(true);
 	const [calendarTransition, setCalendarTransition] = useState('');
@@ -116,7 +116,6 @@ export default function GoalBrowser(props: {
 			<div style={{
 				display: 'flex',
 				overflowY: 'auto',
-				paddingRight: 10,
 				flexShrink: 0,
 				flexBasis: 'fit-content',
 			}}>
