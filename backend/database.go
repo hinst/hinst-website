@@ -3,10 +3,7 @@ package main
 import (
 	"database/sql"
 	"os"
-	"path/filepath"
-	"slices"
 	"strconv"
-	"strings"
 	"time"
 
 	_ "embed"
@@ -63,29 +60,6 @@ func (me *database) getGoalIds() (goalIds []int) {
 }
 
 func (me *database) migrate() {
-	var goalIds = me.getGoalIds()
-	var db = me.open()
-	defer me.close(db)
-	for _, goalId := range goalIds {
-		var goalDirectory = filepath.Join(me.dataDirectory, strconv.Itoa(goalId))
-		var publicPostsPath = goalDirectory + "/" + publicPostsFileName
-		if checkFileExists(publicPostsPath) {
-			var publicPostsText = readTextFile(publicPostsPath)
-			var publicPosts = strings.Split(publicPostsText, "\n")
-			for i := range publicPosts {
-				publicPosts[i] = strings.TrimSpace(publicPosts[i])
-			}
-			var fileNames = getGoalFiles(goalDirectory)
-			for _, fileName := range fileNames {
-				var dateTime = assertResultError(parseStoredGoalFileDate(getFileNameWithoutExtension(fileName)))
-				var dateTimeText = dateTime.Format(smartProgressTimeFormat)
-				var isPublic = slices.Contains(publicPosts, dateTimeText)
-				assertResultError(
-					db.Exec("INSERT INTO goalPosts (goalId, dateTime, isPublic) VALUES (?, ?, ?)",
-						goalId, dateTime.UTC().Unix(), isPublic))
-			}
-		}
-	}
 }
 
 func (me *database) getGoalPost(goalId int, dateTime time.Time) (result *goalPostRow) {
