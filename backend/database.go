@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -69,6 +70,13 @@ func (me *database) migrate() {
 	defer me.close(newDb)
 	var oldDb = me.open()
 	defer me.close(oldDb)
+	me.forEachGoalPost(func(row *goalPostRow) {
+		var execResult = assertResultError(
+			newDb.Exec("UPDATE goalPosts SET isPublic = ? WHERE goalId = ? AND dateTime = ?",
+				row.isPublic, row.goalId, row.dateTime.UTC().Unix()))
+		fmt.Println(row.String())
+		fmt.Printf("%v\n", assertResultError(execResult.RowsAffected()))
+	})
 }
 
 func (me *database) getGoalPost(goalId int, dateTime time.Time) (result *goalPostRow) {
@@ -124,6 +132,18 @@ func (me *database) setGoalPostPublic(row *goalPostRow) {
 			"ON CONFLICT(goalId, dateTime) DO UPDATE SET isPublic = ?",
 			row.goalId, row.dateTime.UTC().Unix(), row.isPublic, row.isPublic),
 	)
+}
+
+func (me *database) forEachGoalPost(callback func(row *goalPostRow)) {
+	var db = me.open()
+	defer me.close(db)
+	var rows = assertResultError(db.Query("SELECT * FROM goalPosts"))
+	for rows.Next() {
+		var row goalPostRow
+		row.scan(rows)
+		callback(&row)
+	}
+	assertError(rows.Err())
 }
 
 func (me *database) collectGarbage() {
