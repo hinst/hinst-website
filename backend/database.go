@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	"strconv"
 	"time"
 
@@ -53,17 +52,6 @@ func (me *database) getFilePath() string {
 	return me.dataDirectory + "/hinst-website.db"
 }
 
-func (me *database) getGoalIds() (goalIds []int) {
-	var files = assertResultError(os.ReadDir(me.dataDirectory))
-	for _, file := range files {
-		if file.IsDir() && goalIdStringMatcher.MatchString(file.Name()) {
-			var goalId = assertResultError(strconv.Atoi(file.Name()))
-			goalIds = append(goalIds, goalId)
-		}
-	}
-	return
-}
-
 func (me *database) migrate() {
 	// merge old and new database formats
 	var newDb = me.openFile("C:\\Dev\\SmartProgress-or\\downloader\\data\\hinst-website.db")
@@ -71,9 +59,17 @@ func (me *database) migrate() {
 	var oldDb = me.open()
 	defer me.close(oldDb)
 	me.forEachGoalPost(func(row *goalPostRow) {
+		var matchedRow = newDb.QueryRow("SELECT dateTime FROM goalPosts WHERE goalId = ? ORDER BY abs(dateTime - ?) LIMIT 1",
+			row.goalId, row.dateTime.UTC().Unix())
+		assertError(matchedRow.Err())
+		var matchedDateTime int64
+		assertError(matchedRow.Scan(&matchedDateTime))
+		assertCondition(matchedDateTime != 0, func() string { return "Cannot find matching date time" })
+		var difference time.Duration = time.Duration(absInt64(row.dateTime.UTC().Unix()-matchedDateTime)) * time.Second
+		fmt.Printf("Difference: %v\n", difference)
 		var execResult = assertResultError(
 			newDb.Exec("UPDATE goalPosts SET isPublic = ? WHERE goalId = ? AND dateTime = ?",
-				row.isPublic, row.goalId, row.dateTime.UTC().Unix()))
+				row.isPublic, row.goalId, matchedDateTime))
 		fmt.Println(row.String())
 		fmt.Printf("%v\n", assertResultError(execResult.RowsAffected()))
 	})
