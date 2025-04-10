@@ -31,9 +31,13 @@ func (me *database) init(dataDirectory string) {
 }
 
 func (me *database) open() *sql.DB {
+	return me.openFile(me.getFilePath())
+}
+
+func (me *database) openFile(filePath string) *sql.DB {
 	const journalMode = "_journal_mode=WAL"
 	var busyTimeout = "_busy_timeout=" + strconv.Itoa(int(dbTimeout))
-	var url = "file:" + me.getFilePath() + "?" + journalMode + "&" + busyTimeout
+	var url = "file:" + filePath + "?" + journalMode + "&" + busyTimeout
 	return assertResultError(sql.Open("sqlite3", url))
 }
 
@@ -60,6 +64,11 @@ func (me *database) getGoalIds() (goalIds []int) {
 }
 
 func (me *database) migrate() {
+	// merge old and new database formats
+	var newDb = me.openFile("C:\\Dev\\SmartProgress-or\\downloader\\data\\hinst-website.db")
+	defer me.close(newDb)
+	var oldDb = me.open()
+	defer me.close(oldDb)
 }
 
 func (me *database) getGoalPost(goalId int, dateTime time.Time) (result *goalPostRow) {
@@ -73,20 +82,6 @@ func (me *database) getGoalPost(goalId int, dateTime time.Time) (result *goalPos
 		assertError(rows.Err())
 		result = new(goalPostRow)
 		result.scan(rows)
-	}
-	return
-}
-
-func (me *database) getGoalPosts(goalId int, times []time.Time) (results map[time.Time]goalPostRow) {
-	var db = me.open()
-	defer me.close(db)
-	var rows = assertResultError(
-		db.Query("SELECT * FROM goalPosts WHERE goalId = ? AND dateTime IN ?", goalId, times),
-	)
-	for rows.Next() {
-		var row goalPostRow
-		row.scan(rows)
-		results[row.dateTime.UTC()] = row
 	}
 	return
 }
