@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 	"os"
-	"path/filepath"
 	"regexp"
+	"strconv"
 	"time"
 )
 
@@ -12,33 +12,6 @@ type webAppGoalsBase struct {
 	db                    *database
 	savedGoalsPath        string
 	goalDateStringMatcher *regexp.Regexp
-}
-
-const publicPostsFileName = "public-posts.txt"
-
-func (me *webAppGoalsBase) getGoalPostFiles(goalId string, allEnabled bool) (filePaths []string) {
-	var goalDirectory = filepath.Join(me.savedGoalsPath, goalId)
-	var fileNames = getGoalFiles(goalDirectory)
-	var visibilities = make(map[time.Time]bool)
-	if !allEnabled {
-		visibilities = me.db.getGoalPostVisibilities(getIntFromString(goalId))
-	}
-	for _, fileName := range fileNames {
-		var isAllowed = false
-		if allEnabled {
-			isAllowed = true
-		} else {
-			var fileNameBase = getFileNameWithoutExtension(fileName)
-			var date = assertResultError(parseStoredGoalFileDate(fileNameBase))
-			isAllowed = visibilities[date.UTC()]
-		}
-		if !isAllowed {
-			continue
-		}
-		var filePath = filepath.Join(me.savedGoalsPath, goalId, fileName)
-		filePaths = append(filePaths, filePath)
-	}
-	return
 }
 
 func (me *webAppGoalsBase) checkValidGoalIdString(goalId string) bool {
@@ -54,15 +27,15 @@ func (me *webAppGoalsBase) inputValidGoalIdString(goalId string) string {
 }
 
 func (me *webAppGoalsBase) inputValidPostDateTime(text string) time.Time {
-	var postDateTime, postDateTimeError = parseSmartProgressDate(text)
+	var unixEpochSeconds, parseIntError = strconv.ParseInt(text, 10, 64)
 	var createWebError = func() webError {
 		return webError{
-			"Need valid postDateTime. Format: " + smartProgressTimeFormat,
+			"Need valid postDateTime. Format: unix epoch seconds, number",
 			http.StatusBadRequest,
 		}
 	}
-	assertCondition(nil == postDateTimeError, createWebError)
-	return postDateTime
+	assertCondition(nil == parseIntError, createWebError)
+	return time.Unix(unixEpochSeconds, 0)
 }
 
 func (me *webAppGoalsBase) inputCheckAdminPassword(request *http.Request) bool {
