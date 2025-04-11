@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"time"
 
 	"golang.org/x/text/language"
@@ -43,13 +42,7 @@ func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Reque
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("id"))
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
-	var filePaths = me.getGoalPostFiles(goalId, goalManagerMode)
-	var posts = readJsonFiles[smartPostHeaderExtended](filePaths, runtime.NumCPU())
-	var postInfos = me.db.getPostsByDates(smartPostHeaderExtended{}.getDatesSeconds(posts))
-	for _, post := range posts {
-		var postInfo = postInfos[assertResultError(parseSmartProgressDate(post.Date)).UTC()]
-		post.IsPublic = postInfo.isPublic
-	}
+	var posts = me.db.getGoalPosts(getIntFromString(goalId), goalManagerMode)
 	response.Write(encodeJson(posts))
 }
 

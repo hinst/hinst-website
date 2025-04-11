@@ -4,3 +4,10 @@ type goalRecord struct {
 	Id    string `json:"id"`
 	Title string `json:"title"`
 }
+
+type goalPostRecord struct {
+	GoalId int `json:"goalId"`
+	// Unix epoch time seconds
+	DateTime int64 `json:"date"`
+	IsPublic bool  `json:"isPublic"`
+}

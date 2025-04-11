@@ -64,6 +64,22 @@ func (me *database) getGoals() (results []goalRecord) {
 	return
 }
 
+func (me *database) getGoalPosts(goalId int, includePrivate bool) (results []goalPostRecord) {
+	var db = me.open()
+	defer me.close(db)
+	var queryText = "SELECT goalId, dateTime, isPublic FROM goalPosts WHERE goalId = ?"
+	if !includePrivate {
+		queryText += " AND isPublic = 1"
+	}
+	var rows = assertResultError(db.Query(queryText, goalId))
+	for rows.Next() {
+		var record goalPostRecord
+		assertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic))
+		results = append(results, record)
+	}
+	return
+}
+
 func (me *database) migrate() {
 	// merge old and new database formats
 	var newDb = me.openFile("C:\\Dev\\SmartProgress-or\\downloader\\data\\hinst-website.db")
