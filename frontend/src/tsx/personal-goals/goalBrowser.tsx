@@ -1,6 +1,6 @@
 import { useParams, useSearchParams } from 'react-router';
 import GoalCalendarPanel from './goalCalendarPanel';
-import { GoalHeader, PostHeader } from 'src/typescript/personal-goals/goalHeader';
+import { GoalRecord, PostHeader } from 'src/typescript/personal-goals/goalHeader';
 import { useContext, useEffect, useState } from 'react';
 import { API_URL } from 'src/typescript/global';
 import { translateGoalTitle } from 'src/typescript/personal-goals/goalInfo';
@@ -55,7 +55,7 @@ export default function GoalBrowser(props: {
 	async function loadGoal() {
 		const response = await fetch(API_URL + '/goal?id=' + encodeURIComponent(goalId));
 		if (response.ok) {
-			const goalHeader: GoalHeader = await response.json();
+			const goalHeader: GoalRecord = await response.json();
 			setGoalTitle(translateGoalTitle(context.currentLanguage, goalHeader.title));
 		}
 	};

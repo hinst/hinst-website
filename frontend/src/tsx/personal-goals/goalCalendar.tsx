@@ -1,18 +1,19 @@
 import lodash from 'lodash';
 import { NavLink } from 'react-router';
-import { PostHeader } from 'src/typescript/personal-goals/goalHeader';
+import { GoalPostRecord } from 'src/typescript/personal-goals/goalPostRecord';
 import { compareStrings } from 'src/typescript/string';
 import { getMonthName, parseMonthlyDate } from 'src/typescript/date';
 import { getPaddedChunks } from 'src/typescript/array';
 import { Calendar } from 'react-feather';
 import { createRandomId } from 'src/typescript/react';
+import { DateTime } from 'luxon';
 
 const ROWS_PER_MONTH = 3;
 
 class MonthlyPosts {
 	constructor(
 		public readonly monthDate: string,
-		public readonly posts: PostHeader[],
+		public readonly posts: GoalPostRecord[],
 	) {}
 }
 
@@ -23,14 +24,14 @@ class YearlyPosts {
 	) {}
 }
 
-export default function GoalCalendar(props: {posts: PostHeader[], activePostDate: string}) {
+export default function GoalCalendar(props: {posts: GoalPostRecord[], activePostDate: number}) {
 	function getSortedPosts() {
-		return [...props.posts].sort((a, b) => compareStrings(a.date, b.date));
+		return [...props.posts].sort((a, b) => a.dateTime - b.dateTime);
 	}
 
 	function getMonthlyPosts() {
 		const posts = getSortedPosts();
-		const groups = lodash.groupBy(posts, post => post.date.substring(0, '2025-03'.length));
+		const groups = lodash.groupBy(posts, post => post.yearAndMonthText);
 		return Array.from(Object.entries(groups))
 			.map(([monthDate, posts]) => new MonthlyPosts(monthDate, posts))
 			.sort((a, b) => -compareStrings(a.monthDate, b.monthDate));
@@ -78,11 +79,11 @@ export default function GoalCalendar(props: {posts: PostHeader[], activePostDate
 	</div>;
 }
 
-function DaysOfMonth(props: {posts: PostHeader[], activePostDate: string}) {
+function DaysOfMonth(props: {posts: GoalPostRecord[], activePostDate: number}) {
 	return <div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
 		{getPaddedChunks(props.posts, ROWS_PER_MONTH).map((posts) =>
 			<div
-				key={posts.map(post => post?.id).join(' ')}
+				key={posts.map(post => post?.dateTime).join(' ')}
 				style={{display: 'flex', gap: 10}}
 			>
 				<DaysOfMonthRow posts={posts} activePostDate={props.activePostDate}/>
@@ -92,23 +93,21 @@ function DaysOfMonth(props: {posts: PostHeader[], activePostDate: string}) {
 }
 
 function DaysOfMonthRow(props: {
-	posts: (PostHeader | undefined)[],
-	activePostDate: string,
+	posts: (GoalPostRecord | undefined)[],
+	activePostDate: number,
 }) {
 	return props.posts.map(post =>
-		<div key={post?.id || createRandomId()}>
+		<div key={post?.dateTime || createRandomId()}>
 			{post
 				? <NavLinkDay
-					date={post.date}
-					id={post.id}
-					goalId={post.obj_id}
-					isActive={props.activePostDate === post.date}
+					date={post.dateTime}
+					goalId={post.goalId}
+					isActive={props.activePostDate === post.dateTime}
 					isPublic={post.isPublic}
 				/>
 				: <NavLinkDay
-					date='2025-03-01'
-					id={''}
-					goalId={''}
+					date={0}
+					goalId={0}
 					isActive={false}
 					isPublic={false}
 				/>
@@ -118,25 +117,25 @@ function DaysOfMonthRow(props: {
 }
 
 function NavLinkDay(props: {
-	date: string,
-	id: string,
-	goalId: string,
+	date: number,
+	goalId: number,
 	isActive: boolean,
 	isPublic: boolean,
 }) {
 	let url = '';
-	if (props.id !== '')
+	if (props.date !== 0)
 		url = '/personal-goals/' + encodeURIComponent(props.goalId) +
 			'?activePostDate=' + encodeURIComponent(props.date);
 	const classNames =  ['ms-btn', 'ms-outline', ];
 	classNames.push(props.isPublic ? 'ms-primary' : 'ms-secondary ms-text-secondary');
 	if (props.isActive)
 		classNames.push('ms-btn-active');
+	const dayText = DateTime.fromMillis(props.date * 1000).toFormat('dd');
 	return <NavLink
 		to={url}
 		className={classNames.join(' ')}
-		style={{fontFamily: 'monospace', visibility: props.id === '' ? 'hidden' : 'visible'}}
+		style={{fontFamily: 'monospace', visibility: props.date === 0 ? 'hidden' : 'visible'}}
 	>
-		{props.date.slice('2025-03-'.length, '2025-03-06'.length)}
+		{dayText}
 	</NavLink>;
 }

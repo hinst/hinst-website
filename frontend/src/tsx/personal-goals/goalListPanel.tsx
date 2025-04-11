@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { GoalHeader } from 'src/typescript/personal-goals/goalHeader';
+import { GoalRecord } from 'src/typescript/personal-goals/goalHeader';
 import { API_URL } from 'src/typescript/global';
 import GoalList from './goalList';
 
 export default function GoalListPanel() {
 	const [isLoading, setIsLoading] = useState(false);
-	const [goals, setGoals] = useState(new Array<GoalHeader>());
+	const [goals, setGoals] = useState(new Array<GoalRecord>());
 	async function loadGoals() {
 		setIsLoading(true);
 		try {
