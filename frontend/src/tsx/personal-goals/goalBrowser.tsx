@@ -1,6 +1,7 @@
 import { useParams, useSearchParams } from 'react-router';
 import GoalCalendarPanel from './goalCalendarPanel';
-import { GoalRecord, PostHeader } from 'src/typescript/personal-goals/goalHeader';
+import { GoalRecord } from 'src/typescript/personal-goals/goalRecord';
+import { GoalPostRecord } from 'src/typescript/personal-goals/goalPostRecord';
 import { useContext, useEffect, useState } from 'react';
 import { API_URL } from 'src/typescript/global';
 import { translateGoalTitle } from 'src/typescript/personal-goals/goalInfo';
@@ -45,10 +46,10 @@ export default function GoalBrowser(props: {
 	const [calendarEnabled, setCalendarEnabled] = useState(true);
 	const [calendarTransition, setCalendarTransition] = useState('');
 
-	function receivePosts(posts: PostHeader[]) {
+	function receivePosts(posts: GoalPostRecord[]) {
 		if (posts.length && !activePostDate) {
-			const newActivePostDate = posts[posts.length - 1].date;
-			setSearchParams({activePostDate: newActivePostDate});
+			const newActivePostDate = posts[posts.length - 1].dateTime;
+			setSearchParams({activePostDate: '' + newActivePostDate});
 		}
 	};
 
