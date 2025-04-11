@@ -8,6 +8,8 @@ type goalRecord struct {
 type goalPostRecord struct {
 	GoalId int `json:"goalId"`
 	// Unix epoch time seconds
-	DateTime int64 `json:"date"`
-	IsPublic bool  `json:"isPublic"`
+	DateTime int64  `json:"date"`
+	IsPublic bool   `json:"isPublic"`
+	// "post" or "comment"
+	Type     string `json:"type"`
 }
