@@ -52,6 +52,18 @@ func (me *database) getFilePath() string {
 	return me.dataDirectory + "/hinst-website.db"
 }
 
+func (me *database) getGoals() (results []goalRecord) {
+	var db = me.open()
+	defer me.close(db)
+	var rows = assertResultError(db.Query("SELECT id, title FROM goals"))
+	for rows.Next() {
+		var record goalRecord
+		assertError(rows.Scan(&record.Id, &record.Title))
+		results = append(results, record)
+	}
+	return
+}
+
 func (me *database) migrate() {
 	// merge old and new database formats
 	var newDb = me.openFile("C:\\Dev\\SmartProgress-or\\downloader\\data\\hinst-website.db")

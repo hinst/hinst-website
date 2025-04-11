@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -29,16 +28,8 @@ func (me *webAppGoals) init(db *database) []namedWebFunction {
 }
 
 func (me *webAppGoals) getGoals(response http.ResponseWriter, request *http.Request) {
-	var files = assertResultError(os.ReadDir(me.savedGoalsPath))
-	var headers = make([]*goalHeader, 0, len(files))
-	for _, file := range files {
-		if file.IsDir() {
-			var headerFilePath = filepath.Join(me.savedGoalsPath, file.Name(), savedGoalHeaderFileName)
-			var header = readJsonFile(headerFilePath, &goalHeader{})
-			headers = append(headers, header)
-		}
-	}
-	response.Write(encodeJson(headers))
+	var records = me.db.getGoals()
+	response.Write(encodeJson(records))
 }
 
 func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Request) {
