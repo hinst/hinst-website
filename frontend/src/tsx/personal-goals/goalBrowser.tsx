@@ -139,6 +139,7 @@ export default function GoalBrowser(props: {
 					style={{
 						paddingLeft: ARTICLE_PADDING,
 						paddingRight: ARTICLE_PADDING,
+						width: ARTICLE_WIDTH,
 						maxWidth: ARTICLE_WIDTH,
 						backgroundAttachment: 'fixed',
 						minHeight: 0,
