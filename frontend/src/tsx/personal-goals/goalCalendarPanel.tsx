@@ -6,7 +6,7 @@ import GoalCalendar from './goalCalendar';
 export default function GoalCalendarPanel(
 	props: {
 		id: string,
-		activePostDate: string,
+		activePostDate: number,
 		receivePosts?: (posts: GoalPostRecord[]) => void,
 		reload: number,
 	}

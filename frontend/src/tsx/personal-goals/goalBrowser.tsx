@@ -91,7 +91,7 @@ export default function GoalBrowser(props: {
 		return <GoalCalendarPanel
 			id={goalId}
 			receivePosts={receivePosts}
-			activePostDate={activePostDate}
+			activePostDate={parseInt(activePostDate) || 0}
 			reload={reloadGoalCalendar}
 		/>;
 	};
