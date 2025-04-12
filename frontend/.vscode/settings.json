@@ -1,0 +1,8 @@
+{
+	"[tsx]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[ts]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	}
+}

@@ -49,7 +49,7 @@ export default function GoalBrowser(props: {
 	function receivePosts(posts: GoalPostRecord[]) {
 		if (posts.length && !activePostDate) {
 			const newActivePostDate = posts[posts.length - 1].dateTime;
-			setSearchParams({activePostDate: '' + newActivePostDate});
+			setSearchParams({ activePostDate: '' + newActivePostDate });
 		}
 	};
 
@@ -120,7 +120,7 @@ export default function GoalBrowser(props: {
 				flexShrink: 0,
 				flexBasis: 'fit-content',
 			}}>
-				{ getGoalCalendarPanel() }
+				{getGoalCalendarPanel()}
 			</div>
 			<div
 				id={articleContainerId}
@@ -147,7 +147,7 @@ export default function GoalBrowser(props: {
 						overflowY: 'auto',
 					}}
 				>
-					{ activePostDate ? getGoalPostPanel() : undefined }
+					{activePostDate ? getGoalPostPanel() : undefined}
 				</div>
 			</div>
 		</div>;
@@ -202,7 +202,7 @@ export default function GoalBrowser(props: {
 				overflowY: 'hidden',
 			}}
 		>
-			{ getFloatingCalendarButton() }
+			{getFloatingCalendarButton()}
 			<div
 				className='ms-bg-light ms-shape-round ms-box-shadow ms-border-main'
 				style={{
@@ -218,7 +218,7 @@ export default function GoalBrowser(props: {
 					transition: calendarTransition,
 				}}
 			>
-				{ getGoalCalendarPanel() }
+				{getGoalCalendarPanel()}
 			</div>
 			<div
 				onClick={() => setCalendarEnabled(false)}
@@ -227,8 +227,8 @@ export default function GoalBrowser(props: {
 					overflowY: 'auto',
 				}}
 			>
-				<div style={{maxWidth: ARTICLE_WIDTH}}>
-					{ activePostDate ? getGoalPostPanel() : undefined }
+				<div style={{ maxWidth: ARTICLE_WIDTH }}>
+					{activePostDate ? getGoalPostPanel() : undefined}
 				</div>
 			</div>
 		</div>;

@@ -5,5 +5,9 @@
         "hinst",
         "Millis",
         "russian"
-    ]
+    ],
+    "files.exclude": {
+        "frontend": true,
+        "backend": true
+    }
 }
