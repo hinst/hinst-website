@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router';
-import { GoalRecord } from 'src/typescript/personal-goals/goalHeader';
+import { GoalRecord } from 'src/typescript/personal-goals/goalRecord';
 import { GOAL_INFOS, translateGoalTitle } from 'src/typescript/personal-goals/goalInfo';
 import { getCurrentLanguage } from 'src/typescript/language';
 
