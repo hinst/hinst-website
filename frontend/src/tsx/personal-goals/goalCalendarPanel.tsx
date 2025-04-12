@@ -39,7 +39,7 @@ export default function GoalCalendarPanel(
 	);
 
 	return <div>
-		{ isLoading ? <div className='ms-loading'/> : undefined }
+		{isLoading ? <div className='ms-loading' /> : undefined}
 		<GoalCalendar posts={posts} activePostDate={props.activePostDate} />
 	</div>;
 }
