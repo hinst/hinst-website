@@ -1,11 +1,4 @@
 {
-    "cSpell.words": [
-        "debian",
-        "github",
-        "hinst",
-        "Millis",
-        "russian"
-    ],
     "files.exclude": {
         "frontend": true,
         "backend": true

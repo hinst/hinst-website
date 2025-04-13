@@ -10,5 +10,10 @@
 			"path": "backend"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"cSpell.words": [
+			"github",
+			"sqlite"
+		]
+	}
 }
