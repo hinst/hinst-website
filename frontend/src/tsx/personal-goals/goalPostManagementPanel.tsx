@@ -1,11 +1,11 @@
 import { Tool } from 'react-feather';
-import { SmartPostExtended } from 'src/typescript/personal-goals/smartPost';
+import { GoalPostObject } from 'src/typescript/personal-goals/smartPost';
 import { API_URL } from 'src/typescript/global';
 import { useState } from 'react';
 
 export default function GoalPostManagementPanel(props: {
-	postData: SmartPostExtended;
-	setPostData: (postData: SmartPostExtended) => void;
+	postData: GoalPostObject;
+	setPostData: (postData: GoalPostObject) => void;
 	onChange: () => void;
 }) {
 	const [isLoading, setIsLoading] = useState(false);
@@ -17,9 +17,9 @@ export default function GoalPostManagementPanel(props: {
 				API_URL +
 				'/goalPost/setPublic' +
 				'?goalId=' +
-				encodeURIComponent(props.postData.obj_id) +
+				encodeURIComponent(props.postData.goalId) +
 				'&postDateTime=' +
-				encodeURIComponent(props.postData.date) +
+				encodeURIComponent(props.postData.dateTime) +
 				'&isPublic=' +
 				encodeURIComponent('' + isPublic);
 			const response = await fetch(url);

@@ -79,6 +79,8 @@ func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result goalPo
 	var row = db.QueryRow("SELECT isPublic, text FROM goalPosts WHERE goalId = ? AND dateTime = ?",
 		goalId, dateTime.UTC().Unix())
 	assertError(row.Err())
+	result.GoalId = goalId
+	result.DateTime = dateTime
 	assertError(row.Scan(&result.IsPublic, &result.Text))
 	return
 }

@@ -2,12 +2,11 @@ package main
 
 import (
 	"database/sql"
-	"strconv"
 	"time"
 )
 
 type goalPostRow struct {
-	GoalId   int
+	GoalId   int64
 	DateTime time.Time
 	IsPublic bool
 	Text     string
@@ -20,7 +19,7 @@ func (me *goalPostRow) scan(rows *sql.Rows) {
 }
 
 func (me *goalPostRow) String() string {
-	return "{goalId:" + strconv.Itoa(me.GoalId) +
+	return "{goalId:" + getStringFromInt64(me.GoalId) +
 		", dateTime:" + me.DateTime.String() +
 		", isPublic:" + getStringFromBool(me.IsPublic) + "}"
 }

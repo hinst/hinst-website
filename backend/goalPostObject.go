@@ -1,5 +1,10 @@
 package main
 
+import "time"
+
 type goalPostObject struct {
-	Text string `json:"text"`
+	GoalId int64 `json:"goalId"`
+	// HTML
+	Text     string    `json:"text"`
+	DateTime time.Time `json:"dateTime"`
 }

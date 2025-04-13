@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SmartPostExtended, SmartPostImage } from 'src/typescript/personal-goals/smartPost';
+import { GoalPostObject, SmartPostImage } from 'src/typescript/personal-goals/smartPost';
 import { API_URL } from 'src/typescript/global';
 import GoalPostView from './goalPostView';
 import GoalPostManagementPanel from './goalPostManagementPanel';
@@ -11,7 +11,7 @@ export default function GoalPostPanel(props: {
 	onChange: () => void;
 }) {
 	const [isLoading, setIsLoading] = useState(false);
-	const [postData, setPostData] = useState<SmartPostExtended | undefined>(undefined);
+	const [postData, setPostData] = useState<GoalPostObject | undefined>(undefined);
 	const [errorMessage, setErrorMessage] = useState<string>('');
 
 	async function load() {
@@ -30,7 +30,7 @@ export default function GoalPostPanel(props: {
 				setErrorMessage(response.statusText);
 				return;
 			}
-			const postData: SmartPostExtended = await response.json();
+			const postData: GoalPostObject = await response.json();
 			setPostData(postData);
 			loadImages();
 		} finally {

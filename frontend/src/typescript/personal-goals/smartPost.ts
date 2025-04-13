@@ -18,7 +18,12 @@ export interface SmartPost {
 	username: string;
 }
 
-export interface SmartPostExtended extends SmartPost {
+export interface GoalPostObject {
+	goalId: number;
+	/** Unix epoch timestamp seconds */
+	dateTime: number;
+	/** HTML */
+	text: string;
 	isAutoTranslated: boolean;
 	languageName?: string;
 	languageNamePending?: string;

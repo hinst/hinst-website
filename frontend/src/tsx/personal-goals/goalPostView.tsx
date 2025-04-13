@@ -1,8 +1,8 @@
-import { SmartPostExtended } from 'src/typescript/personal-goals/smartPost';
+import { GoalPostObject } from 'src/typescript/personal-goals/smartPost';
 import SafeHtmlView from '../safeHtmlView';
 import { Info } from 'react-feather';
 
-export default function GoalPostView(props: { postData: SmartPostExtended }) {
+export default function GoalPostView(props: { postData: GoalPostObject }) {
 	return (
 		<div>
 			{props.postData.isAutoTranslated ? (
@@ -35,10 +35,9 @@ export default function GoalPostView(props: { postData: SmartPostExtended }) {
 				</div>
 			) : undefined}
 			<div className='goalPostViewText'>
-				<SafeHtmlView htmlText={props.postData.msg} />
+				<SafeHtmlView htmlText={props.postData.text} />
 			</div>
 			<div
-				key={props.postData.id}
 				style={{
 					display: 'flex',
 					flexWrap: 'wrap',
