@@ -29,3 +29,7 @@ export interface GoalPostObject {
 	languageNamePending?: string;
 	isPublic: boolean;
 }
+
+export interface GoalPostObjectExtended extends GoalPostObject {
+	images: string[];
+}

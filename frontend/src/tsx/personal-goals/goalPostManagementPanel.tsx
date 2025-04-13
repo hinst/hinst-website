@@ -1,11 +1,11 @@
 import { Tool } from 'react-feather';
-import { GoalPostObject } from 'src/typescript/personal-goals/smartPost';
+import { GoalPostObject, GoalPostObjectExtended } from 'src/typescript/personal-goals/smartPost';
 import { API_URL } from 'src/typescript/global';
 import { useState } from 'react';
 
 export default function GoalPostManagementPanel(props: {
-	postData: GoalPostObject;
-	setPostData: (postData: GoalPostObject) => void;
+	postData: GoalPostObjectExtended;
+	setPostData: (postData: GoalPostObjectExtended) => void;
 	onChange: () => void;
 }) {
 	const [isLoading, setIsLoading] = useState(false);

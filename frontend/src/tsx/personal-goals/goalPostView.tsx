@@ -1,8 +1,8 @@
-import { GoalPostObject } from 'src/typescript/personal-goals/smartPost';
+import { GoalPostObjectExtended } from 'src/typescript/personal-goals/smartPost';
 import SafeHtmlView from '../safeHtmlView';
 import { Info } from 'react-feather';
 
-export default function GoalPostView(props: { postData: GoalPostObject }) {
+export default function GoalPostView(props: { postData: GoalPostObjectExtended }) {
 	return (
 		<div>
 			{props.postData.isAutoTranslated ? (
@@ -44,9 +44,7 @@ export default function GoalPostView(props: { postData: GoalPostObject }) {
 					gap: 10
 				}}
 			>
-				{props.postData.images?.map((image) => (
-					<GoalImage key={image.dataUrl} data={image.dataUrl} />
-				))}
+				{props.postData.images?.map((image) => <GoalImage key={image.slice(0, 100)} data={image} />)}
 			</div>
 		</div>
 	);

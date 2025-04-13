@@ -1,8 +1,8 @@
 package main
 
 import (
+	"encoding/base64"
 	"net/http"
-	"path/filepath"
 	"regexp"
 	"time"
 )
@@ -58,13 +58,17 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 }
 
 func (me *webAppGoals) getGoalPostImages(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("goalId"))
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
-	var fileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
-	var filePath = filepath.Join(me.savedGoalsPath, fileName)
-	var post = readJsonFile(filePath, &smartPostExtended{})
+	var images = me.db.getGoalPostImages(goalId, postDateTime)
+	var imageStrings []string
+	for _, image := range images {
+		var imageString = "data:" + image.contentType + ";base64," +
+			base64.StdEncoding.EncodeToString(image.file)
+		imageStrings = append(imageStrings, imageString)
+	}
 	setCacheAge(response, time.Minute)
-	response.Write(encodeJson(post.Images))
+	response.Write(encodeJson(imageStrings))
 }
 
 func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *http.Request) {
