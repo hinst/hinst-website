@@ -51,7 +51,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 		}
 	}
 
-	async function loadGoal() {
+	async function loadGoal(goalId: string) {
 		const response = await fetch(API_URL + '/goal?id=' + encodeURIComponent(goalId));
 		if (response.ok) {
 			const goalHeader: GoalRecord = await response.json();
@@ -60,7 +60,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 	}
 
 	useEffect(() => {
-		loadGoal();
+		loadGoal(goalId);
 	}, [goalId]);
 
 	useEffect(() => {
