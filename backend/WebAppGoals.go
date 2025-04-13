@@ -32,9 +32,8 @@ func (me *webAppGoals) getGoals(response http.ResponseWriter, request *http.Requ
 }
 
 func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("id"))
-	var headerFilePath = filepath.Join(me.savedGoalsPath, goalId, savedGoalHeaderFileName)
-	var goal = readJsonFile(headerFilePath, &goalHeader{})
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
+	var goal = me.db.getGoal(goalId)
 	setCacheAge(response, time.Minute)
 	response.Write(encodeJson(goal))
 }

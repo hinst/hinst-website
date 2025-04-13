@@ -26,6 +26,15 @@ func (me *webAppGoalsBase) inputValidGoalIdString(goalId string) string {
 	return goalId
 }
 
+func (me *webAppGoalsBase) inputValidGoalId(goalId string) int64 {
+	var result, parseError = strconv.ParseInt(goalId, 10, 64)
+	var createWebError = func() webError {
+		return webError{"Need goal id. Received: " + goalId, http.StatusBadRequest}
+	}
+	assertCondition(parseError == nil, createWebError)
+	return result
+}
+
 func (me *webAppGoalsBase) inputValidPostDateTime(text string) time.Time {
 	var unixEpochSeconds, parseIntError = strconv.ParseInt(text, 10, 64)
 	var createWebError = func() webError {
