@@ -73,6 +73,16 @@ func (me *database) getGoal(goalId int64) (result goalRecord) {
 	return
 }
 
+func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result goalPostRow) {
+	var db = me.open()
+	defer me.close(db)
+	var row = db.QueryRow("SELECT isPublic, text FROM goalPosts WHERE goalId = ? AND dateTime = ?",
+		goalId, dateTime.UTC().Unix())
+	assertError(row.Err())
+	assertError(row.Scan(&result.IsPublic, &result.Text))
+	return
+}
+
 func (me *database) getGoalPosts(goalId int, includePrivate bool) (results []goalPostRecord) {
 	var db = me.open()
 	defer me.close(db)
@@ -97,34 +107,19 @@ func (me *database) migrate() {
 	defer me.close(oldDb)
 	me.forEachGoalPost(func(row *goalPostRow) {
 		var matchedRow = newDb.QueryRow("SELECT dateTime FROM goalPosts WHERE goalId = ? ORDER BY abs(dateTime - ?) LIMIT 1",
-			row.goalId, row.dateTime.UTC().Unix())
+			row.GoalId, row.DateTime.UTC().Unix())
 		assertError(matchedRow.Err())
 		var matchedDateTime int64
 		assertError(matchedRow.Scan(&matchedDateTime))
 		assertCondition(matchedDateTime != 0, func() string { return "Cannot find matching date time" })
-		var difference time.Duration = time.Duration(absInt64(row.dateTime.UTC().Unix()-matchedDateTime)) * time.Second
+		var difference time.Duration = time.Duration(absInt64(row.DateTime.UTC().Unix()-matchedDateTime)) * time.Second
 		fmt.Printf("Difference: %v\n", difference)
 		var execResult = assertResultError(
 			newDb.Exec("UPDATE goalPosts SET isPublic = ? WHERE goalId = ? AND dateTime = ?",
-				row.isPublic, row.goalId, matchedDateTime))
+				row.IsPublic, row.GoalId, matchedDateTime))
 		fmt.Println(row.String())
 		fmt.Printf("%v\n", assertResultError(execResult.RowsAffected()))
 	})
-}
-
-func (me *database) getGoalPost(goalId int, dateTime time.Time) (result *goalPostRow) {
-	var db = me.open()
-	defer me.close(db)
-	var rows = assertResultError(
-		db.Query("SELECT * FROM goalPosts WHERE goalId = ? AND dateTime = ?",
-			goalId, dateTime.UTC().Unix()),
-	)
-	if rows.Next() {
-		assertError(rows.Err())
-		result = new(goalPostRow)
-		result.scan(rows)
-	}
-	return
 }
 
 func (me *database) getPostsByDates(ids []int64) (results map[time.Time]goalPostRow) {
@@ -136,7 +131,7 @@ func (me *database) getPostsByDates(ids []int64) (results map[time.Time]goalPost
 	for rows.Next() {
 		var row goalPostRow
 		row.scan(rows)
-		results[row.dateTime.UTC()] = row
+		results[row.DateTime.UTC()] = row
 	}
 	return
 }
@@ -163,7 +158,7 @@ func (me *database) setGoalPostPublic(row *goalPostRow) {
 	assertResultError(
 		db.Exec("INSERT INTO goalPosts (goalId, dateTime, isPublic) VALUES (?, ?, ?) "+
 			"ON CONFLICT(goalId, dateTime) DO UPDATE SET isPublic = ?",
-			row.goalId, row.dateTime.UTC().Unix(), row.isPublic, row.isPublic),
+			row.GoalId, row.DateTime.UTC().Unix(), row.IsPublic, row.IsPublic),
 	)
 }
 

@@ -5,8 +5,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"time"
-
-	"golang.org/x/text/language"
 )
 
 type webAppGoals struct {
@@ -46,34 +44,15 @@ func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.
 }
 
 func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("goalId"))
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
-	var fileName = filepath.Join(goalId, postDateTime.Format(storedGoalFileTimeFormat)+".json")
-	var filePath = filepath.Join(me.savedGoalsPath, fileName)
-	var goalPost = readJsonFile(filePath, &smartPostExtended{})
-	var goalManagerMode = me.inputCheckGoalManagerMode(request)
+	// var goalManagerMode = me.inputCheckGoalManagerMode(request)
 
-	var requestedLanguage = getWebLanguage(request)
-	var translatedFilePath = translatorPresets.getTranslatedFilePath(filePath, requestedLanguage)
-	if checkFileExists(translatedFilePath) {
-		goalPost.Msg = readTextFile(translatedFilePath)
-		goalPost.LanguageTag = requestedLanguage.String()
-		goalPost.LanguageName = getLanguageName(requestedLanguage)
-		if requestedLanguage != language.Russian {
-			goalPost.IsAutoTranslated = true
-		}
-	} else {
-		goalPost.LanguageNamePending = getLanguageName(requestedLanguage)
-	}
-	if goalManagerMode {
-		var goalPostRow = me.db.getGoalPost(getIntFromString(goalId), postDateTime)
-		if goalPostRow != nil {
-			goalPost.IsPublic = goalPostRow.isPublic
-		}
-	}
-
-	goalPost.Images = nil
-	response.Write(encodeJson(goalPost))
+	// var requestedLanguage = getWebLanguage(request)
+	var goalPostRow = me.db.getGoalPost(goalId, postDateTime)
+	var goalPostObject goalPostObject
+	goalPostObject.Text = goalPostRow.Text
+	response.Write(encodeJson(goalPostObject))
 }
 
 func (me *webAppGoals) getGoalPostImages(response http.ResponseWriter, request *http.Request) {
@@ -94,6 +73,6 @@ func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *
 	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var isPublic = request.URL.Query().Get("isPublic") == "true"
-	var row = goalPostRow{goalId: getIntFromString(goalId), dateTime: postDateTime, isPublic: isPublic}
+	var row = goalPostRow{GoalId: getIntFromString(goalId), DateTime: postDateTime, IsPublic: isPublic}
 	me.db.setGoalPostPublic(&row)
 }

@@ -7,19 +7,20 @@ import (
 )
 
 type goalPostRow struct {
-	goalId   int
-	dateTime time.Time
-	isPublic bool
+	GoalId   int
+	DateTime time.Time
+	IsPublic bool
+	Text     string
 }
 
 func (me *goalPostRow) scan(rows *sql.Rows) {
 	var dateTimeMilliseconds int64
-	assertError(rows.Scan(&me.goalId, &dateTimeMilliseconds, &me.isPublic))
-	me.dateTime = time.Unix(dateTimeMilliseconds, 0)
+	assertError(rows.Scan(&me.GoalId, &dateTimeMilliseconds, &me.IsPublic))
+	me.DateTime = time.Unix(dateTimeMilliseconds, 0)
 }
 
 func (me *goalPostRow) String() string {
-	return "{goalId:" + strconv.Itoa(me.goalId) +
-		", dateTime:" + me.dateTime.String() +
-		", isPublic:" + getStringFromBool(me.isPublic) + "}"
+	return "{goalId:" + strconv.Itoa(me.GoalId) +
+		", dateTime:" + me.DateTime.String() +
+		", isPublic:" + getStringFromBool(me.IsPublic) + "}"
 }
