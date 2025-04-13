@@ -139,36 +139,6 @@ func (me *database) migrate() {
 	})
 }
 
-func (me *database) getPostsByDates(ids []int64) (results map[time.Time]goalPostRow) {
-	var db = me.open()
-	defer me.close(db)
-	var queryText = "SELECT * FROM goalPosts WHERE dateTime IN (" + convertInt64ArrayToSequelString(ids) + ")"
-	var rows = assertResultError(db.Query(queryText))
-	results = make(map[time.Time]goalPostRow)
-	for rows.Next() {
-		var row goalPostRow
-		row.scan(rows)
-		results[row.DateTime.UTC()] = row
-	}
-	return
-}
-
-func (me *database) getGoalPostVisibilities(goalId int) (result map[time.Time]bool) {
-	var db = me.open()
-	defer me.close(db)
-	var rows = assertResultError(
-		db.Query("SELECT dateTime, isPublic FROM goalPosts WHERE goalId = ?", goalId),
-	)
-	result = make(map[time.Time]bool)
-	for rows.Next() {
-		var dateTimeMilliseconds int64
-		var isPublic bool
-		assertError(rows.Scan(&dateTimeMilliseconds, &isPublic))
-		result[time.Unix(dateTimeMilliseconds, 0).UTC()] = isPublic
-	}
-	return
-}
-
 func (me *database) setGoalPostPublic(row *goalPostRow) {
 	var db = me.open()
 	defer me.close(db)
