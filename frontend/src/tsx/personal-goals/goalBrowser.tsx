@@ -99,7 +99,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 		return (
 			<GoalPostPanel
 				goalId={goalId}
-				postDate={activePostDate}
+				postDate={parseInt(activePostDate)}
 				goalManagerMode={isGoalManagerMode()}
 				onChange={() => setReloadGoalCalendar(Math.random())}
 			/>
