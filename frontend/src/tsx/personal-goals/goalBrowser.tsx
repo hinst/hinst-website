@@ -147,7 +147,6 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 						style={{
 							paddingLeft: ARTICLE_PADDING,
 							paddingRight: ARTICLE_PADDING,
-							width: ARTICLE_WIDTH,
 							maxWidth: ARTICLE_WIDTH,
 							backgroundAttachment: 'fixed',
 							minHeight: 0,
