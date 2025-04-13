@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"time"
+
+	"golang.org/x/text/language"
 )
 
 type goalPostRow struct {
@@ -27,4 +29,23 @@ func (me *goalPostRow) String() string {
 	return "{goalId:" + getStringFromInt64(me.goalId) +
 		", dateTime:" + me.dateTime.String() +
 		", isPublic:" + getStringFromBool(me.isPublic) + "}"
+}
+
+func (me *goalPostRow) getTranslatedText(languageTag language.Tag) string {
+	switch languageTag {
+	case language.English:
+		if me.textEnglish != nil {
+			return *me.textEnglish
+		} else {
+			return ""
+		}
+	case language.German:
+		if me.textGerman != nil {
+			return *me.textGerman
+		} else {
+			return ""
+		}
+	default:
+		return me.text
+	}
 }

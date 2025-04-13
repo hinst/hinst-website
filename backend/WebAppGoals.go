@@ -46,8 +46,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
 
-	var requestedLanguage = getWebLanguage(request)
-	var goalPostRow = me.db.getGoalPost(goalId, postDateTime, requestedLanguage)
+	var goalPostRow = me.db.getGoalPost(goalId, postDateTime)
 	if !goalPostRow.isPublic && !goalManagerMode {
 		panic(webError{"Need goal manager access level", http.StatusUnauthorized})
 	}
@@ -55,6 +54,17 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	goalPostObject.GoalId = goalPostRow.goalId
 	goalPostObject.DateTime = goalPostRow.dateTime
 	goalPostObject.Text = goalPostRow.text
+	var requestedLanguage = getWebLanguage(request)
+	if requestedLanguage != supportedLanguages[0] {
+		var translatedText = goalPostRow.getTranslatedText(requestedLanguage)
+		if translatedText != "" {
+			goalPostObject.IsAutoTranslated = true
+			goalPostObject.LanguageName = getLanguageName(requestedLanguage)
+			goalPostObject.Text = translatedText
+		} else {
+			goalPostObject.LanguageNamePending = getLanguageName(requestedLanguage)
+		}
+	}
 	response.Write(encodeJson(goalPostObject))
 }
 
