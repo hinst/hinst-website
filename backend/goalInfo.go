@@ -2,23 +2,7 @@ package main
 
 import (
 	"html/template"
-	"time"
 )
-
-type goalHeader struct {
-	Id        string    `json:"id"`
-	Title     string    `json:"title"`
-	PostCount int       `json:"postCount"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	Author    string    `json:"author"`
-}
-
-type smartPostHeader struct {
-	Id     string `json:"id"`
-	Date   string `json:"date"`
-	GoalId string `json:"obj_id"`
-	Type   string `json:"type"`
-}
 
 type smartPost struct {
 	Id string `json:"id"`

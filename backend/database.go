@@ -105,7 +105,7 @@ func (me *database) getGoalPostImages(goalId int64, dateTime time.Time) (results
 	return
 }
 
-func (me *database) getGoalPosts(goalId int, includePrivate bool) (results []goalPostRecord) {
+func (me *database) getGoalPosts(goalId int64, includePrivate bool) (results []goalPostRecord) {
 	var db = me.open()
 	defer me.close(db)
 	var queryText = "SELECT goalId, dateTime, isPublic, type FROM goalPosts WHERE goalId = ?"
@@ -154,7 +154,7 @@ func (me *database) migrate() {
 	})
 }
 
-func (me *database) setGoalPostPublic(row *goalPostRow) {
+func (me *database) setGoalPostPublic(row goalPostRow) {
 	var db = me.open()
 	defer me.close(db)
 	assertResultError(

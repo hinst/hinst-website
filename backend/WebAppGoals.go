@@ -37,9 +37,9 @@ func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Reque
 }
 
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("id"))
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
-	var posts = me.db.getGoalPosts(getIntFromString(goalId), goalManagerMode)
+	var posts = me.db.getGoalPosts(goalId, goalManagerMode)
 	response.Write(encodeJson(posts))
 }
 
@@ -79,9 +79,9 @@ func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *
 	if !isAdmin {
 		panic(webError{"Need administrator access", http.StatusUnauthorized})
 	}
-	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("goalId"))
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var isPublic = request.URL.Query().Get("isPublic") == "true"
-	var row = goalPostRow{goalId: getInt64FromString(goalId), dateTime: postDateTime, isPublic: isPublic}
-	me.db.setGoalPostPublic(&row)
+	var row = goalPostRow{goalId: goalId, dateTime: postDateTime, isPublic: isPublic}
+	me.db.setGoalPostPublic(row)
 }
