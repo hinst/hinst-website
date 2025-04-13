@@ -46,10 +46,13 @@ func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.
 func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
-	// var goalManagerMode = me.inputCheckGoalManagerMode(request)
+	var goalManagerMode = me.inputCheckGoalManagerMode(request)
 
 	// var requestedLanguage = getWebLanguage(request)
 	var goalPostRow = me.db.getGoalPost(goalId, postDateTime)
+	if !goalPostRow.IsPublic && !goalManagerMode {
+		panic(webError{"Need goal manager access level", http.StatusUnauthorized})
+	}
 	var goalPostObject goalPostObject
 	goalPostObject.GoalId = goalPostRow.GoalId
 	goalPostObject.DateTime = goalPostRow.DateTime
