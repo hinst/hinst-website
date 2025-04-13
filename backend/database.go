@@ -3,14 +3,17 @@ package main
 import (
 	"database/sql"
 	"log"
+	"math"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"time"
 
 	_ "embed"
 
 	_ "github.com/mattn/go-sqlite3"
+	"golang.org/x/text/language"
 )
 
 // Measured in milliseconds
@@ -124,9 +127,29 @@ func (me *database) migrate() {
 	me.forEachGoalPost(func(row *goalPostRow) {
 		var translatedFilesFolder = filepath.Join(me.dataDirectory, getStringFromInt64(row.goalId), "translated")
 		var translatedFileNames = assertResultError(os.ReadDir(translatedFilesFolder))
+		var minDiff int64 = math.MaxInt64
+		var matchedDateTimeText = ""
 		for _, translatedFileName := range translatedFileNames {
 			var dateTimeText = translatedFileName.Name()[0:len("2025-01-01_00-00-00")]
-			log.Println(dateTimeText)
+			var dateTimeForFile = assertResultError(time.Parse("2006-01-02_15-04-05", dateTimeText))
+			var diff = absInt64(row.dateTime.Unix() - dateTimeForFile.Unix())
+			if diff < minDiff {
+				minDiff = diff
+				matchedDateTimeText = dateTimeText
+			}
+		}
+		if matchedDateTimeText == "" {
+			log.Printf("⚠️ Cannot find translated file for row goalId=%v dateTime=%v\n", row.goalId, row.dateTime)
+		}
+		for _, supportedLanguage := range supportedLanguages[1:] {
+			var filePath = filepath.Join(translatedFilesFolder, matchedDateTimeText+"."+supportedLanguage.String()+".html")
+			if !checkFileExists(filePath) {
+				log.Printf("⚠️ Cannot find translated file for row goalId=%v dateTime=%v language=%v\n",
+					row.goalId, row.dateTime, supportedLanguage.String())
+				continue
+			}
+			var fileText = readTextFile(filePath)
+			me.setTranslatedText(row.goalId, row.dateTime, supportedLanguage, fileText)
 		}
 	})
 }
@@ -139,6 +162,23 @@ func (me *database) setGoalPostPublic(row *goalPostRow) {
 			"ON CONFLICT(goalId, dateTime) DO UPDATE SET isPublic = ?",
 			row.goalId, row.dateTime.UTC().Unix(), row.isPublic, row.isPublic),
 	)
+}
+
+func (me *database) setTranslatedText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) {
+	var db = me.open()
+	defer me.close(db)
+	assertCondition(slices.Contains(supportedLanguages[1:], supportedLanguage),
+		func() string { return "Unsupported language: " + supportedLanguage.String() })
+	var languageName = getLanguageName(supportedLanguage)
+	var queryText = "UPDATE goalPosts SET text" + languageName + " = ? WHERE goalId = ? AND dateTime = ?"
+	var dateTimeEpoch = dateTime.UTC().Unix()
+	var result = assertResultError(db.Exec(queryText, text, goalId, dateTimeEpoch))
+	var changedRowCount = assertResultError(result.RowsAffected())
+	assertCondition(changedRowCount > 0,
+		func() string {
+			return "Cannot update translated text for goalId=" +
+				getStringFromInt64(goalId) + " dateTime=" + getStringFromInt64(dateTimeEpoch)
+		})
 }
 
 func (me *database) forEachGoalPost(callback func(row *goalPostRow)) {
