@@ -159,9 +159,8 @@ func (me *database) setGoalPostPublic(row goalPostRow) {
 	var db = me.open()
 	defer me.close(db)
 	assertResultError(
-		db.Exec("INSERT INTO goalPosts (goalId, dateTime, isPublic) VALUES (?, ?, ?) "+
-			"ON CONFLICT(goalId, dateTime) DO UPDATE SET isPublic = ?",
-			row.goalId, row.dateTime.UTC().Unix(), row.isPublic, row.isPublic),
+		db.Exec("UPDATE goalPosts SET isPublic = ? WHERE goalId = ? AND dateTime = ?",
+			row.isPublic, row.goalId, row.dateTime.UTC().Unix()),
 	)
 }
 

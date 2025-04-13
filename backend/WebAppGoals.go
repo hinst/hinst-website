@@ -52,7 +52,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	}
 	var goalPostObject goalPostObject
 	goalPostObject.GoalId = goalPostRow.goalId
-	goalPostObject.DateTime = goalPostRow.dateTime
+	goalPostObject.DateTime = goalPostRow.dateTime.UTC().Unix()
 	goalPostObject.Text = goalPostRow.text
 	var requestedLanguage = getWebLanguage(request)
 	if requestedLanguage != supportedLanguages[0] {
