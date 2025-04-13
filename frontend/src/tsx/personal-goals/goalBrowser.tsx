@@ -9,6 +9,7 @@ import { AppContext } from 'src/tsx/context';
 import { Calendar } from 'react-feather';
 import Cookie from 'js-cookie';
 import GoalPostPanel from './goalPostPanel';
+import { DateTime } from 'luxon';
 
 const ARTICLE_PADDING = 20;
 const ARTICLE_WIDTH = 1000 + ARTICLE_PADDING * 2;
@@ -69,9 +70,10 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 	}, [activePostDate]);
 
 	useEffect(() => {
+		const dateTime = DateTime.fromMillis(parseInt(activePostDate) * 1000);
 		const dateText = isGoalManagerMode()
-			? activePostDate
-			: activePostDate.slice(0, '2025-03-10'.length);
+			? dateTime.toLocaleString({ dateStyle: 'short', timeStyle: 'short' })
+			: dateTime.toLocaleString({ dateStyle: 'short' });
 		const components = [goalTitle, dateText].filter((s) => s.length);
 		props.setPageTitle(components.join(' • '));
 	}, [goalTitle, activePostDate]);
