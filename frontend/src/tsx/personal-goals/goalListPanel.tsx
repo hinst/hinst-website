@@ -10,17 +10,20 @@ export default function GoalListPanel() {
 		setIsLoading(true);
 		try {
 			const response = await fetch(API_URL + '/goals');
-			if (!response.ok)
-				throw new Error(response.statusText);
+			if (!response.ok) throw new Error(response.statusText);
 			const data = await response.json();
 			setGoals(data);
 		} finally {
 			setIsLoading(false);
 		}
-	};
-	useEffect(() => { loadGoals() }, []);
-	return <div>
-		{ isLoading ? <div className='ms-loading'></div> : undefined }
-		<GoalList goals={goals}/>
-	</div>;
+	}
+	useEffect(() => {
+		loadGoals();
+	}, []);
+	return (
+		<div>
+			{isLoading ? <div className='ms-loading'></div> : undefined}
+			<GoalList goals={goals} />
+		</div>
+	);
 }

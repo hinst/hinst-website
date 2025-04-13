@@ -19,40 +19,47 @@ export default function App() {
 		document.title = pageTitle;
 	}, [pageTitle]);
 
-	const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguages>(getCurrentLanguage());
+	const [currentLanguage, setCurrentLanguage] =
+		useState<SupportedLanguages>(getCurrentLanguage());
 	useEffect(() => {
 		const timer = setInterval(() => {
 			const newLanguage = getCurrentLanguage();
-			if (newLanguage !== currentLanguage)
-				setCurrentLanguage(newLanguage);
+			if (newLanguage !== currentLanguage) setCurrentLanguage(newLanguage);
 		}, 1000);
 		return () => clearInterval(timer);
 	}, []);
 
-	return <AppContext.Provider value={{
-		currentLanguage,
-		displayWidth: window.innerWidth,
-	}}>
-		<div
-			style={{
-				padding: 10,
-				paddingBottom: 0,
-				display: 'flex',
-				flexDirection: 'column',
-				width: '100%',
-				maxWidth: '100%',
-				maxHeight: '100%',
+	return (
+		<AppContext.Provider
+			value={{
+				currentLanguage,
+				displayWidth: window.innerWidth
 			}}
 		>
-			<HashRouter>
-				<div style={{ marginBottom: 10 }}>
-					<Header title={pageTitle} />
-				</div>
-				<Routes>
-					<Route path='/' element={<HomePage setPageTitle={setPageTitle} />} />
-					<Route path='/personal-goals/:id' element={<GoalBrowser setPageTitle={setPageTitle} />} />
-				</Routes>
-			</HashRouter>
-		</div>
-	</AppContext.Provider>;
+			<div
+				style={{
+					padding: 10,
+					paddingBottom: 0,
+					display: 'flex',
+					flexDirection: 'column',
+					width: '100%',
+					maxWidth: '100%',
+					maxHeight: '100%'
+				}}
+			>
+				<HashRouter>
+					<div style={{ marginBottom: 10 }}>
+						<Header title={pageTitle} />
+					</div>
+					<Routes>
+						<Route path='/' element={<HomePage setPageTitle={setPageTitle} />} />
+						<Route
+							path='/personal-goals/:id'
+							element={<GoalBrowser setPageTitle={setPageTitle} />}
+						/>
+					</Routes>
+				</HashRouter>
+			</div>
+		</AppContext.Provider>
+	);
 }

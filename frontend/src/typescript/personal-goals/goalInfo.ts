@@ -10,21 +10,26 @@ export interface GoalInfo {
 }
 
 export const GOAL_INFOS = new Map<string, GoalInfo>([
-	['Кодить каждую неделю 8 часов', {
-		englishTitle: 'Weekly Coding',
-		coverImage: codingWeekly,
-	}],
-	['Окупить стоимость велосипеда и самоката', {
-		englishTitle: 'My Bicycle and E-Scooter',
-		coverImage: bicycle,
-	}],
+	[
+		'Кодить каждую неделю 8 часов',
+		{
+			englishTitle: 'Weekly Coding',
+			coverImage: codingWeekly
+		}
+	],
+	[
+		'Окупить стоимость велосипеда и самоката',
+		{
+			englishTitle: 'My Bicycle and E-Scooter',
+			coverImage: bicycle
+		}
+	]
 ]);
 
 export function translateGoalTitle(language: SupportedLanguage, text: string) {
 	if (language === SupportedLanguage.ENGLISH) {
 		const info = GOAL_INFOS.get(text);
-		if (info)
-			return info.englishTitle;
+		if (info) return info.englishTitle;
 	}
 	return text;
 }

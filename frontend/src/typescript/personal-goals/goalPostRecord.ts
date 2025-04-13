@@ -6,9 +6,8 @@ export class GoalPostRecord {
 		/** Unix timestamp seconds */
 		public dateTime: number = 0,
 		public isPublic: boolean = false,
-		public type: string = '',
-	) {
-	}
+		public type: string = ''
+	) {}
 
 	get yearAndMonthText(): string {
 		return DateTime.fromMillis(this.dateTime * 1000).toFormat('yyyy-MM');

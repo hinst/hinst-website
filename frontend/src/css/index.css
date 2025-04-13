@@ -1,4 +1,4 @@
-html[data-theme="dark"] {
+html[data-theme='dark'] {
 	color-scheme: dark;
 }
 
@@ -33,4 +33,3 @@ hr {
 	transition-property: filter;
 	transition-duration: 0.5s;
 }
-

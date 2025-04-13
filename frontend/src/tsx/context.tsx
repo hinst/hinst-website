@@ -3,5 +3,5 @@ import { getCurrentLanguage } from 'src/typescript/language';
 
 export const AppContext = createContext({
 	currentLanguage: getCurrentLanguage(),
-	displayWidth: window.innerWidth,
+	displayWidth: window.innerWidth
 });

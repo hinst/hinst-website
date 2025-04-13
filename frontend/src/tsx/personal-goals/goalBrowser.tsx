@@ -21,9 +21,7 @@ const STRIPES_BACKGROUND = `repeating-linear-gradient(
 )`;
 const STRIPES_MIN_WIDTH = 100;
 
-export default function GoalBrowser(props: {
-	setPageTitle: (title: string) => void
-}) {
+export default function GoalBrowser(props: { setPageTitle: (title: string) => void }) {
 	const context = useContext(AppContext);
 	const params = useParams();
 	const goalId: string = params.id!;
@@ -37,11 +35,11 @@ export default function GoalBrowser(props: {
 
 	function isFullMode() {
 		return context.displayWidth >= 700;
-	};
+	}
 
 	function isGoalManagerMode() {
 		return Cookie.get('goalManagerMode') === '1';
-	};
+	}
 
 	const [calendarEnabled, setCalendarEnabled] = useState(true);
 	const [calendarTransition, setCalendarTransition] = useState('');
@@ -51,7 +49,7 @@ export default function GoalBrowser(props: {
 			const newActivePostDate = posts[posts.length - 1].dateTime;
 			setSearchParams({ activePostDate: '' + newActivePostDate });
 		}
-	};
+	}
 
 	async function loadGoal() {
 		const response = await fetch(API_URL + '/goal?id=' + encodeURIComponent(goalId));
@@ -59,15 +57,14 @@ export default function GoalBrowser(props: {
 			const goalHeader: GoalRecord = await response.json();
 			setGoalTitle(translateGoalTitle(context.currentLanguage, goalHeader.title));
 		}
-	};
+	}
 
 	useEffect(() => {
 		loadGoal();
 	}, [goalId]);
 
 	useEffect(() => {
-		if (activePostDate)
-			setCalendarEnabled(false);
+		if (activePostDate) setCalendarEnabled(false);
 		setTimeout(() => setCalendarTransition('transform 0.3s'));
 	}, [activePostDate]);
 
@@ -75,7 +72,7 @@ export default function GoalBrowser(props: {
 		const dateText = isGoalManagerMode()
 			? activePostDate
 			: activePostDate.slice(0, '2025-03-10'.length);
-		const components = [goalTitle, dateText].filter(s => s.length);
+		const components = [goalTitle, dateText].filter((s) => s.length);
 		props.setPageTitle(components.join(' • '));
 	}, [goalTitle, activePostDate]);
 
@@ -88,151 +85,164 @@ export default function GoalBrowser(props: {
 	}, []);
 
 	function getGoalCalendarPanel() {
-		return <GoalCalendarPanel
-			id={goalId}
-			receivePosts={receivePosts}
-			activePostDate={parseInt(activePostDate) || 0}
-			reload={reloadGoalCalendar}
-		/>;
-	};
+		return (
+			<GoalCalendarPanel
+				id={goalId}
+				receivePosts={receivePosts}
+				activePostDate={parseInt(activePostDate) || 0}
+				reload={reloadGoalCalendar}
+			/>
+		);
+	}
 
 	function getGoalPostPanel() {
-		return <GoalPostPanel
-			goalId={goalId}
-			postDate={activePostDate}
-			goalManagerMode={isGoalManagerMode()}
-			onChange={() => setReloadGoalCalendar(Math.random())}
-		/>;
-	};
+		return (
+			<GoalPostPanel
+				goalId={goalId}
+				postDate={activePostDate}
+				goalManagerMode={isGoalManagerMode()}
+				onChange={() => setReloadGoalCalendar(Math.random())}
+			/>
+		);
+	}
 
 	function getWideLayout() {
-		return <div
-			style={{
-				display: 'flex',
-				gap: 20,
-				minHeight: 0,
-				height: '100%',
-			}}
-		>
-			<div style={{
-				display: 'flex',
-				overflowY: 'auto',
-				flexShrink: 0,
-				flexBasis: 'fit-content',
-			}}>
-				{getGoalCalendarPanel()}
-			</div>
+		return (
 			<div
-				id={articleContainerId}
 				style={{
-					flexGrow: 1,
-					justifyContent: 'center',
 					display: 'flex',
+					gap: 20,
 					minHeight: 0,
-					maxHeight: '100%',
-					background: articleContainerWidth > ARTICLE_WIDTH + STRIPES_MIN_WIDTH
-						? STRIPES_BACKGROUND
-						: undefined,
+					height: '100%'
 				}}
 			>
 				<div
-					className='ms-bg-main'
 					style={{
-						paddingLeft: ARTICLE_PADDING,
-						paddingRight: ARTICLE_PADDING,
-						width: ARTICLE_WIDTH,
-						maxWidth: ARTICLE_WIDTH,
-						backgroundAttachment: 'fixed',
-						minHeight: 0,
+						display: 'flex',
 						overflowY: 'auto',
+						flexShrink: 0,
+						flexBasis: 'fit-content'
 					}}
 				>
-					{activePostDate ? getGoalPostPanel() : undefined}
+					{getGoalCalendarPanel()}
+				</div>
+				<div
+					id={articleContainerId}
+					style={{
+						flexGrow: 1,
+						justifyContent: 'center',
+						display: 'flex',
+						minHeight: 0,
+						maxHeight: '100%',
+						background:
+							articleContainerWidth > ARTICLE_WIDTH + STRIPES_MIN_WIDTH
+								? STRIPES_BACKGROUND
+								: undefined
+					}}
+				>
+					<div
+						className='ms-bg-main'
+						style={{
+							paddingLeft: ARTICLE_PADDING,
+							paddingRight: ARTICLE_PADDING,
+							width: ARTICLE_WIDTH,
+							maxWidth: ARTICLE_WIDTH,
+							backgroundAttachment: 'fixed',
+							minHeight: 0,
+							overflowY: 'auto'
+						}}
+					>
+						{activePostDate ? getGoalPostPanel() : undefined}
+					</div>
 				</div>
 			</div>
-		</div>;
-	};
+		);
+	}
 
 	function getFloatingCalendarButton() {
-		return <div
-			className='ms-bg-light ms-shape-circle'
-			style={{
-				position: 'absolute',
-				width: 40,
-				height: 40,
-				bottom: 0,
-				right: 0,
-				zIndex: 2,
-			}}
-		>
-			<button
-				className={
-					'ms-btn ms-primary ms-rounded ms-box-shadow' +
-					(calendarEnabled ? ' ms-btn-active' : '')
-				}
-				onClick={() => setCalendarEnabled(!calendarEnabled)}
+		return (
+			<div
+				className='ms-bg-light ms-shape-circle'
 				style={{
-					margin: 0,
+					position: 'absolute',
 					width: 40,
 					height: 40,
+					bottom: 0,
+					right: 0,
+					zIndex: 2
 				}}
 			>
-				<Calendar
+				<button
+					className={
+						'ms-btn ms-primary ms-rounded ms-box-shadow' +
+						(calendarEnabled ? ' ms-btn-active' : '')
+					}
+					onClick={() => setCalendarEnabled(!calendarEnabled)}
 					style={{
-						position: 'absolute',
-						left: '50%',
-						top: '50%',
-						transform: 'translate(-50%, -50%)',
+						margin: 0,
+						width: 40,
+						height: 40
 					}}
-				/>
-			</button>
-		</div>;
-	};
+				>
+					<Calendar
+						style={{
+							position: 'absolute',
+							left: '50%',
+							top: '50%',
+							transform: 'translate(-50%, -50%)'
+						}}
+					/>
+				</button>
+			</div>
+		);
+	}
 
 	function getNarrowLayout() {
-		return <div
-			style={{
-				position: 'relative',
-				display: 'flex',
-				minHeight: 0,
-				height: '100%',
-				maxHeight: '100%',
-				width: '100%',
-				maxWidth: '100%',
-				overflowY: 'hidden',
-			}}
-		>
-			{getFloatingCalendarButton()}
+		return (
 			<div
-				className='ms-bg-light ms-shape-round ms-box-shadow ms-border-main'
 				style={{
-					display: calendarEnabled ? 'block' : 'block',
-					position: 'absolute',
-					zIndex: 1,
-					overflowY: 'auto',
-					maxHeight: '100%',
-					padding: 8,
-					borderWidth: 1,
-					borderStyle: 'solid',
-					transform: calendarEnabled ? 'translate(0,0)' : 'translate(-100%, 0)',
-					transition: calendarTransition,
-				}}
-			>
-				{getGoalCalendarPanel()}
-			</div>
-			<div
-				onClick={() => setCalendarEnabled(false)}
-				style={{
+					position: 'relative',
 					display: 'flex',
-					overflowY: 'auto',
+					minHeight: 0,
+					height: '100%',
+					maxHeight: '100%',
+					width: '100%',
+					maxWidth: '100%',
+					overflowY: 'hidden'
 				}}
 			>
-				<div style={{ maxWidth: ARTICLE_WIDTH }}>
-					{activePostDate ? getGoalPostPanel() : undefined}
+				{getFloatingCalendarButton()}
+				<div
+					className='ms-bg-light ms-shape-round ms-box-shadow ms-border-main'
+					style={{
+						display: calendarEnabled ? 'block' : 'block',
+						position: 'absolute',
+						zIndex: 1,
+						overflowY: 'auto',
+						maxHeight: '100%',
+						padding: 8,
+						borderWidth: 1,
+						borderStyle: 'solid',
+						transform: calendarEnabled ? 'translate(0,0)' : 'translate(-100%, 0)',
+						transition: calendarTransition
+					}}
+				>
+					{getGoalCalendarPanel()}
+				</div>
+				<div
+					onClick={() => setCalendarEnabled(false)}
+					style={{
+						display: 'flex',
+						overflowY: 'auto'
+					}}
+				>
+					<div style={{ maxWidth: ARTICLE_WIDTH }}>
+						{activePostDate ? getGoalPostPanel() : undefined}
+					</div>
 				</div>
 			</div>
-		</div>;
-	};
+		);
+	}
 
 	return isFullMode() ? getWideLayout() : getNarrowLayout();
 }
