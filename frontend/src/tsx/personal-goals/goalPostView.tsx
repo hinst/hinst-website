@@ -1,6 +1,7 @@
 import { GoalPostObjectExtended } from 'src/typescript/personal-goals/smartPost';
 import SafeHtmlView from '../safeHtmlView';
 import { Info } from 'react-feather';
+import { getHashFromString } from 'src/typescript/string';
 
 export default function GoalPostView(props: { postData: GoalPostObjectExtended }) {
 	return (
@@ -44,7 +45,9 @@ export default function GoalPostView(props: { postData: GoalPostObjectExtended }
 					gap: 10
 				}}
 			>
-				{props.postData.images?.map((image) => <GoalImage key={image.slice(0, 100)} data={image} />)}
+				{props.postData.images?.map((image) => (
+					<GoalImage key={getHashFromString(image)} data={image} />
+				))}
 			</div>
 		</div>
 	);
