@@ -44,11 +44,13 @@ func (me *program) runWeb() {
 }
 
 func (me *program) translate() {
+	me.database.init(me.savedGoalsPath)
 	var translator = translatorPresets
 	if me.translatorApiUrl != "" {
 		translator.apiUrl = me.translatorApiUrl + "/v1/chat/completions"
 	}
 	translator.savedGoalsPath = me.savedGoalsPath
+	translator.db = me.database
 	translator.run()
 }
 

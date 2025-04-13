@@ -4,73 +4,47 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strings"
 
-	"github.com/hinst/hinst-website/file_mode"
 	"golang.org/x/text/language"
 )
 
 type translator struct {
-	apiUrl                string
-	translatedGoalDirName string
-
+	apiUrl         string
 	savedGoalsPath string
+	db             *database
 }
 
 var translatorPresets = translator{
-	apiUrl:                "http://localhost:1235/v1/chat/completions",
-	translatedGoalDirName: "translated",
+	apiUrl: "http://localhost:1235/v1/chat/completions",
 }
 
 func (me *translator) run() {
-	var goalFiles = assertResultError(os.ReadDir(me.savedGoalsPath))
-	for _, goalFile := range goalFiles {
-		if !goalFile.IsDir() {
-			continue
+	var totalCount = 0
+	var translatedCount = 0
+	me.db.forEachGoalPost(func(row *goalPostRow) {
+		var isDone = false
+		if row.textEnglish == nil {
+			me.translate(row, language.English)
+			isDone = true
 		}
-		var goalFilePath = filepath.Join(me.savedGoalsPath, goalFile.Name())
-		me.translateGoal(goalFilePath)
-	}
+		if row.textGerman == nil {
+			me.translate(row, language.German)
+			isDone = true
+		}
+		totalCount++
+		if isDone {
+			translatedCount++
+		}
+	})
+	log.Printf("Translated goal posts: %v of %v", translatedCount, totalCount)
 }
 
-func (me *translator) translateGoal(directoryPath string) {
-	assertError(os.MkdirAll(
-		filepath.Join(directoryPath, me.translatedGoalDirName),
-		file_mode.OS_USER_RWX,
-	))
-	var files = assertResultError(os.ReadDir(directoryPath))
-	for _, file := range files {
-		if !file.IsDir() && goalFileNameMatcher.MatchString(file.Name()) {
-			var filePath = filepath.Join(directoryPath, file.Name())
-			me.translateFile(filePath)
-		}
-	}
-}
-
-func (me *translator) getTranslatedFilePath(smartPostFilePath string, tag language.Tag) string {
-	var targetFilePath = filepath.Join(
-		filepath.Dir(smartPostFilePath),
-		me.translatedGoalDirName,
-		getFileNameWithoutExtension(smartPostFilePath),
-	)
-	return targetFilePath + "." + tag.String() + ".html"
-}
-
-func (me *translator) translateFile(smartPostFilePath string) {
-	var article = readJsonFile(smartPostFilePath, &smartPost{})
-	for _, languageTag := range supportedLanguages {
-		var targetFilePath = me.getTranslatedFilePath(smartPostFilePath, languageTag)
-		if !checkFileExists(targetFilePath) {
-			var message = article.Msg
-			if languageTag != language.Russian {
-				message = assertResultError(me.translateText(article.Msg, languageTag))
-			}
-			writeTextFile(targetFilePath, message)
-		}
-	}
+func (me *translator) translate(row *goalPostRow, tag language.Tag) {
+	var text = assertResultError(me.translateText(row.text, tag))
+	me.db.setTranslatedText(row.goalId, row.dateTime, tag, text)
 }
 
 func (me *translator) translateText(text string, tag language.Tag) (string, error) {
