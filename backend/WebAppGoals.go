@@ -50,13 +50,13 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 
 	// var requestedLanguage = getWebLanguage(request)
 	var goalPostRow = me.db.getGoalPost(goalId, postDateTime)
-	if !goalPostRow.IsPublic && !goalManagerMode {
+	if !goalPostRow.isPublic && !goalManagerMode {
 		panic(webError{"Need goal manager access level", http.StatusUnauthorized})
 	}
 	var goalPostObject goalPostObject
-	goalPostObject.GoalId = goalPostRow.GoalId
-	goalPostObject.DateTime = goalPostRow.DateTime
-	goalPostObject.Text = goalPostRow.Text
+	goalPostObject.GoalId = goalPostRow.goalId
+	goalPostObject.DateTime = goalPostRow.dateTime
+	goalPostObject.Text = goalPostRow.text
 	response.Write(encodeJson(goalPostObject))
 }
 
@@ -82,6 +82,6 @@ func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *
 	var goalId = me.inputValidGoalIdString(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var isPublic = request.URL.Query().Get("isPublic") == "true"
-	var row = goalPostRow{GoalId: getInt64FromString(goalId), DateTime: postDateTime, IsPublic: isPublic}
+	var row = goalPostRow{goalId: getInt64FromString(goalId), dateTime: postDateTime, isPublic: isPublic}
 	me.db.setGoalPostPublic(&row)
 }

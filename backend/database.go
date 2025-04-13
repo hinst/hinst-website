@@ -2,7 +2,9 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
+	"log"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -79,9 +81,9 @@ func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result goalPo
 	var row = db.QueryRow("SELECT isPublic, text FROM goalPosts WHERE goalId = ? AND dateTime = ?",
 		goalId, dateTime.UTC().Unix())
 	assertError(row.Err())
-	result.GoalId = goalId
-	result.DateTime = dateTime
-	assertError(row.Scan(&result.IsPublic, &result.Text))
+	result.goalId = goalId
+	result.dateTime = dateTime
+	assertError(row.Scan(&result.isPublic, &result.text))
 	return
 }
 
@@ -117,25 +119,15 @@ func (me *database) getGoalPosts(goalId int, includePrivate bool) (results []goa
 }
 
 func (me *database) migrate() {
-	// merge old and new database formats
-	var newDb = me.openFile("C:\\Dev\\SmartProgress-or\\downloader\\data\\hinst-website.db")
-	defer me.close(newDb)
 	var oldDb = me.open()
 	defer me.close(oldDb)
 	me.forEachGoalPost(func(row *goalPostRow) {
-		var matchedRow = newDb.QueryRow("SELECT dateTime FROM goalPosts WHERE goalId = ? ORDER BY abs(dateTime - ?) LIMIT 1",
-			row.GoalId, row.DateTime.UTC().Unix())
-		assertError(matchedRow.Err())
-		var matchedDateTime int64
-		assertError(matchedRow.Scan(&matchedDateTime))
-		assertCondition(matchedDateTime != 0, func() string { return "Cannot find matching date time" })
-		var difference time.Duration = time.Duration(absInt64(row.DateTime.UTC().Unix()-matchedDateTime)) * time.Second
-		fmt.Printf("Difference: %v\n", difference)
-		var execResult = assertResultError(
-			newDb.Exec("UPDATE goalPosts SET isPublic = ? WHERE goalId = ? AND dateTime = ?",
-				row.IsPublic, row.GoalId, matchedDateTime))
-		fmt.Println(row.String())
-		fmt.Printf("%v\n", assertResultError(execResult.RowsAffected()))
+		var translatedFilesFolder = filepath.Join(me.dataDirectory, getStringFromInt64(row.goalId), "translated")
+		var translatedFileNames = assertResultError(os.ReadDir(translatedFilesFolder))
+		for _, translatedFileName := range translatedFileNames {
+			var dateTimeText = translatedFileName.Name()[0:len("2025-01-01_00-00-00")]
+			log.Println(dateTimeText)
+		}
 	})
 }
 
@@ -145,7 +137,7 @@ func (me *database) setGoalPostPublic(row *goalPostRow) {
 	assertResultError(
 		db.Exec("INSERT INTO goalPosts (goalId, dateTime, isPublic) VALUES (?, ?, ?) "+
 			"ON CONFLICT(goalId, dateTime) DO UPDATE SET isPublic = ?",
-			row.GoalId, row.DateTime.UTC().Unix(), row.IsPublic, row.IsPublic),
+			row.goalId, row.dateTime.UTC().Unix(), row.isPublic, row.isPublic),
 	)
 }
 
