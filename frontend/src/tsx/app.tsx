@@ -5,6 +5,7 @@ import HomePage from './homePage';
 import GoalBrowser from './personal-goals/goalBrowser';
 import { getCurrentLanguage, SupportedLanguages } from 'src/typescript/language';
 import { AppContext } from './context';
+import Cookies from 'js-cookie';
 
 const PAGE_TITLE = 'Showcase Website';
 
@@ -33,7 +34,8 @@ export default function App() {
 		<AppContext.Provider
 			value={{
 				currentLanguage,
-				displayWidth: window.innerWidth
+				displayWidth: window.innerWidth,
+				goalManagerMode: Cookies.get('goalManagerMode') == '1'
 			}}
 		>
 			<div

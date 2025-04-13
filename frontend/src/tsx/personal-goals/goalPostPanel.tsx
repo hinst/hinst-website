@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { GoalPostObject, SmartPostImage } from 'src/typescript/personal-goals/smartPost';
 import { API_URL } from 'src/typescript/global';
 import GoalPostView from './goalPostView';
 import GoalPostManagementPanel from './goalPostManagementPanel';
+import { AppContext } from 'src/tsx/context';
 
 export default function GoalPostPanel(props: {
 	goalId: string;
@@ -13,6 +14,7 @@ export default function GoalPostPanel(props: {
 	const [isLoading, setIsLoading] = useState(false);
 	const [postData, setPostData] = useState<GoalPostObject | undefined>(undefined);
 	const [errorMessage, setErrorMessage] = useState<string>('');
+	const context = useContext(AppContext);
 
 	async function load() {
 		setIsLoading(true);
@@ -60,11 +62,13 @@ export default function GoalPostPanel(props: {
 			{isLoading ? <div className='ms-loading' /> : undefined}
 			{postData ? (
 				<>
-					<GoalPostManagementPanel
-						postData={postData}
-						setPostData={setPostData}
-						onChange={props.onChange}
-					/>
+					{context.goalManagerMode ? (
+						<GoalPostManagementPanel
+							postData={postData}
+							setPostData={setPostData}
+							onChange={props.onChange}
+						/>
+					) : undefined}
 					<GoalPostView postData={postData} />
 				</>
 			) : (
