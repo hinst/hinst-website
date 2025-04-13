@@ -3,15 +3,13 @@ package main
 import (
 	"net/http"
 	"os"
-	"regexp"
 	"strconv"
 	"time"
 )
 
 type webAppGoalsBase struct {
-	db                    *database
-	savedGoalsPath        string
-	goalDateStringMatcher *regexp.Regexp
+	db             *database
+	savedGoalsPath string
 }
 
 func (me *webAppGoalsBase) inputValidGoalId(goalId string) int64 {

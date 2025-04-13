@@ -78,11 +78,15 @@ func (me *database) getGoal(goalId int64) (result goalRecord) {
 	return
 }
 
-func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result goalPostRow) {
+func (me *database) getGoalPost(goalId int64, dateTime time.Time, languageTag language.Tag) (result goalPostRow) {
 	var db = me.open()
 	defer me.close(db)
-	var row = db.QueryRow("SELECT isPublic, text FROM goalPosts WHERE goalId = ? AND dateTime = ?",
-		goalId, dateTime.UTC().Unix())
+	var languageName = ""
+	if languageTag != supportedLanguages[0] {
+		languageName = getLanguageName(languageTag)
+	}
+	var queryText = "SELECT isPublic, text" + languageName + " FROM goalPosts WHERE goalId = ? AND dateTime = ?"
+	var row = db.QueryRow(queryText, goalId, dateTime.UTC().Unix())
 	assertError(row.Err())
 	result.goalId = goalId
 	result.dateTime = dateTime
@@ -133,13 +137,14 @@ func (me *database) migrate() {
 			var dateTimeText = translatedFileName.Name()[0:len("2025-01-01_00-00-00")]
 			var dateTimeForFile = assertResultError(time.Parse("2006-01-02_15-04-05", dateTimeText))
 			var diff = absInt64(row.dateTime.Unix() - dateTimeForFile.Unix())
-			if diff < minDiff {
+			if diff < minDiff && diff < 60*60*12 {
 				minDiff = diff
 				matchedDateTimeText = dateTimeText
 			}
 		}
 		if matchedDateTimeText == "" {
 			log.Printf("⚠️ Cannot find translated file for row goalId=%v dateTime=%v\n", row.goalId, row.dateTime)
+			return
 		}
 		for _, supportedLanguage := range supportedLanguages[1:] {
 			var filePath = filepath.Join(translatedFilesFolder, matchedDateTimeText+"."+supportedLanguage.String()+".html")

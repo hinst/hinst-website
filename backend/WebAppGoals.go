@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/base64"
 	"net/http"
-	"regexp"
 	"time"
 )
 
@@ -13,7 +12,6 @@ type webAppGoals struct {
 
 func (me *webAppGoals) init(db *database) []namedWebFunction {
 	me.db = db
-	me.goalDateStringMatcher = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$`)
 	return []namedWebFunction{
 		{"/api/goals", me.getGoals},
 		{"/api/goal", me.getGoal},
@@ -48,8 +46,8 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
 
-	// var requestedLanguage = getWebLanguage(request)
-	var goalPostRow = me.db.getGoalPost(goalId, postDateTime)
+	var requestedLanguage = getWebLanguage(request)
+	var goalPostRow = me.db.getGoalPost(goalId, postDateTime, requestedLanguage)
 	if !goalPostRow.isPublic && !goalManagerMode {
 		panic(webError{"Need goal manager access level", http.StatusUnauthorized})
 	}
