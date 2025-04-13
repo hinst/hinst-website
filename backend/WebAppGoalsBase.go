@@ -14,18 +14,6 @@ type webAppGoalsBase struct {
 	goalDateStringMatcher *regexp.Regexp
 }
 
-func (me *webAppGoalsBase) checkValidGoalIdString(goalId string) bool {
-	return goalIdStringMatcher.MatchString(goalId)
-}
-
-func (me *webAppGoalsBase) inputValidGoalIdString(goalId string) string {
-	var createWebError = func() webError {
-		return webError{"Need goal id. Received: " + goalId, http.StatusBadRequest}
-	}
-	assertCondition(me.checkValidGoalIdString(goalId), createWebError)
-	return goalId
-}
-
 func (me *webAppGoalsBase) inputValidGoalId(goalId string) int64 {
 	var result, parseError = strconv.ParseInt(goalId, 10, 64)
 	var createWebError = func() webError {
