@@ -78,15 +78,15 @@ func (me *database) getGoal(goalId int64) (result goalRecord) {
 	return
 }
 
-func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result goalPostRow) {
+func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *goalPostRow) {
 	var db = me.open()
 	defer me.close(db)
-	var queryText = "SELECT isPublic, text, textEnglish, textGerman, type FROM goalPosts WHERE goalId = ? AND dateTime = ?"
-	var row = db.QueryRow(queryText, goalId, dateTime.UTC().Unix())
-	assertError(row.Err())
-	result.goalId = goalId
-	result.dateTime = dateTime
-	assertError(row.Scan(&result.isPublic, &result.text, &result.textEnglish, &result.textGerman, &result.typeString))
+	var queryText = "SELECT * FROM goalPosts WHERE goalId = ? AND dateTime = ?"
+	var rows = assertResultError(db.Query(queryText, goalId, dateTime.UTC().Unix()))
+	if rows.Next() {
+		result = new(goalPostRow)
+		result.scan(rows)
+	}
 	return
 }
 

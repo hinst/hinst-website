@@ -9,4 +9,5 @@ type goalPostObject struct {
 	IsAutoTranslated    bool   `json:"isAutoTranslated"`
 	LanguageName        string `json:"languageName"`
 	LanguageNamePending string `json:"languageNamePending"`
+	IsPublic            bool   `json:"isPublic"`
 }

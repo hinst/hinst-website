@@ -65,6 +65,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 			goalPostObject.LanguageNamePending = getLanguageName(requestedLanguage)
 		}
 	}
+	goalPostObject.IsPublic = goalPostRow.isPublic
 	response.Write(encodeJson(goalPostObject))
 }
 

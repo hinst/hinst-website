@@ -20,8 +20,15 @@ type goalPostRow struct {
 
 func (me *goalPostRow) scan(rows *sql.Rows) {
 	var dateTimeMilliseconds int64
-	assertError(rows.Scan(&me.goalId, &dateTimeMilliseconds, &me.isPublic,
-		&me.text, &me.textEnglish, &me.textGerman, &me.typeString))
+	assertError(rows.Scan(
+		&me.goalId,
+		&dateTimeMilliseconds,
+		&me.isPublic,
+		&me.text,
+		&me.textEnglish,
+		&me.textGerman,
+		&me.typeString,
+	))
 	me.dateTime = time.Unix(dateTimeMilliseconds, 0)
 }
 
