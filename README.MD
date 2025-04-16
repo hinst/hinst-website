@@ -11,3 +11,4 @@
 * Enabled prettier formatting for source code files
 * Fixed bug after storage migration: provide isPublic
 * Fixed back browser button: go to main page and skip the intermediate loading page
+* Fixed article layout: fill width but no overflow
