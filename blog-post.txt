@@ -1,0 +1,11 @@
+My new personal website is up:
+🌐 https://hinst.github.io/
+📜 https://github.com/hinst/hinst-website
+
+
+For content, it has my blog posts on topics Coding and Cycling.
+The blog posts are available in three languages: Russian, English and German. Russian is the original, meanwhile English and German are translated by a Large Language Model.
+Also, I tried to optimize it for both wide (desktop) and narrow (mobile) screens.
+
+
+Tech stack
