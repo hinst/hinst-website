@@ -48,7 +48,7 @@ func (me *translator) translate(row *goalPostRow, tag language.Tag) {
 }
 
 func (me *translator) translateText(text string, tag language.Tag) (string, error) {
-	var prompt = prompt_russian_to_something
+	var prompt = prompt_Russian_to_something
 	prompt = strings.Replace(prompt, "{something}", getLanguageName(tag), -1)
 	var request = encodeJson(lmStudioRequest{
 		Model: "aya-expanse-8B",
