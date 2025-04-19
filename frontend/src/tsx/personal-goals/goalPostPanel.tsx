@@ -4,6 +4,7 @@ import { API_URL } from 'src/typescript/global';
 import GoalPostView from './goalPostView';
 import GoalPostManagementPanel from './goalPostManagementPanel';
 import { AppContext } from 'src/tsx/context';
+import { apiClient } from 'src/typescript/apiClient';
 
 export default function GoalPostPanel(props: {
 	goalId: string;
@@ -20,19 +21,13 @@ export default function GoalPostPanel(props: {
 		setIsLoading(true);
 		setPostData(undefined);
 		try {
-			const response = await fetch(
-				API_URL +
-					'/goalPost' +
-					'?goalId=' +
-					encodeURIComponent(props.goalId) +
-					'&postDateTime=' +
-					props.postDate
-			);
-			if (!response.ok) {
-				setErrorMessage(response.statusText);
+			let postData: GoalPostObject;
+			try {
+				postData = await apiClient.getGoalPost(props.goalId, props.postDate);
+			} catch (e) {
+				setErrorMessage((e as Error).message);
 				return;
 			}
-			const postData: GoalPostObject = await response.json();
 			setPostData({ ...postData, images: [] });
 			loadImages();
 		} finally {

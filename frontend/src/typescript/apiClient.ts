@@ -1,3 +1,5 @@
+import { GoalPostObject } from './personal-goals/smartPost';
+
 class ApiClient {
 	url: string = process.env.API_URL || '/hinst-website/api';
 
@@ -15,6 +17,18 @@ class ApiClient {
 			'&isPublic=' +
 			encodeURIComponent('' + isPublic);
 		return this.fetch(url);
+	}
+
+	async getGoalPost(goalId: string, postDateTime: number): Promise<GoalPostObject> {
+		const url = '/goalPost' +
+			'?goalId=' +
+			encodeURIComponent(goalId) +
+			'&postDateTime=' +
+			encodeURIComponent(postDateTime);
+		const response = await this.fetch(url);
+		if (!response.ok)
+			throw new Error('Cannot load post. Status: ' + response.statusText);
+		return await response.json() as GoalPostObject;
 	}
 }
 
