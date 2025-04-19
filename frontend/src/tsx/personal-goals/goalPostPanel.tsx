@@ -7,7 +7,7 @@ import { AppContext } from 'src/tsx/context';
 import { apiClient } from 'src/typescript/apiClient';
 
 export default function GoalPostPanel(props: {
-	goalId: string;
+	goalId: number;
 	postDate: number;
 	goalManagerMode: boolean;
 	onChange: () => void;
