@@ -30,6 +30,17 @@ class ApiClient {
 			throw new Error('Cannot load post. Status: ' + response.statusText);
 		return await response.json() as GoalPostObject;
 	}
+
+	async setGoalPostText(goalId: number, postDateTime: number, languageTag: string, text: string): Promise<Response> {
+		const url = '/goalPost/setText' +
+			'?goalId=' +
+			encodeURIComponent(goalId) +
+			'&postDateTime=' +
+			encodeURIComponent(postDateTime) +
+			'&languageTag=' +
+			encodeURIComponent(languageTag);
+		return this.fetch(url, { method: 'POST', body: text });
+	}
 }
 
 export const apiClient = new ApiClient();

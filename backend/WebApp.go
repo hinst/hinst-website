@@ -32,6 +32,7 @@ func (me *webApp) wrap(function func(http.ResponseWriter, *http.Request)) func(h
 					response.WriteHeader(webError.Status)
 					response.Write(encodeJson(webError))
 				} else {
+					response.WriteHeader(http.StatusInternalServerError)
 					panic(exception)
 				}
 			}

@@ -25,8 +25,9 @@ export interface GoalPostObject {
 	/** HTML */
 	text: string;
 	isAutoTranslated: boolean;
+	isTranslationPending: boolean;
 	languageName?: string;
-	languageNamePending?: string;
+	languageTag: string;
 	isPublic: boolean;
 }
 

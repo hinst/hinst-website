@@ -2,8 +2,11 @@ package main
 
 import (
 	"encoding/base64"
+	"io"
 	"net/http"
 	"time"
+
+	"golang.org/x/text/language"
 )
 
 type webAppGoals struct {
@@ -19,6 +22,7 @@ func (me *webAppGoals) init(db *database) []namedWebFunction {
 		{"/api/goalPost", me.getGoalPost},
 		{"/api/goalPost/images", me.getGoalPostImages},
 		{"/api/goalPost/setPublic", me.setGoalPostPublic},
+		{"/api/goalPost/setText", me.setGoalPostText},
 	}
 }
 
@@ -55,14 +59,15 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	goalPostObject.DateTime = goalPostRow.dateTime.UTC().Unix()
 	goalPostObject.Text = goalPostRow.text
 	var requestedLanguage = getWebLanguage(request)
+	goalPostObject.LanguageTag = requestedLanguage.String()
+	goalPostObject.LanguageName = getLanguageName(requestedLanguage)
 	if requestedLanguage != supportedLanguages[0] {
 		var translatedText = goalPostRow.getTranslatedText(requestedLanguage)
 		if translatedText != "" {
 			goalPostObject.IsAutoTranslated = true
-			goalPostObject.LanguageName = getLanguageName(requestedLanguage)
 			goalPostObject.Text = translatedText
 		} else {
-			goalPostObject.LanguageNamePending = getLanguageName(requestedLanguage)
+			goalPostObject.IsTranslationPending = true
 		}
 	}
 	goalPostObject.IsPublic = goalPostRow.isPublic
@@ -93,4 +98,17 @@ func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *
 	var isPublic = request.URL.Query().Get("isPublic") == "true"
 	var row = goalPostRow{goalId: goalId, dateTime: postDateTime, isPublic: isPublic}
 	me.db.setGoalPostPublic(row)
+}
+
+func (me *webAppGoals) setGoalPostText(response http.ResponseWriter, request *http.Request) {
+	var isAdmin = me.inputCheckAdminPassword(request)
+	if !isAdmin {
+		panic(webError{"Need administrator access", http.StatusUnauthorized})
+	}
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
+	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
+	var languageTagText = request.URL.Query().Get("languageTag")
+	var text = string(assertResultError(io.ReadAll(request.Body)))
+	var languageTag = assertResultError(language.Parse(languageTagText))
+	me.db.setGoalPostText(goalId, postDateTime, languageTag, text)
 }

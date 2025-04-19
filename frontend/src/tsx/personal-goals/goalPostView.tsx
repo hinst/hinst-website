@@ -20,7 +20,7 @@ export default function GoalPostView(props: { postData: GoalPostObjectExtended }
 					</div>
 				</div>
 			) : undefined}
-			{props.postData.languageNamePending ? (
+			{props.postData.isTranslationPending ? (
 				<div
 					className='ms-alert ms-light'
 					style={{ display: 'flex', alignItems: 'center', gap: 8 }}
@@ -29,9 +29,8 @@ export default function GoalPostView(props: { postData: GoalPostObjectExtended }
 						<Info className='ms-text-secondary' />
 					</div>
 					<div>
-						The automatic translation of this text to{' '}
-						{props.postData.languageNamePending} language is not available yet. Please
-						come back later or check older posts.
+						The automatic translation of this text to {props.postData.languageName}
+						language is not available yet. Please come back later or check older posts.
 					</div>
 				</div>
 			) : undefined}

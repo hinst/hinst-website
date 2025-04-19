@@ -44,7 +44,7 @@ func (me *translator) run() {
 
 func (me *translator) translate(row *goalPostRow, tag language.Tag) {
 	var text = assertResultError(me.translateText(row.text, tag))
-	me.db.setTranslatedText(row.goalId, row.dateTime, tag, text)
+	me.db.setGoalPostText(row.goalId, row.dateTime, tag, text)
 }
 
 func (me *translator) translateText(text string, tag language.Tag) (string, error) {

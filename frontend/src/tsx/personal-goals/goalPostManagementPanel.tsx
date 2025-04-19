@@ -1,4 +1,4 @@
-import { Edit, Tool } from 'react-feather';
+import { Edit, Save, Tool } from 'react-feather';
 import { GoalPostObject, GoalPostObjectExtended } from 'src/typescript/personal-goals/smartPost';
 import { useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
@@ -40,8 +40,20 @@ export default function GoalPostManagementPanel(props: {
 		}
 	}
 
-	async function saveContent() {
-		
+	async function saveText() {
+		if (isLoading || !content) return;
+		setIsLoading(true);
+		try {
+			const response = await apiClient.setGoalPostText(
+				props.postData.goalId,
+				props.postData.dateTime,
+				content.languageTag,
+				content.text
+			);
+			if (!response.ok) throw new Error('Cannot save text. Status: ' + response.statusText);
+		} finally {
+			setIsLoading(false);
+		}
 	}
 
 	function toggleEditMode() {
@@ -71,7 +83,7 @@ export default function GoalPostManagementPanel(props: {
 				public
 			</div>
 			<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-				<div>
+				<div style={{ display: 'flex', gap: 10 }}>
 					<button
 						type='button'
 						className='ms-btn ms-action'
@@ -81,6 +93,17 @@ export default function GoalPostManagementPanel(props: {
 					>
 						<Edit /> Edit content
 					</button>
+					{content ? (
+						<button
+							type='button'
+							className='ms-btn ms-action2'
+							disabled={isLoading}
+							style={{ display: 'flex', gap: 10, alignItems: 'center' }}
+							onClick={saveText}
+						>
+							<Save /> Save text
+						</button>
+					) : undefined}
 				</div>
 				{content ? (
 					<textarea
