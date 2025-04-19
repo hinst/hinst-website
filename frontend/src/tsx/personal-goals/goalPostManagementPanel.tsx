@@ -73,9 +73,7 @@ export default function GoalPostManagementPanel(props: {
 					</button>
 				</div>
 				{content ? (
-					<textarea style={{ fontFamily: 'monospace' }} rows={20}>
-						{content?.text}
-					</textarea>
+					<textarea style={{ fontFamily: 'monospace' }} rows={20} value={content?.text} />
 				) : undefined}
 			</div>
 		</div>
