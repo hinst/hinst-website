@@ -1,6 +1,5 @@
-import { Tool } from 'react-feather';
-import { GoalPostObjectExtended } from 'src/typescript/personal-goals/smartPost';
-import { API_URL } from 'src/typescript/global';
+import { Edit, Tool } from 'react-feather';
+import { GoalPostObject, GoalPostObjectExtended } from 'src/typescript/personal-goals/smartPost';
 import { useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
 
@@ -10,6 +9,7 @@ export default function GoalPostManagementPanel(props: {
 	onChange: () => void;
 }) {
 	const [isLoading, setIsLoading] = useState(false);
+
 	async function setPublic(isPublic: boolean) {
 		if (isLoading) return;
 		setIsLoading(true);
@@ -27,10 +27,25 @@ export default function GoalPostManagementPanel(props: {
 			setIsLoading(false);
 		}
 	}
+
+	const [content, setContent] = useState<GoalPostObject | undefined>(undefined);
+
+	async function loadContent() {
+		setContent(await apiClient.getGoalPost(props.postData.goalId, props.postData.dateTime));
+	}
+
+	function toggleEditMode() {
+		if (content) setContent(undefined);
+		else loadContent();
+	}
+
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column' }}>
+		<div
+			style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
+			className='ms-alert ms-light'
+		>
+			<div></div>
 			<div
-				className='ms-alert ms-light'
 				style={{
 					display: 'flex',
 					gap: 10,
@@ -45,6 +60,23 @@ export default function GoalPostManagementPanel(props: {
 					onChange={() => setPublic(!props.postData?.isPublic)}
 				/>
 				public
+			</div>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+				<div>
+					<button
+						type='button'
+						className='ms-btn ms-action'
+						style={{ display: 'flex', gap: 10, alignItems: 'center' }}
+						onClick={toggleEditMode}
+					>
+						<Edit /> Edit content
+					</button>
+				</div>
+				{content ? (
+					<textarea style={{ fontFamily: 'monospace' }} rows={20}>
+						{content?.text}
+					</textarea>
+				) : undefined}
 			</div>
 		</div>
 	);

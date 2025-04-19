@@ -19,7 +19,7 @@ class ApiClient {
 		return this.fetch(url);
 	}
 
-	async getGoalPost(goalId: string, postDateTime: number): Promise<GoalPostObject> {
+	async getGoalPost(goalId: number, postDateTime: number): Promise<GoalPostObject> {
 		const url = '/goalPost' +
 			'?goalId=' +
 			encodeURIComponent(goalId) +
