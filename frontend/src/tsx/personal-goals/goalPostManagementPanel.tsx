@@ -2,6 +2,7 @@ import { Tool } from 'react-feather';
 import { GoalPostObjectExtended } from 'src/typescript/personal-goals/smartPost';
 import { API_URL } from 'src/typescript/global';
 import { useState } from 'react';
+import { apiClient } from 'src/typescript/apiClient';
 
 export default function GoalPostManagementPanel(props: {
 	postData: GoalPostObjectExtended;
@@ -13,16 +14,11 @@ export default function GoalPostManagementPanel(props: {
 		if (isLoading) return;
 		setIsLoading(true);
 		try {
-			const url =
-				API_URL +
-				'/goalPost/setPublic' +
-				'?goalId=' +
-				encodeURIComponent(props.postData.goalId) +
-				'&postDateTime=' +
-				encodeURIComponent(props.postData.dateTime) +
-				'&isPublic=' +
-				encodeURIComponent('' + isPublic);
-			const response = await fetch(url);
+			const response = await apiClient.goalPostSetPublic(
+				props.postData.goalId,
+				props.postData.dateTime,
+				isPublic
+			);
 			if (!response.ok)
 				throw new Error('Cannot update post visibility. Status: ' + response.statusText);
 			props.setPostData({ ...props.postData, isPublic });
@@ -32,22 +28,24 @@ export default function GoalPostManagementPanel(props: {
 		}
 	}
 	return (
-		<div
-			className='ms-alert ms-light'
-			style={{
-				display: 'flex',
-				gap: 10,
-				alignItems: 'center'
-			}}
-		>
-			<Tool />
-			<input
-				disabled={isLoading}
-				type='checkbox'
-				checked={props.postData?.isPublic}
-				onChange={() => setPublic(!props.postData?.isPublic)}
-			/>
-			public
+		<div style={{ display: 'flex', flexDirection: 'column' }}>
+			<div
+				className='ms-alert ms-light'
+				style={{
+					display: 'flex',
+					gap: 10,
+					alignItems: 'center'
+				}}
+			>
+				<Tool />
+				<input
+					disabled={isLoading}
+					type='checkbox'
+					checked={props.postData?.isPublic}
+					onChange={() => setPublic(!props.postData?.isPublic)}
+				/>
+				public
+			</div>
 		</div>
 	);
 }
