@@ -31,7 +31,17 @@ export default function GoalPostManagementPanel(props: {
 	const [content, setContent] = useState<GoalPostObject | undefined>(undefined);
 
 	async function loadContent() {
-		setContent(await apiClient.getGoalPost(props.postData.goalId, props.postData.dateTime));
+		if (isLoading) return;
+		setIsLoading(true);
+		try {
+			setContent(await apiClient.getGoalPost(props.postData.goalId, props.postData.dateTime));
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+	async function saveContent() {
+		
 	}
 
 	function toggleEditMode() {
@@ -44,7 +54,6 @@ export default function GoalPostManagementPanel(props: {
 			style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
 			className='ms-alert ms-light'
 		>
-			<div></div>
 			<div
 				style={{
 					display: 'flex',
@@ -66,6 +75,7 @@ export default function GoalPostManagementPanel(props: {
 					<button
 						type='button'
 						className='ms-btn ms-action'
+						disabled={isLoading}
 						style={{ display: 'flex', gap: 10, alignItems: 'center' }}
 						onClick={toggleEditMode}
 					>
@@ -73,7 +83,12 @@ export default function GoalPostManagementPanel(props: {
 					</button>
 				</div>
 				{content ? (
-					<textarea style={{ fontFamily: 'monospace' }} rows={20} value={content?.text} />
+					<textarea
+						style={{ fontFamily: 'monospace' }}
+						rows={20}
+						value={content?.text}
+						onChange={(event) => setContent({ ...content, text: event.target.value })}
+					/>
 				) : undefined}
 			</div>
 		</div>
