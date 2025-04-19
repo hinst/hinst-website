@@ -150,7 +150,7 @@ func (me *database) migrate() {
 				continue
 			}
 			var fileText = readTextFile(filePath)
-			me.setTranslatedText(row.goalId, row.dateTime, supportedLanguage, fileText)
+			me.setGoalPostText(row.goalId, row.dateTime, supportedLanguage, fileText)
 		}
 	})
 }
@@ -164,12 +164,15 @@ func (me *database) setGoalPostPublic(row goalPostRow) {
 	)
 }
 
-func (me *database) setTranslatedText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) {
+func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) {
 	var db = me.open()
 	defer me.close(db)
-	assertCondition(slices.Contains(supportedLanguages[1:], supportedLanguage),
+	assertCondition(slices.Contains(supportedLanguages, supportedLanguage),
 		func() string { return "Unsupported language: " + supportedLanguage.String() })
-	var languageName = getLanguageName(supportedLanguage)
+	var languageName = ""
+	if supportedLanguage != supportedLanguages[0] {
+		languageName = getLanguageName(supportedLanguage)
+	}
 	var queryText = "UPDATE goalPosts SET text" + languageName + " = ? WHERE goalId = ? AND dateTime = ?"
 	var dateTimeEpoch = dateTime.UTC().Unix()
 	var result = assertResultError(db.Exec(queryText, text, goalId, dateTimeEpoch))
