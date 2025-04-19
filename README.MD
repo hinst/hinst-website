@@ -1,4 +1,12 @@
-# Changelog
+# hinst-website
+
+## How to deploy
+1. Call `build && push` in the root folder
+	1. Call `deploy` in `orange-pi-kubernetes` folder to deploy backend container to my Orange-Pi single board computer
+2. Call `node build.js` in `frontend` folder
+	1. Commit and push `hinst.github.io` repository to make frontend available on GitHub pages
+
+## Changelog
 
 ## 2025.07
 
