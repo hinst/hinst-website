@@ -51,6 +51,7 @@ export default function GoalPostManagementPanel(props: {
 				content.text
 			);
 			if (!response.ok) throw new Error('Cannot save text. Status: ' + response.statusText);
+			props.onChange();
 		} finally {
 			setIsLoading(false);
 		}

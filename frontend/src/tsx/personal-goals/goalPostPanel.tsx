@@ -48,6 +48,11 @@ export default function GoalPostPanel(props: {
 		setPostData((postData) => (postData ? { ...postData, images } : undefined));
 	}
 
+	function receiveChange() {
+		load();
+		props.onChange();
+	}
+
 	useEffect(() => {
 		load();
 	}, [props.goalId, props.postDate]);
@@ -61,7 +66,7 @@ export default function GoalPostPanel(props: {
 						<GoalPostManagementPanel
 							postData={postData}
 							setPostData={setPostData}
-							onChange={props.onChange}
+							onChange={receiveChange}
 						/>
 					) : undefined}
 					<GoalPostView postData={postData} />
