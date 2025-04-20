@@ -1,9 +1,17 @@
 import { GoalPostObject } from './personal-goals/smartPost';
+import { settingsStorage } from './settings';
 
 class ApiClient {
 	url: string = process.env.API_URL || '/hinst-website/api';
 
 	async fetch(url: string, options?: RequestInit): Promise<Response> {
+		if (settingsStorage.language) {
+			options = options || {};
+			options.headers = {
+				...options.headers,
+				'Accept-Language': settingsStorage.language,
+			}
+		}
 		const response = await fetch(this.url + url, options);
 		return response;
 	}
