@@ -20,7 +20,16 @@ export default function App() {
 		const timer = setInterval(() => {
 			const newLanguage = settingsStorage.resolvedLanguage;
 			if (newLanguage !== currentLanguage) setCurrentLanguage(newLanguage);
-		}, 1000);
+		}, 500);
+		return () => clearInterval(timer);
+	}, []);
+
+	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+	useEffect(() => {
+		const timer = setInterval(() => {
+			const newWindowWidth = window.innerWidth;
+			if (newWindowWidth !== windowWidth) setWindowWidth(newWindowWidth);
+		}, 500);
 		return () => clearInterval(timer);
 	}, []);
 
@@ -33,8 +42,8 @@ export default function App() {
 		<AppContext.Provider
 			value={{
 				currentLanguage,
-				displayWidth: window.innerWidth,
-				goalManagerMode: Cookies.get('goalManagerMode') == '1'
+				displayWidth: windowWidth,
+				goalManagerMode: Cookies.get('goalManagerMode') === '1'
 			}}
 		>
 			<div
