@@ -27,12 +27,12 @@ export default function App() {
 
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	useEffect(() => {
-		const receiveResize = debounce(function (e: Event) {
-			const newWindowWidth = (e.target as Window).innerWidth;
-			if (newWindowWidth !== windowWidth) setWindowWidth(newWindowWidth);
-		}, 100);
-		window.addEventListener('resize', receiveResize);
-		return () => window.removeEventListener('resize', receiveResize);
+		const timer = setInterval(() => {
+			const newWindowWidth =
+				document.getElementById('content')?.clientWidth || window.innerWidth;
+			if (windowWidth != newWindowWidth) setWindowWidth(newWindowWidth);
+		}, 500);
+		return () => clearTimeout(timer);
 	}, []);
 
 	const [pageTitle, setPageTitle] = useState(APP_TITLE);
