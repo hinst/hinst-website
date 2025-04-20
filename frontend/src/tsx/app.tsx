@@ -9,7 +9,6 @@ import Cookies from 'js-cookie';
 import SettingsPage from './settings/settingsPage';
 import { APP_TITLE } from 'src/typescript/global';
 import { settingsStorage } from 'src/typescript/settings';
-import { debounce } from 'lodash';
 
 export default function App() {
 	settingsStorage.initialize();
@@ -18,19 +17,13 @@ export default function App() {
 		settingsStorage.resolvedLanguage
 	);
 	useEffect(() => {
-		const timer = setInterval(() => {
-			const newLanguage = settingsStorage.resolvedLanguage;
-			if (newLanguage !== currentLanguage) setCurrentLanguage(newLanguage);
-		}, 500);
+		const timer = setInterval(() => setCurrentLanguage(settingsStorage.resolvedLanguage), 500);
 		return () => clearInterval(timer);
 	}, []);
 
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	useEffect(() => {
-		const timer = setInterval(() => {
-			const newWindowWidth = window.innerWidth;
-			if (windowWidth != newWindowWidth) setWindowWidth(newWindowWidth);
-		}, 500);
+		const timer = setInterval(() => setWindowWidth(window.innerWidth), 500);
 		return () => clearInterval(timer);
 	}, []);
 
