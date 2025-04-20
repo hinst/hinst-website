@@ -28,11 +28,10 @@ export default function App() {
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	useEffect(() => {
 		const timer = setInterval(() => {
-			const newWindowWidth =
-				document.getElementById('content')?.clientWidth || window.innerWidth;
+			const newWindowWidth = window.innerWidth;
 			if (windowWidth != newWindowWidth) setWindowWidth(newWindowWidth);
 		}, 500);
-		return () => clearTimeout(timer);
+		return () => clearInterval(timer);
 	}, []);
 
 	const [pageTitle, setPageTitle] = useState(APP_TITLE);
