@@ -26,3 +26,4 @@
 	* Color theme selection: System, Dark, Light
 	* Language selection: System, English, Russian, German
 * Fixed setInterval handling: avoid using captured state variables in inner functions
+* Fixed timezone handling in downloader
