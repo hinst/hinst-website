@@ -235,10 +235,11 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 					onClick={() => setCalendarEnabled(false)}
 					style={{
 						display: 'flex',
-						overflowY: 'auto'
+						overflowY: 'auto',
+						flexGrow: 1
 					}}
 				>
-					<div style={{ maxWidth: ARTICLE_WIDTH }}>
+					<div style={{ maxWidth: ARTICLE_WIDTH, width: '100%' }}>
 						{activePostDate ? getGoalPostPanel() : undefined}
 					</div>
 				</div>
