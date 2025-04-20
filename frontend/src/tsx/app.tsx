@@ -6,16 +6,14 @@ import GoalBrowser from './personal-goals/goalBrowser';
 import { getCurrentLanguage, SupportedLanguages } from 'src/typescript/language';
 import { AppContext } from './context';
 import Cookies from 'js-cookie';
-
-const PAGE_TITLE = 'Showcase Website';
+import SettingsPage from './settings/settingsPage';
+import { APP_TITLE } from 'src/typescript/global';
+import { settingsStorage } from 'src/typescript/settings';
 
 export default function App() {
-	useEffect(() => {
-		if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-			document.getElementsByTagName('html')[0].setAttribute('data-theme', 'dark');
-	}, []);
+	settingsStorage.initialize();
 
-	const [pageTitle, setPageTitle] = useState(PAGE_TITLE);
+	const [pageTitle, setPageTitle] = useState(APP_TITLE);
 	useEffect(() => {
 		document.title = pageTitle;
 	}, [pageTitle]);
@@ -58,6 +56,10 @@ export default function App() {
 						<Route
 							path='/personal-goals/:id'
 							element={<GoalBrowser setPageTitle={setPageTitle} />}
+						/>
+						<Route
+							path='/settings'
+							element={<SettingsPage setPageTitle={setPageTitle} />}
 						/>
 					</Routes>
 				</HashRouter>

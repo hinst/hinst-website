@@ -1,12 +1,10 @@
 import { NavLink } from 'react-router';
 // @ts-ignore
 import icon from 'images/icon.webp';
-import { useState } from 'react';
-import { Info } from 'react-feather';
+import { Settings } from 'react-feather';
 import { AUTHOR_NAME, COPYRIGHT_YEAR } from 'src/typescript/global';
 
 export default function Header(props: { title: string }) {
-	const [isCopyrightVisible, setCopyrightVisible] = useState(false);
 	return (
 		<div style={{ display: 'flex', alignItems: 'center', gap: 10, maxWidth: '100%' }}>
 			<NavLink to='/'>
@@ -65,22 +63,12 @@ export default function Header(props: { title: string }) {
 				}}
 				className='ms-bg-main blurry-main-background'
 			>
-				<div
-					className='ms-bg-main'
-					style={{
-						display: isCopyrightVisible ? 'block' : 'none',
-						textWrap: 'nowrap',
-						marginLeft: 5
-					}}
-				>
-					&copy; {COPYRIGHT_YEAR} {AUTHOR_NAME}
-				</div>
-				<button
-					onClick={() => setCopyrightVisible(!isCopyrightVisible)}
+				<NavLink
+					to='/settings'
 					className='ms-btn ms-rounded'
 					style={{ width: 40, height: 40, position: 'relative' }}
 				>
-					<Info
+					<Settings
 						size={20}
 						style={{
 							position: 'absolute',
@@ -89,7 +77,7 @@ export default function Header(props: { title: string }) {
 							transform: 'translate(-50%, -50%)'
 						}}
 					/>
-				</button>
+				</NavLink>
 			</div>
 		</div>
 	);
