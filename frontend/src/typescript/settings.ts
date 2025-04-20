@@ -39,6 +39,14 @@ class SettingsStorage {
 		return theme;
 	}
 
+	private applyTheme() {
+		const dataThemeAttributeKey = 'data-theme';
+		if (this.resolvedTheme === Theme.DARK)
+			document.documentElement.setAttribute(dataThemeAttributeKey, 'dark');
+		else
+			document.documentElement.removeAttribute(dataThemeAttributeKey);
+	}
+
 	private readonly keyLanguage = 'language';
 
 	get language(): SupportedLanguage | undefined {
@@ -47,7 +55,7 @@ class SettingsStorage {
 		else return undefined;
 	}
 
-	set language(value: SupportedLanguage) {
+	set language(value: SupportedLanguage | undefined) {
 		if (!value)
 			localStorage.removeItem(this.keyLanguage);
 		else
@@ -56,13 +64,6 @@ class SettingsStorage {
 
 	get resolvedLanguage(): SupportedLanguage {
 		return this.language || getSystemLanguage() || SupportedLanguage.ENGLISH;
-	}
-
-	private applyTheme() {
-		if (this.resolvedTheme === Theme.DARK)
-			document.documentElement.setAttribute('data-theme', 'dark');
-		else
-			document.documentElement.removeAttribute('data-theme');
 	}
 }
 

@@ -1,5 +1,7 @@
 import { CSSProperties, useEffect, useReducer } from 'react';
+import { Info } from 'react-feather';
 import { APP_TITLE, AUTHOR_NAME, COPYRIGHT_YEAR } from 'src/typescript/global';
+import { SupportedLanguage, supportedLanguageNames } from 'src/typescript/language';
 import { settingsStorage, Theme } from 'src/typescript/settings';
 
 export default function SettingsPage(props: { setPageTitle: (title: string) => void }) {
@@ -15,28 +17,67 @@ export default function SettingsPage(props: { setPageTitle: (title: string) => v
 	}
 
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 			<div>
-				Color theme &nbsp;
+				Color theme <br />
 				<div className='ms-btn-group'>
-					<CreateThemeButton
+					<ThemeButton
 						theme={Theme.SYSTEM}
 						currentTheme={settingsStorage.theme}
 						title='System'
 						setTheme={setTheme}
 					/>
-					<CreateThemeButton
+					<ThemeButton
 						theme={Theme.DARK}
 						currentTheme={settingsStorage.theme}
 						title='Dark'
 						setTheme={setTheme}
 					/>
-					<CreateThemeButton
+					<ThemeButton
 						theme={Theme.LIGHT}
 						currentTheme={settingsStorage.theme}
 						title='Light'
 						setTheme={setTheme}
 					/>
+				</div>
+			</div>
+			<div>
+				Language <br />
+				<div className='ms-btn-group'>
+					<LanguageButton
+						language={undefined}
+						currentLanguage={settingsStorage.language}
+						title='System'
+						setLanguage={(language) => {
+							settingsStorage.language = language;
+							forceUpdate();
+						}}
+					/>
+					{Object.values(SupportedLanguage).map((supportedLanguage) => (
+						<LanguageButton
+							key={supportedLanguage}
+							language={supportedLanguage}
+							currentLanguage={settingsStorage.language}
+							title={supportedLanguageNames[supportedLanguage]}
+							setLanguage={(language) => {
+								settingsStorage.language = language;
+								forceUpdate();
+							}}
+						/>
+					))}
+				</div>
+				<br />
+				<div
+					style={{
+						display: 'flex',
+						alignItems: 'flex-start',
+						gap: 5,
+						marginTop: 4
+					}}
+				>
+					<Info />
+					Translations are currently available only for articles in personal goals. <br />
+					Buttons and other UI elements are English only.
 				</div>
 			</div>
 			<div>
@@ -46,23 +87,43 @@ export default function SettingsPage(props: { setPageTitle: (title: string) => v
 	);
 }
 
-function CreateThemeButton(props: {
+const activeStyle: CSSProperties = {
+	backgroundColor: 'rgba(var(--primary-bg-color), 1)',
+	color: 'white'
+};
+
+function ThemeButton(props: {
 	theme: Theme;
 	currentTheme: Theme;
 	title: string;
 	setTheme: (theme: Theme) => void;
 }) {
-	const style: CSSProperties = {};
-	if (props.currentTheme === props.theme) {
-		style.backgroundColor = 'rgba(var(--primary-bg-color), 1)';
-		style.color = 'white';
-	}
+	const style = props.currentTheme === props.theme ? activeStyle : {};
 	return (
 		<button
 			type='button'
 			className='ms-btn ms-outline'
 			style={style}
 			onClick={() => props.setTheme(props.theme)}
+		>
+			{props.title}
+		</button>
+	);
+}
+
+function LanguageButton(props: {
+	language: SupportedLanguage | undefined;
+	currentLanguage: SupportedLanguage | undefined;
+	title: string;
+	setLanguage: (language: SupportedLanguage | undefined) => void;
+}) {
+	const style = props.currentLanguage === props.language ? activeStyle : {};
+	return (
+		<button
+			type='button'
+			className='ms-btn ms-outline'
+			style={style}
+			onClick={() => props.setLanguage(props.language)}
 		>
 			{props.title}
 		</button>

@@ -4,6 +4,12 @@ export enum SupportedLanguage {
 	GERMAN = 'de',
 }
 
+export const supportedLanguageNames = {
+	[SupportedLanguage.ENGLISH]: 'English',
+	[SupportedLanguage.RUSSIAN]: 'Russian',
+	[SupportedLanguage.GERMAN]: 'German',
+}
+
 export function getSystemLanguage(): SupportedLanguage | undefined {
 	for (const lang of navigator.languages) {
 		if (lang.startsWith('ru')) return SupportedLanguage.RUSSIAN;
