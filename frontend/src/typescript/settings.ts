@@ -35,7 +35,10 @@ class SettingsStorage {
 	}
 
 	set theme(value: Theme) {
-		localStorage.setItem('theme', value);
+		if (value === Theme.SYSTEM)
+			localStorage.removeItem('theme');
+		else
+			localStorage.setItem('theme', value);
 		this.applyTheme();
 	}
 }
