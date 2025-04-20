@@ -1,4 +1,4 @@
-import { SupportedLanguages as SupportedLanguage } from 'src/typescript/language';
+import { SupportedLanguage as SupportedLanguage } from 'src/typescript/language';
 //@ts-ignore
 import codingWeekly from 'images/codingWeekly.jpg';
 //@ts-ignore
@@ -27,7 +27,7 @@ export const GOAL_INFOS = new Map<string, GoalInfo>([
 ]);
 
 export function translateGoalTitle(language: SupportedLanguage, text: string) {
-	if (language === SupportedLanguage.ENGLISH) {
+	if ([SupportedLanguage.ENGLISH, SupportedLanguage.GERMAN].includes(language)) {
 		const info = GOAL_INFOS.get(text);
 		if (info) return info.englishTitle;
 	}

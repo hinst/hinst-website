@@ -1,3 +1,5 @@
+import { getSystemLanguage, SupportedLanguage } from './language';
+
 export enum Theme {
 	LIGHT = 'LIGHT',
 	DARK = 'DARK',
@@ -9,17 +11,20 @@ class SettingsStorage {
 		this.applyTheme();
 	}
 
-	private applyTheme() {
-		if (this.resolvedTheme === Theme.DARK)
-			document.documentElement.setAttribute('data-theme', 'dark');
-		else
-			document.documentElement.removeAttribute('data-theme');
-	}
+	private readonly keyTheme = 'theme';
 
 	get theme(): Theme {
-		const theme = localStorage.getItem('theme');
+		const theme = localStorage.getItem(this.keyTheme);
 		if (theme) return theme as Theme;
 		return Theme.SYSTEM;
+	}
+
+	set theme(value: Theme) {
+		if (value === Theme.SYSTEM)
+			localStorage.removeItem(this.keyTheme);
+		else
+			localStorage.setItem(this.keyTheme, value);
+		this.applyTheme();
 	}
 
 	get resolvedTheme(): Theme {
@@ -34,12 +39,30 @@ class SettingsStorage {
 		return theme;
 	}
 
-	set theme(value: Theme) {
-		if (value === Theme.SYSTEM)
-			localStorage.removeItem('theme');
+	private readonly keyLanguage = 'language';
+
+	get language(): SupportedLanguage | undefined {
+		const language = localStorage.getItem(this.keyLanguage);
+		if (language) return language as SupportedLanguage;
+		else return undefined;
+	}
+
+	set language(value: SupportedLanguage) {
+		if (!value)
+			localStorage.removeItem(this.keyLanguage);
 		else
-			localStorage.setItem('theme', value);
-		this.applyTheme();
+			localStorage.setItem(this.keyLanguage, value);
+	}
+
+	get resolvedLanguage(): SupportedLanguage {
+		return this.language || getSystemLanguage() || SupportedLanguage.ENGLISH;
+	}
+
+	private applyTheme() {
+		if (this.resolvedTheme === Theme.DARK)
+			document.documentElement.setAttribute('data-theme', 'dark');
+		else
+			document.documentElement.removeAttribute('data-theme');
 	}
 }
 

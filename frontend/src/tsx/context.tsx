@@ -1,9 +1,9 @@
 import { createContext } from 'react';
-import { getCurrentLanguage } from 'src/typescript/language';
 import Cookies from 'js-cookie';
+import { settingsStorage } from 'src/typescript/settings';
 
 export const AppContext = createContext({
-	currentLanguage: getCurrentLanguage(),
+	currentLanguage: settingsStorage.resolvedLanguage,
 	displayWidth: window.innerWidth,
-	goalManagerMode: Cookies.get('goalManagerMode') == '1'
+	goalManagerMode: Cookies.get('goalManagerMode') === '1'
 });

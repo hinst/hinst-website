@@ -3,7 +3,7 @@ import Header from './header';
 import { useEffect, useState } from 'react';
 import HomePage from './homePage';
 import GoalBrowser from './personal-goals/goalBrowser';
-import { getCurrentLanguage, SupportedLanguages } from 'src/typescript/language';
+import { SupportedLanguage } from 'src/typescript/language';
 import { AppContext } from './context';
 import Cookies from 'js-cookie';
 import SettingsPage from './settings/settingsPage';
@@ -13,20 +13,21 @@ import { settingsStorage } from 'src/typescript/settings';
 export default function App() {
 	settingsStorage.initialize();
 
-	const [pageTitle, setPageTitle] = useState(APP_TITLE);
-	useEffect(() => {
-		document.title = pageTitle;
-	}, [pageTitle]);
-
-	const [currentLanguage, setCurrentLanguage] =
-		useState<SupportedLanguages>(getCurrentLanguage());
+	const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>(
+		settingsStorage.resolvedLanguage
+	);
 	useEffect(() => {
 		const timer = setInterval(() => {
-			const newLanguage = getCurrentLanguage();
+			const newLanguage = settingsStorage.resolvedLanguage;
 			if (newLanguage !== currentLanguage) setCurrentLanguage(newLanguage);
 		}, 1000);
 		return () => clearInterval(timer);
 	}, []);
+
+	const [pageTitle, setPageTitle] = useState(APP_TITLE);
+	useEffect(() => {
+		document.title = pageTitle;
+	}, [pageTitle]);
 
 	return (
 		<AppContext.Provider
