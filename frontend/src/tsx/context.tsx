@@ -4,6 +4,6 @@ import { settingsStorage } from 'src/typescript/settings';
 
 export const AppContext = createContext({
 	currentLanguage: settingsStorage.resolvedLanguage,
-	displayWidth: window.innerWidth,
+	windowWidth: window.innerWidth,
 	goalManagerMode: Cookies.get('goalManagerMode') === '1'
 });

@@ -35,7 +35,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 	const [reloadGoalCalendar, setReloadGoalCalendar] = useState(0);
 
 	function isFullMode() {
-		return context.displayWidth >= 700;
+		return context.windowWidth >= 700;
 	}
 
 	function isGoalManagerMode() {

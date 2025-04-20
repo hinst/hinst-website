@@ -9,6 +9,7 @@ import Cookies from 'js-cookie';
 import SettingsPage from './settings/settingsPage';
 import { APP_TITLE } from 'src/typescript/global';
 import { settingsStorage } from 'src/typescript/settings';
+import { debounce } from 'lodash';
 
 export default function App() {
 	settingsStorage.initialize();
@@ -26,11 +27,12 @@ export default function App() {
 
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	useEffect(() => {
-		const timer = setInterval(() => {
-			const newWindowWidth = window.innerWidth;
+		const receiveResize = debounce(function (e: Event) {
+			const newWindowWidth = (e.target as Window).innerWidth;
 			if (newWindowWidth !== windowWidth) setWindowWidth(newWindowWidth);
-		}, 500);
-		return () => clearInterval(timer);
+		}, 100);
+		window.addEventListener('resize', receiveResize);
+		return () => window.removeEventListener('resize', receiveResize);
 	}, []);
 
 	const [pageTitle, setPageTitle] = useState(APP_TITLE);
@@ -42,7 +44,7 @@ export default function App() {
 		<AppContext.Provider
 			value={{
 				currentLanguage,
-				displayWidth: windowWidth,
+				windowWidth: windowWidth,
 				goalManagerMode: Cookies.get('goalManagerMode') === '1'
 			}}
 		>
