@@ -76,12 +76,17 @@ function GoalImage(props: { data: string }) {
 function removeRedirect(document: Document) {
 	const prefix = 'http://smartprogress.do/site/redirect/?url=';
 	[...document.getElementsByTagName('a')].forEach((link) => {
-		console.log(link);
-		let href = link.getAttribute('href');
-		if (href?.startsWith(prefix)) {
-			href = href.substring(prefix.length);
-			href = decodeURIComponent(href);
-			link.setAttribute('href', href);
+		try {
+			let href = link.getAttribute('href');
+			if (href?.startsWith(prefix)) {
+				href = href.substring(prefix.length);
+				if (href.endsWith('%'))
+					href = href.substring(0, href.length - 1);
+				href = decodeURIComponent(href);
+				link.setAttribute('href', href);
+			}
+		} catch (e) {
+			console.warn('Cannot process link', link, e);
 		}
 	});
 }
