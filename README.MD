@@ -28,3 +28,5 @@
 * Fixed setInterval handling: avoid using captured state variables in inner functions
 * Fixed timezone handling in downloader
 * Cut href redirects from links in article texts
+* Run translator at 00:15 after downloader to ensure that the translator can process new articles
+	* Earlier both were scheduled to run at 00:00 exactly
