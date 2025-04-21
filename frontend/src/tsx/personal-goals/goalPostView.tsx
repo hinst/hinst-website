@@ -35,7 +35,7 @@ export default function GoalPostView(props: { postData: GoalPostObjectExtended }
 				</div>
 			) : undefined}
 			<div className='goalPostViewText'>
-				<SafeHtmlView htmlText={props.postData.text} />
+				<SafeHtmlView htmlText={props.postData.text} updateDocument={removeRedirect} />
 			</div>
 			<div
 				style={{
@@ -71,4 +71,17 @@ function GoalImage(props: { data: string }) {
 			/>
 		</a>
 	);
+}
+
+function removeRedirect(document: Document) {
+	const prefix = 'http://smartprogress.do/site/redirect/?url=';
+	[...document.getElementsByTagName('a')].forEach((link) => {
+		console.log(link);
+		let href = link.getAttribute('href');
+		if (href?.startsWith(prefix)) {
+			href = href.substring(prefix.length);
+			href = decodeURIComponent(href);
+			link.setAttribute('href', href);
+		}
+	});
 }
