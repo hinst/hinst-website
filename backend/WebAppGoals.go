@@ -51,6 +51,11 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
 
 	var goalPostRow = me.db.getGoalPost(goalId, postDateTime)
+	if goalPostRow == nil {
+		var errorMessage = "Cannot find goalId=" + getStringFromInt64(goalId) +
+			" postDateTime=" + postDateTime.String()
+		panic(webError{errorMessage, http.StatusNotFound})
+	}
 	if !goalPostRow.isPublic && !goalManagerMode {
 		panic(webError{"Need goal manager access level", http.StatusUnauthorized})
 	}
