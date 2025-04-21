@@ -21,4 +21,4 @@ Source code 📜 https://github.com/hinst/hinst-website
 Total time spent on programming: 79 hours. Oh wow, that took a lot of time for such a simple website 🤔
 Especially considering that the time to write the blog posts is generally not included
 
-I plan to keep adding more features and blog posts in the future 🌠
+I plan to keep adding more blog posts and features in the coming months 🌠
