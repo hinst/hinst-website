@@ -1,11 +1,24 @@
-My new personal website is up:
+My new personal website is live:
 🌐 https://hinst.github.io/
-📜 https://github.com/hinst/hinst-website
 
+It contains my blog posts on two topics:
+🖥️ Coding in my free time
+🚲 Bicycle and E-Scooter
+The blog posts are available in three languages: Russian (original), English and German
 
-For content, it has my blog posts on topics Coding and Cycling.
-The blog posts are available in three languages: Russian, English and German. Russian is the original, meanwhile English and German are translated by a Large Language Model.
-Also, I tried to optimize it for both wide (desktop) and narrow (mobile) screens.
+Tech stack:
+• Backend: Go, Node.js
+	• Storage: SQLite
+• Frontend: React.js, TypeScript
+	• Build: Parcel.js
+• Translations: LM Studio
+	• Model: Nyxene v3 11B
+• Deployment: Kubernetes
+	• Hardware: Orange Pi 2W single board computer
 
+Source code 📜 https://github.com/hinst/hinst-website
 
-Tech stack
+Total time spent on programming: 79 hours. Oh wow, that took a lot of time for such a simple website 🤔
+Especially considering that the time to write the blog posts is generally not included
+
+I plan to keep adding more features and blog posts in the future 🌠
