@@ -20,7 +20,7 @@ export const GOAL_INFOS = new Map<string, GoalInfo>([
 	[
 		'Окупить стоимость велосипеда и самоката',
 		{
-			englishTitle: 'My Bicycle and E-Scooter',
+			englishTitle: 'Bicycle and E-Scooter',
 			coverImage: bicycle
 		}
 	]
