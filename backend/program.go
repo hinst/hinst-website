@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 )
 
 type program struct {
@@ -57,4 +59,16 @@ func (me *program) translate() {
 func (me *program) migrate() {
 	me.database.init(me.savedGoalsPath)
 	me.database.migrate()
+}
+
+func (me *program) generatePrimeNumbers() {
+	var primeNumbers = calculatePrimeNumbers(100_000)
+	primeNumbers = primeNumbers[10_000:]
+	var file = assertResultError(os.Create("primeNumbers.txt"))
+	for index, primeNumber := range primeNumbers {
+		if (index % 10) == 0 {
+			file.WriteString(strconv.Itoa(primeNumber) + "\n")
+		}
+	}
+	assertError(file.Close())
 }

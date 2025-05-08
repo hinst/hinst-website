@@ -28,6 +28,9 @@ func main() {
 	case "migrate":
 		var theProgram = new(program).create()
 		theProgram.migrate()
+	case "generatePrimeNumbers":
+		var theProgram = new(program).create()
+		theProgram.generatePrimeNumbers()
 	default:
 		log.Fatalf("Unknown mode: %v", *modePtr)
 	}
