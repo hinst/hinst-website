@@ -43,3 +43,6 @@ In administrator mode we can edit article texts and toggle article visibility: p
 * Run translator at 00:15 after downloader to ensure that the translator can process new articles
 	* Earlier both were scheduled to run at 00:00 exactly
 * Fixed timezone for images and comments
+
+## 2025.08
+* Added license file: Mozilla Public License
