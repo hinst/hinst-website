@@ -40,6 +40,5 @@ CREATE TABLE IF NOT EXISTS goalPostComments (
 CREATE TABLE IF NOT EXISTS riddles (
 	id INTEGER PRIMARY KEY,
 	product INTEGER NOT NULL,
-	keys TEXT NOT NULL,
 	createdAt INTEGER NOT NULL /* Unix seconds UTC */
 );

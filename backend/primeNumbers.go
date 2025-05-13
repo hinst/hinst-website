@@ -25,20 +25,9 @@ func init() {
 		readJsonFile(primeNumbersFileName, &globalPrimeNumbers)
 		assertCondition(
 			len(globalPrimeNumbers) > 0,
-			func() string { return "Need prime numbers" },
+			func() string { return "Need prime numbers, but the array is empty" },
 		)
 	} else {
-		panic("Need prime numbers")
+		panic("Need prime numbers, but the file is missing: " + primeNumbersFileName)
 	}
-}
-
-func createRiddle(steps int) (keys []int, riddle int) {
-	riddle = 1
-	for range steps {
-		var index = createRandomInt(len(globalPrimeNumbers))
-		var primeNumber = globalPrimeNumbers[index]
-		keys = append(keys, primeNumber)
-		riddle = multiplyLimited(riddle, primeNumber, 1000_000)
-	}
-	return
 }

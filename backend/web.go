@@ -28,3 +28,15 @@ func getWebLanguage(request *http.Request) language.Tag {
 func setCacheAge(response http.ResponseWriter, duration time.Duration) {
 	response.Header().Set("Cache-Control", "max-age="+strconv.Itoa(int(duration.Seconds())))
 }
+
+func parseWebInt(request *http.Request, key string) int {
+	var text = request.URL.Query().Get(key)
+	if text == "" {
+		panic(webError{Message: "Missing integer parameter '" + key + "'", Status: http.StatusBadRequest})
+	}
+	var value, parseError = strconv.Atoi(text)
+	assertCondition(parseError == nil, func() error {
+		return webError{Message: "Invalid integer: " + text, Status: http.StatusBadRequest}
+	})
+	return value
+}
