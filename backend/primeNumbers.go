@@ -22,20 +22,23 @@ var globalPrimeNumbers []int
 
 func init() {
 	if checkFileExists(primeNumbersFileName) {
-		globalPrimeNumbers = readJsonFile(primeNumbersFileName, []int{})
+		readJsonFile(primeNumbersFileName, &globalPrimeNumbers)
 		assertCondition(
 			len(globalPrimeNumbers) > 0,
 			func() string { return "Need prime numbers" },
 		)
+	} else {
+		panic("Need prime numbers")
 	}
 }
 
-func createRiddle(steps int) (riddle int) {
+func createRiddle(steps int) (keys []int, riddle int) {
 	riddle = 1
 	for range steps {
 		var index = createRandomInt(len(globalPrimeNumbers))
 		var primeNumber = globalPrimeNumbers[index]
+		keys = append(keys, primeNumber)
 		riddle = multiplyLimited(riddle, primeNumber, 1000_000)
 	}
-	return int(riddle)
+	return
 }

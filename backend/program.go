@@ -56,7 +56,6 @@ func (me *program) translate() {
 
 func (me *program) migrate() {
 	me.database.init(me.savedGoalsPath)
-	me.database.migrate()
 }
 
 func (me *program) generatePrimeNumbers() {
