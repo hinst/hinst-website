@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"time"
 )
 
 type webAppRiddles struct {
@@ -24,10 +25,18 @@ func (me *webAppRiddles) getPrimeNumbers(response http.ResponseWriter, request *
 }
 
 func (me *webAppRiddles) createRiddle(response http.ResponseWriter, request *http.Request) {
-	var item = riddles{}.create(4)
-	me.db.insertRiddle(&item)
-	item.keys = nil
-	response.Write(encodeJson(item))
+	var product = riddles{}.create(4)
+	var row = riddleRow{
+		product:   product,
+		createdAt: time.Now(),
+	}
+	me.db.insertRiddle(&row)
+	var responseObject = riddleResponse{
+		Id:      row.id,
+		Product: row.product,
+		Steps:   me.steps,
+	}
+	response.Write(encodeJson(responseObject))
 }
 
 func (me *webAppRiddles) answerRiddle(response http.ResponseWriter, request *http.Request) {
@@ -36,7 +45,7 @@ func (me *webAppRiddles) answerRiddle(response http.ResponseWriter, request *htt
 	var keys []int
 	decodeWebJson(request.Body, &keys)
 	var isCorrect = false
-	me.db.processRiddle(id, product, func(item *riddleItem) {
+	me.db.processRiddle(id, product, func(item *riddleRow) {
 		if nil == item {
 			response.WriteHeader(http.StatusNotFound)
 			return
@@ -45,7 +54,7 @@ func (me *webAppRiddles) answerRiddle(response http.ResponseWriter, request *htt
 		for _, key := range keys {
 			product = multiplyLimited(product, key, 1000_000)
 		}
-		isCorrect = product == item.Product
+		isCorrect = product == item.product
 	})
 	response.Write(encodeJson(isCorrect))
 }
