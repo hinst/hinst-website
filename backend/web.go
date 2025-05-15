@@ -1,10 +1,12 @@
 package main
 
 import (
+	"io"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/goccy/go-json"
 	"golang.org/x/text/language"
 )
 
@@ -39,4 +41,11 @@ func parseWebInt(request *http.Request, key string) int {
 		return webError{Message: "Invalid integer: " + text, Status: http.StatusBadRequest}
 	})
 	return value
+}
+
+func decodeWebJson(input io.ReadCloser, value any) {
+	var decodeError = json.NewDecoder(input).Decode(value)
+	if decodeError != nil {
+		panic(webError{Message: "Invalid JSON body: " + decodeError.Error(), Status: http.StatusBadRequest})
+	}
 }

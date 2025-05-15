@@ -2,8 +2,6 @@ package main
 
 import (
 	"net/http"
-
-	"github.com/goccy/go-json"
 )
 
 type webAppRiddles struct {
@@ -36,9 +34,7 @@ func (me *webAppRiddles) answerRiddle(response http.ResponseWriter, request *htt
 	var id = parseWebInt(request, "id")
 	var product = parseWebInt(request, "product")
 	var keys []int
-	assertWebError(json.NewDecoder(request.Body).Decode(&keys), webError{
-		Message: "Invalid JSON body", Status: http.StatusBadRequest,
-	})
+	decodeWebJson(request.Body, &keys)
 	var isCorrect = false
 	me.db.processRiddle(id, product, func(item *riddleItem) {
 		if nil == item {
