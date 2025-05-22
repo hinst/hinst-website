@@ -1,10 +1,10 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "start": "parcel --public-url=/hinst-website index.html",
-    "build": "tsc && parcel build index.html"
+    "build": "tsc && parcel build index.html",
+    "test": "tsc --module CommonJS --moduleResolution node10 && node compiled/typescript/runTests.js"
   },
   "keywords": [],
   "author": "",
@@ -29,7 +29,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-feather": "^2.0.10",
-    "react-router": "^7.2.0"
+    "react-router": "^7.2.0",
+    "source-map-support": "^0.5.21"
   },
   "alias": {
     "src": "./src"
