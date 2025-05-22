@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "parcel --public-url=/hinst-website index.html",
-    "build": "parcel build index.html"
+    "build": "tsc && parcel build index.html"
   },
   "keywords": [],
   "author": "",
