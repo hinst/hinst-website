@@ -6,13 +6,16 @@ import (
 )
 
 type webAppRiddles struct {
-	db    *database
-	steps int
+	db      *database
+	riddles *riddleManager
 }
 
 func (me *webAppRiddles) init(db *database) []namedWebFunction {
 	me.db = db
-	me.steps = 4
+	me.riddles = &riddleManager{
+		steps: 4,
+		limit: 1000_000,
+	}
 	return []namedWebFunction{
 		{"/api/riddles/primeNumbers", me.getPrimeNumbers},
 		{"/api/riddles/new", me.createRiddle},
@@ -21,11 +24,12 @@ func (me *webAppRiddles) init(db *database) []namedWebFunction {
 }
 
 func (me *webAppRiddles) getPrimeNumbers(response http.ResponseWriter, request *http.Request) {
+	setCacheAge(response, time.Hour*24*10)
 	response.Write(encodeJson(globalPrimeNumbers))
 }
 
 func (me *webAppRiddles) createRiddle(response http.ResponseWriter, request *http.Request) {
-	var product = riddles{}.create(4)
+	var product = me.riddles.create()
 	var row = riddleRow{
 		product:   product,
 		createdAt: time.Now(),
@@ -34,7 +38,8 @@ func (me *webAppRiddles) createRiddle(response http.ResponseWriter, request *htt
 	var responseObject = riddleResponse{
 		Id:      row.id,
 		Product: row.product,
-		Steps:   me.steps,
+		Steps:   me.riddles.steps,
+		Limit:   me.riddles.limit,
 	}
 	response.Write(encodeJson(responseObject))
 }

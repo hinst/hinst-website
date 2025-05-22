@@ -1,14 +1,16 @@
 package main
 
-type riddles struct {
+type riddleManager struct {
+	steps int
+	limit int
 }
 
-func (riddles) create(steps int) (result int) {
+func (me *riddleManager) create() (result int) {
 	result = 1
-	for range steps {
+	for range me.steps {
 		var index = createRandomInt(len(globalPrimeNumbers))
 		var primeNumber = globalPrimeNumbers[index]
-		result = multiplyLimited(result, primeNumber, 1000_000)
+		result = multiplyLimited(result, primeNumber, me.limit)
 	}
 	return
 }

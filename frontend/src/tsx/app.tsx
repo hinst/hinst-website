@@ -9,6 +9,7 @@ import Cookies from 'js-cookie';
 import SettingsPage from './settings/settingsPage';
 import { APP_TITLE } from 'src/typescript/global';
 import { settingsStorage } from 'src/typescript/settings';
+import TestRiddlePage from './settings/testRiddlePage';
 
 export default function App() {
 	settingsStorage.initialize();
@@ -64,6 +65,10 @@ export default function App() {
 						<Route
 							path='/settings'
 							element={<SettingsPage setPageTitle={setPageTitle} />}
+						/>
+						<Route
+							path='/test-riddle'
+							element={<TestRiddlePage setPageTitle={setPageTitle} />}
 						/>
 					</Routes>
 				</HashRouter>

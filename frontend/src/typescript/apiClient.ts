@@ -61,10 +61,17 @@ class ApiClient {
 		return this.fetch(url, { method: 'POST', body: text });
 	}
 
-	async getRiddle(): Promise<RiddleItem> {
+	async createRiddle(): Promise<RiddleItem> {
 		const url = '/riddles/new';
 		const response = await this.fetch(url);
-		return (await response.json()) as RiddleItem;
+		const object = await response.json();
+		return Object.assign(new RiddleItem(), object);
+	}
+
+	async getPrimeNumbers(): Promise<number[]> {
+		const url = '/riddles/primeNumbers';
+		const response = await this.fetch(url);
+		return (await response.json()) as number[];
 	}
 }
 
