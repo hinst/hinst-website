@@ -5,7 +5,7 @@ function runTests(directory: string) {
 	fs.readdirSync(directory).forEach((file) => {
 		if (fs.lstatSync(directory + '/' + file).isDirectory()) runTests(directory + '/' + file);
 		else if (file.endsWith('.test.js')) {
-			console.log(`Running ${file}`);
+			console.log('Testing ' + file);
 			require('./' + file);
 		}
 	});

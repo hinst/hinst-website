@@ -2,9 +2,10 @@ export class RiddleItem {
 	id: number = 0;
 	product: number = 0;
 	steps: number = 0;
+	limit: number = 0;
 
 	solve(primeNumbers: number[]): number[] {
-		const solver = new RiddleSolver(primeNumbers, this.product, this.steps);
+		const solver = new RiddleSolver(primeNumbers, this.product, this.steps, this.limit);
 		if (solver.solve()) return solver.sequence;
 		else return [];
 	}
@@ -16,7 +17,8 @@ export class RiddleSolver {
 	constructor(
 		public readonly primeNumbers: number[],
 		public readonly goal: number,
-		public readonly steps: number
+		public readonly steps: number,
+		public readonly limit: number
 	) {
 		this.sequence = new Array(steps);
 		for (let i = 0; i < steps; ++i) {
@@ -30,7 +32,7 @@ export class RiddleSolver {
 			for (let i = 0; i < this.primeNumbers.length; ++i) {
 				const primeNumber = this.primeNumbers[i];
 				this.sequence[step] = primeNumber;
-				const newProduct = product * primeNumber;
+				const newProduct = (product * primeNumber) % this.limit;
 				if (this.solve(step + 1, newProduct)) return true;
 			}
 		return false;
