@@ -21,20 +21,16 @@ export class RiddleSolver {
 		public readonly limit: number
 	) {
 		this.sequence = new Array(steps);
-		for (let i = 0; i < steps; ++i) {
-			this.sequence[i] = 1;
-		}
 	}
 
 	solve(step: number = 0, product: number = 1): boolean {
 		if (step === this.steps) return product === this.goal;
-		if (step < this.steps)
-			for (let i = 0; i < this.primeNumbers.length; ++i) {
-				const primeNumber = this.primeNumbers[i];
-				this.sequence[step] = primeNumber;
-				const newProduct = (product * primeNumber) % this.limit;
-				if (this.solve(step + 1, newProduct)) return true;
-			}
+		if (step > this.steps) throw new Error('Step out of bounds: ' + step);
+		for (const primeNumber of this.primeNumbers) {
+			this.sequence[step] = primeNumber;
+			const newProduct = (product * primeNumber) % this.limit;
+			if (this.solve(step + 1, newProduct)) return true;
+		}
 		return false;
 	}
 }
