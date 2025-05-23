@@ -13,6 +13,9 @@ function testSolve(chosenNumbers: number[]) {
 	assert.equal(solver.sequence.length, steps);
 	const product = solver.sequence.reduce((acc, val) => (acc * val) % limit, 1);
 	assert.equal(product, goal);
+
+	const count = solver.count();
+	console.log(chosenNumbers, count, solver.callCount);
 }
 
 test('RiddleSolver.solve simple', function () {
@@ -20,7 +23,12 @@ test('RiddleSolver.solve simple', function () {
 	testSolve(chosenNumbers);
 });
 
-test('RiddleSolver.solve many', function () {
+test('RiddleSolver.solve same', function () {
+	const chosenNumbers = [41, 47, 41, 47];
+	testSolve(chosenNumbers);
+});
+
+test('RiddleSolver.solve generated', function () {
 	const testCount = 10;
 	const steps = 4;
 	for (let i = 0; i < testCount; i++) {
