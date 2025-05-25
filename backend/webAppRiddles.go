@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"net/http"
 	"time"
 )
@@ -13,8 +14,8 @@ type webAppRiddles struct {
 func (me *webAppRiddles) init(db *database) []namedWebFunction {
 	me.db = db
 	me.riddles = &riddleManager{
-		steps: 4,
-		limit: 1000_000,
+		steps: 3,
+		limit: math.MaxInt32,
 	}
 	return []namedWebFunction{
 		{"/api/riddles/primeNumbers", me.getPrimeNumbers},
@@ -24,7 +25,7 @@ func (me *webAppRiddles) init(db *database) []namedWebFunction {
 }
 
 func (me *webAppRiddles) getPrimeNumbers(response http.ResponseWriter, request *http.Request) {
-	setCacheAge(response, time.Hour*24*10)
+	setCacheAge(response, time.Hour)
 	response.Write(encodeJson(globalPrimeNumbers))
 }
 

@@ -13,6 +13,8 @@ export default function TestRiddlePage(props: { setPageTitle: (title: string) =>
 	const [answer, setAnswer] = useState(new Array<number>());
 	const [answerCallCount, setAnswerCallCount] = useState(0);
 	const [answerCount, setAnswerCount] = useState(0);
+	const [timeToAnswer, setTimeToAnswer] = useState(0);
+	const [timeToCount, setTimeToFindAll] = useState(0);
 
 	function getProduct() {
 		return answer.reduce((product, item) => (product * item) % riddle.limit, 1);
@@ -32,17 +34,24 @@ export default function TestRiddlePage(props: { setPageTitle: (title: string) =>
 				riddle.steps,
 				riddle.limit
 			);
+			let time = new Date().getTime();
 			setHaveAnswer(solver.solve());
+			time = new Date().getTime() - time;
+			setTimeToAnswer(time);
 			setAnswer(solver.sequence);
 			setAnswerCallCount(solver.callCount);
 
 			solver.callCount = 0;
+			time = new Date().getTime();
 			setAnswerCount(solver.count());
+			time = new Date().getTime() - time;
+			setTimeToFindAll(time);
 		} finally {
 			setIsLoading(false);
 		}
 	}
 
+	const listItemStyle: React.CSSProperties = { marginBottom: 10 };
 	return (
 		<div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 			<div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
@@ -56,19 +65,28 @@ export default function TestRiddlePage(props: { setPageTitle: (title: string) =>
 				{isLoading ? <div className='ms-loading' /> : undefined}
 			</div>
 			<ul style={{ margin: 0 }}>
-				<li>
-					riddle: <pre>{JSON.stringify(riddle)}</pre>
+				<li style={listItemStyle}>
+					riddle: <code>{JSON.stringify(riddle)}</code>
 				</li>
-				<li>
-					prime numbers: <pre>{primeNumbers.length}</pre>
+				<li style={listItemStyle}>
+					prime numbers: <code>{primeNumbers.length}</code>
 				</li>
-				<li>
-					answer: <b>{haveAnswer ? 'true' : 'false'}</b> {getProduct()}{' '}
+				<li style={listItemStyle}>
+					answer: <b>{haveAnswer ? 'true' : 'false'}</b> <code>{getProduct()}</code>
 					{getProduct() === riddle.product ? 'ok' : 'error'}
 					<pre>{answer.join(',')}</pre>
 					call count: {answerCallCount}
 				</li>
-				<li>answer count: {answerCount}</li>
+				<li style={listItemStyle}>
+					time to answer: <code>{(timeToAnswer / 1000).toFixed(3)}</code> seconds
+				</li>
+				<li style={listItemStyle}>
+					answer count: <code>{answerCount}</code>
+				</li>
+				<li style={listItemStyle}>
+					time to count all answers: <code>{(timeToCount / 1000).toFixed(3)}</code>{' '}
+					seconds
+				</li>
 			</ul>
 		</div>
 	);
