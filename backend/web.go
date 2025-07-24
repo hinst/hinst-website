@@ -31,7 +31,7 @@ func setCacheAge(response http.ResponseWriter, duration time.Duration) {
 	response.Header().Set("Cache-Control", "max-age="+strconv.Itoa(int(duration.Seconds())))
 }
 
-func parseWebInt(request *http.Request, key string) int {
+func requireRequestQueryInt(request *http.Request, key string) int {
 	var text = request.URL.Query().Get(key)
 	if text == "" {
 		panic(webError{Message: "Missing integer parameter '" + key + "'", Status: http.StatusBadRequest})
@@ -48,4 +48,9 @@ func decodeWebJson(input io.ReadCloser, value any) {
 	if decodeError != nil {
 		panic(webError{Message: "Invalid JSON body: " + decodeError.Error(), Status: http.StatusBadRequest})
 	}
+}
+
+func writeJsonResponse(response http.ResponseWriter, value any) {
+	response.Header().Set("Content-Type", contentTypeJson)
+	response.Write(encodeJson(value))
 }

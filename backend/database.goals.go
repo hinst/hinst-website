@@ -96,6 +96,28 @@ func (me *database) getGoalPostImages(goalId int64, dateTime time.Time) (results
 	return
 }
 
+func (me *database) getGoalPostImage(goalId int64, dateTime time.Time, index int) (result *goalPostImageRow) {
+	var db = me.open()
+	defer me.close(db)
+	var queryText = "SELECT contentType, file FROM goalPostImages" +
+		" WHERE goalId = ? AND parentDateTime = ? AND sequenceIndex = ?"
+	var row = db.QueryRow(queryText, goalId, dateTime.UTC().Unix(), index)
+	assertError(row.Err())
+	result = new(goalPostImageRow)
+	assertError(row.Scan(&result.contentType, &result.file))
+	return
+}
+
+func (me *database) getGoalPostImageCount(goalId int64, dateTime time.Time) (count int) {
+	var db = me.open()
+	defer me.close(db)
+	var queryText = "SELECT COUNT(*) FROM goalPostImages WHERE goalId = ? AND parentDateTime = ?"
+	var row = db.QueryRow(queryText, goalId, dateTime.UTC().Unix())
+	assertError(row.Err())
+	assertError(row.Scan(&count))
+	return
+}
+
 func (me *database) getGoalPosts(goalId int64, includePrivate bool) (results []goalPostRecord) {
 	var db = me.open()
 	defer me.close(db)

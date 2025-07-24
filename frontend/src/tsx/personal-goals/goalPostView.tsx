@@ -1,9 +1,10 @@
-import { GoalPostObjectExtended } from 'src/typescript/personal-goals/smartPost';
+import { GoalPostObject } from 'src/typescript/personal-goals/smartPost';
 import SafeHtmlView from '../safeHtmlView';
+import { API_URL } from 'src/typescript/global';
 import { Info } from 'react-feather';
 import { getHashFromString } from 'src/typescript/string';
 
-export default function GoalPostView(props: { postData: GoalPostObjectExtended }) {
+export default function GoalPostView(props: { postData: GoalPostObject }) {
 	return (
 		<div>
 			{props.postData.isAutoTranslated ? (
@@ -44,17 +45,26 @@ export default function GoalPostView(props: { postData: GoalPostObjectExtended }
 					gap: 10
 				}}
 			>
-				{props.postData.images?.map((image) => (
-					<GoalImage key={getHashFromString(image)} data={image} />
+				{new Array(props.postData.imageCount).fill(undefined).map((_, index) => (
+					<GoalImage
+						key={getHashFromString('' + props.postData.goalId + index)}
+						goalId={props.postData.goalId}
+						postDateTime={props.postData.dateTime}
+						index={index}
+					/>
 				))}
 			</div>
 		</div>
 	);
 }
 
-function GoalImage(props: { data: string }) {
+function GoalImage(props: { goalId: number; postDateTime: number; index: number }) {
+	const goalIdParameter = encodeURIComponent('' + props.goalId);
+	const postDateTimeParameter = encodeURIComponent('' + props.postDateTime);
+	const indexParameter = encodeURIComponent('' + props.index);
+	const url = `${API_URL}/goalPost/image?goalId=${goalIdParameter}&postDateTime=${postDateTimeParameter}&index=${indexParameter}`;
 	return (
-		<a href={props.data}>
+		<a href={url}>
 			<img
 				className='ms-card ms-border'
 				width={240}
@@ -66,7 +76,7 @@ function GoalImage(props: { data: string }) {
 					margin: 0,
 					padding: 0
 				}}
-				src={props.data}
+				src={url}
 				alt='Image'
 			/>
 		</a>
@@ -80,8 +90,7 @@ function removeRedirect(document: Document) {
 			let href = link.getAttribute('href');
 			if (href?.startsWith(prefix)) {
 				href = href.substring(prefix.length);
-				if (href.endsWith('%'))
-					href = href.substring(0, href.length - 1);
+				if (href.endsWith('%')) href = href.substring(0, href.length - 1);
 				href = decodeURIComponent(href);
 				link.setAttribute('href', href);
 			}

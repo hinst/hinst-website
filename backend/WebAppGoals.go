@@ -20,6 +20,7 @@ func (me *webAppGoals) init(db *database) []namedWebFunction {
 		{"/api/goal", me.getGoal},
 		{"/api/goalPosts", me.getGoalPosts},
 		{"/api/goalPost", me.getGoalPost},
+		{"/api/goalPost/image", me.getGoalPostImage},
 		{"/api/goalPost/images", me.getGoalPostImages},
 		{"/api/goalPost/setPublic", me.setGoalPostPublic},
 		{"/api/goalPost/setText", me.setGoalPostText},
@@ -28,21 +29,21 @@ func (me *webAppGoals) init(db *database) []namedWebFunction {
 
 func (me *webAppGoals) getGoals(response http.ResponseWriter, request *http.Request) {
 	var records = me.db.getGoals()
-	response.Write(encodeJson(records))
+	writeJsonResponse(response, records)
 }
 
 func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
 	var goal = me.db.getGoal(goalId)
 	setCacheAge(response, time.Minute)
-	response.Write(encodeJson(goal))
+	writeJsonResponse(response, goal)
 }
 
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
 	var posts = me.db.getGoalPosts(goalId, goalManagerMode)
-	response.Write(encodeJson(posts))
+	writeJsonResponse(response, posts)
 }
 
 func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.Request) {
@@ -76,7 +77,8 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 		}
 	}
 	goalPostObject.IsPublic = goalPostRow.isPublic
-	response.Write(encodeJson(goalPostObject))
+	goalPostObject.ImageCount = me.db.getGoalPostImageCount(goalId, postDateTime)
+	writeJsonResponse(response, goalPostObject)
 }
 
 func (me *webAppGoals) getGoalPostImages(response http.ResponseWriter, request *http.Request) {
@@ -89,8 +91,21 @@ func (me *webAppGoals) getGoalPostImages(response http.ResponseWriter, request *
 			base64.StdEncoding.EncodeToString(image.file)
 		imageStrings = append(imageStrings, imageString)
 	}
-	setCacheAge(response, time.Minute)
-	response.Write(encodeJson(imageStrings))
+	setCacheAge(response, time.Hour)
+	writeJsonResponse(response, imageStrings)
+}
+
+func (me *webAppGoals) getGoalPostImage(response http.ResponseWriter, request *http.Request) {
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
+	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
+	var index = requireRequestQueryInt(request, "index")
+	var image = me.db.getGoalPostImage(goalId, postDateTime, index)
+	if image == nil {
+		panic(webError{"Image not found", http.StatusNotFound})
+	}
+	setCacheAge(response, time.Hour)
+	response.Header().Set("Content-Type", image.contentType)
+	response.Write(image.file)
 }
 
 func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *http.Request) {

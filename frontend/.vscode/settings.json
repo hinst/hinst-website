@@ -10,5 +10,6 @@
 		"hinst",
 		"luxon",
 		"Millis"
-	]
+	],
+	"files.autoSave": "off"
 }

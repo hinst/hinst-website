@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { GoalPostObject, GoalPostObjectExtended } from 'src/typescript/personal-goals/smartPost';
-import { API_URL } from 'src/typescript/global';
+import { GoalPostObject } from 'src/typescript/personal-goals/smartPost';
 import GoalPostView from './goalPostView';
 import GoalPostManagementPanel from './goalPostManagementPanel';
 import { AppContext } from 'src/tsx/context';
@@ -13,7 +12,7 @@ export default function GoalPostPanel(props: {
 	onChange: () => void;
 }) {
 	const [isLoading, setIsLoading] = useState(false);
-	const [postData, setPostData] = useState<GoalPostObjectExtended | undefined>(undefined);
+	const [postData, setPostData] = useState<GoalPostObject | undefined>(undefined);
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const context = useContext(AppContext);
 
@@ -28,24 +27,10 @@ export default function GoalPostPanel(props: {
 				setErrorMessage((e as Error).message);
 				return;
 			}
-			setPostData({ ...postData, images: [] });
-			loadImages();
+			setPostData(postData);
 		} finally {
 			setIsLoading(false);
 		}
-	}
-
-	async function loadImages() {
-		const response = await fetch(
-			API_URL +
-				'/goalPost/images' +
-				'?goalId=' +
-				encodeURIComponent(props.goalId) +
-				'&postDateTime=' +
-				props.postDate
-		);
-		const images: string[] = await response.json();
-		setPostData((postData) => (postData ? { ...postData, images } : undefined));
 	}
 
 	function receiveChange() {

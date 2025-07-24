@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
 
 export default function GoalPostManagementPanel(props: {
-	postData: GoalPostObjectExtended;
-	setPostData: (postData: GoalPostObjectExtended) => void;
+	postData: GoalPostObject;
+	setPostData: (postData: GoalPostObject) => void;
 	onChange: () => void;
 }) {
 	const [isLoading, setIsLoading] = useState(false);

@@ -29,6 +29,7 @@ export interface GoalPostObject {
 	languageName?: string;
 	languageTag: string;
 	isPublic: boolean;
+	imageCount: number;
 }
 
 export interface GoalPostObjectExtended extends GoalPostObject {

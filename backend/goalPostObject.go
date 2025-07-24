@@ -11,4 +11,5 @@ type goalPostObject struct {
 	LanguageName         string `json:"languageName"`
 	LanguageTag          string `json:"languageTag"`
 	IsPublic             bool   `json:"isPublic"`
+	ImageCount           int    `json:"imageCount"`
 }
