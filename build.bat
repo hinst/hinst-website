@@ -1,1 +1,1 @@
-docker build -t hinst/hinst-website --progress=plain .
+docker build -t hinst/hinst-website --progress=plain --platform=linux/arm64 .
