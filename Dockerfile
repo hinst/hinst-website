@@ -1,4 +1,5 @@
-FROM --platform=linux/arm64 golang AS backend
+ARG PLATFORM_ORANGE_PI=linux/arm64
+FROM --platform=$PLATFORM_ORANGE_PI golang AS backend
 ADD backend /app
 WORKDIR /app
 ENV CGO_ENABLED=1
@@ -14,7 +15,7 @@ RUN rm -rf .parcel-cache
 RUN npm install
 RUN npm run build -- --public-url=/hinst-website
 
-FROM --platform=linux/arm64 debian:bookworm
+FROM --platform=$PLATFORM_ORANGE_PI debian:bookworm
 COPY --from=backend /app/hinst-website /app/hinst-website
 COPY --from=backend /app/primeNumbers.json /app/primeNumbers.json
 COPY --from=frontend /app/dist /app/www
