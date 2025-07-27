@@ -31,7 +31,3 @@ export interface GoalPostObject {
 	isPublic: boolean;
 	imageCount: number;
 }
-
-export interface GoalPostObjectExtended extends GoalPostObject {
-	images: string[];
-}

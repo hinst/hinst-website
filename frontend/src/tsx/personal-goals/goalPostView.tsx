@@ -1,6 +1,6 @@
 import { GoalPostObject } from 'src/typescript/personal-goals/smartPost';
 import SafeHtmlView from '../safeHtmlView';
-import { API_URL } from 'src/typescript/global';
+import { apiClient } from 'src/typescript/apiClient';
 import { Info } from 'react-feather';
 import { getHashFromString } from 'src/typescript/string';
 
@@ -59,10 +59,7 @@ export default function GoalPostView(props: { postData: GoalPostObject }) {
 }
 
 function GoalImage(props: { goalId: number; postDateTime: number; index: number }) {
-	const goalIdParameter = encodeURIComponent('' + props.goalId);
-	const postDateTimeParameter = encodeURIComponent('' + props.postDateTime);
-	const indexParameter = encodeURIComponent('' + props.index);
-	const url = `${API_URL}/goalPost/image?goalId=${goalIdParameter}&postDateTime=${postDateTimeParameter}&index=${indexParameter}`;
+	const url = apiClient.getImageUrl(props.goalId, props.postDateTime, props.index);
 	return (
 		<a href={url}>
 			<img

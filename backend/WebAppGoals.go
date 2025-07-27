@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/base64"
 	"io"
 	"net/http"
 	"time"
@@ -21,7 +20,6 @@ func (me *webAppGoals) init(db *database) []namedWebFunction {
 		{"/api/goalPosts", me.getGoalPosts},
 		{"/api/goalPost", me.getGoalPost},
 		{"/api/goalPost/image", me.getGoalPostImage},
-		{"/api/goalPost/images", me.getGoalPostImages},
 		{"/api/goalPost/setPublic", me.setGoalPostPublic},
 		{"/api/goalPost/setText", me.setGoalPostText},
 	}
@@ -79,20 +77,6 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	goalPostObject.IsPublic = goalPostRow.isPublic
 	goalPostObject.ImageCount = me.db.getGoalPostImageCount(goalId, postDateTime)
 	writeJsonResponse(response, goalPostObject)
-}
-
-func (me *webAppGoals) getGoalPostImages(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
-	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
-	var images = me.db.getGoalPostImages(goalId, postDateTime)
-	var imageStrings []string
-	for _, image := range images {
-		var imageString = "data:" + image.contentType + ";base64," +
-			base64.StdEncoding.EncodeToString(image.file)
-		imageStrings = append(imageStrings, imageString)
-	}
-	setCacheAge(response, time.Hour)
-	writeJsonResponse(response, imageStrings)
 }
 
 func (me *webAppGoals) getGoalPostImage(response http.ResponseWriter, request *http.Request) {

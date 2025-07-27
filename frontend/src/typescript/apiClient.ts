@@ -73,6 +73,21 @@ class ApiClient {
 		const response = await this.fetch(url);
 		return (await response.json()) as number[];
 	}
+
+	getImageUrl(goalId: number, postDateTime: number, index: number): string {
+		const goalIdParameter = encodeURIComponent('' + goalId);
+		const postDateTimeParameter = encodeURIComponent('' + postDateTime);
+		const indexParameter = encodeURIComponent('' + index);
+		return (
+			this.url +
+			'/goalPost/image?goalId=' +
+			goalIdParameter +
+			'&postDateTime=' +
+			postDateTimeParameter +
+			'&index=' +
+			indexParameter
+		);
+	}
 }
 
 export const apiClient = new ApiClient();
