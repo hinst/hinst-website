@@ -1,3 +1,5 @@
 /.env
 /hinst-website.exe
 /saved-goals
+/node_modules
+/pages/static/js/dist/bundle.js

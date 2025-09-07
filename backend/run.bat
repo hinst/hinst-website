@@ -1,1 +1,3 @@
-go build && hinst-website.exe --www=../frontend/dist
+go build &&^
+npx webpack &&^
+hinst-website.exe --www=../frontend/dist
