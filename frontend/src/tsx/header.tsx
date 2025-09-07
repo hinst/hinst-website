@@ -2,7 +2,6 @@ import { NavLink } from 'react-router';
 // @ts-ignore
 import icon from 'images/icon.webp';
 import { Settings } from 'react-feather';
-import { AUTHOR_NAME, COPYRIGHT_YEAR } from 'src/typescript/global';
 
 export default function Header(props: { title: string }) {
 	return (

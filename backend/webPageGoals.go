@@ -27,12 +27,15 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 	var goals = me.db.getGoals()
 	var data = GoalListTemplate{BaseTemplate: me.getBaseTemplate(), Goals: goals}
 	var content = executeTemplateFile("pages/goalList.html", data)
-	writeHtmlResponse(response, me.getTemplatePage(content))
+	writeHtmlResponse(response, me.getTemplatePage("My Personal Goals", content))
 }
 
-func (me *webPageGoals) getTemplatePage(content string) string {
+func (me *webPageGoals) getTemplatePage(title string, content string) string {
+	var headerData = ContentTemplate{BaseTemplate: me.getBaseTemplate(), Title: title}
 	var page = ContentTemplate{
 		BaseTemplate: me.getBaseTemplate(),
+		Title:        title,
+		Header:       template.HTML(executeTemplateFile("pages/header.html", headerData)),
 		Content:      template.HTML(content),
 	}
 	return executeTemplateFile("pages/template.html", page)
