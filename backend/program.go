@@ -35,10 +35,11 @@ func (me *program) runWeb() {
 		allowOrigin: me.allowOrigin,
 	}
 	webApp.init(me.database)
-	var fileServer = http.FileServer(http.Dir(me.webFilesPath))
 
+	var fileServer = http.FileServer(http.Dir(me.webFilesPath))
 	var filesPrefix = webApp.webPath + "/"
 	http.Handle(filesPrefix, http.StripPrefix(filesPrefix, fileServer))
+
 	log.Printf("Starting: netAddress=%v, webPath=%v, filesPath=%v",
 		me.netAddress, webApp.webPath, me.webFilesPath)
 	assertError(http.ListenAndServe(me.netAddress, nil))
