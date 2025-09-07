@@ -3,10 +3,9 @@ package main
 import "net/http"
 
 type webApp struct {
-	db             *database
-	savedGoalsPath string
-	allowOrigin    string
-	webPath        string
+	db          *database
+	allowOrigin string
+	webPath     string
 }
 
 func (me *webApp) init(db *database) {
@@ -15,8 +14,11 @@ func (me *webApp) init(db *database) {
 		me.webPath = "/hinst-website"
 	}
 	var appGoals = new(webAppGoals)
-	appGoals.savedGoalsPath = me.savedGoalsPath
 	me.addFunctions(appGoals.init(me.db))
+
+	var pageGoals = new(webPageGoals)
+	me.addFunctions(pageGoals.init(me.db))
+
 	var appRiddles = new(webAppRiddles)
 	me.addFunctions(appRiddles.init(me.db))
 }

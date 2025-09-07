@@ -8,8 +8,7 @@ import (
 )
 
 type webAppGoalsBase struct {
-	db             *database
-	savedGoalsPath string
+	db *database
 }
 
 func (me *webAppGoalsBase) inputValidGoalId(goalId string) int64 {

@@ -54,3 +54,8 @@ func writeJsonResponse(response http.ResponseWriter, value any) {
 	response.Header().Set("Content-Type", contentTypeJson)
 	response.Write(encodeJson(value))
 }
+
+func writeHtmlResponse(response http.ResponseWriter, text string) {
+	response.Header().Set("Content-Type", "text/html; charset=utf-8")
+	response.Write([]byte(text))
+}
