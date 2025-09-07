@@ -1,4 +1,4 @@
-package pages
+package main
 
 type BaseTemplate struct {
 	WebPath string
