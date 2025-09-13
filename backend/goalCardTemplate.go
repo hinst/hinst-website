@@ -1,0 +1,7 @@
+package main
+
+type goalCardTemplate struct {
+	BaseTemplate
+	Id    int64
+	Title string
+}

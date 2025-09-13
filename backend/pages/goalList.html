@@ -1,5 +1,34 @@
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
 	{{range .Goals}}
-		{{.Title}}
+		<div
+			style="
+				width: fit-content;
+				padding: 0;
+				margin: 0;
+				overflow: hidden
+			"
+			class="ms-card ms-border grayscale"
+		>
+			<a
+				href="{{$.WebPath}}/pages/personal-goals/"
+				class="ms-text-main"
+			>
+				<div
+					style="display: flex; flex-direction: column;"
+					class="ms-bg-light"
+				>
+					<img
+						width="200"
+						height="100"
+						src={GOAL_INFOS.get(props.goal.title)?.coverImage}
+						alt="{{.Title}}"
+					/>
+					<div style="padding: 8px; max-width: 200px">
+						{{.Title}}
+						{translateGoalTitle(context.currentLanguage, props.goal.title)}
+					</div>
+				</div>
+			</a>
+		</div>
 	{{end}}
 </div>

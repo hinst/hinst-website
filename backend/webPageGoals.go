@@ -19,13 +19,17 @@ func (me *webPageGoals) init(db *database, webPath string) []namedWebFunction {
 	http.Handle(filesPrefix, http.StripPrefix(filesPrefix, fileServer))
 
 	return []namedWebFunction{
-		{"/pages", me.getHomePage},
+		{PAGES_WEB_PATH, me.getHomePage},
 	}
 }
 
 func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.Request) {
 	var goals = me.db.getGoals()
-	var data = GoalListTemplate{BaseTemplate: me.getBaseTemplate(), Goals: goals}
+	var data = goalListTemplate{BaseTemplate: me.getBaseTemplate()}
+	for _, goal := range goals {
+		var item goalCardTemplate
+		item.Id = goal.Id
+	}
 	var content = executeTemplateFile("pages/goalList.html", data)
 	writeHtmlResponse(response, me.getTemplatePage("My Personal Goals", content))
 }

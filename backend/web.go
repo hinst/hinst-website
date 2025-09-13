@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/goccy/go-json"
+	"github.com/yosssi/gohtml"
 	"golang.org/x/text/language"
 )
 
@@ -56,6 +57,7 @@ func writeJsonResponse(response http.ResponseWriter, value any) {
 }
 
 func writeHtmlResponse(response http.ResponseWriter, text string) {
+	text = gohtml.Format(text)
 	response.Header().Set("Content-Type", "text/html; charset=utf-8")
 	response.Write([]byte(text))
 }

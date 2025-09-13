@@ -1,6 +1,6 @@
 package main
 
-type GoalListTemplate struct {
+type goalListTemplate struct {
 	BaseTemplate
-	Goals []goalRecord
+	Goals []goalCardTemplate
 }
