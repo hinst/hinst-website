@@ -1,0 +1,37 @@
+package server
+
+import (
+	"flag"
+	"log"
+
+	"github.com/joho/godotenv"
+)
+
+func Main() {
+	godotenv.Load()
+	var modePtr = flag.String("mode", "web", "")
+	var wwwPtr = flag.String("www", programTemplate.webFilesPath, "")
+	var allowOriginPtr = flag.String("allowOrigin", programTemplate.allowOrigin, "")
+	var translatorApiPtr = flag.String("translatorApi", programTemplate.translatorApiUrl, "")
+	flag.Parse()
+
+	switch *modePtr {
+	case "web":
+		var theProgram = new(program).create()
+		theProgram.webFilesPath = *wwwPtr
+		theProgram.allowOrigin = *allowOriginPtr
+		theProgram.runWeb()
+	case "translate":
+		var theProgram = new(program).create()
+		theProgram.translatorApiUrl = *translatorApiPtr
+		theProgram.translate()
+	case "migrate":
+		var theProgram = new(program).create()
+		theProgram.migrate()
+	case "generatePrimeNumbers":
+		var theProgram = new(program).create()
+		theProgram.generatePrimeNumbers()
+	default:
+		log.Fatalf("Unknown mode: %v", *modePtr)
+	}
+}
