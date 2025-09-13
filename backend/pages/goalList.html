@@ -1,4 +1,4 @@
-<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; flex-direction: row">
 	{{range .Goals}}
 		<div
 			style="
@@ -20,12 +20,11 @@
 					<img
 						width="200"
 						height="100"
-						src={GOAL_INFOS.get(props.goal.title)?.coverImage}
+						src="{{$.WebPath}}{{.Image}}"
 						alt="{{.Title}}"
 					/>
 					<div style="padding: 8px; max-width: 200px">
 						{{.Title}}
-						{translateGoalTitle(context.currentLanguage, props.goal.title)}
 					</div>
 				</div>
 			</a>

@@ -4,5 +4,11 @@ var personalGoalInfos = []goalInfo{
 	{
 		title:        "Кодить каждую неделю 8 часов",
 		englishTitle: "Weekly Coding",
-		coverImage:   PAGES_WEB_PATH + STATIC_WEB_PATH + "images/codingWeekly.jpg",
-	}}
+		coverImage:   pagesWebPath + staticWebPath + "/images/codingWeekly.jpg",
+	},
+	{
+		title:        "Окупить стоимость велосипеда и самоката",
+		englishTitle: "Bicycle and E-Scooter",
+		coverImage:   pagesWebPath + staticWebPath + "/images/bicycle.jpg",
+	},
+}

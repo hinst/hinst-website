@@ -19,16 +19,24 @@ func (me *webPageGoals) init(db *database, webPath string) []namedWebFunction {
 	http.Handle(filesPrefix, http.StripPrefix(filesPrefix, fileServer))
 
 	return []namedWebFunction{
-		{PAGES_WEB_PATH, me.getHomePage},
+		{pagesWebPath, me.getHomePage},
 	}
 }
 
 func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.Request) {
+	var language = getWebLanguage(request)
 	var goals = me.db.getGoals()
 	var data = goalListTemplate{BaseTemplate: me.getBaseTemplate()}
 	for _, goal := range goals {
 		var item goalCardTemplate
+		var metaInfo = goalInfo{}.findByTitle(personalGoalInfos, goal.Title)
 		item.Id = goal.Id
+		item.Title = goal.Title
+		item.Image = metaInfo.coverImage
+		if language != supportedLanguages[0] {
+			item.Title = metaInfo.englishTitle
+		}
+		data.Goals = append(data.Goals, item)
 	}
 	var content = executeTemplateFile("pages/goalList.html", data)
 	writeHtmlResponse(response, me.getTemplatePage("My Personal Goals", content))

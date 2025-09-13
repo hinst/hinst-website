@@ -6,11 +6,11 @@ type goalInfo struct {
 	coverImage   string
 }
 
-func findEnglishTitle(array []goalInfo, title string) string {
+func (goalInfo) findByTitle(array []goalInfo, title string) *goalInfo {
 	for _, info := range array {
 		if info.title == title {
-			return info.englishTitle
+			return &info
 		}
 	}
-	return ""
+	return nil
 }
