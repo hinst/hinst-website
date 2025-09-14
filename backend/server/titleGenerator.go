@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	"golang.org/x/text/language"
 )
@@ -23,21 +24,46 @@ func (me *titleGenerator) run() {
 	var totalCount int64
 	var updatedCount int64
 	me.db.forEachGoalPost(func(row *goalPostRow) bool {
+		totalCount++
+		var isUpdated = false
 		if row.title == nil {
 			var title = me.summarizeText(row.text)
 			me.db.setGoalPostTitle(row.goalId, row.dateTime, language.Russian, title)
+			isUpdated = true
 		}
 		if row.titleEnglish == nil && row.textEnglish != nil {
 			var title = me.summarizeText(*row.textEnglish)
 			me.db.setGoalPostTitle(row.goalId, row.dateTime, language.English, title)
+			isUpdated = true
 		}
 		if row.titleGerman == nil && row.textGerman != nil {
 			var title = me.summarizeText(*row.textGerman)
 			me.db.setGoalPostTitle(row.goalId, row.dateTime, language.German, title)
+			isUpdated = true
+		}
+		if isUpdated {
+			updatedCount++
 		}
 		return true
 	})
-	log.Println("Title generation completed. Total posts:", totalCount, ", updated titles:", updatedCount)
+	var trimmedCount int64
+	me.db.forEachGoalPost(func(row *goalPostRow) bool {
+		for _, lang := range supportedLanguages {
+			var title = row.getTranslatedTitle(lang)
+			if title == "" {
+				return true
+			}
+			var trimmedTitle = me.trim(title)
+			if title != trimmedTitle {
+				trimmedCount++
+				me.db.setGoalPostTitle(row.goalId, row.dateTime, lang, trimmedTitle)
+			}
+		}
+		return true
+	})
+	log.Println("Title generation completed. Total posts:", totalCount,
+		"; updated posts:", updatedCount,
+		"; trimmed titles:", trimmedCount)
 }
 
 func (me *titleGenerator) summarizeText(text string) string {
@@ -67,15 +93,21 @@ func (me *titleGenerator) trim(text string) string {
 		if trimmedText == text {
 			return text
 		}
+		text = trimmedText
 	}
 }
 
 func (me *titleGenerator) trimOnce(text string) string {
-	if len(text) > 1 && text[0] == '"' && text[len(text)-1] == '"' {
+	if strings.HasPrefix(text, "\"") && strings.HasSuffix(text, "\"") {
 		text = text[1 : len(text)-1]
 	}
-	if len(text) > 1 && text[0] == '*' && text[len(text)-1] == '*' {
+	if strings.HasPrefix(text, "*") && strings.HasSuffix(text, "*") {
 		text = text[1 : len(text)-1]
+	}
+	text = strings.TrimPrefix(text, "# ")
+	if strings.Contains(text, "\n") {
+		var lines = strings.SplitN(text, "\n", 2)
+		text = lines[0]
 	}
 	return text
 }
