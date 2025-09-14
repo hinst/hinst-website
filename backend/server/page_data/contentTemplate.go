@@ -1,9 +1,9 @@
-package server
+package page_data
 
 import "html/template"
 
 type ContentTemplate struct {
-	BaseTemplate
+	Base
 	Title   string
 	Header  template.HTML
 	Content template.HTML

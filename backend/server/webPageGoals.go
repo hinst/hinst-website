@@ -3,6 +3,8 @@ package server
 import (
 	"html/template"
 	"net/http"
+
+	"github.com/hinst/hinst-website/server/page_data"
 )
 
 type webPageGoals struct {
@@ -26,9 +28,9 @@ func (me *webPageGoals) init(db *database, webPath string) []namedWebFunction {
 func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.Request) {
 	var language = getWebLanguage(request)
 	var goals = me.db.getGoals()
-	var data = goalListTemplate{BaseTemplate: me.getBaseTemplate()}
+	var data = page_data.GoalList{Base: me.getBaseTemplate()}
 	for _, goal := range goals {
-		var item goalCardTemplate
+		var item page_data.GoalCard
 		var metaInfo = goalInfo{}.findByTitle(personalGoalInfos, goal.Title)
 		item.Id = goal.Id
 		item.Title = goal.Title
@@ -53,16 +55,16 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 }
 
 func (me *webPageGoals) getTemplatePage(title string, content string) string {
-	var headerData = ContentTemplate{BaseTemplate: me.getBaseTemplate(), Title: title}
-	var page = ContentTemplate{
-		BaseTemplate: me.getBaseTemplate(),
-		Title:        title,
-		Header:       template.HTML(executeTemplateFile("pages/html/templates/header.html", headerData)),
-		Content:      template.HTML(content),
+	var headerData = page_data.ContentTemplate{Base: me.getBaseTemplate(), Title: title}
+	var page = page_data.ContentTemplate{
+		Base:    me.getBaseTemplate(),
+		Title:   title,
+		Header:  template.HTML(executeTemplateFile("pages/html/templates/header.html", headerData)),
+		Content: template.HTML(content),
 	}
 	return executeTemplateFile("pages/html/templates/template.html", page)
 }
 
-func (me *webPageGoals) getBaseTemplate() BaseTemplate {
-	return BaseTemplate{WebPath: me.webPath}
+func (me *webPageGoals) getBaseTemplate() page_data.Base {
+	return page_data.Base{WebPath: me.webPath}
 }
