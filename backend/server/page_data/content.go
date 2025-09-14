@@ -2,7 +2,7 @@ package page_data
 
 import "html/template"
 
-type ContentTemplate struct {
+type Content struct {
 	Base
 	Title   string
 	Header  template.HTML

@@ -55,8 +55,8 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 }
 
 func (me *webPageGoals) getTemplatePage(title string, content string) string {
-	var headerData = page_data.ContentTemplate{Base: me.getBaseTemplate(), Title: title}
-	var page = page_data.ContentTemplate{
+	var headerData = page_data.Content{Base: me.getBaseTemplate(), Title: title}
+	var page = page_data.Content{
 		Base:    me.getBaseTemplate(),
 		Title:   title,
 		Header:  template.HTML(executeTemplateFile("pages/html/templates/header.html", headerData)),
