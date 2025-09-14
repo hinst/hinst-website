@@ -138,14 +138,14 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 	var db = me.open()
 	defer me.close(db)
 	var titleField = "title" + me.getLanguagePostfix(language)
-	var queryText = "SELECT goalId, dateTime, isPublic, " + titleField + " FROM goalPosts WHERE goalId = ?"
+	var queryText = "SELECT goalId, dateTime, isPublic, type, " + titleField + " FROM goalPosts WHERE goalId = ?"
 	if !includePrivate {
 		queryText += " AND isPublic = 1"
 	}
 	var rows = assertResultError(db.Query(queryText, goalId))
 	for rows.Next() {
 		var record goalPostRecord
-		assertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.Type))
+		assertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.Type, &record.Title))
 		results = append(results, record)
 	}
 	return

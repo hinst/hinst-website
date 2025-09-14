@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"log"
 	"net/http"
 
 	"golang.org/x/text/language"
@@ -19,6 +20,8 @@ var titleGeneratorPreset = titleGenerator{
 }
 
 func (me *titleGenerator) run() {
+	var totalCount int64
+	var updatedCount int64
 	me.db.forEachGoalPost(func(row *goalPostRow) bool {
 		if row.title == nil {
 			var title = me.summarizeText(row.text)
@@ -34,6 +37,7 @@ func (me *titleGenerator) run() {
 		}
 		return true
 	})
+	log.Println("Title generation completed. Total posts:", totalCount, ", updated titles:", updatedCount)
 }
 
 func (me *titleGenerator) summarizeText(text string) string {
@@ -53,8 +57,25 @@ func (me *titleGenerator) summarizeText(text string) string {
 	var responseText = assertResultError(io.ReadAll(response.Body))
 	var responseObject = decodeJson(responseText, new(lmStudioResponse))
 	var resultText = responseObject.Choices[0].Message.Content
-	if len(resultText) > 1 && resultText[0] == '"' && resultText[len(resultText)-1] == '"' {
-		resultText = resultText[1 : len(resultText)-1]
-	}
+	resultText = me.trim(resultText)
 	return resultText
+}
+
+func (me *titleGenerator) trim(text string) string {
+	for {
+		var trimmedText = me.trimOnce(text)
+		if trimmedText == text {
+			return text
+		}
+	}
+}
+
+func (me *titleGenerator) trimOnce(text string) string {
+	if len(text) > 1 && text[0] == '"' && text[len(text)-1] == '"' {
+		text = text[1 : len(text)-1]
+	}
+	if len(text) > 1 && text[0] == '*' && text[len(text)-1] == '*' {
+		text = text[1 : len(text)-1]
+	}
+	return text
 }
