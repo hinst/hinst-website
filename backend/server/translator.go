@@ -12,9 +12,8 @@ import (
 )
 
 type translator struct {
-	apiUrl         string
-	savedGoalsPath string
-	db             *database
+	apiUrl string
+	db     *database
 }
 
 var translatorPresets = translator{

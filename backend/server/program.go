@@ -51,7 +51,6 @@ func (me *program) translate() {
 	if me.translatorApiUrl != "" {
 		translator.apiUrl = me.translatorApiUrl + "/v1/chat/completions"
 	}
-	translator.savedGoalsPath = me.savedGoalsPath
 	translator.db = me.database
 	translator.run()
 }
