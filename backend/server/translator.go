@@ -39,7 +39,7 @@ func (me *translator) run() {
 		}
 		return true
 	})
-	log.Printf("Translated goal posts: %v of %v", translatedCount, totalCount)
+	log.Printf("Generated translated text for %v of %v posts", translatedCount, totalCount)
 }
 
 func (me *translator) translate(row *goalPostRow, tag language.Tag) {

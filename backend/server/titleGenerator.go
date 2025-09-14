@@ -46,24 +46,7 @@ func (me *titleGenerator) run() {
 		}
 		return true
 	})
-	var trimmedCount int64
-	me.db.forEachGoalPost(func(row *goalPostRow) bool {
-		for _, lang := range supportedLanguages {
-			var title = row.getTranslatedTitle(lang)
-			if title == "" {
-				return true
-			}
-			var trimmedTitle = me.trim(title)
-			if title != trimmedTitle {
-				trimmedCount++
-				me.db.setGoalPostTitle(row.goalId, row.dateTime, lang, trimmedTitle)
-			}
-		}
-		return true
-	})
-	log.Println("Title generation completed. Total posts:", totalCount,
-		"; updated posts:", updatedCount,
-		"; trimmed titles:", trimmedCount)
+	log.Printf("Generated title for %v of %v posts\n", updatedCount, totalCount)
 }
 
 func (me *titleGenerator) summarizeText(text string) string {
