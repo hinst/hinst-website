@@ -133,3 +133,12 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool) (results []g
 	}
 	return
 }
+
+func (me *database) migrate() {
+	var db = me.open()
+	defer me.close(db)
+	var queryText = "ALTER TABLE goalPosts ADD COLUMN title TEXT;\n"
+	queryText += "ALTER TABLE goalPosts ADD COLUMN titleEnglish TEXT;\n"
+	queryText += "ALTER TABLE goalPosts ADD COLUMN titleGerman TEXT;\n"
+	assertResultError(db.Exec(queryText))
+}

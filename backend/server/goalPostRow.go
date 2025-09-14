@@ -11,11 +11,16 @@ type goalPostRow struct {
 	goalId   int64
 	dateTime time.Time
 	isPublic bool
-	text     string
 
+	text        string
 	textEnglish *string
 	textGerman  *string
-	typeString  string
+
+	typeString string
+
+	title        *string
+	titleEnglish *string
+	titleGerman  *string
 }
 
 func (me *goalPostRow) scan(rows *sql.Rows) {
@@ -28,6 +33,9 @@ func (me *goalPostRow) scan(rows *sql.Rows) {
 		&me.textEnglish,
 		&me.textGerman,
 		&me.typeString,
+		&me.title,
+		&me.titleEnglish,
+		&me.titleGerman,
 	))
 	me.dateTime = time.Unix(dateTimeMilliseconds, 0)
 }
