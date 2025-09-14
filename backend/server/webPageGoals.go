@@ -2,8 +2,9 @@ package server
 
 import (
 	"html/template"
-	"log"
 	"net/http"
+	"slices"
+	"time"
 
 	"github.com/hinst/hinst-website/server/page_data"
 )
@@ -48,7 +49,6 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 
 func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.Request) {
 	var requestedLanguage = getWebLanguage(request)
-	log.Printf("Requested language: %v", requestedLanguage)
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
 	var goalPosts = me.db.getGoalPosts(goalId, false, requestedLanguage)
 	if goalPosts == nil {
@@ -56,18 +56,28 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 		panic(webError{errorMessage, http.StatusNotFound})
 	}
 	var data = page_data.GoalPosts{Base: me.getBaseTemplate()}
+	data.GoalId = goalId
 	for _, post := range goalPosts {
-		log.Printf("Post: %+v", post)
 		if post.Title == nil {
 			continue
 		}
-		println("Post title: " + *post.Title)
 		var item page_data.GoalPost
 		item.Title = *post.Title
+		item.DateTime = post.DateTime
+		item.DateText = time.Unix(post.DateTime, 0).Format("2006-01-02")
 		data.Posts = append(data.Posts, item)
 	}
+	slices.SortFunc(data.Posts, func(a, b page_data.GoalPost) int {
+		if a.DateTime < b.DateTime {
+			return 1
+		} else if a.DateTime > b.DateTime {
+			return -1
+		} else {
+			return 0
+		}
+	})
 	var content = executeTemplateFile("pages/html/templates/goalPosts.html", data)
-	writeHtmlResponse(response, me.getTemplatePage("Goal posts", content))
+	writeHtmlResponse(response, me.getTemplatePage("Goal diary", content))
 }
 
 func (me *webPageGoals) getTemplatePage(title string, content string) string {

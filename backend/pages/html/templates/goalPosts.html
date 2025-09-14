@@ -1,7 +1,17 @@
 <div style="display: flex; flex-wrap: wrap; gap: 10px; flex-direction: column">
 	{{range .Posts}}
 		<div>
-			{{.Title}}
+			<a
+				href="{{$.WebPath}}/pages/personal-goals?id={{$.GoalId}}"
+				class="ms-text-bluesky"
+			>
+				<span style="font-family: monospace">
+					{{.DateText}}<!---->
+				</span>
+				<span class="">
+					{{.Title}}
+				</span>
+			</a>
 		</div>
 	{{end}}
 </div>

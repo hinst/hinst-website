@@ -40,7 +40,7 @@ func (me *program) runWeb() {
 	var filesPrefix = webApp.webPath + "/"
 	http.Handle(filesPrefix, http.StripPrefix(filesPrefix, fileServer))
 
-	log.Printf("Starting: netAddress=%v, webPath=%v, filesPath=%v",
+	log.Printf("Starting: netAddress=%v, webPath=%v, webFilesPath=%v",
 		me.netAddress, webApp.webPath, me.webFilesPath)
 	assertError(http.ListenAndServe(me.netAddress, nil))
 }

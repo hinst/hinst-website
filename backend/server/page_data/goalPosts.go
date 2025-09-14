@@ -2,5 +2,6 @@ package page_data
 
 type GoalPosts struct {
 	Base
-	Posts []GoalPost
+	GoalId int64
+	Posts  []GoalPost
 }

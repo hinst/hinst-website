@@ -1,5 +1,7 @@
 package page_data
 
 type GoalPost struct {
-	Title string
+	DateTime int64
+	DateText string
+	Title    string
 }
