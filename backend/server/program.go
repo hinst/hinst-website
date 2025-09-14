@@ -47,12 +47,19 @@ func (me *program) runWeb() {
 
 func (me *program) translate() {
 	me.database.init(me.savedGoalsPath)
-	var translator = translatorPresets
+	var translator = translatorPreset
 	if me.translatorApiUrl != "" {
 		translator.apiUrl = me.translatorApiUrl + "/v1/chat/completions"
 	}
 	translator.db = me.database
 	translator.run()
+
+	var titleGenerator = titleGeneratorPreset
+	if me.translatorApiUrl != "" {
+		titleGenerator.apiUrl = me.translatorApiUrl + "/v1/chat/completions"
+	}
+	titleGenerator.db = me.database
+	titleGenerator.run()
 }
 
 func (me *program) migrate() {

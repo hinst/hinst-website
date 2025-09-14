@@ -36,14 +36,36 @@ func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedL
 		})
 }
 
-func (me *database) forEachGoalPost(callback func(row *goalPostRow)) {
+func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) {
+	var db = me.open()
+	defer me.close(db)
+	assertCondition(slices.Contains(supportedLanguages, supportedLanguage),
+		func() string { return "Unsupported language: " + supportedLanguage.String() })
+	var languageName = ""
+	if supportedLanguage != supportedLanguages[0] {
+		languageName = getLanguageName(supportedLanguage)
+	}
+	var queryText = "UPDATE goalPosts SET title" + languageName + " = ? WHERE goalId = ? AND dateTime = ?"
+	var dateTimeEpoch = dateTime.UTC().Unix()
+	var result = assertResultError(db.Exec(queryText, text, goalId, dateTimeEpoch))
+	var changedRowCount = assertResultError(result.RowsAffected())
+	assertCondition(changedRowCount > 0,
+		func() string {
+			return "Cannot update translated title for goalId=" +
+				getStringFromInt64(goalId) + " dateTime=" + getStringFromInt64(dateTimeEpoch)
+		})
+}
+
+func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool) {
 	var db = me.open()
 	defer me.close(db)
 	var rows = assertResultError(db.Query("SELECT * FROM goalPosts"))
 	for rows.Next() {
 		var row goalPostRow
 		row.scan(rows)
-		callback(&row)
+		if !callback(&row) {
+			break
+		}
 	}
 	assertError(rows.Err())
 }
