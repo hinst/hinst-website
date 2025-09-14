@@ -21,11 +21,8 @@ func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedL
 	defer me.close(db)
 	assertCondition(slices.Contains(supportedLanguages, supportedLanguage),
 		func() string { return "Unsupported language: " + supportedLanguage.String() })
-	var languageName = ""
-	if supportedLanguage != supportedLanguages[0] {
-		languageName = getLanguageName(supportedLanguage)
-	}
-	var queryText = "UPDATE goalPosts SET text" + languageName + " = ? WHERE goalId = ? AND dateTime = ?"
+	var textField = "text" + me.getLanguagePostfix(supportedLanguage)
+	var queryText = "UPDATE goalPosts SET " + textField + " = ? WHERE goalId = ? AND dateTime = ?"
 	var dateTimeEpoch = dateTime.UTC().Unix()
 	var result = assertResultError(db.Exec(queryText, text, goalId, dateTimeEpoch))
 	var changedRowCount = assertResultError(result.RowsAffected())
@@ -41,11 +38,8 @@ func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supported
 	defer me.close(db)
 	assertCondition(slices.Contains(supportedLanguages, supportedLanguage),
 		func() string { return "Unsupported language: " + supportedLanguage.String() })
-	var languageName = ""
-	if supportedLanguage != supportedLanguages[0] {
-		languageName = getLanguageName(supportedLanguage)
-	}
-	var queryText = "UPDATE goalPosts SET title" + languageName + " = ? WHERE goalId = ? AND dateTime = ?"
+	var titleField = "title" + me.getLanguagePostfix(supportedLanguage)
+	var queryText = "UPDATE goalPosts SET " + titleField + " = ? WHERE goalId = ? AND dateTime = ?"
 	var dateTimeEpoch = dateTime.UTC().Unix()
 	var result = assertResultError(db.Exec(queryText, text, goalId, dateTimeEpoch))
 	var changedRowCount = assertResultError(result.RowsAffected())
@@ -140,10 +134,11 @@ func (me *database) getGoalPostImageCount(goalId int64, dateTime time.Time) (cou
 	return
 }
 
-func (me *database) getGoalPosts(goalId int64, includePrivate bool) (results []goalPostRecord) {
+func (me *database) getGoalPosts(goalId int64, includePrivate bool, language language.Tag) (results []goalPostRecord) {
 	var db = me.open()
 	defer me.close(db)
-	var queryText = "SELECT goalId, dateTime, isPublic, type FROM goalPosts WHERE goalId = ?"
+	var titleField = "title" + me.getLanguagePostfix(language)
+	var queryText = "SELECT goalId, dateTime, isPublic, " + titleField + " FROM goalPosts WHERE goalId = ?"
 	if !includePrivate {
 		queryText += " AND isPublic = 1"
 	}
@@ -154,6 +149,14 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool) (results []g
 		results = append(results, record)
 	}
 	return
+}
+
+func (me *database) getLanguagePostfix(supportedLanguage language.Tag) string {
+	var languageName = ""
+	if supportedLanguage != supportedLanguages[0] {
+		languageName = getLanguageName(supportedLanguage)
+	}
+	return languageName
 }
 
 func (me *database) migrate() {

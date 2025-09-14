@@ -38,8 +38,18 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 		}
 		data.Goals = append(data.Goals, item)
 	}
-	var content = executeTemplateFile("pages/goalList.html", data)
+	var content = executeTemplateFile("pages/html/templates/goalList.html", data)
 	writeHtmlResponse(response, me.getTemplatePage("My Personal Goals", content))
+}
+
+func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.Request) {
+	var requestedLanguage = getWebLanguage(request)
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
+	var goalPosts = me.db.getGoalPosts(goalId, false, requestedLanguage)
+	if goalPosts == nil {
+		var errorMessage = "Cannot find goalId=" + getStringFromInt64(goalId)
+		panic(webError{errorMessage, http.StatusNotFound})
+	}
 }
 
 func (me *webPageGoals) getTemplatePage(title string, content string) string {
@@ -47,10 +57,10 @@ func (me *webPageGoals) getTemplatePage(title string, content string) string {
 	var page = ContentTemplate{
 		BaseTemplate: me.getBaseTemplate(),
 		Title:        title,
-		Header:       template.HTML(executeTemplateFile("pages/header.html", headerData)),
+		Header:       template.HTML(executeTemplateFile("pages/html/templates/header.html", headerData)),
 		Content:      template.HTML(content),
 	}
-	return executeTemplateFile("pages/template.html", page)
+	return executeTemplateFile("pages/html/templates/template.html", page)
 }
 
 func (me *webPageGoals) getBaseTemplate() BaseTemplate {

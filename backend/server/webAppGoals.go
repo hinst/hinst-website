@@ -40,7 +40,8 @@ func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Reque
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
-	var posts = me.db.getGoalPosts(goalId, goalManagerMode)
+	var requestedLanguage = getWebLanguage(request)
+	var posts = me.db.getGoalPosts(goalId, goalManagerMode, requestedLanguage)
 	writeJsonResponse(response, posts)
 }
 
