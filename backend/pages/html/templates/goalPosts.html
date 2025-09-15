@@ -1,17 +1,26 @@
 <div style="display: flex; flex-wrap: wrap; gap: 10px; flex-direction: column">
-	{{range .Posts}}
-		<div>
-			<a
-				href="{{$.WebPath}}/pages/personal-goals?id={{$.GoalId}}"
-				class="ms-text-bluesky"
-			>
-				<span style="font-family: monospace">
-					{{.DateText}}<!---->
-				</span>
-				<span class="">
-					{{.Title}}
-				</span>
-			</a>
+	{{range $i, $month := .Months}}
+		{{if ne $i 0}}
+			<div style="min-height: 10px"></div>
+		{{end}}
+		<div
+			class="ms-text-light"
+			style="font-family: monospace"
+		>
+			{{.YearAndMonth}}
 		</div>
+		{{range .Posts}}
+			<div>
+				<a href="{{$.WebPath}}/pages/personal-goals?id={{$.GoalId}}">
+					<button type="button" class="ms-btn ms-primary ms-outline" style="font-family: monospace; min-width: 50px; padding: 8px">
+						{{.Day}}
+					</button>
+					&nbsp;
+					<span class="ms-text-main">
+						{{.Title}}
+					</span>
+				</a>
+			</div>
+		{{end}}
 	{{end}}
 </div>
