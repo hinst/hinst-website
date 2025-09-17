@@ -76,12 +76,15 @@ func (me *database) getGoals() (results []goalRecord) {
 	return
 }
 
-func (me *database) getGoal(goalId int64) (result goalRecord) {
+func (me *database) getGoal(goalId int64) (result *goalRecord) {
 	var db = me.open()
 	defer me.close(db)
-	var row = db.QueryRow("SELECT id, title FROM goals WHERE id = ?", goalId)
-	assertError(row.Err())
-	assertError(row.Scan(&result.Id, &result.Title))
+	var queryText = "SELECT id, title FROM goals WHERE id = ?"
+	var rows = assertResultError(db.Query(queryText, goalId))
+	if rows.Next() {
+		result = new(goalRecord)
+		assertError(rows.Scan(&result.Id, &result.Title))
+	}
 	return
 }
 

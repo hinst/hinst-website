@@ -11,9 +11,9 @@ type GoalPosts struct {
 	Months []GoalMonth
 }
 
-func (me *GoalPosts) Load(posts []GoalPost) {
+func (me *GoalPosts) Load(posts []GoalPostItem) {
 	// Group posts by month
-	var postMap = make(map[string][]GoalPost)
+	var postMap = make(map[string][]GoalPostItem)
 	for _, post := range posts {
 		var dateTime = time.Unix(post.DateTime, 0).UTC()
 		var key = dateTime.Format("2006-01")
@@ -36,5 +36,5 @@ func (me *GoalPosts) Load(posts []GoalPost) {
 
 type GoalMonth struct {
 	YearAndMonth string
-	Posts        []GoalPost
+	Posts        []GoalPostItem
 }

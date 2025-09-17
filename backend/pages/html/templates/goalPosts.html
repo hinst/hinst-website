@@ -11,7 +11,7 @@
 		</div>
 		{{range .Posts}}
 			<div>
-				<a href="{{$.WebPath}}/pages/personal-goals?id={{$.GoalId}}">
+				<a href="{{$.WebPath}}/pages/personal-goals?id={{$.GoalId}}&post={{.DateTime}}">
 					<button type="button" class="ms-btn ms-primary ms-outline" style="font-family: monospace; min-width: 50px; padding: 8px">
 						{{.Day}}
 					</button>

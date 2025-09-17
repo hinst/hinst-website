@@ -1,0 +1,27 @@
+<div
+	style="
+		flex-grow: 1;
+		justify-content: center;
+		display: flex;
+		min-height: 0px;
+		max-height: 100%;
+		background: repeating-linear-gradient(
+			45deg,
+			rgba(var(--main-bg), 1),
+			rgba(var(--main-bg), 1) 10px,
+			rgba(var(--light-bg-color), 1) 10px,
+			rgba(var(--light-bg-color), 1) 20px
+		);
+	"
+>
+	<div
+		class="ms-bg-main"
+		style="
+			padding-left: 10px;
+			padding-right: 10px;
+			max-width: 1000px;
+		"
+	>
+		{{.Text}}
+	</div>
+</div>

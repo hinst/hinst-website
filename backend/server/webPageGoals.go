@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/hinst/hinst-website/server/page_data"
+	"golang.org/x/text/language"
 )
 
 type webPageGoals struct {
@@ -43,24 +44,28 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 		data.Goals = append(data.Goals, item)
 	}
 	var content = executeTemplateFile("pages/html/templates/goalList.html", data)
-	writeHtmlResponse(response, me.getTemplatePage("My Personal Goals", content))
+	writeHtmlResponse(response, me.wrapTemplatePage("My Personal Goals", content))
 }
 
 func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.Request) {
+	if request.URL.Query().Has("post") {
+		me.getGoalPostPage(response, request)
+		return
+	}
 	var requestedLanguage = getWebLanguage(request)
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
 	var goalPostRecords = me.db.getGoalPosts(goalId, false, requestedLanguage)
 	if goalPostRecords == nil {
-		var errorMessage = "Cannot find goalId=" + getStringFromInt64(goalId)
+		var errorMessage = "Cannot find goal with id=" + getStringFromInt64(goalId)
 		panic(webError{errorMessage, http.StatusNotFound})
 	}
 
-	var goalPosts []page_data.GoalPost
+	var goalPosts []page_data.GoalPostItem
 	for _, post := range goalPostRecords {
 		if post.Title == nil {
 			continue
 		}
-		var item page_data.GoalPost
+		var item page_data.GoalPostItem
 		item.Title = *post.Title
 		item.DateTime = post.DateTime
 		item.Day = time.Unix(post.DateTime, 0).UTC().Day()
@@ -72,14 +77,52 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 	data.Load(goalPosts)
 
 	var content = executeTemplateFile("pages/html/templates/goalPosts.html", data)
-	writeHtmlResponse(response, me.getTemplatePage("Goal diary", content))
+	writeHtmlResponse(response, me.wrapTemplatePage("Goal diary", content))
 }
 
-func (me *webPageGoals) getTemplatePage(title string, content string) string {
-	var headerData = page_data.Content{Base: me.getBaseTemplate(), Title: title}
+func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *http.Request) {
+	var requestedLanguage = getWebLanguage(request)
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
+	var dateTime = me.inputValidPostDateTime(request.URL.Query().Get("post"))
+
+	var goalRecord = me.db.getGoal(goalId)
+	if goalRecord == nil {
+		var errorMessage = "Cannot find goal with id=" + getStringFromInt64(goalId)
+		panic(webError{errorMessage, http.StatusNotFound})
+	}
+
+	var goalPostRecord = me.db.getGoalPost(goalId, dateTime)
+	if goalPostRecord == nil {
+		var errorMessage = "Cannot find goal post with id=" + getStringFromInt64(goalId) +
+			" and dateTime=" + dateTime.UTC().Format(time.DateTime)
+		panic(webError{errorMessage, http.StatusNotFound})
+	}
+	var text = goalPostRecord.getTranslatedText(requestedLanguage)
+	var data = page_data.GoalPost{
+		Base: me.getBaseTemplate(),
+		Text: template.HTML(text),
+	}
+	var content = executeTemplateFile("pages/html/templates/goalPost.html", data)
+	var goalTitle = me.getTranslatedTitle(goalRecord.Title, requestedLanguage)
+	writeHtmlResponse(response, me.wrapTemplatePage(goalTitle, content))
+}
+
+func (webPageGoals) getTranslatedTitle(title string, language language.Tag) string {
+	if language == supportedLanguages[0] {
+		return title
+	}
+	var metaInfo = goalInfo{}.findByTitle(personalGoalInfos, title)
+	if metaInfo == nil {
+		return title
+	}
+	return metaInfo.englishTitle
+}
+
+func (me *webPageGoals) wrapTemplatePage(pageTitle string, content string) string {
+	var headerData = page_data.Content{Base: me.getBaseTemplate(), Title: pageTitle}
 	var page = page_data.Content{
 		Base:    me.getBaseTemplate(),
-		Title:   title,
+		Title:   pageTitle,
 		Header:  template.HTML(executeTemplateFile("pages/html/templates/header.html", headerData)),
 		Content: template.HTML(content),
 	}

@@ -1,7 +1,8 @@
 package page_data
 
+import "html/template"
+
 type GoalPost struct {
-	DateTime int64
-	Day      int
-	Title    string
+	Base
+	Text template.HTML
 }
