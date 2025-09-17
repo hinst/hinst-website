@@ -3,6 +3,7 @@ package server
 import (
 	"html/template"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/hinst/hinst-website/server/page_data"
@@ -11,7 +12,9 @@ import (
 
 type webPageGoals struct {
 	webAppGoalsBase
-	webPath string
+	webPath         string
+	elementIdLocker sync.Mutex
+	elementId       int64
 }
 
 func (me *webPageGoals) init(db *database, webPath string) []namedWebFunction {
@@ -107,7 +110,7 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 	writeHtmlResponse(response, me.wrapTemplatePage(goalTitle, content))
 }
 
-func (webPageGoals) getTranslatedTitle(title string, language language.Tag) string {
+func (me *webPageGoals) getTranslatedTitle(title string, language language.Tag) string {
 	if language == supportedLanguages[0] {
 		return title
 	}
@@ -130,5 +133,15 @@ func (me *webPageGoals) wrapTemplatePage(pageTitle string, content string) strin
 }
 
 func (me *webPageGoals) getBaseTemplate() page_data.Base {
-	return page_data.Base{WebPath: me.webPath}
+	return page_data.Base{
+		Id:      me.advanceElementId(),
+		WebPath: me.webPath,
+	}
+}
+
+func (me *webPageGoals) advanceElementId() int64 {
+	me.elementIdLocker.Lock()
+	defer me.elementIdLocker.Unlock()
+	me.elementId++
+	return me.elementId
 }
