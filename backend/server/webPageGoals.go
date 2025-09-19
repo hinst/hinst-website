@@ -134,8 +134,9 @@ func (me *webPageGoals) wrapTemplatePage(pageTitle string, content string) strin
 
 func (me *webPageGoals) getBaseTemplate() page_data.Base {
 	return page_data.Base{
-		Id:      me.advanceElementId(),
-		WebPath: me.webPath,
+		Id:          me.advanceElementId(),
+		WebPath:     me.webPath,
+		SettingsSvg: template.HTML(readTextFile("pages/static/images/settings.svg")),
 	}
 }
 
