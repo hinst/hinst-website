@@ -120,10 +120,11 @@ func (me *database) getGoalPostImage(goalId int64, dateTime time.Time, index int
 	defer me.close(db)
 	var queryText = "SELECT contentType, file FROM goalPostImages" +
 		" WHERE goalId = ? AND parentDateTime = ? AND sequenceIndex = ?"
-	var row = db.QueryRow(queryText, goalId, dateTime.UTC().Unix(), index)
-	assertError(row.Err())
-	result = new(goalPostImageRow)
-	assertError(row.Scan(&result.contentType, &result.file))
+	var rows = assertResultError(db.Query(queryText, goalId, dateTime.UTC().Unix(), index))
+	if rows.Next() {
+		result = new(goalPostImageRow)
+		assertError(rows.Scan(&result.contentType, &result.file))
+	}
 	return
 }
 
