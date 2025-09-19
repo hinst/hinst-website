@@ -28,6 +28,7 @@ func (me *webPageGoals) init(db *database, webPath string) []namedWebFunction {
 	return []namedWebFunction{
 		{pagesWebPath, me.getHomePage},
 		{pagesWebPath + "/personal-goals", me.getGoalPage},
+		{pagesWebPath + "/personal-goals/image", me.getGoalPostImage},
 	}
 }
 
@@ -102,9 +103,17 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 	}
 	var text = goalPostRecord.getTranslatedText(requestedLanguage)
 	var data = page_data.GoalPost{
-		Base: me.getBaseTemplate(),
-		Text: template.HTML(text),
+		Base:     me.getBaseTemplate(),
+		GoalId:   goalId,
+		DateTime: dateTime.Unix(),
+		Text:     template.HTML(text),
 	}
+
+	var imageCount = me.db.getGoalPostImageCount(goalId, dateTime)
+	for i := range imageCount {
+		data.Images = append(data.Images, i)
+	}
+
 	var content = executeTemplateFile("pages/html/templates/goalPost.html", data)
 	var goalTitle = me.getTranslatedTitle(goalRecord.Title, requestedLanguage)
 	writeHtmlResponse(response, me.wrapTemplatePage(goalTitle, content))
@@ -130,6 +139,19 @@ func (me *webPageGoals) wrapTemplatePage(pageTitle string, content string) strin
 		Content: template.HTML(content),
 	}
 	return executeTemplateFile("pages/html/templates/template.html", page)
+}
+
+func (me *webPageGoals) getGoalPostImage(response http.ResponseWriter, request *http.Request) {
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
+	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
+	var index = requireRequestQueryInt(request, "index")
+	var image = me.db.getGoalPostImage(goalId, postDateTime, index)
+	if image == nil {
+		panic(webError{"Image not found", http.StatusNotFound})
+	}
+	setCacheAge(response, time.Hour)
+	response.Header().Set("Content-Type", image.contentType)
+	response.Write(image.file)
 }
 
 func (me *webPageGoals) getBaseTemplate() page_data.Base {
