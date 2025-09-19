@@ -60,7 +60,6 @@ export default function Header(props: { title: string }) {
 					flexShrink: 1,
 					gap: 10
 				}}
-				className='ms-bg-main blurry-main-background'
 			>
 				<NavLink
 					to='/settings'
