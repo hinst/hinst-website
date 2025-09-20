@@ -24,7 +24,7 @@ func (me *webAppGoalsBase) inputValidPostDateTime(text string) time.Time {
 	var unixEpochSeconds, parseIntError = strconv.ParseInt(text, 10, 64)
 	var createWebError = func() webError {
 		return webError{
-			"Need valid postDateTime. Format: unix epoch seconds, number",
+			"Need valid post date time. Format: unix epoch seconds, number",
 			http.StatusBadRequest,
 		}
 	}

@@ -27,7 +27,8 @@ func (me *webPageGoals) init(db *database, webPath string) []namedWebFunction {
 
 	return []namedWebFunction{
 		{pagesWebPath, me.getHomePage},
-		{pagesWebPath + "/personal-goals", me.getGoalPage},
+		{pagesWebPath + "/personal-goals/{id}", me.getGoalPage},
+		{pagesWebPath + "/personal-goals/{id}/{post}", me.getGoalPostPage},
 		{pagesWebPath + "/personal-goals/image", me.getGoalPostImage},
 	}
 }
@@ -52,12 +53,8 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 }
 
 func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.Request) {
-	if request.URL.Query().Has("post") {
-		me.getGoalPostPage(response, request)
-		return
-	}
 	var requestedLanguage = getWebLanguage(request)
-	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
+	var goalId = me.inputValidGoalId(request.PathValue("id"))
 	var goalPostRecords = me.db.getGoalPosts(goalId, false, requestedLanguage)
 	if goalPostRecords == nil {
 		var errorMessage = "Cannot find goal with id=" + getStringFromInt64(goalId)
@@ -86,8 +83,8 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 
 func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *http.Request) {
 	var requestedLanguage = getWebLanguage(request)
-	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
-	var dateTime = me.inputValidPostDateTime(request.URL.Query().Get("post"))
+	var goalId = me.inputValidGoalId(request.PathValue("id"))
+	var dateTime = me.inputValidPostDateTime(request.PathValue("post"))
 
 	var goalRecord = me.db.getGoal(goalId)
 	if goalRecord == nil {
