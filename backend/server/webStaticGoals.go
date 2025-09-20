@@ -1,6 +1,7 @@
 package server
 
 import (
+	"net/url"
 	"os"
 
 	"golang.org/x/text/language"
@@ -27,16 +28,16 @@ func (me *webStaticGoals) run() {
 }
 
 func (me *webStaticGoals) generate(lang language.Tag) {
-	os.CopyFS(me.folder+"/pages/static", os.DirFS("pages/static"))
-
-	var path = me.getLanguagePath(lang)
+	var path = me.folder + me.getLanguagePath(lang)
 	assertError(os.MkdirAll(path, os.ModePerm))
-	var url = me.url + "/pages?lang=" + lang.String() + "&webPath=" + lang.String()
-	var homePageText = readTextFromUrl(url)
+	os.CopyFS(path+"/static", os.DirFS("pages/static"))
+	var homeUrl = me.url + "/pages?lang=" + url.QueryEscape(lang.String()) +
+		"&webPath=" + url.QueryEscape(me.getWebPath(lang))
+	var homePageText = readTextFromUrl(homeUrl)
 	writeTextFile(path+"/index.html", homePageText)
 
 	var goals = me.db.getGoals()
-	var goalsPath = path + pagesWebPath + "/personal-goals"
+	var goalsPath = path + "/personal-goals"
 	assertError(os.MkdirAll(goalsPath, os.ModePerm))
 	for _, goal := range goals {
 		me.generateGoal(lang, goalsPath, goal)
@@ -45,16 +46,27 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 
 func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal goalRecord) {
 	var goalId = goal.Id
-	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) + "?lang=" + lang.String()
+	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) +
+		"?lang=" + lang.String() +
+		"&webPath=" + url.QueryEscape(me.getWebPath(lang))
 	var goalPageText = readTextFromUrl(url)
 	writeTextFile(goalsPath+"/"+getStringFromInt64(goalId)+".html", goalPageText)
 }
 
-func (me *webStaticGoals) getLanguagePath(tag language.Tag) (path string) {
-	path = me.folder
+func (me *webStaticGoals) getLanguagePath(tag language.Tag) string {
 	if tag == language.English {
-		return
+		return ""
 	}
-	path += "/" + tag.String()
-	return
+	return "/" + tag.String()
+}
+
+func (me *webStaticGoals) slashEmpty(text string) string {
+	if text == "" {
+		text = "/"
+	}
+	return text
+}
+
+func (me *webStaticGoals) getWebPath(tag language.Tag) string {
+	return me.slashEmpty(me.getLanguagePath(tag))
 }

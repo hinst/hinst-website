@@ -1,5 +1,5 @@
 <div style="display: flex; align-items: center; gap: 10px; max-width: 100%;">
-	<a href="{{.WebPath}}">
+	<a href="{{if .WebPath}}{{.WebPath}}{{else}}/{{end}}">
 		<img
 			src="{{.WebPath}}/static/images/favicon.png"
 			width="42" height="42"

@@ -158,6 +158,9 @@ func (me *webPageGoals) getBaseTemplate(request *http.Request) page_data.Base {
 	var customWebPath = request.URL.Query().Get("webPath")
 	if customWebPath != "" {
 		webPath = customWebPath
+		if webPath == "/" {
+			webPath = ""
+		}
 	}
 	return page_data.Base{
 		Id:          me.advanceElementId(),
