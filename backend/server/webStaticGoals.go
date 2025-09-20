@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"os"
 
 	"golang.org/x/text/language"
@@ -32,7 +31,6 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 
 	var path = me.getLanguagePath(lang)
 	assertError(os.MkdirAll(path, os.ModePerm))
-	log.Printf("path: %v", path)
 	var homePageText = readTextFromUrl(me.url + "/pages?lang=" + lang.String())
 	writeTextFile(path+"/index.html", homePageText)
 
@@ -40,10 +38,15 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 	var goalsPath = path + pagesWebPath + "/personal-goals"
 	assertError(os.MkdirAll(goalsPath, os.ModePerm))
 	for _, goal := range goals {
-		var goalId = goal.Id
-		var goalPageText = readTextFromUrl(me.url + "/pages/personal-goals/" + getStringFromInt64(goalId) + "?lang=" + lang.String())
-		writeTextFile(goalsPath+"/"+getStringFromInt64(goalId)+".html", goalPageText)
+		me.generateGoal(lang, goalsPath, goal)
 	}
+}
+
+func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal goalRecord) {
+	var goalId = goal.Id
+	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) + "?lang=" + lang.String()
+	var goalPageText = readTextFromUrl(url)
+	writeTextFile(goalsPath+"/"+getStringFromInt64(goalId)+".html", goalPageText)
 }
 
 func (me *webStaticGoals) getLanguagePath(tag language.Tag) (path string) {
