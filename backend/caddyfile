@@ -2,6 +2,7 @@
 	handle {
 		root * ./static
 		file_server
+		try_files {path} {path}.html
 	}
 	log {
 		output stdout

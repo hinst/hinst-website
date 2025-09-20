@@ -90,6 +90,6 @@ func (me *program) generateStatic() {
 	time.Sleep(1000 * time.Millisecond)
 
 	var webStatic = new(webStaticGoals)
-	webStatic.init("http://localhost:8080")
+	webStatic.init("http://localhost:8080", me.database)
 	webStatic.run()
 }
