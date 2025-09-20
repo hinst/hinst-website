@@ -3,6 +3,7 @@ package server
 import (
 	"log"
 	"net/http"
+	"time"
 )
 
 type program struct {
@@ -80,7 +81,15 @@ func (me *program) generatePrimeNumbers() {
 }
 
 func (me *program) generateStatic() {
+	me.database.init(me.savedGoalsPath)
+	var webApp = &webApp{webPath: "/"}
+	webApp.init(me.database)
+	go func() {
+		assertError(http.ListenAndServe(me.netAddress, nil))
+	}()
+	time.Sleep(1000 * time.Millisecond)
+
 	var webStatic = new(webStaticGoals)
-	webStatic.init("http://localhost:8080" + webApp{}.getDefaultWebPath())
+	webStatic.init("http://localhost:8080")
 	webStatic.run()
 }

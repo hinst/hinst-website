@@ -1,6 +1,9 @@
 package server
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 type webApp struct {
 	db          *database
@@ -17,6 +20,9 @@ func (me *webApp) init(db *database) {
 	if me.webPath == "" {
 		me.webPath = me.getDefaultWebPath()
 	}
+	if me.webPath == "/" {
+		me.webPath = ""
+	}
 	var appGoals = new(webAppGoals)
 	me.addFunctions(appGoals.init(me.db))
 
@@ -29,7 +35,9 @@ func (me *webApp) init(db *database) {
 
 func (me *webApp) addFunctions(functions []namedWebFunction) {
 	for _, namedWebFunction := range functions {
-		http.HandleFunc(me.webPath+namedWebFunction.Name, me.wrap(namedWebFunction.Function))
+		var url = me.webPath + namedWebFunction.Name
+		log.Printf("Adding web function: %v", url)
+		http.HandleFunc(url, me.wrap(namedWebFunction.Function))
 	}
 }
 
