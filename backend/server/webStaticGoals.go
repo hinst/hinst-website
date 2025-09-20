@@ -26,6 +26,8 @@ func (me *webStaticGoals) run() {
 }
 
 func (me *webStaticGoals) generate(lang language.Tag) {
+	os.CopyFS("static/hinst-website/pages/static", os.DirFS("pages/static"))
+
 	var path = me.getLanguagePath(lang)
 	assertError(os.MkdirAll(path, os.ModePerm))
 	log.Printf("path: %v", path)
