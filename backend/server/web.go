@@ -3,6 +3,7 @@ package server
 import (
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -90,4 +91,19 @@ func readTextFromUrl(url string) string {
 	defer response.Body.Close()
 	var text = string(assertResultError(io.ReadAll(response.Body)))
 	return text
+}
+
+func buildUrl(base string, parameters map[string]string) string {
+	var theUrl = base
+	var first = true
+	for key, value := range parameters {
+		if first {
+			theUrl += "?"
+			first = false
+		} else {
+			theUrl += "&"
+		}
+		theUrl += key + "=" + url.QueryEscape(value)
+	}
+	return theUrl
 }
