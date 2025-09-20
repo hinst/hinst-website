@@ -22,6 +22,7 @@ func (me *webStaticGoals) init(url string, db *database) {
 func (me *webStaticGoals) run() {
 	assertError(os.RemoveAll(me.folder))
 	assertError(os.MkdirAll(me.folder, os.ModePerm))
+	os.CopyFS(me.folder+"/static", os.DirFS("pages/static"))
 	for _, lang := range supportedLanguages {
 		me.generate(lang)
 	}
@@ -30,7 +31,6 @@ func (me *webStaticGoals) run() {
 func (me *webStaticGoals) generate(lang language.Tag) {
 	var path = me.folder + me.getLanguagePath(lang)
 	assertError(os.MkdirAll(path, os.ModePerm))
-	os.CopyFS(path+"/static", os.DirFS("pages/static"))
 	var homeUrl = me.url + "/pages?" + me.getPathQuery(lang)
 	var homePageText = readTextFromUrl(homeUrl)
 	writeTextFile(path+"/index.html", homePageText)
@@ -90,5 +90,6 @@ func (me *webStaticGoals) getApiPath() string {
 
 func (me *webStaticGoals) getPathQuery(tag language.Tag) string {
 	return "&webPath=" + url.QueryEscape(me.getWebPath(tag)) +
-		"&apiPath=" + url.QueryEscape(me.getApiPath())
+		"&apiPath=" + url.QueryEscape(me.getApiPath()) +
+		"&staticPath=" + url.QueryEscape("/")
 }

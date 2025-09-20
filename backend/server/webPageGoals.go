@@ -154,30 +154,23 @@ func (me *webPageGoals) getGoalPostImage(response http.ResponseWriter, request *
 }
 
 func (me *webPageGoals) getBaseTemplate(request *http.Request) page_data.Base {
-	var webPath = me.webPath
-	var customWebPath = request.URL.Query().Get("webPath")
-	if customWebPath != "" {
-		webPath = customWebPath
-		if webPath == "/" {
-			webPath = ""
-		}
-	}
-
-	var apiPath = webPath
-	var customApiPath = request.URL.Query().Get("apiPath")
-	if customApiPath != "" {
-		apiPath = customApiPath
-		if apiPath == "/" {
-			apiPath = ""
-		}
-	}
-
 	return page_data.Base{
 		Id:          me.advanceElementId(),
-		WebPath:     webPath,
-		ApiPath:     apiPath,
+		WebPath:     me.inputWebPath(request.URL.Query().Get("webPath"), me.webPath),
+		ApiPath:     me.inputWebPath(request.URL.Query().Get("apiPath"), me.webPath),
+		StaticPath:  me.inputWebPath(request.URL.Query().Get("staticPath"), me.webPath),
 		SettingsSvg: template.HTML(readTextFile("pages/static/images/settings.svg")),
 	}
+}
+
+func (me *webPageGoals) inputWebPath(text string, defaultText string) string {
+	if text == "" {
+		return defaultText
+	}
+	if text == "/" {
+		return ""
+	}
+	return text
 }
 
 func (me *webPageGoals) advanceElementId() int64 {
