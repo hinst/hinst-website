@@ -31,7 +31,8 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 
 	var path = me.getLanguagePath(lang)
 	assertError(os.MkdirAll(path, os.ModePerm))
-	var homePageText = readTextFromUrl(me.url + "/pages?lang=" + lang.String())
+	var url = me.url + "/pages?lang=" + lang.String() + "&webPath=" + lang.String()
+	var homePageText = readTextFromUrl(url)
 	writeTextFile(path+"/index.html", homePageText)
 
 	var goals = me.db.getGoals()

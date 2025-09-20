@@ -37,13 +37,13 @@
 			"
 		>
 			{{range .Images}}
-				<a href="{{$.WebPath}}/pages/personal-goals/image?id={{$.GoalId}}&postDateTime={{$.DateTime}}&index={{.}}">
+				<a href="{{$.WebPath}}/personal-goals/image?id={{$.GoalId}}&postDateTime={{$.DateTime}}&index={{.}}">
 					<img
 						width="240"
 						height="240"
 						class="ms-card ms-border"
 						style="width: 240px; height: 240px; object-fit: cover; margin: 0; padding: 0"
-						src="{{$.WebPath}}/pages/personal-goals/image?id={{$.GoalId}}&postDateTime={{$.DateTime}}&index={{.}}"
+						src="{{$.WebPath}}/personal-goals/image?id={{$.GoalId}}&postDateTime={{$.DateTime}}&index={{.}}"
 						alt="Image {{.}}"
 					/>
 				</a>

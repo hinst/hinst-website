@@ -24,18 +24,18 @@ func (me *webApp) init(db *database) {
 		me.webPath = ""
 	}
 	var appGoals = new(webAppGoals)
-	me.addFunctions(appGoals.init(me.db))
+	me.addFunctions(me.webPath, appGoals.init(me.db))
 
 	var pageGoals = new(webPageGoals)
-	me.addFunctions(pageGoals.init(me.db, me.webPath))
+	me.addFunctions(me.webPath+pagesWebPath, pageGoals.init(me.db, me.webPath+pagesWebPath))
 
 	var appRiddles = new(webAppRiddles)
-	me.addFunctions(appRiddles.init(me.db))
+	me.addFunctions(me.webPath, appRiddles.init(me.db))
 }
 
-func (me *webApp) addFunctions(functions []namedWebFunction) {
+func (me *webApp) addFunctions(path string, functions []namedWebFunction) {
 	for _, namedWebFunction := range functions {
-		var url = me.webPath + namedWebFunction.Name
+		var url = path + namedWebFunction.Name
 		log.Printf("Adding web function: %v", url)
 		http.HandleFunc(url, me.wrap(namedWebFunction.Function))
 	}

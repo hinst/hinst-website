@@ -22,21 +22,21 @@ func (me *webPageGoals) init(db *database, webPath string) []namedWebFunction {
 	me.webPath = webPath
 
 	var fileServer = http.FileServer(http.Dir("./pages/static"))
-	var filesPrefix = me.webPath + "/pages/static/"
+	var filesPrefix = me.webPath + "/static/"
 	http.Handle(filesPrefix, http.StripPrefix(filesPrefix, fileServer))
 
 	return []namedWebFunction{
-		{pagesWebPath, me.getHomePage},
-		{pagesWebPath + "/personal-goals/{id}", me.getGoalPage},
-		{pagesWebPath + "/personal-goals/{id}/{post}", me.getGoalPostPage},
-		{pagesWebPath + "/personal-goals/image", me.getGoalPostImage},
+		{"", me.getHomePage},
+		{"/personal-goals/{id}", me.getGoalPage},
+		{"/personal-goals/{id}/{post}", me.getGoalPostPage},
+		{"/personal-goals/image", me.getGoalPostImage},
 	}
 }
 
 func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.Request) {
 	var language = getWebLanguage(request)
 	var goals = me.db.getGoals()
-	var data = page_data.GoalList{Base: me.getBaseTemplate()}
+	var data = page_data.GoalList{Base: me.getBaseTemplate(request)}
 	for _, goal := range goals {
 		var item page_data.GoalCard
 		var metaInfo = goalInfo{}.findByTitle(personalGoalInfos, goal.Title)
@@ -49,7 +49,7 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 		data.Goals = append(data.Goals, item)
 	}
 	var content = executeTemplateFile("pages/html/templates/goalList.html", data)
-	writeHtmlResponse(response, me.wrapTemplatePage("My Personal Goals", content))
+	writeHtmlResponse(response, me.wrapTemplatePage(request, "My Personal Goals", content))
 }
 
 func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.Request) {
@@ -73,12 +73,12 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 		goalPosts = append(goalPosts, item)
 	}
 
-	var data = page_data.GoalPosts{Base: me.getBaseTemplate()}
+	var data = page_data.GoalPosts{Base: me.getBaseTemplate(request)}
 	data.GoalId = goalId
 	data.Load(goalPosts)
 
 	var content = executeTemplateFile("pages/html/templates/goalPosts.html", data)
-	writeHtmlResponse(response, me.wrapTemplatePage("Goal diary", content))
+	writeHtmlResponse(response, me.wrapTemplatePage(request, "Goal diary", content))
 }
 
 func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *http.Request) {
@@ -100,7 +100,7 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 	}
 	var text = goalPostRecord.getTranslatedText(requestedLanguage)
 	var data = page_data.GoalPost{
-		Base:     me.getBaseTemplate(),
+		Base:     me.getBaseTemplate(request),
 		GoalId:   goalId,
 		DateTime: dateTime.Unix(),
 		Text:     template.HTML(text),
@@ -115,7 +115,7 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 		dateTime.UTC().Format("2006-01-02")
 	var content = executeTemplateFile("pages/html/templates/goalPost.html", data)
 	var goalTitle = me.getTranslatedTitle(pageTitle, requestedLanguage)
-	writeHtmlResponse(response, me.wrapTemplatePage(goalTitle, content))
+	writeHtmlResponse(response, me.wrapTemplatePage(request, goalTitle, content))
 }
 
 func (me *webPageGoals) getTranslatedTitle(title string, language language.Tag) string {
@@ -129,10 +129,10 @@ func (me *webPageGoals) getTranslatedTitle(title string, language language.Tag) 
 	return metaInfo.englishTitle
 }
 
-func (me *webPageGoals) wrapTemplatePage(pageTitle string, content string) string {
-	var headerData = page_data.Content{Base: me.getBaseTemplate(), Title: pageTitle}
+func (me *webPageGoals) wrapTemplatePage(request *http.Request, pageTitle string, content string) string {
+	var headerData = page_data.Content{Base: me.getBaseTemplate(request), Title: pageTitle}
 	var page = page_data.Content{
-		Base:    me.getBaseTemplate(),
+		Base:    me.getBaseTemplate(request),
 		Title:   pageTitle,
 		Header:  template.HTML(executeTemplateFile("pages/html/templates/header.html", headerData)),
 		Content: template.HTML(content),
@@ -153,10 +153,15 @@ func (me *webPageGoals) getGoalPostImage(response http.ResponseWriter, request *
 	response.Write(image.file)
 }
 
-func (me *webPageGoals) getBaseTemplate() page_data.Base {
+func (me *webPageGoals) getBaseTemplate(request *http.Request) page_data.Base {
+	var webPath = me.webPath
+	var customWebPath = request.URL.Query().Get("webPath")
+	if customWebPath != "" {
+		webPath = customWebPath
+	}
 	return page_data.Base{
 		Id:          me.advanceElementId(),
-		WebPath:     me.webPath,
+		WebPath:     webPath,
 		SettingsSvg: template.HTML(readTextFile("pages/static/images/settings.svg")),
 	}
 }
