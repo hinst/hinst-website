@@ -31,6 +31,9 @@ func Main() {
 	case "generatePrimeNumbers":
 		var theProgram = new(program).create()
 		theProgram.generatePrimeNumbers()
+	case "generateStatic":
+		var theProgram = new(program).create()
+		theProgram.generateStatic()
 	default:
 		log.Fatalf("Unknown mode: %v", *modePtr)
 	}

@@ -8,10 +8,14 @@ type webApp struct {
 	webPath     string
 }
 
+func (webApp) getDefaultWebPath() string {
+	return "/hinst-website"
+}
+
 func (me *webApp) init(db *database) {
 	me.db = db
 	if me.webPath == "" {
-		me.webPath = "/hinst-website"
+		me.webPath = me.getDefaultWebPath()
 	}
 	var appGoals = new(webAppGoals)
 	me.addFunctions(appGoals.init(me.db))

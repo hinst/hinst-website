@@ -78,3 +78,9 @@ func (me *program) generatePrimeNumbers() {
 	}
 	writeJsonFile(primeNumbersFileName, outputs)
 }
+
+func (me *program) generateStatic() {
+	var webStatic = new(webStaticGoals)
+	webStatic.init("http://localhost:8080" + webApp{}.getDefaultWebPath())
+	webStatic.run()
+}
