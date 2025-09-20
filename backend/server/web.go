@@ -81,3 +81,13 @@ func writeHtmlResponse(response http.ResponseWriter, text string) {
 	response.Header().Set("Content-Type", "text/html; charset=utf-8")
 	response.Write([]byte(text))
 }
+
+func readTextFromUrl(url string) string {
+	var response = assertResultError(http.Get(url))
+	if response.StatusCode != http.StatusOK {
+		panic("Bad status=" + response.Status + " returned from url=" + url)
+	}
+	defer response.Body.Close()
+	var text = string(assertResultError(io.ReadAll(response.Body)))
+	return text
+}

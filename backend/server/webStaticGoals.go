@@ -1,9 +1,7 @@
 package server
 
 import (
-	"io"
 	"log"
-	"net/http"
 	"os"
 
 	"golang.org/x/text/language"
@@ -31,9 +29,7 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 	var path = me.getLanguagePath(lang)
 	assertError(os.MkdirAll(path, os.ModePerm))
 	log.Printf("path: %v", path)
-	var homePage = assertResultError(http.Get(me.url + "/pages?lang=" + lang.String()))
-	defer homePage.Body.Close()
-	var homePageText = string(assertResultError(io.ReadAll(homePage.Body)))
+	var homePageText = readTextFromUrl(me.url + "/pages?lang=" + lang.String())
 	writeTextFile(path+"/index.html", homePageText)
 }
 
