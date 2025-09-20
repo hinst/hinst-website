@@ -51,6 +51,23 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 		"&webPath=" + url.QueryEscape(me.getWebPath(lang))
 	var goalPageText = readTextFromUrl(url)
 	writeTextFile(goalsPath+"/"+getStringFromInt64(goalId)+".html", goalPageText)
+
+	var path = goalsPath + "/" + getStringFromInt64(goalId)
+	assertError(os.MkdirAll(path, os.ModePerm))
+	var posts = me.db.getGoalPosts(goalId, false, lang)
+	for _, post := range posts {
+		me.generateGoalPost(lang, goalsPath, goalId, post.DateTime)
+	}
+}
+
+func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, goalId int64, postDateTime int64) {
+	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) + "/" +
+		getStringFromInt64(postDateTime) +
+		"?lang=" + lang.String() +
+		"&webPath=" + url.QueryEscape(me.getWebPath(lang))
+	var postPageText = readTextFromUrl(url)
+	var path = goalsPath + "/" + getStringFromInt64(goalId)
+	writeTextFile(path+"/"+getStringFromInt64(postDateTime)+".html", postPageText)
 }
 
 func (me *webStaticGoals) getLanguagePath(tag language.Tag) string {
