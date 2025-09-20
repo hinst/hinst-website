@@ -162,9 +162,20 @@ func (me *webPageGoals) getBaseTemplate(request *http.Request) page_data.Base {
 			webPath = ""
 		}
 	}
+
+	var apiPath = webPath
+	var customApiPath = request.URL.Query().Get("apiPath")
+	if customApiPath != "" {
+		apiPath = customApiPath
+		if apiPath == "/" {
+			apiPath = ""
+		}
+	}
+
 	return page_data.Base{
 		Id:          me.advanceElementId(),
 		WebPath:     webPath,
+		ApiPath:     apiPath,
 		SettingsSvg: template.HTML(readTextFile("pages/static/images/settings.svg")),
 	}
 }

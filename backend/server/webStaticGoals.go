@@ -31,8 +31,7 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 	var path = me.folder + me.getLanguagePath(lang)
 	assertError(os.MkdirAll(path, os.ModePerm))
 	os.CopyFS(path+"/static", os.DirFS("pages/static"))
-	var homeUrl = me.url + "/pages?lang=" + url.QueryEscape(lang.String()) +
-		"&webPath=" + url.QueryEscape(me.getWebPath(lang))
+	var homeUrl = me.url + "/pages?" + me.getPathQuery(lang)
 	var homePageText = readTextFromUrl(homeUrl)
 	writeTextFile(path+"/index.html", homePageText)
 
@@ -46,9 +45,8 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 
 func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal goalRecord) {
 	var goalId = goal.Id
-	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) +
-		"?lang=" + lang.String() +
-		"&webPath=" + url.QueryEscape(me.getWebPath(lang))
+	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) + "?" +
+		me.getPathQuery(lang)
 	var goalPageText = readTextFromUrl(url)
 	writeTextFile(goalsPath+"/"+getStringFromInt64(goalId)+".html", goalPageText)
 
@@ -62,9 +60,7 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 
 func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, goalId int64, postDateTime int64) {
 	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) + "/" +
-		getStringFromInt64(postDateTime) +
-		"?lang=" + lang.String() +
-		"&webPath=" + url.QueryEscape(me.getWebPath(lang))
+		getStringFromInt64(postDateTime) + "?" + me.getPathQuery(lang)
 	var postPageText = readTextFromUrl(url)
 	var path = goalsPath + "/" + getStringFromInt64(goalId)
 	writeTextFile(path+"/"+getStringFromInt64(postDateTime)+".html", postPageText)
@@ -86,4 +82,13 @@ func (me *webStaticGoals) slashEmpty(text string) string {
 
 func (me *webStaticGoals) getWebPath(tag language.Tag) string {
 	return me.slashEmpty(me.getLanguagePath(tag))
+}
+
+func (me *webStaticGoals) getApiPath() string {
+	return "http://localhost:8080/hinst-website/pages"
+}
+
+func (me *webStaticGoals) getPathQuery(tag language.Tag) string {
+	return "&webPath=" + url.QueryEscape(me.getWebPath(tag)) +
+		"&apiPath=" + url.QueryEscape(me.getApiPath())
 }
