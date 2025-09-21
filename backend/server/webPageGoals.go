@@ -161,6 +161,7 @@ func (me *webPageGoals) getBaseTemplate(request *http.Request) page_data.Base {
 		JpegExtension: request.URL.Query().Get("jpegExtension"),
 		HtmlExtension: request.URL.Query().Get("htmlExtension"),
 		SettingsSvg:   template.HTML(readTextFile("pages/static/images/settings.svg")),
+		GlobeSvg:      template.HTML(readTextFile("pages/static/images/globe.svg")),
 	}
 }
 

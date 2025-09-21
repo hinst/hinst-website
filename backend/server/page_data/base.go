@@ -10,5 +10,7 @@ type Base struct {
 	JpegExtension string
 	// For server side rendering, should be empty. For static files, should be .html
 	HtmlExtension string
-	SettingsSvg   template.HTML
+
+	SettingsSvg template.HTML
+	GlobeSvg    template.HTML
 }

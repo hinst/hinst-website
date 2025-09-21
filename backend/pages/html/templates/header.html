@@ -37,4 +37,34 @@
 			</div>
 		</a>
 	</div>
+	<div>
+		<button id="header-language-button" type="button" class="ms-btn ms-rounded" style="width: 40px; height: 40px">
+			<div
+				style="
+					width: 24px; height: 24px;
+					border-radius: 50%;
+					transform: translate(-8px, -0px);
+				"
+				alt="settings"
+			>
+				{{.GlobeSvg}}
+			</div>
+		</button>
+		<div
+			id="header-language-popup"
+			style="
+				right: 0px;
+				left: auto;
+				position: absolute;
+				padding: 10px;
+				display: none;
+				flex-direction: column;
+				gap: 4px
+			"
+		>
+			<a class="ms-btn" href="{{.StaticPath}}">English</a>
+			<a class="ms-btn" href="{{.StaticPath}}/de">German</a>
+			<a class="ms-btn" href="{{.StaticPath}}/ru">Russian</a>
+		</div>
+  	</div>
 </div>
