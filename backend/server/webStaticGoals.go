@@ -66,14 +66,14 @@ func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, 
 	writeTextFile(path+"/"+getStringFromInt64(postDateTime)+".html", postPageText)
 
 	var imageCount = me.db.getGoalPostImageCount(goalId, time.Unix(postDateTime, 0))
-	for index := range imageCount {
-		me.generateGoalPostImage(goalId, postDateTime, index)
+	for imageIndex := range imageCount {
+		me.generateGoalPostImage(goalId, postDateTime, imageIndex)
 	}
 }
 
-func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64, index int) {
+func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64, imageIndex int) {
 	var url = buildUrl(me.url+pagesWebPath+"/personal-goals/image/"+getStringFromInt64(goalId)+"/"+
-		getStringFromInt64(postDateTime)+"/"+getStringFromInt(index), nil)
+		getStringFromInt64(postDateTime)+"/"+getStringFromInt(imageIndex), nil)
 	var image = readBytesFromUrl(url)
 	var path = me.folder + "/personal-goals/image/" + getStringFromInt64(goalId) + "/" +
 		getStringFromInt64(postDateTime)
@@ -81,7 +81,7 @@ func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64
 		return // already saved
 	}
 	assertError(os.MkdirAll(path, file_mode.OS_USER_RW))
-	path += "/" + getStringFromInt(index) + ".jpg"
+	path += "/" + getStringFromInt(imageIndex) + ".jpg"
 	writeBytesFile(path, image)
 }
 
@@ -103,14 +103,9 @@ func (me *webStaticGoals) getWebPath(tag language.Tag) string {
 	return me.slashEmpty(me.getLanguagePath(tag))
 }
 
-func (me *webStaticGoals) getApiPath() string {
-	return "http://localhost:8080/hinst-website/pages"
-}
-
 func (me *webStaticGoals) getPathQuery(tag language.Tag) map[string]string {
 	return map[string]string{
 		"webPath":       me.getWebPath(tag),
-		"apiPath":       me.getApiPath(),
 		"staticPath":    "/",
 		"jpegExtension": ".jpg",
 		"htmlExtension": ".html",
