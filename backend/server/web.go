@@ -53,16 +53,13 @@ func setCacheAge(response http.ResponseWriter, duration time.Duration) {
 	response.Header().Set("Cache-Control", "max-age="+strconv.Itoa(int(duration.Seconds())))
 }
 
-func requireRequestQueryInt(request *http.Request, key string) int {
-	var text = request.URL.Query().Get(key)
-	if text == "" {
-		panic(webError{Message: "Missing integer parameter '" + key + "'", Status: http.StatusBadRequest})
+func inputValidWebInteger(text string) int {
+	var result, parseError = strconv.Atoi(text)
+	var createWebError = func() webError {
+		return webError{"Need integer. Received: " + text, http.StatusBadRequest}
 	}
-	var value, parseError = strconv.Atoi(text)
-	assertCondition(parseError == nil, func() error {
-		return webError{Message: "Invalid integer: " + text, Status: http.StatusBadRequest}
-	})
-	return value
+	assertCondition(parseError == nil, createWebError)
+	return result
 }
 
 func decodeWebJson(input io.ReadCloser, value any) {

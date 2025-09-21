@@ -46,8 +46,8 @@ func (me *webAppRiddles) createRiddle(response http.ResponseWriter, request *htt
 }
 
 func (me *webAppRiddles) answerRiddle(response http.ResponseWriter, request *http.Request) {
-	var id = requireRequestQueryInt(request, "id")
-	var product = requireRequestQueryInt(request, "product")
+	var id = inputValidWebInteger(request.URL.Query().Get("id"))
+	var product = inputValidWebInteger(request.URL.Query().Get("product"))
 	var keys []int
 	decodeWebJson(request.Body, &keys)
 	var isCorrect = false

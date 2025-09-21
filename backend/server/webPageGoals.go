@@ -29,7 +29,7 @@ func (me *webPageGoals) init(db *database, webPath string) []namedWebFunction {
 		{"", me.getHomePage},
 		{"/personal-goals/{id}", me.getGoalPage},
 		{"/personal-goals/{id}/{post}", me.getGoalPostPage},
-		{"/personal-goals/image", me.getGoalPostImage},
+		{"/personal-goals/image/{id}/{post}/{index}", me.getGoalPostImage},
 	}
 }
 
@@ -141,9 +141,9 @@ func (me *webPageGoals) wrapTemplatePage(request *http.Request, pageTitle string
 }
 
 func (me *webPageGoals) getGoalPostImage(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
-	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
-	var index = requireRequestQueryInt(request, "index")
+	var goalId = me.inputValidGoalId(request.PathValue("id"))
+	var postDateTime = me.inputValidPostDateTime(request.PathValue("post"))
+	var index = inputValidWebInteger(request.PathValue("index"))
 	var image = me.db.getGoalPostImage(goalId, postDateTime, index)
 	if image == nil {
 		panic(webError{"Image not found", http.StatusNotFound})

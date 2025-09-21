@@ -83,7 +83,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 func (me *webAppGoals) getGoalPostImage(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
-	var index = requireRequestQueryInt(request, "index")
+	var index = inputValidWebInteger(request.URL.Query().Get("index"))
 	var image = me.db.getGoalPostImage(goalId, postDateTime, index)
 	if image == nil {
 		panic(webError{"Image not found", http.StatusNotFound})
