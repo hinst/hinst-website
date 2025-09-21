@@ -62,9 +62,9 @@
 				gap: 4px
 			"
 		>
-			<a class="ms-btn" href="{{.StaticPath}}">English</a>
-			<a class="ms-btn" href="{{.StaticPath}}/de">German</a>
-			<a class="ms-btn" href="{{.StaticPath}}/ru">Russian</a>
+			<a class="ms-btn ms-outline ms-rounded ms-primary" href="{{if .StaticPath}}{{.StaticPath}}{{else}}/{{end}}">English</a>
+			<a class="ms-btn ms-outline ms-rounded ms-primary" href="{{.StaticPath}}/de">German</a>
+			<a class="ms-btn ms-outline ms-rounded ms-primary" href="{{.StaticPath}}/ru">Russian</a>
 		</div>
   	</div>
 </div>

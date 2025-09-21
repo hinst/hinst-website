@@ -6,6 +6,16 @@ const headerLanguagePopup = document.getElementById('header-language-popup') as 
 if (headerLanguageButton && headerLanguagePopup) {
 	const displayStyle = 'flex';
 	headerLanguageButton.onclick = () => {
-		headerLanguagePopup.style.display = headerLanguagePopup.style.display === displayStyle ? 'none' : displayStyle;
+		const isVisible = headerLanguagePopup.style.display === displayStyle;
+		headerLanguagePopup.style.display = isVisible ? 'none' : displayStyle;
 	};
+	const links = headerLanguagePopup.getElementsByTagName('a');
+	let lastLink: HTMLAnchorElement | null = null;
+	for (const link of links) {
+		const href = link.getAttribute('href') || '';
+		if (window.location.pathname.startsWith(href))
+			lastLink = link;
+	}
+	if (lastLink)
+		lastLink.classList.remove('ms-outline');
 }
