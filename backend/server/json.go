@@ -1,6 +1,6 @@
 package server
 
-import "github.com/goccy/go-json"
+import "encoding/json"
 
 func encodeJson[T any](value T) []byte {
 	return assertResultError(json.Marshal(value))

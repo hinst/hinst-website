@@ -1,13 +1,12 @@
 package server
 
 import (
+	"encoding/json"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"slices"
 	"strings"
-
-	"github.com/goccy/go-json"
 
 	"github.com/hinst/hinst-website/server/file_mode"
 )

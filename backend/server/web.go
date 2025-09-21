@@ -1,13 +1,13 @@
 package server
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
 
-	"github.com/goccy/go-json"
 	"github.com/yosssi/gohtml"
 	"golang.org/x/text/language"
 )
