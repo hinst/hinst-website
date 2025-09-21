@@ -11,11 +11,17 @@
 		</div>
 		{{range .Posts}}
 			<div>
-				<a href="{{$.WebPath}}/personal-goals/{{$.GoalId}}/{{.DateTime}}{{$.HtmlExtension}}">
-					<button type="button" class="ms-btn ms-primary ms-outline" style="font-family: monospace; min-width: 50px; padding: 8px">
-						{{.Day}}
+				<a
+					href="{{$.WebPath}}/personal-goals/{{$.GoalId}}/{{.DateTime}}{{$.HtmlExtension}}"
+					style="display: flex; gap: 10px"
+				>
+					<button
+						type="button"
+						class="ms-btn ms-primary ms-outline"
+						style="font-family: monospace; min-width: 50px; padding: 8px; display: flex; justify-content: center;"
+					>
+						<span>{{.Day}}</span>
 					</button>
-					&nbsp;
 					<span class="ms-text-main">
 						{{.Title}}
 					</span>
