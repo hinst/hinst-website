@@ -77,11 +77,11 @@ func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64
 	var image = readBytesFromUrl(url)
 	var path = me.folder + "/personal-goals/image/" + getStringFromInt64(goalId) + "/" +
 		getStringFromInt64(postDateTime)
+	assertError(os.MkdirAll(path, file_mode.OS_USER_RW))
+	path += "/" + getStringFromInt(imageIndex) + ".jpg"
 	if checkFileExists(path) {
 		return // already saved
 	}
-	assertError(os.MkdirAll(path, file_mode.OS_USER_RW))
-	path += "/" + getStringFromInt(imageIndex) + ".jpg"
 	writeBytesFile(path, image)
 }
 
