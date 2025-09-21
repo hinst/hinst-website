@@ -155,11 +155,11 @@ func (me *webPageGoals) getGoalPostImage(response http.ResponseWriter, request *
 
 func (me *webPageGoals) getBaseTemplate(request *http.Request) page_data.Base {
 	return page_data.Base{
-		Id:          me.advanceElementId(),
-		WebPath:     me.inputWebPath(request.URL.Query().Get("webPath"), me.webPath),
-		ApiPath:     me.inputWebPath(request.URL.Query().Get("apiPath"), me.webPath),
-		StaticPath:  me.inputWebPath(request.URL.Query().Get("staticPath"), me.webPath),
-		SettingsSvg: template.HTML(readTextFile("pages/static/images/settings.svg")),
+		Id:            me.advanceElementId(),
+		WebPath:       me.inputWebPath(request.URL.Query().Get("webPath"), me.webPath),
+		StaticPath:    me.inputWebPath(request.URL.Query().Get("staticPath"), me.webPath),
+		JpegExtension: request.URL.Query().Get("jpegExtension"),
+		SettingsSvg:   template.HTML(readTextFile("pages/static/images/settings.svg")),
 	}
 }
 

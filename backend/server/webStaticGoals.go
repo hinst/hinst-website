@@ -75,7 +75,7 @@ func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64
 	var url = buildUrl(me.url+pagesWebPath+"/personal-goals/image/"+getStringFromInt64(goalId)+"/"+
 		getStringFromInt64(postDateTime)+"/"+getStringFromInt(index), nil)
 	var image = readBytesFromUrl(url)
-	var path = me.folder + "/image/" + getStringFromInt64(goalId) + "/" +
+	var path = me.folder + "/personal-goals/image/" + getStringFromInt64(goalId) + "/" +
 		getStringFromInt64(postDateTime)
 	if checkFileExists(path) {
 		return // already saved
@@ -109,9 +109,10 @@ func (me *webStaticGoals) getApiPath() string {
 
 func (me *webStaticGoals) getPathQuery(tag language.Tag) map[string]string {
 	return map[string]string{
-		"webPath":    me.getWebPath(tag),
-		"apiPath":    me.getApiPath(),
-		"staticPath": "/",
-		"lang":       tag.String(),
+		"webPath":       me.getWebPath(tag),
+		"apiPath":       me.getApiPath(),
+		"staticPath":    "/",
+		"jpegExtension": ".jpg",
+		"lang":          tag.String(),
 	}
 }
