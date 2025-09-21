@@ -54,6 +54,10 @@ func readTextFile(filePath string) string {
 	return string(fileContent)
 }
 
+func writeBytesFile(filePath string, data []byte) {
+	assertError(os.WriteFile(filePath, data, file_mode.OS_USER_RW))
+}
+
 func writeJsonFile[T any](filePath string, data T) {
 	var jsonBytes = assertResultError(json.Marshal(data))
 	assertError(os.WriteFile(filePath, jsonBytes, file_mode.OS_USER_RW))

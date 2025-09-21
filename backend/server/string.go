@@ -14,6 +14,10 @@ func getStringFromInt64(number int64) string {
 	return strconv.FormatInt(number, 10)
 }
 
+func getStringFromInt(number int) string {
+	return strconv.Itoa(number)
+}
+
 func getStringFromBool(value bool) string {
 	if value {
 		return "true"

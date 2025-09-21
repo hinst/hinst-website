@@ -81,13 +81,17 @@ func writeHtmlResponse(response http.ResponseWriter, text string) {
 }
 
 func readTextFromUrl(url string) string {
+	return string(readBytesFromUrl(url))
+}
+
+func readBytesFromUrl(url string) []byte {
 	var response = assertResultError(http.Get(url))
+	defer response.Body.Close()
 	if response.StatusCode != http.StatusOK {
 		panic("Bad status=" + response.Status + " returned from url=" + url)
 	}
-	defer response.Body.Close()
-	var text = string(assertResultError(io.ReadAll(response.Body)))
-	return text
+	var data = assertResultError(io.ReadAll(response.Body))
+	return data
 }
 
 func buildUrl(base string, parameters map[string]string) string {

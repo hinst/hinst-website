@@ -2,7 +2,7 @@
 	handle {
 		root * ./static
 		file_server
-		try_files {path} {path}.html
+		try_files {path} {path}.html {path}.jpg
 	}
 	log {
 		output stdout
