@@ -113,6 +113,7 @@ func (me *webStaticGoals) getPathQuery(tag language.Tag) map[string]string {
 		"apiPath":       me.getApiPath(),
 		"staticPath":    "/",
 		"jpegExtension": ".jpg",
+		"htmlExtension": ".html",
 		"lang":          tag.String(),
 	}
 }
