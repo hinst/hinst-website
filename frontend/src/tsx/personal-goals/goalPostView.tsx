@@ -30,7 +30,7 @@ export default function GoalPostView(props: { postData: GoalPostObject }) {
 						<Info className='ms-text-secondary' />
 					</div>
 					<div>
-						The automatic translation of this text to {props.postData.languageName}
+						The automatic translation of this text to {props.postData.languageName}{' '}
 						language is not available yet. Please come back later or check older posts.
 					</div>
 				</div>
