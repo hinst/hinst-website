@@ -52,6 +52,7 @@
 		</button>
 		<div
 			id="header-language-popup"
+			class="ms-bg-light"
 			style="
 				right: 0px;
 				left: auto;
@@ -59,12 +60,30 @@
 				padding: 10px;
 				display: none;
 				flex-direction: column;
-				gap: 4px
+				gap: 4px;
+				border-radius: 15px;
+				margin-top: 5px;
+				margin-right: 10px;
 			"
 		>
-			<a class="ms-btn ms-outline ms-rounded ms-primary" href="{{if .StaticPath}}{{.StaticPath}}{{else}}/{{end}}">English</a>
-			<a class="ms-btn ms-outline ms-rounded ms-primary" href="{{.StaticPath}}/de">German</a>
-			<a class="ms-btn ms-outline ms-rounded ms-primary" href="{{.StaticPath}}/ru">Russian</a>
+			<a
+				class="ms-btn ms-outline ms-rounded ms-primary"
+				href="{{if .StaticPath}}{{.StaticPath}}{{else}}/{{end}}"
+			>
+				English
+			</a>
+			<a
+				class="ms-btn ms-outline ms-rounded ms-primary"
+				href="{{.StaticPath}}/de"
+			>
+				German
+			</a>
+			<a
+				class="ms-btn ms-outline ms-rounded ms-primary"
+				href="{{.StaticPath}}/ru"
+			>
+				Russian
+			</a>
 		</div>
   	</div>
 </div>
