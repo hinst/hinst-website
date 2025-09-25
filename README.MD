@@ -18,7 +18,11 @@ In administrator mode we can edit article texts and toggle article visibility: p
 	2. `adminPassword=` actual password
 2. Administrator mode is available only when API hostname is the same as the web page hostname. There is no easy way to use administrator mode in public proxied mode, because the domain name for the cookies will be different.
 
-## Changelog
+## Static mode
+1. Call `backend\batch\generate.bat` to create static HTML files in `backend\static` folder
+2. To deploy static files, copy them to hinst.github.io, commit and push
+
+# Changelog
 
 ## 2025.07
 
@@ -46,3 +50,6 @@ In administrator mode we can edit article texts and toggle article visibility: p
 
 ## 2025.08
 * Added license file: Mozilla Public License
+
+## 2025.09
+* Created static version of the website to enable search engine indexing
