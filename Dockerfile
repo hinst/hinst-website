@@ -16,6 +16,8 @@ RUN npm install
 RUN npm run build -- --public-url=/hinst-website
 
 FROM debian:trixie
+RUN apt-get update
+RUN apt-get -y install git
 COPY --from=backend /app/hinst-website /app/hinst-website
 COPY --from=backend /app/primeNumbers.json /app/primeNumbers.json
 COPY --from=backend /app/pages /app/pages

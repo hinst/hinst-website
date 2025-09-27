@@ -1,0 +1,1 @@
+go build && hinst-website.exe --mode=update

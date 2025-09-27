@@ -7,20 +7,23 @@ import (
 )
 
 type program struct {
-	netAddress       string
-	webFilesPath     string
-	savedGoalsPath   string
-	allowOrigin      string
-	translatorApiUrl string
-	database         *database
+	netAddress          string
+	webFilesPath        string
+	savedGoalsPath      string
+	allowOrigin         string
+	translatorApiUrl    string
+	staticWebsiteGitUrl string
+
+	database *database
 }
 
 var programTemplate = program{
-	netAddress:       ":8080",
-	webFilesPath:     "./www",
-	savedGoalsPath:   "./saved-goals",
-	allowOrigin:      "http://localhost:1234",
-	translatorApiUrl: "http://localhost:1235",
+	netAddress:          ":8080",
+	webFilesPath:        "./www",
+	savedGoalsPath:      "./saved-goals",
+	allowOrigin:         "http://localhost:1234",
+	translatorApiUrl:    "http://localhost:1235",
+	staticWebsiteGitUrl: "https://github.com/hinst/hinst.github.io.git",
 }
 
 func (me *program) create() *program {
@@ -50,7 +53,8 @@ func (me *program) update() {
 	me.database.init(me.savedGoalsPath)
 	me.updateTranslations()
 	me.updateTitles()
-	me.updateStaticFiles()
+	me.generateStatic()
+	me.uploadStatic()
 }
 
 func (me *program) updateTranslations() {
@@ -71,7 +75,8 @@ func (me *program) updateTitles() {
 	titleGenerator.run()
 }
 
-func (me *program) updateStaticFiles() {
+func (me *program) uploadStatic() {
+	me.generateStatic()
 }
 
 func (me *program) migrate() {
