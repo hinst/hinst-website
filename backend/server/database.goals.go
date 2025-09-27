@@ -2,7 +2,12 @@ package server
 
 import (
 	"log"
+	"net/http"
+	"net/http/cookiejar"
+	"net/url"
+	"os"
 	"slices"
+	"strings"
 	"time"
 
 	"golang.org/x/text/language"
@@ -165,11 +170,45 @@ func (me *database) getLanguagePostfix(supportedLanguage language.Tag) string {
 }
 
 func (me *database) migrate() {
-	log.Println("Migrating table goalPosts: adding title columns")
+	log.Println("Migrating table goalPosts: copying titles to Orange Pi server")
 	var db = me.open()
 	defer me.close(db)
-	var queryText = "ALTER TABLE goalPosts ADD COLUMN title TEXT;\n"
-	queryText += "ALTER TABLE goalPosts ADD COLUMN titleEnglish TEXT;\n"
-	queryText += "ALTER TABLE goalPosts ADD COLUMN titleGerman TEXT;\n"
-	assertResultError(db.Exec(queryText))
+	var cookies = assertResultError(cookiejar.New(nil))
+	var targetUrl = &url.URL{Scheme: "http", Host: "192.168.0.23:30001"}
+	var adminPassword = os.Getenv("adminPassword")
+	cookies.SetCookies(targetUrl, []*http.Cookie{
+		{
+			Name:  "adminPassword",
+			Value: adminPassword,
+			Path:  "/",
+		},
+	})
+	var client = &http.Client{Jar: cookies}
+	me.forEachGoalPost(func(row *goalPostRow) bool {
+		for _, lang := range supportedLanguages {
+			var title = row.getTranslatedTitle(lang)
+			if title != "" {
+				var parameters = map[string]string{
+					"goalId":       getStringFromInt64(row.goalId),
+					"postDateTime": getStringFromInt64(row.dateTime.UTC().Unix()),
+					"languageTag":  lang.String(),
+				}
+				var url = buildUrl(targetUrl.String()+"/hinst-website/api/goalPost/setTitle", parameters)
+				var response *http.Response
+				for completed := false; !completed; {
+					response = assertResultError(client.Post(url, contentTypeText, strings.NewReader(title)))
+					defer response.Body.Close()
+					if response.StatusCode == http.StatusTooManyRequests {
+						time.Sleep(time.Second)
+					} else {
+						completed = true
+					}
+				}
+				if response.StatusCode != http.StatusOK {
+					panic("Cannot set title. Status=" + response.Status + " url=" + url)
+				}
+			}
+		}
+		return true
+	})
 }

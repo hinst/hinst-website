@@ -13,6 +13,7 @@ import (
 )
 
 const contentTypeJson = "application/json"
+const contentTypeText = "text/plain"
 
 type webFunction func(response http.ResponseWriter, request *http.Request)
 type namedWebFunction struct {
