@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"slices"
 	"time"
 
@@ -164,6 +165,7 @@ func (me *database) getLanguagePostfix(supportedLanguage language.Tag) string {
 }
 
 func (me *database) migrate() {
+	log.Println("Migrating table goalPosts: adding title columns")
 	var db = me.open()
 	defer me.close(db)
 	var queryText = "ALTER TABLE goalPosts ADD COLUMN title TEXT;\n"
