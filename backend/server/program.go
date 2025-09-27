@@ -85,6 +85,18 @@ func (me *program) uploadStatic() {
 		log.Fatal("git clone error: ", string(output), err)
 	}
 
+	command = exec.Command("git", "config", "core.fileMode", "false")
+	command.Dir = staticGitPath
+	if output, err := command.CombinedOutput(); err != nil {
+		log.Fatal("git config error: ", string(output), err)
+	}
+
+	command = exec.Command("git", "config", "core.autocrlf", "true")
+	command.Dir = staticGitPath
+	if output, err := command.CombinedOutput(); err != nil {
+		log.Fatal("git config error: ", string(output), err)
+	}
+
 	var preservedFiles = []string{".git", "posts"}
 	for _, file := range assertResultError(os.ReadDir(staticGitPath)) {
 		if !slices.Contains(preservedFiles, file.Name()) {
