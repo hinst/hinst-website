@@ -4,9 +4,10 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"slices"
 	"time"
+
+	"github.com/hinst/hinst-website/server/file_mode"
 )
 
 type program struct {
@@ -79,23 +80,18 @@ func (me *program) updateTitles() {
 }
 
 func (me *program) uploadStatic() {
+	var gitBotName = requireEnvVar("GIT_BOT_NAME")
+	var gitEmail = requireEnvVar("GIT_EMAIL")
+
 	var staticGitPath = assertResultError(os.Getwd()) + "/static-git"
-	var command = exec.Command("git", "clone", me.staticWebsiteGitUrl, staticGitPath)
-	if output, err := command.CombinedOutput(); err != nil {
-		log.Fatalln("Git clone error:", string(output), err)
-	}
+	assertError(os.MkdirAll(staticGitPath, file_mode.OS_USER_RW))
+	var runner = &commandRunner{Dir: staticGitPath}
+	runner.command("Git clone", true, "git", "clone", me.staticWebsiteGitUrl, staticGitPath)
 
-	command = exec.Command("git", "config", "core.fileMode", "false")
-	command.Dir = staticGitPath
-	if output, err := command.CombinedOutput(); err != nil {
-		log.Fatalln("Git config error:", string(output), err)
-	}
-
-	command = exec.Command("git", "config", "core.autocrlf", "true")
-	command.Dir = staticGitPath
-	if output, err := command.CombinedOutput(); err != nil {
-		log.Fatalln("Git config error:", string(output), err)
-	}
+	runner.command("Git config", true, "git", "config", "core.fileMode", "false")
+	runner.command("Git config", true, "git", "config", "core.autocrlf", "true")
+	runner.command("Git config", true, "git", "config", "user.name", getQuotedString(gitBotName))
+	runner.command("Git config", true, "git", "config", "user.email", getQuotedString(gitEmail))
 
 	var preservedFiles = []string{".git", "posts"}
 	for _, file := range assertResultError(os.ReadDir(staticGitPath)) {
@@ -104,33 +100,17 @@ func (me *program) uploadStatic() {
 		}
 	}
 
+	var copyRunner = &commandRunner{Dir: assertResultError(os.Getwd())}
 	for _, file := range assertResultError(os.ReadDir("./static")) {
-		command = exec.Command("cp", "-r", "./static/"+file.Name(), staticGitPath+"/")
-		command.Dir = assertResultError(os.Getwd())
-		if output, err := command.CombinedOutput(); err != nil {
-			log.Fatalln("Copy error:", string(output), err)
-		}
+		copyRunner.command("Copy", true, "cp", "-r", "./static/"+file.Name(), staticGitPath+"/")
 	}
 
-	command = exec.Command("git", "add", ".")
-	command.Dir = assertResultError(os.Getwd()) + "/static-git"
-	if output, err := command.CombinedOutput(); err != nil {
-		log.Fatalln("Git add error:", string(output), err)
-	}
-
-	command = exec.Command("git", "status")
-	command.Dir = assertResultError(os.Getwd()) + "/static-git"
-	if output, err := command.CombinedOutput(); err != nil {
-		log.Fatalln("Git status error:", string(output), err)
-	} else {
-		log.Println("Git status:", string(output))
-	}
-
-	command = exec.Command("git", "commit", "-m", "Automatic update")
-	command.Dir = assertResultError(os.Getwd()) + "/static-git"
-	if output, err := command.CombinedOutput(); err != nil {
-		log.Print("Cannot commit: ", string(output), err)
-		return // Assuming than nothing changed
+	runner.command("Git add", true, "git", "add", ".")
+	runner.command("Git status", true, "git", "status")
+	var commitOk = runner.command("Git commit", false, "git", "commit", "-m", "Automatic update")
+	if !commitOk {
+		log.Println("Nothing to commit")
+		return
 	}
 }
 

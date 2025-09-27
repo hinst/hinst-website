@@ -1,6 +1,10 @@
 package server
 
-import "strconv"
+import (
+	"log"
+	"os"
+	"strconv"
+)
 
 func getIntFromString(text string) int {
 	return assertResultError(strconv.Atoi(text))
@@ -23,4 +27,16 @@ func getStringFromBool(value bool) string {
 		return "true"
 	}
 	return "false"
+}
+
+func getQuotedString(text string) string {
+	return "\"" + text + "\""
+}
+
+func requireEnvVar(name string) string {
+	var value = os.Getenv(name)
+	if value == "" {
+		log.Fatalln("Environment variable is required:", name)
+	}
+	return value
 }
