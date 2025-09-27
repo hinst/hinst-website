@@ -3,6 +3,9 @@ package server
 import (
 	"log"
 	"net/http"
+	"os"
+	"os/exec"
+	"slices"
 	"time"
 )
 
@@ -76,7 +79,40 @@ func (me *program) updateTitles() {
 }
 
 func (me *program) uploadStatic() {
-	me.generateStatic()
+	var staticGitPath = assertResultError(os.Getwd()) + "/static-git"
+	var command = exec.Command("git", "clone", me.staticWebsiteGitUrl, staticGitPath)
+	if output, err := command.CombinedOutput(); err != nil {
+		log.Fatal("git clone error: ", string(output), err)
+	}
+
+	var preservedFiles = []string{".git", "posts"}
+	for _, file := range assertResultError(os.ReadDir(staticGitPath)) {
+		if !slices.Contains(preservedFiles, file.Name()) {
+			assertError(os.RemoveAll(staticGitPath + "/" + file.Name()))
+		}
+	}
+
+	for _, file := range assertResultError(os.ReadDir("./static")) {
+		command = exec.Command("cp", "-r", "./static/"+file.Name(), staticGitPath+"/")
+		command.Dir = assertResultError(os.Getwd())
+		if output, err := command.CombinedOutput(); err != nil {
+			log.Fatal("cp error: ", string(output), err)
+		}
+	}
+
+	command = exec.Command("git", "add", ".")
+	command.Dir = assertResultError(os.Getwd()) + "/static-git"
+	if output, err := command.CombinedOutput(); err != nil {
+		log.Fatal("git add error: ", string(output), err)
+	}
+
+	command = exec.Command("git", "status")
+	command.Dir = assertResultError(os.Getwd()) + "/static-git"
+	if output, err := command.CombinedOutput(); err != nil {
+		log.Fatal("git status error: ", string(output), err)
+	} else {
+		log.Print("git status: ", string(output))
+	}
 }
 
 func (me *program) migrate() {
