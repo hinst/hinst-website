@@ -21,10 +21,10 @@ func Main() {
 		theProgram.webFilesPath = *wwwPtr
 		theProgram.allowOrigin = *allowOriginPtr
 		theProgram.runWeb()
-	case "translate":
+	case "update":
 		var theProgram = new(program).create()
 		theProgram.translatorApiUrl = *translatorApiPtr
-		theProgram.translate()
+		theProgram.update()
 	case "migrate":
 		var theProgram = new(program).create()
 		theProgram.migrate()

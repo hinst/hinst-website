@@ -46,21 +46,32 @@ func (me *program) runWeb() {
 	assertError(http.ListenAndServe(me.netAddress, nil))
 }
 
-func (me *program) translate() {
+func (me *program) update() {
 	me.database.init(me.savedGoalsPath)
+	me.updateTranslations()
+	me.updateTitles()
+	me.updateStaticFiles()
+}
+
+func (me *program) updateTranslations() {
 	var translator = translatorPreset
 	if me.translatorApiUrl != "" {
 		translator.apiUrl = me.translatorApiUrl + "/v1/chat/completions"
 	}
 	translator.db = me.database
 	translator.run()
+}
 
+func (me *program) updateTitles() {
 	var titleGenerator = titleGeneratorPreset
 	if me.translatorApiUrl != "" {
 		titleGenerator.apiUrl = me.translatorApiUrl + "/v1/chat/completions"
 	}
 	titleGenerator.db = me.database
 	titleGenerator.run()
+}
+
+func (me *program) updateStaticFiles() {
 }
 
 func (me *program) migrate() {
