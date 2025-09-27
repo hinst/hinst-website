@@ -82,19 +82,19 @@ func (me *program) uploadStatic() {
 	var staticGitPath = assertResultError(os.Getwd()) + "/static-git"
 	var command = exec.Command("git", "clone", me.staticWebsiteGitUrl, staticGitPath)
 	if output, err := command.CombinedOutput(); err != nil {
-		log.Fatal("git clone error: ", string(output), err)
+		log.Fatalln("Git clone error:", string(output), err)
 	}
 
 	command = exec.Command("git", "config", "core.fileMode", "false")
 	command.Dir = staticGitPath
 	if output, err := command.CombinedOutput(); err != nil {
-		log.Fatal("git config error: ", string(output), err)
+		log.Fatalln("Git config error:", string(output), err)
 	}
 
 	command = exec.Command("git", "config", "core.autocrlf", "true")
 	command.Dir = staticGitPath
 	if output, err := command.CombinedOutput(); err != nil {
-		log.Fatal("git config error: ", string(output), err)
+		log.Fatalln("Git config error:", string(output), err)
 	}
 
 	var preservedFiles = []string{".git", "posts"}
@@ -108,22 +108,29 @@ func (me *program) uploadStatic() {
 		command = exec.Command("cp", "-r", "./static/"+file.Name(), staticGitPath+"/")
 		command.Dir = assertResultError(os.Getwd())
 		if output, err := command.CombinedOutput(); err != nil {
-			log.Fatal("cp error: ", string(output), err)
+			log.Fatalln("Copy error:", string(output), err)
 		}
 	}
 
 	command = exec.Command("git", "add", ".")
 	command.Dir = assertResultError(os.Getwd()) + "/static-git"
 	if output, err := command.CombinedOutput(); err != nil {
-		log.Fatal("git add error: ", string(output), err)
+		log.Fatalln("Git add error:", string(output), err)
 	}
 
 	command = exec.Command("git", "status")
 	command.Dir = assertResultError(os.Getwd()) + "/static-git"
 	if output, err := command.CombinedOutput(); err != nil {
-		log.Fatal("git status error: ", string(output), err)
+		log.Fatalln("Git status error:", string(output), err)
 	} else {
-		log.Print("git status: ", string(output))
+		log.Println("Git status:", string(output))
+	}
+
+	command = exec.Command("git", "commit", "-m", "Automatic update")
+	command.Dir = assertResultError(os.Getwd()) + "/static-git"
+	if output, err := command.CombinedOutput(); err != nil {
+		log.Print("Cannot commit: ", string(output), err)
+		return // Assuming than nothing changed
 	}
 }
 
