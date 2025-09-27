@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -11,23 +12,21 @@ import (
 )
 
 type program struct {
-	netAddress          string
-	webFilesPath        string
-	savedGoalsPath      string
-	allowOrigin         string
-	translatorApiUrl    string
-	staticWebsiteGitUrl string
+	netAddress       string
+	webFilesPath     string
+	savedGoalsPath   string
+	allowOrigin      string
+	translatorApiUrl string
 
 	database *database
 }
 
 var programTemplate = program{
-	netAddress:          ":8080",
-	webFilesPath:        "./www",
-	savedGoalsPath:      "./saved-goals",
-	allowOrigin:         "http://localhost:1234",
-	translatorApiUrl:    "http://localhost:1235",
-	staticWebsiteGitUrl: "https://github.com/hinst/hinst.github.io.git",
+	netAddress:       ":8080",
+	webFilesPath:     "./www",
+	savedGoalsPath:   "./saved-goals",
+	allowOrigin:      "http://localhost:1234",
+	translatorApiUrl: "http://localhost:1235",
 }
 
 func (me *program) create() *program {
@@ -86,7 +85,7 @@ func (me *program) uploadStatic() {
 	var staticGitPath = assertResultError(os.Getwd()) + "/static-git"
 	assertError(os.MkdirAll(staticGitPath, file_mode.OS_USER_RW))
 	var runner = &commandRunner{Dir: staticGitPath}
-	runner.command("Git clone", true, "git", "clone", me.staticWebsiteGitUrl, staticGitPath)
+	runner.command("Git clone", true, "git", "clone", me.getStaticWebsiteGitUrl(), staticGitPath)
 
 	runner.command("Git config", true, "git", "config", "core.fileMode", "false")
 	runner.command("Git config", true, "git", "config", "core.autocrlf", "true")
@@ -112,6 +111,8 @@ func (me *program) uploadStatic() {
 		log.Println("Nothing to commit")
 		return
 	}
+
+	runner.command("Git push", true, "git", "push")
 }
 
 func (me *program) migrate() {
@@ -143,4 +144,8 @@ func (me *program) generateStatic() {
 	var webStatic = new(webStaticGoals)
 	webStatic.init("http://localhost:8080", me.database)
 	webStatic.run()
+}
+
+func (me *program) getStaticWebsiteGitUrl() string {
+	return fmt.Sprintf("https://%v@github.com/hinst/hinst.github.io.git", requireEnvVar("GIT_TOKEN"))
 }
