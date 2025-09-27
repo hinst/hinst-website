@@ -22,6 +22,7 @@ func (me *webAppGoals) init(db *database) []namedWebFunction {
 		{"/api/goalPost/image", me.getGoalPostImage},
 		{"/api/goalPost/setPublic", me.setGoalPostPublic},
 		{"/api/goalPost/setText", me.setGoalPostText},
+		{"/api/goalPost/setTitle", me.setGoalTitleText},
 	}
 }
 
@@ -94,10 +95,7 @@ func (me *webAppGoals) getGoalPostImage(response http.ResponseWriter, request *h
 }
 
 func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *http.Request) {
-	var isAdmin = me.inputCheckAdminPassword(request)
-	if !isAdmin {
-		panic(webError{"Need administrator access", http.StatusUnauthorized})
-	}
+	me.inputAssertAdminPassword(request)
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var isPublic = request.URL.Query().Get("isPublic") == "true"
@@ -106,14 +104,21 @@ func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *
 }
 
 func (me *webAppGoals) setGoalPostText(response http.ResponseWriter, request *http.Request) {
-	var isAdmin = me.inputCheckAdminPassword(request)
-	if !isAdmin {
-		panic(webError{"Need administrator access", http.StatusUnauthorized})
-	}
+	me.inputAssertAdminPassword(request)
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var languageTagText = request.URL.Query().Get("languageTag")
-	var text = string(assertResultError(io.ReadAll(request.Body)))
 	var languageTag = assertResultError(language.Parse(languageTagText))
+	var text = string(assertResultError(io.ReadAll(request.Body)))
 	me.db.setGoalPostText(goalId, postDateTime, languageTag, text)
+}
+
+func (me *webAppGoals) setGoalTitleText(response http.ResponseWriter, request *http.Request) {
+	me.inputAssertAdminPassword(request)
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
+	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
+	var languageTagText = request.URL.Query().Get("languageTag")
+	var languageTag = assertResultError(language.Parse(languageTagText))
+	var text = string(assertResultError(io.ReadAll(request.Body)))
+	me.db.setGoalPostTitle(goalId, postDateTime, languageTag, text)
 }

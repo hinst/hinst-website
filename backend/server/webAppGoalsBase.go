@@ -44,6 +44,12 @@ func (me *webAppGoalsBase) inputCheckAdminPassword(request *http.Request) bool {
 	return false
 }
 
+func (me *webAppGoalsBase) inputAssertAdminPassword(request *http.Request) {
+	if !me.inputCheckAdminPassword(request) {
+		panic(webError{"Need admin password", http.StatusForbidden})
+	}
+}
+
 func (me *webAppGoalsBase) inputCheckGoalManagerMode(request *http.Request) bool {
 	var goalManagerModeCookie, _ = request.Cookie("goalManagerMode")
 	return me.inputCheckAdminPassword(request) &&
