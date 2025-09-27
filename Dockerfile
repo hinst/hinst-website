@@ -18,6 +18,7 @@ RUN npm run build -- --public-url=/hinst-website
 FROM debian:bookworm
 COPY --from=backend /app/hinst-website /app/hinst-website
 COPY --from=backend /app/primeNumbers.json /app/primeNumbers.json
+COPY --from=backend /app/pages /app/pages
 COPY --from=frontend /app/dist /app/www
 WORKDIR /app
 EXPOSE 8080
