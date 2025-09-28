@@ -7,8 +7,6 @@ import (
 	"os"
 	"slices"
 	"time"
-
-	"github.com/hinst/hinst-website/server/file_mode"
 )
 
 type program struct {
@@ -83,10 +81,13 @@ func (me *program) uploadStatic() {
 	var gitEmail = requireEnvVar("GIT_EMAIL")
 
 	var staticGitPath = me.savedGoalsPath + "/static-git"
-	assertError(os.MkdirAll(staticGitPath, file_mode.OS_USER_RWX))
-	var runner = &commandRunner{Dir: staticGitPath}
-	runner.command("Git clone", true, "git", "clone", me.getStaticWebsiteGitUrl(), staticGitPath)
+	var runner = new(commandRunner)
+	if !checkFileExists(staticGitPath) {
+		runner.command("Git clone", true, "git", "clone", me.getStaticWebsiteGitUrl(), staticGitPath)
+	}
 
+	runner.Dir = staticGitPath
+	runner.command("Git fetch", true, "git", "fetch")
 	runner.command("Git config", true, "git", "config", "core.fileMode", "false")
 	runner.command("Git config", true, "git", "config", "core.autocrlf", "true")
 	runner.command("Git config", true, "git", "config", "user.name", getQuotedString(gitBotName))
