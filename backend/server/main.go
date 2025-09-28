@@ -33,7 +33,7 @@ func Main() {
 		theProgram.generatePrimeNumbers()
 	case "generateStatic":
 		var theProgram = new(program).create()
-		theProgram.generateStatic()
+		theProgram.generateStatic("static")
 	default:
 		log.Fatalf("Unknown mode: %v", *modePtr)
 	}

@@ -56,7 +56,7 @@ func (me *program) update() {
 	me.database.init(me.savedGoalsPath)
 	me.updateTranslations()
 	me.updateTitles()
-	me.generateStatic()
+	me.generateStatic(me.savedGoalsPath + "/static")
 	me.uploadStatic()
 }
 
@@ -82,8 +82,8 @@ func (me *program) uploadStatic() {
 	var gitBotName = requireEnvVar("GIT_BOT_NAME")
 	var gitEmail = requireEnvVar("GIT_EMAIL")
 
-	var staticGitPath = assertResultError(os.Getwd()) + "/static-git"
-	assertError(os.MkdirAll(staticGitPath, file_mode.OS_USER_RW))
+	var staticGitPath = me.savedGoalsPath + "/static-git"
+	assertError(os.MkdirAll(staticGitPath, file_mode.OS_USER_RWX))
 	var runner = &commandRunner{Dir: staticGitPath}
 	runner.command("Git clone", true, "git", "clone", me.getStaticWebsiteGitUrl(), staticGitPath)
 
@@ -99,9 +99,10 @@ func (me *program) uploadStatic() {
 		}
 	}
 
-	var copyRunner = &commandRunner{Dir: assertResultError(os.Getwd())}
 	for _, file := range assertResultError(os.ReadDir("./static")) {
-		copyRunner.command("Copy", true, "cp", "-r", "./static/"+file.Name(), staticGitPath+"/")
+		new(commandRunner).command("Copy", true, "cp", "-r",
+			me.savedGoalsPath+"/static/"+file.Name(),
+			staticGitPath+"/")
 	}
 
 	runner.command("Git add", true, "git", "add", ".")
@@ -132,7 +133,7 @@ func (me *program) generatePrimeNumbers() {
 	writeJsonFile(primeNumbersFileName, outputs)
 }
 
-func (me *program) generateStatic() {
+func (me *program) generateStatic(folder string) {
 	me.database.init(me.savedGoalsPath)
 	var webApp = &webApp{webPath: "/"}
 	webApp.init(me.database)
@@ -142,7 +143,7 @@ func (me *program) generateStatic() {
 	time.Sleep(1000 * time.Millisecond)
 
 	var webStatic = new(webStaticGoals)
-	webStatic.init("http://localhost:8080", me.database)
+	webStatic.init("http://localhost:8080", me.database, folder)
 	webStatic.run()
 }
 
