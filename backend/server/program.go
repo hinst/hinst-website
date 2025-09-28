@@ -100,11 +100,7 @@ func (me *program) uploadStatic() {
 		}
 	}
 
-	for _, file := range assertResultError(os.ReadDir(me.savedGoalsPath + "/static")) {
-		new(commandRunner).command("Copy", true, "cp", "-r",
-			me.savedGoalsPath+"/static/"+file.Name(),
-			staticGitPath+"/")
-	}
+	assertError(os.CopyFS(staticGitPath, os.DirFS(me.savedGoalsPath+"/static")))
 
 	runner.command("Git add", true, "git", "add", ".")
 	runner.command("Git status", true, "git", "status")
