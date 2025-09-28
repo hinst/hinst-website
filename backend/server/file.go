@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -87,4 +88,12 @@ func getFileNameWithoutExtension(filePath string) string {
 func checkFileExists(filePath string) bool {
 	_, err := os.Stat(filePath)
 	return err == nil
+}
+
+func copyFile(destinationPath string, sourcePath string) (size int64) {
+	var sourceFile = assertResultError(os.Open(sourcePath))
+	defer sourceFile.Close()
+	var destinationFile = assertResultError(os.Create(destinationPath))
+	defer destinationFile.Close()
+	return assertResultError(io.Copy(destinationFile, sourceFile))
 }

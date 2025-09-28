@@ -24,14 +24,7 @@ func (me *staticFilesUpdate) run() {
 	runner.command("Git config", true, "git", "config", "core.autocrlf", "true")
 	runner.command("Git config", true, "git", "config", "user.name", getQuotedString(me.getBotName()))
 	runner.command("Git config", true, "git", "config", "user.email", getQuotedString(me.getEmail()))
-
-	var preservedFiles = []string{".git", "posts"}
-	for _, file := range assertResultError(os.ReadDir(staticGitPath)) {
-		if !slices.Contains(preservedFiles, file.Name()) {
-			assertError(os.RemoveAll(staticGitPath + "/" + file.Name()))
-		}
-	}
-	assertError(os.CopyFS(staticGitPath, os.DirFS(me.savedGoalsPath+"/static")))
+	me.flushFiles(staticGitPath)
 
 	runner.command("Git add", true, "git", "add", ".")
 	runner.command("Git status", true, "git", "status")
@@ -41,7 +34,26 @@ func (me *staticFilesUpdate) run() {
 		return
 	}
 
-	runner.command("Git push", true, "git", "push")
+	if false {
+		runner.command("Git push", true, "git", "push")
+	}
+}
+
+func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
+	var preservedFiles = []string{".git", "posts"}
+	for _, file := range assertResultError(os.ReadDir(staticGitPath)) {
+		if !slices.Contains(preservedFiles, file.Name()) {
+			var filePath = staticGitPath + "/" + file.Name()
+			var oldFilePath = me.savedGoalsPath + "/static-old/" + file.Name()
+			if file.IsDir() {
+				os.CopyFS(oldFilePath, os.DirFS(filePath))
+			} else {
+				copyFile(oldFilePath, filePath)
+			}
+			assertError(os.RemoveAll(filePath))
+		}
+	}
+	assertError(os.CopyFS(staticGitPath, os.DirFS(me.savedGoalsPath+"/static")))
 }
 
 func (me *staticFilesUpdate) getStaticWebsiteGitUrl() string {
