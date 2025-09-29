@@ -35,9 +35,7 @@ func (me *staticFilesUpdate) run() {
 		return
 	}
 
-	if false {
-		runner.command("Git push", true, "git", "push")
-	}
+	runner.command("Git push", true, "git", "push")
 }
 
 // Copy old files from Git repository
