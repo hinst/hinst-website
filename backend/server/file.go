@@ -51,8 +51,12 @@ func readJsonFiles[T any](filePaths []string, threadCount int) (items []*T) {
 }
 
 func readTextFile(filePath string) string {
+	return string(readBytesFile(filePath))
+}
+
+func readBytesFile(filePath string) []byte {
 	var fileContent = assertResultError(os.ReadFile(filePath))
-	return string(fileContent)
+	return fileContent
 }
 
 func writeBytesFile(filePath string, data []byte) {

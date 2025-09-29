@@ -8,7 +8,7 @@ import (
 )
 
 func Main() {
-	godotenv.Load()
+	assertError(godotenv.Load())
 	var modePtr = flag.String("mode", "web", "")
 	var wwwPtr = flag.String("www", programTemplate.webFilesPath, "")
 	var allowOriginPtr = flag.String("allowOrigin", programTemplate.allowOrigin, "")

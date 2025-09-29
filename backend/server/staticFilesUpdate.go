@@ -50,7 +50,7 @@ func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
 			var filePath = staticGitPath + "/" + file.Name()
 			var oldFilePath = me.savedGoalsPath + "/static-old/" + file.Name()
 			if file.IsDir() {
-				os.CopyFS(oldFilePath, os.DirFS(filePath))
+				assertError(os.CopyFS(oldFilePath, os.DirFS(filePath)))
 			} else {
 				copyFile(oldFilePath, filePath)
 			}
@@ -67,6 +67,7 @@ func (me *staticFilesUpdate) buildSitemap() {
 		oldFilesPath: me.savedGoalsPath + "/static-old",
 	}
 	builder.run()
+	copyFile(me.savedGoalsPath+"/static-git/sitemap.xml", me.savedGoalsPath+"/static/sitemap.xml")
 }
 
 func (staticFilesUpdate) getStaticWebsiteGitUrl() string {

@@ -6,35 +6,35 @@ import (
 	"time"
 )
 
-// xmlSitemap is the XML representation of <urlset>...</urlset> used in sitemap
-type xmlSitemap struct {
-	XMLName xml.Name `xml:"urlset"`
-	URL     []*xmlSitemapItem    `xml:"url"`
-	Xmlns     string   `xml:"xmlns,attr"`
+// XmlSitemap is the XML representation of <urlset>...</urlset> used in sitemap
+type XmlSitemap struct {
+	XMLName xml.Name          `xml:"urlset"`
+	URL     []*XmlSitemapItem `xml:"url"`
+	Xmlns   string            `xml:"xmlns,attr"`
 }
 
-// xmlSitemapItem is the XML representation of <url> in <sitemap>
-type xmlSitemapItem struct {
-	Loc        string  `xml:"loc"`
-	LastMod    string  `xml:"lastmod"`
-	ChangeFreq string  `xml:"changefreq"`
+// XmlSitemapItem is the XML representation of <url> in <sitemap>
+type XmlSitemapItem struct {
+	Loc        string `xml:"loc"`
+	LastMod    string `xml:"lastmod"`
+	ChangeFreq string `xml:"changefreq,omitempty"`
 	Priority   string `xml:"priority"`
 }
 
 // Sitemap is the structure used to create new sitemap
 type Sitemap struct {
-	items []*SitemapItem
-	options * Options
+	items   []*SitemapItem
+	options *Options
 }
 
 type SitemapItem struct {
 	Loc        string
-	LastMod time.Time
+	LastMod    time.Time
 	ChangeFreq string
 	Priority   float32
 }
 
-func isValidItem(i * SitemapItem) bool {
+func isValidItem(i *SitemapItem) bool {
 	if !validateURL(i.Loc) {
 		_ = fmt.Errorf("[validation error] Invalid URL: %s\n", i.Loc)
 		return false
@@ -47,9 +47,9 @@ func isValidItem(i * SitemapItem) bool {
 }
 
 // NewSitemap creates a new Sitemap
-func NewSitemap(items []*SitemapItem, opts * Options) *Sitemap {
+func NewSitemap(items []*SitemapItem, opts *Options) *Sitemap {
 	s := Sitemap{
-		items: items,
+		items:   items,
 		options: opts,
 	}
 	if s.options == nil {
@@ -58,21 +58,21 @@ func NewSitemap(items []*SitemapItem, opts * Options) *Sitemap {
 	return &s
 }
 
-func (s * Sitemap) ToXMLString() (string, error) {
-	itemsXML := make([]*xmlSitemapItem, len(s.items))
+func (s *Sitemap) ToXMLString() (string, error) {
+	itemsXML := make([]*XmlSitemapItem, len(s.items))
 	for idx, i := range s.items {
 		if s.options.Validate && !isValidItem(i) {
 			return "", ErrValidation
 		}
-		itemsXML[idx] = &xmlSitemapItem {
-			Loc: i.Loc,
-			LastMod: formatTime(i.LastMod),
+		itemsXML[idx] = &XmlSitemapItem{
+			Loc:        i.Loc,
+			LastMod:    formatTime(i.LastMod),
 			ChangeFreq: i.ChangeFreq,
-			Priority: fmt.Sprintf("%.1f", i.Priority),
+			Priority:   fmt.Sprintf("%.1f", i.Priority),
 		}
 	}
-	siXML := xmlSitemap{
-		URL: itemsXML,
+	siXML := XmlSitemap{
+		URL:   itemsXML,
 		Xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
 	}
 	result, err := xmlMarshal(s.options, siXML)
@@ -82,10 +82,10 @@ func (s * Sitemap) ToXMLString() (string, error) {
 	return result, nil
 }
 
-func (s * Sitemap) AddItem(loc string, lastMod time.Time, changeFreq string, priority float32) {
+func (s *Sitemap) AddItem(loc string, lastMod time.Time, changeFreq string, priority float32) {
 	s.items = append(s.items, &SitemapItem{Loc: loc, LastMod: lastMod, ChangeFreq: changeFreq, Priority: priority})
 }
 
-func (s * Sitemap) RemoveItem(idx int) {
+func (s *Sitemap) RemoveItem(idx int) {
 	s.items = append(s.items[:idx], s.items[idx+1:]...)
 }

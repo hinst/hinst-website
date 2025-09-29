@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -15,21 +14,29 @@ type siteMapBuilder struct {
 	newFilesPath       string
 	newFilesPathPrefix string
 	oldFilesPath       string
+	oldSiteMap         *sitemap.XmlSitemap
 	items              []*sitemap.SitemapItem
 }
 
 func (me *siteMapBuilder) run() {
+	me.loadOldSitemap()
 	me.newFilesPathPrefix = me.newFilesPath
 	me.newFilesPathPrefix = strings.TrimPrefix(me.newFilesPathPrefix, "./") + "/"
-	filepath.WalkDir(me.newFilesPath, me.createItem)
-	var options = sitemap.Options{PrettyOutput: true, WithXMLHeader: true, Validate: true}
+	assertError(filepath.WalkDir(me.newFilesPath, me.createItem))
+	var options = sitemap.Options{PrettyOutput: true, WithXMLHeader: true, Validate: false}
 	var siteMap = sitemap.NewSitemap(me.items, &options)
 	var siteMapText = assertResultError(siteMap.ToXMLString())
-	log.Println(me.newFilesPath + "/sitemap.xml")
 	writeTextFile(me.newFilesPath+"/sitemap.xml", siteMapText)
 }
 
 func (me *siteMapBuilder) loadOldSitemap() {
+	var oldSiteMapPath = me.oldFilesPath + "/sitemap.xml"
+	if !checkFileExists(oldSiteMapPath) {
+		return
+	}
+	var text = readBytesFile(me.oldFilesPath + "/sitemap.xml")
+	me.oldSiteMap = &sitemap.XmlSitemap{}
+	readXml(text, me.oldSiteMap)
 }
 
 func (me *siteMapBuilder) createItem(newFilePath string, directory os.DirEntry, err error) error {
@@ -47,14 +54,19 @@ func (me *siteMapBuilder) createItem(newFilePath string, directory os.DirEntry, 
 	var oldFilePath = me.oldFilesPath + "/" + relativePath
 	var haveChange = !checkFilesEqual(oldFilePath, newFilePath)
 	var url = me.webPath + "/" + relativePath
-	log.Println(url)
 	var item = &sitemap.SitemapItem{
-		Loc:        url,
-		Priority:   me.getDefaultPriority(),
-		ChangeFreq: me.getDefaultChangeFrequency(),
+		Loc:      url,
+		Priority: me.getDefaultPriority(),
 	}
 	if haveChange {
 		item.LastMod = time.Now()
+	} else {
+		var previousLastMod = me.findPreviousLastMod(url)
+		if previousLastMod != nil {
+			item.LastMod = *previousLastMod
+		} else {
+			item.LastMod = time.Now()
+		}
 	}
 	me.items = append(me.items, item)
 	return nil
@@ -64,6 +76,15 @@ func (siteMapBuilder) getDefaultPriority() float32 {
 	return 0.5
 }
 
-func (siteMapBuilder) getDefaultChangeFrequency() string {
-	return "yearly"
+func (me *siteMapBuilder) findPreviousLastMod(url string) *time.Time {
+	if nil == me.oldSiteMap {
+		return nil
+	}
+	for _, item := range me.oldSiteMap.URL {
+		if item.Loc == url {
+			var previousTime = assertResultError(time.Parse(time.RFC3339, item.LastMod))
+			return &previousTime
+		}
+	}
+	return nil
 }
