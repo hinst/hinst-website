@@ -4,11 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"slices"
-	"strings"
-
-	"github.com/carlosstrand/go-sitemap"
 )
 
 type staticFilesUpdate struct {
@@ -65,26 +61,11 @@ func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
 }
 
 func (me *staticFilesUpdate) buildSitemap() {
-	var items []*sitemap.SitemapItem
-	var pathPrefix = me.savedGoalsPath + "/static"
-	pathPrefix = strings.TrimPrefix(pathPrefix, "./")
-	filepath.WalkDir(me.savedGoalsPath+"/static", func(path string, directory os.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if directory.IsDir() {
-			return nil
-		}
-		if filepath.Ext(path) == ".html" {
-			var relativePath = path[len(pathPrefix)+1:]
-			relativePath = strings.ReplaceAll(relativePath, "\\", "/")
-			var oldPath = me.savedGoalsPath + "/static-old/" + relativePath
-			log.Println(path, relativePath, checkFileExists(oldPath))
-		}
-		return nil
-	})
-	var siteMap = sitemap.NewSitemap(items, nil)
-	siteMap.ToXMLString()
+	var builder = siteMapBuilder{
+		newFilesPath: me.savedGoalsPath + "/static",
+		oldFilesPath: me.savedGoalsPath + "/static-old",
+	}
+	builder.run()
 }
 
 func (me *staticFilesUpdate) getStaticWebsiteGitUrl() string {
