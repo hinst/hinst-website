@@ -23,7 +23,7 @@ func (me *siteMapBuilder) run() {
 	me.newFilesPathPrefix = me.newFilesPath
 	me.newFilesPathPrefix = strings.TrimPrefix(me.newFilesPathPrefix, "./") + "/"
 	assertError(filepath.WalkDir(me.newFilesPath, me.createItem))
-	var options = sitemap.Options{PrettyOutput: true, WithXMLHeader: true, Validate: false}
+	var options = sitemap.Options{PrettyOutput: true, WithXMLHeader: true, Validate: true}
 	var siteMap = sitemap.NewSitemap(me.items, &options)
 	var siteMapText = assertResultError(siteMap.ToXMLString())
 	writeTextFile(me.newFilesPath+"/sitemap.xml", siteMapText)
@@ -55,8 +55,9 @@ func (me *siteMapBuilder) createItem(newFilePath string, directory os.DirEntry, 
 	var haveChange = !checkFilesEqual(oldFilePath, newFilePath)
 	var url = me.webPath + "/" + relativePath
 	var item = &sitemap.SitemapItem{
-		Loc:      url,
-		Priority: me.getDefaultPriority(),
+		Loc:        url,
+		Priority:   me.getDefaultPriority(),
+		ChangeFreq: me.getDefaultChangeFreq(),
 	}
 	if haveChange {
 		item.LastMod = time.Now()
@@ -74,6 +75,10 @@ func (me *siteMapBuilder) createItem(newFilePath string, directory os.DirEntry, 
 
 func (siteMapBuilder) getDefaultPriority() float32 {
 	return 0.5
+}
+
+func (siteMapBuilder) getDefaultChangeFreq() string {
+	return "yearly"
 }
 
 func (me *siteMapBuilder) findPreviousLastMod(url string) *time.Time {
