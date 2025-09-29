@@ -1,3 +1,5 @@
+github.com/carlosstrand/go-sitemap v0.0.0-20191230193616-37cd6896357b h1:irHAba/Cx721r27eh+0/s7Iny2tz1seKAGbQRh8O2kI=
+github.com/carlosstrand/go-sitemap v0.0.0-20191230193616-37cd6896357b/go.mod h1:jFnYFQUoDfqmXJKCX4EvrQQ0RrMZ2ZIYqlIJNndk8L4=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/mattn/go-sqlite3 v1.14.32 h1:JD12Ag3oLy1zQA+BNn74xRgaBbdhbNIDYvQUEuuErjs=

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"io/fs"
@@ -86,8 +87,13 @@ func getFileNameWithoutExtension(filePath string) string {
 }
 
 func checkFileExists(filePath string) bool {
-	_, err := os.Stat(filePath)
-	return err == nil
+	var info, err = os.Stat(filePath)
+	return err == nil && !info.IsDir()
+}
+
+func checkDirectoryExists(directoryPath string) bool {
+	var info, err = os.Stat(directoryPath)
+	return err == nil && info.IsDir()
 }
 
 func copyFile(destinationPath string, sourcePath string) (size int64) {
@@ -96,4 +102,42 @@ func copyFile(destinationPath string, sourcePath string) (size int64) {
 	var destinationFile = assertResultError(os.Create(destinationPath))
 	defer destinationFile.Close()
 	return assertResultError(io.Copy(destinationFile, sourceFile))
+}
+
+// https://stackoverflow.com/questions/29505089/how-can-i-compare-two-files-in-golang
+func checkFilesEqual(file1, file2 string) bool {
+	const chunkSize = 64000
+	f1, err := os.Open(file1)
+	if err != nil {
+		return false
+	}
+	defer f1.Close()
+
+	f2, err := os.Open(file2)
+	if err != nil {
+		return false
+	}
+	defer f2.Close()
+
+	for {
+		b1 := make([]byte, chunkSize)
+		_, err1 := f1.Read(b1)
+
+		b2 := make([]byte, chunkSize)
+		_, err2 := f2.Read(b2)
+
+		if err1 != nil || err2 != nil {
+			if err1 == io.EOF && err2 == io.EOF {
+				return true
+			} else if err1 == io.EOF || err2 == io.EOF {
+				return false
+			} else {
+				panic("File comparison error")
+			}
+		}
+
+		if !bytes.Equal(b1, b2) {
+			return false
+		}
+	}
 }

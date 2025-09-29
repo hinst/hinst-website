@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"slices"
+	"strings"
+
+	"github.com/carlosstrand/go-sitemap"
 )
 
 type staticFilesUpdate struct {
@@ -14,9 +18,11 @@ type staticFilesUpdate struct {
 func (me *staticFilesUpdate) run() {
 	var staticGitPath = me.savedGoalsPath + "/static-git"
 	var runner = new(commandRunner)
-	if !checkFileExists(staticGitPath) {
+	if !checkDirectoryExists(staticGitPath) {
 		runner.command("Git clone", true, "git", "clone", me.getStaticWebsiteGitUrl(), staticGitPath)
 	}
+	me.flushFiles(staticGitPath)
+	me.buildSitemap()
 
 	runner.Dir = staticGitPath
 	runner.command("Git fetch", true, "git", "fetch")
@@ -24,7 +30,6 @@ func (me *staticFilesUpdate) run() {
 	runner.command("Git config", true, "git", "config", "core.autocrlf", "true")
 	runner.command("Git config", true, "git", "config", "user.name", getQuotedString(me.getBotName()))
 	runner.command("Git config", true, "git", "config", "user.email", getQuotedString(me.getEmail()))
-	me.flushFiles(staticGitPath)
 
 	runner.command("Git add", true, "git", "add", ".")
 	runner.command("Git status", true, "git", "status")
@@ -39,7 +44,10 @@ func (me *staticFilesUpdate) run() {
 	}
 }
 
+// Copy old files from Git repository
+// Copy new files into Git repository
 func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
+	assertError(os.RemoveAll(me.savedGoalsPath + "/static-old"))
 	var preservedFiles = []string{".git", "posts"}
 	for _, file := range assertResultError(os.ReadDir(staticGitPath)) {
 		if !slices.Contains(preservedFiles, file.Name()) {
@@ -54,6 +62,29 @@ func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
 		}
 	}
 	assertError(os.CopyFS(staticGitPath, os.DirFS(me.savedGoalsPath+"/static")))
+}
+
+func (me *staticFilesUpdate) buildSitemap() {
+	var items []*sitemap.SitemapItem
+	var pathPrefix = me.savedGoalsPath + "/static"
+	pathPrefix = strings.TrimPrefix(pathPrefix, "./")
+	filepath.WalkDir(me.savedGoalsPath+"/static", func(path string, directory os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if directory.IsDir() {
+			return nil
+		}
+		if filepath.Ext(path) == ".html" {
+			var relativePath = path[len(pathPrefix)+1:]
+			relativePath = strings.ReplaceAll(relativePath, "\\", "/")
+			var oldPath = me.savedGoalsPath + "/static-old/" + relativePath
+			log.Println(path, relativePath, checkFileExists(oldPath))
+		}
+		return nil
+	})
+	var siteMap = sitemap.NewSitemap(items, nil)
+	siteMap.ToXMLString()
 }
 
 func (me *staticFilesUpdate) getStaticWebsiteGitUrl() string {
