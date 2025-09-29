@@ -23,7 +23,7 @@ func (me *webStaticGoals) init(url string, db *database, folder string) {
 func (me *webStaticGoals) run() {
 	assertError(os.RemoveAll(me.folder))
 	assertError(os.MkdirAll(me.folder, file_mode.OS_USER_RWX))
-	os.CopyFS(me.folder+"/static", os.DirFS("pages/static"))
+	assertError(os.CopyFS(me.folder+"/static", os.DirFS("pages/static")))
 	for _, lang := range supportedLanguages {
 		me.generate(lang)
 	}
