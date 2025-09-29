@@ -62,14 +62,19 @@ func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
 
 func (me *staticFilesUpdate) buildSitemap() {
 	var builder = siteMapBuilder{
+		webPath:      me.getPublicUrl(),
 		newFilesPath: me.savedGoalsPath + "/static",
 		oldFilesPath: me.savedGoalsPath + "/static-old",
 	}
 	builder.run()
 }
 
-func (me *staticFilesUpdate) getStaticWebsiteGitUrl() string {
+func (staticFilesUpdate) getStaticWebsiteGitUrl() string {
 	return fmt.Sprintf("https://%v@github.com/hinst/hinst.github.io.git", requireEnvVar("GIT_TOKEN"))
+}
+
+func (staticFilesUpdate) getPublicUrl() string {
+	return "https://hinst.github.io"
 }
 
 func (me *staticFilesUpdate) getBotName() string {
