@@ -8,7 +8,9 @@ import (
 )
 
 func Main() {
-	assertError(godotenv.Load())
+	if checkFileExists(".env") {
+		assertError(godotenv.Load())
+	}
 	var modePtr = flag.String("mode", "web", "")
 	var wwwPtr = flag.String("www", programTemplate.webFilesPath, "")
 	var allowOriginPtr = flag.String("allowOrigin", programTemplate.allowOrigin, "")
