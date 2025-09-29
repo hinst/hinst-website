@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/carlosstrand/go-sitemap"
+	"github.com/hinst/hinst-website/server/sitemap"
 )
 
 type siteMapBuilder struct {
