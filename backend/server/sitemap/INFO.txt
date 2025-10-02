@@ -1,0 +1,2 @@
+Files in this folder are copied from an external repository: https://github.com/carlosstrand/go-sitemap
+I copied them because I had to make some minor changes to the code before using it.
