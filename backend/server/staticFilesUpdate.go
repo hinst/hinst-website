@@ -42,7 +42,7 @@ func (me *staticFilesUpdate) run() {
 // Copy new files into Git repository
 func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
 	assertError(os.RemoveAll(me.savedGoalsPath + "/static-old"))
-	var preservedFiles = []string{".git", "posts"}
+	var preservedFiles = []string{".git", "posts", "robots.txt"}
 	for _, file := range assertResultError(os.ReadDir(staticGitPath)) {
 		if !slices.Contains(preservedFiles, file.Name()) {
 			var filePath = staticGitPath + "/" + file.Name()
