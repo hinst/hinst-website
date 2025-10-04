@@ -123,14 +123,17 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 		data.Images = append(data.Images, i)
 	}
 
-	var pageTitle = me.getTranslatedTitle(goalRecord.Title, requestedLanguage) + " • " +
-		dateTime.UTC().Format("2006-01-02") + " • " +
+	var goalTitle = me.getTranslatedTitle(goalRecord.Title, requestedLanguage)
+	var pageTitle = goalTitle + " • " +
+		dateTime.UTC().Format("2006-01-02")
+	var pageDescription = goalTitle + " - " +
+		dateTime.UTC().Format("2006-01-02") + " - " +
 		goalPostRecord.getTranslatedTitle(requestedLanguage)
 	var content = executeTemplateFile("pages/html/templates/goalPost.html", data)
-	var goalTitle = me.getTranslatedTitle(pageTitle, requestedLanguage)
 	writeHtmlResponse(response, me.wrapTemplatePage(request, page_data.Content{
-		Title:   goalTitle,
-		Content: template.HTML(content),
+		Title:       pageTitle,
+		Description: pageDescription,
+		Content:     template.HTML(content),
 	}))
 }
 
