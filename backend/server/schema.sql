@@ -48,7 +48,6 @@ CREATE TABLE IF NOT EXISTS riddles (
 
 CREATE TABLE IF NOT EXISTS urlPings (
 	url TEXT NOT NULL,
-	service INTEGER NOT NULL,
-	doneAt INTEGER, /* Unix seconds UTC */
-	PRIMARY KEY (url, service)
+	googlePingedAt INTEGER, /* Unix seconds UTC */
+	PRIMARY KEY (url)
 );
