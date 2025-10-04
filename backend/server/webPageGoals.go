@@ -50,8 +50,9 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 	}
 	var content = executeTemplateFile("pages/html/templates/goalList.html", data)
 	writeHtmlResponse(response, me.wrapTemplatePage(request, page_data.Content{
-		Title:   "My Personal Goals",
-		Content: template.HTML(content),
+		LanguageTag: requestedLanguage.String(),
+		Title:       "My Personal Goals",
+		Content:     template.HTML(content),
 	}))
 }
 
@@ -88,8 +89,9 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 	}
 	var content = executeTemplateFile("pages/html/templates/goalPosts.html", data)
 	writeHtmlResponse(response, me.wrapTemplatePage(request, page_data.Content{
-		Title:   "Goal diary: " + goalTitle,
-		Content: template.HTML(content),
+		LanguageTag: requestedLanguage.String(),
+		Title:       "Goal diary: " + goalTitle,
+		Content:     template.HTML(content),
 	}))
 }
 
@@ -131,6 +133,7 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 		goalPostRecord.getTranslatedTitle(requestedLanguage)
 	var content = executeTemplateFile("pages/html/templates/goalPost.html", data)
 	writeHtmlResponse(response, me.wrapTemplatePage(request, page_data.Content{
+		LanguageTag: requestedLanguage.String(),
 		Title:       pageTitle,
 		Description: pageDescription,
 		Content:     template.HTML(content),
