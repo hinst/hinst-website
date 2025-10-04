@@ -36,11 +36,11 @@ type SitemapItem struct {
 
 func isValidItem(i *SitemapItem) bool {
 	if !validateURL(i.Loc) {
-		_ = fmt.Errorf("[validation error] Invalid URL: %s\n", i.Loc)
+		_ = fmt.Errorf("[validation error] Invalid URL: %s", i.Loc)
 		return false
 	}
 	if !validateChangeFreq(i.ChangeFreq) {
-		_ = fmt.Errorf("[validation error] Invalid ChangeFreq: %s\n", i.ChangeFreq)
+		_ = fmt.Errorf("[validation error] Invalid ChangeFreq: %s", i.ChangeFreq)
 		return false
 	}
 	return true

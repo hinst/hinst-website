@@ -83,7 +83,7 @@ func (si * SitemapIndex) ToXMLString() (string, error) {
 
 func isValidIndexItem(i * SitemapIndexItem) bool {
 	if !validateURL(i.Loc) {
-		_ = fmt.Errorf("[validation error] Invalid URL: %s\n", i.Loc)
+		_ = fmt.Errorf("[validation error] Invalid URL: %s", i.Loc)
 		return false
 	}
 	return true
