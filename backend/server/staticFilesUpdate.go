@@ -9,6 +9,7 @@ import (
 )
 
 type staticFilesUpdate struct {
+	db             *database
 	savedGoalsPath string
 }
 
@@ -31,12 +32,15 @@ func (me *staticFilesUpdate) run() {
 	runner.command("Git add", true, "git", "add", ".")
 	runner.command("Git status", true, "git", "status")
 	var commitOk = runner.command("Git commit", false, "git", "commit", "-m", "Automatic update")
+	me.submitSitemap()
 	if !commitOk {
 		log.Println("Nothing to commit")
 		return
 	}
 
-	runner.command("Git push", true, "git", "push")
+	if false {
+		runner.command("Git push", true, "git", "push")
+	}
 }
 
 // Copy old files from Git repository
@@ -71,6 +75,14 @@ func (me *staticFilesUpdate) buildSitemap() {
 	}
 	builder.run()
 	copyFile(me.savedGoalsPath+"/static-git/sitemap.xml", me.savedGoalsPath+"/static/sitemap.xml")
+}
+
+func (me *staticFilesUpdate) submitSitemap() {
+	var submitter = siteMapSubmitter{
+		db:          me.db,
+		siteMapPath: me.savedGoalsPath + "/static/sitemap.xml",
+	}
+	submitter.run()
 }
 
 func (staticFilesUpdate) getStaticWebsiteGitUrl() string {

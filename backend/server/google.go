@@ -23,9 +23,8 @@ func (GoogleIndexingClient) getScope() string {
 
 func (me *GoogleIndexingClient) connect() {
 	var jsonText = readBytesFile(requireEnvVar("GOOGLE_ACCOUNT_JSON"))
-	var conf = assertResultError(google.ConfigFromJSON(jsonText, me.getScope()))
-	conf.Client(context.Background(), nil)
-	me.client = conf.Client(context.Background(), nil)
+	var conf = assertResultError(google.JWTConfigFromJSON(jsonText, me.getScope()))
+	me.client = conf.Client(context.Background())
 }
 
 func (me *GoogleIndexingClient) updateUrl(url string) bool {
