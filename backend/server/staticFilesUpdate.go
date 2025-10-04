@@ -22,7 +22,7 @@ func (me *staticFilesUpdate) run() {
 	me.buildSitemap()
 
 	runner.Dir = staticGitPath
-	runner.command("Git fetch", true, "git", "fetch")
+	runner.command("Git pull", true, "git", "pull")
 	runner.command("Git config", true, "git", "config", "core.fileMode", "false")
 	runner.command("Git config", true, "git", "config", "core.autocrlf", "true")
 	runner.command("Git config", true, "git", "config", "user.name", getQuotedString(me.getBotName()))
@@ -60,7 +60,7 @@ func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
 
 func (me *staticFilesUpdate) checkPreservedFile(fileName string) bool {
 	var preservedFiles = []string{".git", "posts", "robots.txt"}
-	return slices.Contains(preservedFiles, fileName) || strings.HasPrefix("googled", fileName)
+	return slices.Contains(preservedFiles, fileName) || strings.HasPrefix(fileName, "googled")
 }
 
 func (me *staticFilesUpdate) buildSitemap() {
