@@ -21,6 +21,7 @@ func (me *staticFilesUpdate) run() {
 	}
 	me.flushFiles(staticGitPath)
 	me.buildSitemap()
+	me.submitSitemap()
 
 	runner.Dir = staticGitPath
 	runner.command("Git pull", true, "git", "pull")
@@ -32,15 +33,12 @@ func (me *staticFilesUpdate) run() {
 	runner.command("Git add", true, "git", "add", ".")
 	runner.command("Git status", true, "git", "status")
 	var commitOk = runner.command("Git commit", false, "git", "commit", "-m", "Automatic update")
-	me.submitSitemap()
 	if !commitOk {
 		log.Println("Nothing to commit")
 		return
 	}
 
-	if false {
-		runner.command("Git push", true, "git", "push")
-	}
+	runner.command("Git push", true, "git", "push")
 }
 
 // Copy old files from Git repository

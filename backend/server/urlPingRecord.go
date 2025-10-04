@@ -1,7 +1,7 @@
 package server
 
 type urlPingRecord struct {
-	Url     string
-	Service int
-	DoneAt  int64 // Unix seconds UTC
+	url     string
+	service int
+	doneAt  int64 // Unix seconds UTC
 }
