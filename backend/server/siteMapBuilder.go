@@ -87,7 +87,7 @@ func (me *siteMapBuilder) findPreviousLastMod(url string) *time.Time {
 	}
 	for _, item := range me.oldSiteMap.URL {
 		if item.Loc == url {
-			var previousTime = assertResultError(time.Parse(time.RFC3339, item.LastMod))
+			var previousTime = assertResultError(time.Parse(time.DateOnly, item.LastMod)).UTC()
 			return &previousTime
 		}
 	}
