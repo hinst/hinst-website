@@ -34,16 +34,16 @@ func (me *webPageGoals) init(db *database, webPath string) []namedWebFunction {
 }
 
 func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.Request) {
-	var language = getWebLanguage(request)
-	var goals = me.db.getGoals()
+	var requestedLanguage = getWebLanguage(request)
+	var goalRecords = me.db.getGoals()
 	var data = page_data.GoalList{Base: me.getBaseTemplate(request)}
-	for _, goal := range goals {
+	for _, goalRecord := range goalRecords {
 		var item page_data.GoalCard
-		var metaInfo = goalInfo{}.findByTitle(personalGoalInfos, goal.Title)
-		item.Id = goal.Id
-		item.Title = goal.Title
+		var metaInfo = goalInfo{}.findByTitle(personalGoalInfos, goalRecord.Title)
+		item.Id = goalRecord.Id
+		item.Title = goalRecord.Title
 		item.Image = metaInfo.coverImage
-		if language != supportedLanguages[0] {
+		if requestedLanguage != supportedLanguages[0] {
 			item.Title = metaInfo.englishTitle
 		}
 		data.Goals = append(data.Goals, item)
@@ -55,11 +55,12 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.Request) {
 	var requestedLanguage = getWebLanguage(request)
 	var goalId = me.inputValidGoalId(request.PathValue("id"))
-	var goalPostRecords = me.db.getGoalPosts(goalId, false, requestedLanguage)
-	if goalPostRecords == nil {
+	var goalRecord = me.db.getGoal(goalId)
+	if goalRecord == nil {
 		var errorMessage = "Cannot find goal with id=" + getStringFromInt64(goalId)
 		panic(webError{errorMessage, http.StatusNotFound})
 	}
+	var goalPostRecords = me.db.getGoalPosts(goalId, false, requestedLanguage)
 
 	var goalPosts []page_data.GoalPostItem
 	for _, post := range goalPostRecords {
@@ -77,8 +78,13 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 	data.GoalId = goalId
 	data.Load(goalPosts)
 
+	var metaInfo = goalInfo{}.findByTitle(personalGoalInfos, goalRecord.Title)
+	var goalTitle = goalRecord.Title
+	if requestedLanguage != supportedLanguages[0] {
+		goalTitle = metaInfo.englishTitle
+	}
 	var content = executeTemplateFile("pages/html/templates/goalPosts.html", data)
-	writeHtmlResponse(response, me.wrapTemplatePage(request, "Goal diary", content))
+	writeHtmlResponse(response, me.wrapTemplatePage(request, "Goal diary: "+goalTitle, content))
 }
 
 func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *http.Request) {
