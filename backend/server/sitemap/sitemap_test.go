@@ -8,27 +8,27 @@ import (
 var NewYorkLoc, _ = time.LoadLocation("America/New_York")
 var MockIndexItems = []*SitemapIndexItem{
 	{
-		Loc: "http://mysite.com/sitemap_1.xml",
+		Loc:     "http://mysite.com/sitemap_1.xml",
 		LastMod: time.Date(2019, 10, 10, 8, 0, 0, 0, NewYorkLoc),
 	},
 	{
-		Loc: "http://mysite.com/sitemap_2.xml",
+		Loc:     "http://mysite.com/sitemap_2.xml",
 		LastMod: time.Date(2020, 10, 10, 8, 0, 0, 0, NewYorkLoc),
 	},
 }
 
 var MockItems = []*SitemapItem{
 	{
-		Loc: "http://mysite.com/about",
-		LastMod: time.Date(2019, 10, 10, 8, 0, 0, 0, NewYorkLoc),
+		Loc:        "http://mysite.com/about",
+		LastMod:    time.Date(2019, 10, 10, 8, 0, 0, 0, NewYorkLoc),
 		ChangeFreq: "daily",
-		Priority: 0.5,
+		Priority:   0.5,
 	},
 	{
-		Loc: "http://mysite.com/contact",
-		LastMod: time.Date(2020, 10, 10, 8, 0, 0, 0, NewYorkLoc),
+		Loc:        "http://mysite.com/contact",
+		LastMod:    time.Date(2020, 10, 10, 8, 0, 0, 0, NewYorkLoc),
 		ChangeFreq: "monthly",
-		Priority: 0.5,
+		Priority:   0.5,
 	},
 }
 
@@ -48,10 +48,10 @@ func assertItem(t *testing.T, i *SitemapItem, loc string, lastMod time.Time, cha
 	if !i.LastMod.Equal(lastMod) {
 		t.Errorf("Assert lastMod failed. Expected %s, Received: %s", lastMod, i.LastMod)
 	}
-	if i.ChangeFreq != i.ChangeFreq {
+	if i.ChangeFreq != changeFreq {
 		t.Errorf("Assert changeFreq failed. Expected %s, Received: %s", changeFreq, i.ChangeFreq)
 	}
-	if i.Priority != i.Priority {
+	if i.Priority != priority {
 		t.Errorf("Assert priority failed. Expected %.1f, Received: %.1f", priority, i.Priority)
 	}
 }
@@ -99,7 +99,7 @@ func TestSitemapIndexToXMLString(t *testing.T) {
 func TestSitemapIndexToXMLStringWithValidation(t *testing.T) {
 	si := NewSitemapIndex([]*SitemapIndexItem{
 		{
-			Loc: "http//invalid-url.com",
+			Loc:     "http//invalid-url.com",
 			LastMod: time.Now(),
 		},
 	}, nil)

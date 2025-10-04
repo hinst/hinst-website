@@ -49,7 +49,10 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 		data.Goals = append(data.Goals, item)
 	}
 	var content = executeTemplateFile("pages/html/templates/goalList.html", data)
-	writeHtmlResponse(response, me.wrapTemplatePage(request, "My Personal Goals", content))
+	writeHtmlResponse(response, me.wrapTemplatePage(request, page_data.Content{
+		Title:   "My Personal Goals",
+		Content: template.HTML(content),
+	}))
 }
 
 func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.Request) {
@@ -84,7 +87,10 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 		goalTitle = metaInfo.englishTitle
 	}
 	var content = executeTemplateFile("pages/html/templates/goalPosts.html", data)
-	writeHtmlResponse(response, me.wrapTemplatePage(request, "Goal diary: "+goalTitle, content))
+	writeHtmlResponse(response, me.wrapTemplatePage(request, page_data.Content{
+		Title:   "Goal diary: " + goalTitle,
+		Content: template.HTML(content),
+	}))
 }
 
 func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *http.Request) {
@@ -118,10 +124,14 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 	}
 
 	var pageTitle = me.getTranslatedTitle(goalRecord.Title, requestedLanguage) + " • " +
-		dateTime.UTC().Format("2006-01-02")
+		dateTime.UTC().Format("2006-01-02") + " • " +
+		goalPostRecord.getTranslatedTitle(requestedLanguage)
 	var content = executeTemplateFile("pages/html/templates/goalPost.html", data)
 	var goalTitle = me.getTranslatedTitle(pageTitle, requestedLanguage)
-	writeHtmlResponse(response, me.wrapTemplatePage(request, goalTitle, content))
+	writeHtmlResponse(response, me.wrapTemplatePage(request, page_data.Content{
+		Title:   goalTitle,
+		Content: template.HTML(content),
+	}))
 }
 
 func (me *webPageGoals) getTranslatedTitle(title string, language language.Tag) string {
@@ -135,15 +145,16 @@ func (me *webPageGoals) getTranslatedTitle(title string, language language.Tag) 
 	return metaInfo.englishTitle
 }
 
-func (me *webPageGoals) wrapTemplatePage(request *http.Request, pageTitle string, content string) string {
-	var headerData = page_data.Content{Base: me.getBaseTemplate(request), Title: pageTitle}
-	var page = page_data.Content{
-		Base:    me.getBaseTemplate(request),
-		Title:   pageTitle,
-		Header:  template.HTML(executeTemplateFile("pages/html/templates/header.html", headerData)),
-		Content: template.HTML(content),
+func (me *webPageGoals) wrapTemplatePage(request *http.Request, content page_data.Content) string {
+	if content.Description == "" {
+		content.Description = content.Title
 	}
-	return executeTemplateFile("pages/html/templates/template.html", page)
+	var headerContent = content
+	headerContent.Base = me.getBaseTemplate(request)
+	var pageContent = content
+	pageContent.Base = me.getBaseTemplate(request)
+	pageContent.Header = template.HTML(executeTemplateFile("pages/html/templates/header.html", headerContent))
+	return executeTemplateFile("pages/html/templates/template.html", pageContent)
 }
 
 func (me *webPageGoals) getGoalPostImage(response http.ResponseWriter, request *http.Request) {
@@ -156,7 +167,7 @@ func (me *webPageGoals) getGoalPostImage(response http.ResponseWriter, request *
 	}
 	setCacheAge(response, time.Hour)
 	response.Header().Set("Content-Type", image.contentType)
-	response.Write(image.file)
+	var _, _ = response.Write(image.file)
 }
 
 func (me *webPageGoals) getBaseTemplate(request *http.Request) page_data.Base {

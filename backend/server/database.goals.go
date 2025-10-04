@@ -197,7 +197,7 @@ func (me *database) migrate() {
 				var response *http.Response
 				for completed := false; !completed; {
 					response = assertResultError(client.Post(url, contentTypeText, strings.NewReader(title)))
-					defer response.Body.Close()
+					defer ioCloseSilently(response.Body)
 					if response.StatusCode == http.StatusTooManyRequests {
 						time.Sleep(time.Second)
 					} else {

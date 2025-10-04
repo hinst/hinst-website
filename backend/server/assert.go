@@ -16,3 +16,6 @@ func assertCondition[T any](condition bool, exception func() T) {
 		panic(exception())
 	}
 }
+
+func ignoreError(err error) {
+}

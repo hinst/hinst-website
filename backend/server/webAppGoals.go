@@ -91,7 +91,7 @@ func (me *webAppGoals) getGoalPostImage(response http.ResponseWriter, request *h
 	}
 	setCacheAge(response, time.Hour)
 	response.Header().Set("Content-Type", image.contentType)
-	response.Write(image.file)
+	var _, _ = response.Write(image.file)
 }
 
 func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *http.Request) {

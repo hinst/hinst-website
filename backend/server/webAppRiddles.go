@@ -26,7 +26,7 @@ func (me *webAppRiddles) init(db *database) []namedWebFunction {
 
 func (me *webAppRiddles) getPrimeNumbers(response http.ResponseWriter, request *http.Request) {
 	setCacheAge(response, time.Hour)
-	response.Write(encodeJson(globalPrimeNumbers))
+	var _, _ = response.Write(encodeJson(globalPrimeNumbers))
 }
 
 func (me *webAppRiddles) createRiddle(response http.ResponseWriter, request *http.Request) {
@@ -42,7 +42,7 @@ func (me *webAppRiddles) createRiddle(response http.ResponseWriter, request *htt
 		Steps:   me.riddles.steps,
 		Limit:   me.riddles.limit,
 	}
-	response.Write(encodeJson(responseObject))
+	var _, _ = response.Write(encodeJson(responseObject))
 }
 
 func (me *webAppRiddles) answerRiddle(response http.ResponseWriter, request *http.Request) {
@@ -62,5 +62,5 @@ func (me *webAppRiddles) answerRiddle(response http.ResponseWriter, request *htt
 		}
 		isCorrect = product == item.product
 	})
-	response.Write(encodeJson(isCorrect))
+	var _, _ = response.Write(encodeJson(isCorrect))
 }

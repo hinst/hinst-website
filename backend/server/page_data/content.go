@@ -4,7 +4,8 @@ import "html/template"
 
 type Content struct {
 	Base
-	Title   string
-	Header  template.HTML
-	Content template.HTML
+	Title       string
+	Description string
+	Header      template.HTML
+	Content     template.HTML
 }

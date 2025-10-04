@@ -50,7 +50,7 @@ func (me *webApp) wrap(function func(http.ResponseWriter, *http.Request)) func(h
 				var webError, isWebError = exception.(webError)
 				if isWebError {
 					response.WriteHeader(webError.Status)
-					response.Write(encodeJson(webError))
+					var _, _ = response.Write(encodeJson(webError))
 				} else {
 					response.WriteHeader(http.StatusInternalServerError)
 					panic(exception)

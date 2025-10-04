@@ -72,13 +72,13 @@ func decodeWebJson(input io.ReadCloser, value any) {
 
 func writeJsonResponse(response http.ResponseWriter, value any) {
 	response.Header().Set("Content-Type", contentTypeJson)
-	response.Write(encodeJson(value))
+	var _, _ = response.Write(encodeJson(value))
 }
 
 func writeHtmlResponse(response http.ResponseWriter, text string) {
 	text = gohtml.Format(text)
 	response.Header().Set("Content-Type", "text/html; charset=utf-8")
-	response.Write([]byte(text))
+	var _, _ = response.Write([]byte(text))
 }
 
 func readTextFromUrl(url string) string {
@@ -87,7 +87,7 @@ func readTextFromUrl(url string) string {
 
 func readBytesFromUrl(url string) []byte {
 	var response = assertResultError(http.Get(url))
-	defer response.Body.Close()
+	defer ioCloseSilently(response.Body)
 	if response.StatusCode != http.StatusOK {
 		panic("Bad status=" + response.Status + " returned from url=" + url)
 	}

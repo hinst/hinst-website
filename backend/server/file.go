@@ -11,7 +11,7 @@ import (
 
 func readJsonFile[T any](filePath string, receiver T) T {
 	var file = assertResultError(os.Open(filePath))
-	defer file.Close()
+	defer ioCloseSilently(file)
 	assertError(json.NewDecoder(file).Decode(receiver))
 	return receiver
 }
@@ -50,9 +50,9 @@ func checkDirectoryExists(directoryPath string) bool {
 
 func copyFile(destinationPath string, sourcePath string) (size int64) {
 	var sourceFile = assertResultError(os.Open(sourcePath))
-	defer sourceFile.Close()
+	defer ioCloseSilently(sourceFile)
 	var destinationFile = assertResultError(os.Create(destinationPath))
-	defer destinationFile.Close()
+	defer ioClose(destinationFile)
 	return assertResultError(io.Copy(destinationFile, sourceFile))
 }
 
@@ -63,13 +63,13 @@ func checkFilesEqual(file1, file2 string) bool {
 	if err != nil {
 		return false
 	}
-	defer f1.Close()
+	defer ioCloseSilently(f1)
 
 	f2, err := os.Open(file2)
 	if err != nil {
 		return false
 	}
-	defer f2.Close()
+	defer ioCloseSilently(f2)
 
 	for {
 		b1 := make([]byte, chunkSize)
