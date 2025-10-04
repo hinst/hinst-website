@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"slices"
+	"strings"
 )
 
 type staticFilesUpdate struct {
@@ -42,9 +43,8 @@ func (me *staticFilesUpdate) run() {
 // Copy new files into Git repository
 func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
 	assertError(os.RemoveAll(me.savedGoalsPath + "/static-old"))
-	var preservedFiles = []string{".git", "posts", "robots.txt"}
 	for _, file := range assertResultError(os.ReadDir(staticGitPath)) {
-		if !slices.Contains(preservedFiles, file.Name()) {
+		if !me.checkPreservedFile(file.Name()) {
 			var filePath = staticGitPath + "/" + file.Name()
 			var oldFilePath = me.savedGoalsPath + "/static-old/" + file.Name()
 			if file.IsDir() {
@@ -56,6 +56,11 @@ func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
 		}
 	}
 	assertError(os.CopyFS(staticGitPath, os.DirFS(me.savedGoalsPath+"/static")))
+}
+
+func (me *staticFilesUpdate) checkPreservedFile(fileName string) bool {
+	var preservedFiles = []string{".git", "posts", "robots.txt"}
+	return slices.Contains(preservedFiles, fileName) || strings.HasPrefix("googled", fileName)
 }
 
 func (me *staticFilesUpdate) buildSitemap() {
