@@ -11,12 +11,12 @@ func NewOptions() *Options {
 	return &Options{
 		PrettyOutput:  false,
 		WithXMLHeader: false,
-		Validate: true,
+		Validate:      true,
 	}
 }
 
 func formatTime(t time.Time) string {
-	return t.Format(time.RFC3339)
+	return t.Format(time.DateOnly)
 }
 
 func xmlMarshal(options *Options, obj interface{}) (string, error) {
