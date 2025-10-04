@@ -1,16 +1,45 @@
 package server
 
 import (
+	"bytes"
 	"context"
+	"net/http"
 
 	"golang.org/x/oauth2/google"
 )
 
-const GOOGLE_SCOPE_INDEXING = "https://www.googleapis.com/auth/indexing"
+type GoogleIndexingClient struct {
+	client *http.Client
+}
 
-func connectGoogleIndexing() {
+type GoogleUrlNotification struct {
+	Url  string `json:"url"`
+	Type string `json:"type"`
+}
+
+func (GoogleIndexingClient) getScope() string {
+	return "https://www.googleapis.com/auth/indexing"
+}
+
+func (me *GoogleIndexingClient) connect() {
 	var jsonText = readBytesFile(requireEnvVar("GOOGLE_ACCOUNT_JSON"))
-	var conf = assertResultError(google.ConfigFromJSON(jsonText, GOOGLE_SCOPE_INDEXING))
-	client := conf.Client(context.Background(), nil)
-	client.Get("...")
+	var conf = assertResultError(google.ConfigFromJSON(jsonText, me.getScope()))
+	conf.Client(context.Background(), nil)
+	me.client = conf.Client(context.Background(), nil)
+}
+
+func (me *GoogleIndexingClient) updateUrl(url string) bool {
+	var data = GoogleUrlNotification{
+		Url:  url,
+		Type: "URL_UPDATED",
+	}
+	var apiUrl = "https://indexing.googleapis.com/v3/urlNotifications:publish"
+	var response = assertResultError(me.client.Post(apiUrl,
+		contentTypeJson, bytes.NewReader(encodeJson(data))))
+	defer ioCloseSilently(response.Body)
+	if response.StatusCode == http.StatusTooManyRequests {
+		return false
+	}
+	assertResponse(response)
+	return true
 }

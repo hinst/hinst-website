@@ -88,11 +88,18 @@ func readTextFromUrl(url string) string {
 func readBytesFromUrl(url string) []byte {
 	var response = assertResultError(http.Get(url))
 	defer ioCloseSilently(response.Body)
-	if response.StatusCode != http.StatusOK {
-		panic("Bad status=" + response.Status + " returned from url=" + url)
-	}
+	assertResponse(response)
 	var data = assertResultError(io.ReadAll(response.Body))
 	return data
+}
+
+func assertResponse(response *http.Response) {
+	if response.StatusCode != http.StatusOK {
+		var text, _ = io.ReadAll(response.Body)
+		panic("Bad status=" + response.Status +
+			" returned from url=" + response.Request.URL.String() +
+			"\n" + string(text))
+	}
 }
 
 func buildUrl(base string, parameters map[string]string) string {
