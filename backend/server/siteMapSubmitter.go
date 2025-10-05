@@ -32,7 +32,6 @@ func (me *siteMapSubmitter) run() {
 			if ok {
 				me.db.updateUrlPing(url, time.Now())
 				pingedNowCount++
-				break
 			} else {
 				log.Printf("Rate limit reached")
 				break
