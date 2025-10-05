@@ -1,0 +1,4 @@
+frontend/src/css/minstyle.css
+backend/server/sitemap
+backend/pages/static/css/minstyle.css
+backend/pages/static/js/dist

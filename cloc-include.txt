@@ -1,0 +1,4 @@
+frontend/src
+backend/server
+backend/pages
+backend/batch

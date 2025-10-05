@@ -1,0 +1,1 @@
+"C:\App\cloc-2.06.exe" . --list-file=cloc-include.txt --exclude-list-file=cloc-exclude.txt
