@@ -20,8 +20,7 @@ func (me *staticFilesUpdate) run() {
 		runner.command("Git clone", true, "git", "clone", me.getStaticWebsiteGitUrl(), staticGitPath)
 	}
 	me.flushFiles(staticGitPath)
-	me.buildSitemap()
-	me.submitSitemap()
+	me.buildSiteMap()
 
 	runner.Dir = staticGitPath
 	runner.command("Git pull", true, "git", "pull")
@@ -33,12 +32,13 @@ func (me *staticFilesUpdate) run() {
 	runner.command("Git add", true, "git", "add", ".")
 	runner.command("Git status", true, "git", "status")
 	var commitOk = runner.command("Git commit", false, "git", "commit", "-m", "Automatic update")
-	if !commitOk {
+	if commitOk {
+		runner.command("Git push", true, "git", "push")
+	} else {
 		log.Println("Nothing to commit")
-		return
 	}
 
-	runner.command("Git push", true, "git", "push")
+	me.submitSiteMap()
 }
 
 // Copy old files from Git repository
@@ -65,7 +65,7 @@ func (me *staticFilesUpdate) checkPreservedFile(fileName string) bool {
 	return slices.Contains(preservedFiles, fileName) || strings.HasPrefix(fileName, "googled")
 }
 
-func (me *staticFilesUpdate) buildSitemap() {
+func (me *staticFilesUpdate) buildSiteMap() {
 	var builder = siteMapBuilder{
 		webPath:      me.getPublicUrl(),
 		newFilesPath: me.savedGoalsPath + "/static",
@@ -75,7 +75,7 @@ func (me *staticFilesUpdate) buildSitemap() {
 	copyFile(me.savedGoalsPath+"/static-git/sitemap.xml", me.savedGoalsPath+"/static/sitemap.xml")
 }
 
-func (me *staticFilesUpdate) submitSitemap() {
+func (me *staticFilesUpdate) submitSiteMap() {
 	var submitter = siteMapSubmitter{
 		db:          me.db,
 		siteMapPath: me.savedGoalsPath + "/static/sitemap.xml",
