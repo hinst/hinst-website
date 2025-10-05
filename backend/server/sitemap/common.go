@@ -16,7 +16,7 @@ func NewOptions() *Options {
 }
 
 func formatTime(t time.Time) string {
-	return t.Format(time.DateOnly)
+	return t.UTC().Format(time.DateOnly)
 }
 
 func xmlMarshal(options *Options, obj interface{}) (string, error) {
