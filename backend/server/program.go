@@ -74,7 +74,10 @@ func (me *program) updateTitles() {
 }
 
 func (me *program) uploadStatic() {
-	var staticFilesUpdate = &staticFilesUpdate{savedGoalsPath: me.savedGoalsPath}
+	var staticFilesUpdate = &staticFilesUpdate{
+		db:             me.database,
+		savedGoalsPath: me.savedGoalsPath,
+	}
 	staticFilesUpdate.run()
 }
 

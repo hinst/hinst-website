@@ -4,7 +4,7 @@ import "database/sql"
 
 type urlPingRecord struct {
 	url            string
-	googlePingedAt int64 // Unix seconds UTC
+	googlePingedAt *int64 // Unix seconds UTC
 }
 
 func (me *urlPingRecord) scan(rows *sql.Rows) {

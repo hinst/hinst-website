@@ -2,6 +2,7 @@ package server
 
 import (
 	"log"
+	"time"
 
 	"github.com/hinst/hinst-website/server/sitemap"
 )
@@ -9,22 +10,45 @@ import (
 type siteMapSubmitter struct {
 	db          *database
 	siteMapPath string
+	client      *GoogleIndexingClient
 }
 
 func (me *siteMapSubmitter) run() {
 	var siteMap = &sitemap.XmlSitemap{}
 	readXml(readBytesFile(me.siteMapPath), siteMap)
-	for _, item := range siteMap.URL {
-		var url = item.Loc
+	var siteMapItems = siteMap.URL
+	var pingedEarlierCount = 0
+	var pingedNowCount = 0
+	for _, siteMapItem := range siteMapItems {
+		var url = siteMapItem.Loc
+		var record = me.db.getUrlPing(url)
+		if record == nil {
+			me.db.insertUrlPing(url)
+			record = me.db.getUrlPing(url)
+		}
+		if record.googlePingedAt == nil {
+			var ok = me.getClient().updateUrl(url)
+			log.Printf("Pinged Google URL: %v, ok: %v", url, ok)
+			if ok {
+				me.db.updateUrlPing(url, time.Now())
+				pingedNowCount++
+				break
+			} else {
+				log.Printf("Rate limit reached")
+				break
+			}
+		} else {
+			pingedEarlierCount++
+		}
 	}
+	log.Printf("Total URLs in sitemap: %v, pinged now: %v, pinged earlier: %v",
+		len(siteMapItems), pingedNowCount, pingedEarlierCount)
+}
 
-
-	var client = &GoogleIndexingClient{}
-	client.connect()
-	for _, item := range siteMap.URL {
-		var url = item.Loc
-		var ok = client.updateUrl(url)
-		log.Printf("URL: %v, ok: %v\n", url, ok)
-		break
+func (me *siteMapSubmitter) getClient() *GoogleIndexingClient {
+	if me.client == nil {
+		me.client = &GoogleIndexingClient{}
+		me.client.connect()
 	}
+	return me.client
 }
