@@ -12,6 +12,7 @@ import (
 	"golang.org/x/text/language"
 )
 
+const contentTypeHeader = "Content-Type"
 const contentTypeJson = "application/json"
 const contentTypeText = "text/plain"
 

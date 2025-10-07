@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"golang.org/x/text/language"
 )
@@ -58,7 +59,10 @@ func (me *translator) translateText(text string, tag language.Tag) string {
 		},
 		Stream: false,
 	})
-	var response = assertResultError(http.Post(me.apiUrl, contentTypeJson, bytes.NewBuffer(request)))
+	var client = &http.Client{Timeout: 1 * time.Hour}
+	var req = assertResultError(http.NewRequest("POST", me.apiUrl, bytes.NewBuffer(request)))
+	req.Header.Set(contentTypeHeader, contentTypeJson)
+	var response = assertResultError(client.Do(req))
 	defer ioCloseSilently(response.Body)
 	assertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot translate text. Status: " + response.Status)
