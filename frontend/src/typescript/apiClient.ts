@@ -95,6 +95,11 @@ class ApiClient {
 		const response = await this.fetch(url);
 		return (await response.json()) as UrlPingRecord[];
 	}
+
+	async pingUrlManually(url: string) {
+		const apiUrl = '/pingUrlManually' + '?url=' + encodeURIComponent(url);
+		return await this.fetch(apiUrl, { method: 'PUT' });
+	}
 }
 
 export const apiClient = new ApiClient();
