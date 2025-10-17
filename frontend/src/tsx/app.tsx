@@ -10,7 +10,7 @@ import SettingsPage from './settings/settingsPage';
 import { APP_TITLE } from 'src/typescript/global';
 import { settingsStorage } from 'src/typescript/settings';
 import TestRiddlePage from './settings/testRiddlePage';
-import ManualPingTracker from './settings/manualPingTracker';
+import ManualPingTracker from './manual-ping-tracker/manualPingTracker';
 
 export default function App() {
 	settingsStorage.initialize();
@@ -72,7 +72,7 @@ export default function App() {
 							element={<TestRiddlePage setPageTitle={setPageTitle} />}
 						/>
 						<Route
-							path='/manualPingTracker'
+							path='/manual-ping-tracker'
 							element={<ManualPingTracker setPageTitle={setPageTitle} />}
 						/>
 					</Routes>
