@@ -1,9 +1,10 @@
 import { GoalPostObject } from './personal-goals/smartPost';
 import { RiddleItem } from './riddle';
 import { settingsStorage } from './settings';
+import { UrlPingRecord } from './urlPing';
 
 class ApiClient {
-	url: string = process.env.API_URL || '/hinst-website/api';
+	readonly url: string = process.env.API_URL || '/hinst-website/api';
 
 	async fetch(url: string, options?: RequestInit): Promise<Response> {
 		if (settingsStorage.language) {
@@ -87,6 +88,12 @@ class ApiClient {
 			'&index=' +
 			indexParameter
 		);
+	}
+
+	async getUrlPings(): Promise<UrlPingRecord[]> {
+		const url = '/urlPings';
+		const response = await this.fetch(url);
+		return (await response.json()) as UrlPingRecord[];
 	}
 }
 

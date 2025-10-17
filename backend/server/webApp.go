@@ -31,6 +31,9 @@ func (me *webApp) init(db *database) {
 
 	var appRiddles = new(webAppRiddles)
 	me.addFunctions(me.webPath, appRiddles.init(me.db))
+
+	var appAdmin = new(webAppAdmin)
+	me.addFunctions(me.webPath, appAdmin.init(me.db))
 }
 
 func (me *webApp) addFunctions(path string, functions []namedWebFunction) {

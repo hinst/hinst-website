@@ -26,7 +26,7 @@ func (me *siteMapSubmitter) run() {
 			me.db.insertUrlPing(url)
 			record = me.db.getUrlPing(url)
 		}
-		if record.googlePingedAt == nil {
+		if record.GooglePingedAt == nil {
 			var ok = me.getClient().updateUrl(url)
 			log.Printf("Pinged Google URL: %v, ok: %v", url, ok)
 			if ok {

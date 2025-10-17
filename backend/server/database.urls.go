@@ -2,7 +2,7 @@ package server
 
 import "time"
 
-func (me *database) getAllUrlPings() (results []urlPingRecord) {
+func (me *database) getUrlPings() (results []urlPingRecord) {
 	var db = me.open()
 	defer me.close(db)
 	var rows = assertResultError(db.Query("SELECT * FROM urlPings"))
