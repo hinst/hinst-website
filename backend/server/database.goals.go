@@ -101,21 +101,6 @@ func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *goalP
 	return
 }
 
-func (me *database) getGoalPostImages(goalId int64, dateTime time.Time) (results []goalPostImageRow) {
-	var db = me.open()
-	defer me.close(db)
-	var queryText = "SELECT contentType, file FROM goalPostImages" +
-		" WHERE goalId = ? AND parentDateTime = ?" +
-		" ORDER BY sequenceIndex"
-	var rows = assertResultError(db.Query(queryText, goalId, dateTime.UTC().Unix()))
-	for rows.Next() {
-		var record goalPostImageRow
-		assertError(rows.Scan(&record.contentType, &record.file))
-		results = append(results, record)
-	}
-	return
-}
-
 func (me *database) getGoalPostImage(goalId int64, dateTime time.Time, index int) (result *goalPostImageRow) {
 	var db = me.open()
 	defer me.close(db)
