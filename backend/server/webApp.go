@@ -41,7 +41,7 @@ func (me *webApp) addFunctions(path string, functions []namedWebFunction) {
 	}
 }
 
-func (me *webApp) wrap(function func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+func (me *webApp) wrap(function webFunction) webFunction {
 	return func(response http.ResponseWriter, request *http.Request) {
 		response.Header().Set("Access-Control-Allow-Origin", me.allowOrigin)
 		defer func() {

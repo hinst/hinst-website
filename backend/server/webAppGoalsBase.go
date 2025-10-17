@@ -2,12 +2,12 @@ package server
 
 import (
 	"net/http"
-	"os"
 	"strconv"
 	"time"
 )
 
 type webAppGoalsBase struct {
+	webAppBase
 	db *database
 }
 
@@ -30,32 +30,4 @@ func (me *webAppGoalsBase) inputValidPostDateTime(text string) time.Time {
 	}
 	assertCondition(nil == parseIntError, createWebError)
 	return time.Unix(unixEpochSeconds, 0)
-}
-
-func (me *webAppGoalsBase) inputCheckAdminPassword(request *http.Request) bool {
-	var actualAdminPassword = me.getAdminPassword()
-	if actualAdminPassword == "" {
-		return false
-	}
-	var adminPassword, _ = request.Cookie("adminPassword")
-	if adminPassword != nil {
-		return adminPassword.Value == actualAdminPassword
-	}
-	return false
-}
-
-func (me *webAppGoalsBase) inputAssertAdminPassword(request *http.Request) {
-	if !me.inputCheckAdminPassword(request) {
-		panic(webError{"Need admin password", http.StatusForbidden})
-	}
-}
-
-func (me *webAppGoalsBase) inputCheckGoalManagerMode(request *http.Request) bool {
-	var goalManagerModeCookie, _ = request.Cookie("goalManagerMode")
-	return me.inputCheckAdminPassword(request) &&
-		goalManagerModeCookie != nil && goalManagerModeCookie.Value == "1"
-}
-
-func (me *webAppGoalsBase) getAdminPassword() string {
-	return os.Getenv("ADMIN_PASSWORD")
 }

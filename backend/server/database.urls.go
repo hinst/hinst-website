@@ -2,10 +2,10 @@ package server
 
 import "time"
 
-func (me *database) getPendingUrlPings() (results []urlPingRecord) {
+func (me *database) getAllUrlPings() (results []urlPingRecord) {
 	var db = me.open()
 	defer me.close(db)
-	var rows = assertResultError(db.Query("SELECT * FROM urlPings WHERE googlePingedAt IS NULL"))
+	var rows = assertResultError(db.Query("SELECT * FROM urlPings"))
 	defer ioClose(rows)
 	for rows.Next() {
 		var record urlPingRecord
