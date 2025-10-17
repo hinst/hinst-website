@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
 import { UrlPingRecord } from 'src/typescript/urlPing';
 import { DateTime } from 'luxon';
+import { Check, Copy } from 'react-feather';
 
 export default function ManualPingTracker(props: { setPageTitle: (title: string) => void }) {
 	const [urlPings, setUrlPings] = useState<Array<UrlPingRecord>>([]);
@@ -33,18 +34,27 @@ export default function ManualPingTracker(props: { setPageTitle: (title: string)
 }
 
 function Row(props: { record: UrlPingRecord }) {
+	const [isLoading, setIsLoading] = useState(false);
 	const [isDone, setIsDone] = useState(false);
 	async function pingNow() {
-		navigator.clipboard.writeText(props.record.url);
-		await apiClient.pingUrlManually(props.record.url);
+		setIsLoading(true);
+		{
+			navigator.clipboard.writeText(props.record.url);
+			await apiClient.pingUrlManually(props.record.url);
+			setIsDone(true);
+		}
+		setIsLoading(false);
 	}
 	return (
 		<tr>
 			<td>{props.record.url}</td>
 			<td>{formatDate(props.record.googlePingedAt)}</td>
-			<td>
-				{isDone ? 'Done' : ''}
-				{props.record.googlePingedManuallyAt != null ? (
+			<td style={{ height: 62 }}>
+				{isDone ? (
+					<div style={{ display: 'flex', alignItems: 'center' }}>
+						<Check /> &nbsp; Done
+					</div>
+				) : props.record.googlePingedManuallyAt != null ? (
 					formatDate(props.record.googlePingedManuallyAt)
 				) : (
 					<button
@@ -52,8 +62,11 @@ function Row(props: { record: UrlPingRecord }) {
 						type='button'
 						className='ms-btn ms-action'
 						onClick={pingNow}
+						disabled={isLoading}
+						style={{ display: 'flex', alignItems: 'center', padding: '6px 12px' }}
 					>
-						Commit
+						<Copy />
+						&nbsp; Commit
 					</button>
 				)}
 			</td>
@@ -71,7 +84,6 @@ function formatDate(timestamp: number | null) {
 
 function validatePings(urlPings: UrlPingRecord[]) {
 	const urls = new Set<string>();
-	for (const ping of urlPings) {
+	for (const ping of urlPings)
 		if (urls.has(ping.url)) console.warn('Duplicate URL ping record for URL: ' + ping.url);
-	}
 }
