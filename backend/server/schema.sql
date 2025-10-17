@@ -49,5 +49,6 @@ CREATE TABLE IF NOT EXISTS riddles (
 CREATE TABLE IF NOT EXISTS urlPings (
 	url TEXT NOT NULL,
 	googlePingedAt INTEGER, /* Unix seconds UTC */
+	googlePingedManuallyAt INTEGER, /* Unix seconds UTC */
 	PRIMARY KEY (url)
 );

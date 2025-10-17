@@ -35,11 +35,20 @@ func (me *database) insertUrlPing(url string) {
 	assertResultError(result.RowsAffected())
 }
 
-func (me *database) updateUrlPing(url string, dateTime time.Time) bool {
+func (me *database) updateUrlPingGoogle(url string, dateTime time.Time) bool {
 	var db = me.open()
 	defer me.close(db)
 	var unixSeconds = dateTime.UTC().Unix()
 	var result = assertResultError(db.Exec("UPDATE urlPings SET googlePingedAt = ? WHERE url = ?", unixSeconds, url))
+	var rowCount = assertResultError(result.RowsAffected())
+	return rowCount > 0
+}
+
+func (me *database) updateUrlPingGoogleManually(url string, dateTime time.Time) bool {
+	var db = me.open()
+	defer me.close(db)
+	var unixSeconds = dateTime.UTC().Unix()
+	var result = assertResultError(db.Exec("UPDATE urlPings SET googlePingedManuallyAt = ? WHERE url = ?", unixSeconds, url))
 	var rowCount = assertResultError(result.RowsAffected())
 	return rowCount > 0
 }

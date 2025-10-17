@@ -30,7 +30,7 @@ func (me *siteMapSubmitter) run() {
 			var ok = me.getClient().updateUrl(url)
 			log.Printf("Pinged Google URL: %v, ok: %v", url, ok)
 			if ok {
-				me.db.updateUrlPing(url, time.Now())
+				me.db.updateUrlPingGoogle(url, time.Now())
 				pingedNowCount++
 			} else {
 				log.Printf("Rate limit reached")
