@@ -10,7 +10,7 @@ type webAppAdmin struct {
 func (me *webAppAdmin) init(db *database) []namedWebFunction {
 	me.db = db
 	return []namedWebFunction{
-		{"/api/urlPings", me.getUrlPings},
+		{"/api/urlPings", me.guardAdminFunction(me.getUrlPings)},
 	}
 }
 

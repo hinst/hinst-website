@@ -20,9 +20,9 @@ func (me *webAppGoals) init(db *database) []namedWebFunction {
 		{"/api/goalPosts", me.getGoalPosts},
 		{"/api/goalPost", me.getGoalPost},
 		{"/api/goalPost/image", me.getGoalPostImage},
-		{"/api/goalPost/setPublic", me.setGoalPostPublic},
-		{"/api/goalPost/setText", me.setGoalPostText},
-		{"/api/goalPost/setTitle", me.setGoalTitleText},
+		{"/api/goalPost/setPublic", me.guardAdminFunction(me.setGoalPostPublic)},
+		{"/api/goalPost/setText", me.guardAdminFunction(me.setGoalPostText)},
+		{"/api/goalPost/setTitle", me.guardAdminFunction(me.setGoalTitleText)},
 	}
 }
 
@@ -95,7 +95,6 @@ func (me *webAppGoals) getGoalPostImage(response http.ResponseWriter, request *h
 }
 
 func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *http.Request) {
-	me.inputAssertAdminPassword(request)
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var isPublic = request.URL.Query().Get("isPublic") == "true"
@@ -104,7 +103,6 @@ func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *
 }
 
 func (me *webAppGoals) setGoalPostText(response http.ResponseWriter, request *http.Request) {
-	me.inputAssertAdminPassword(request)
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var languageTagText = request.URL.Query().Get("languageTag")
@@ -114,7 +112,6 @@ func (me *webAppGoals) setGoalPostText(response http.ResponseWriter, request *ht
 }
 
 func (me *webAppGoals) setGoalTitleText(response http.ResponseWriter, request *http.Request) {
-	me.inputAssertAdminPassword(request)
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var languageTagText = request.URL.Query().Get("languageTag")
