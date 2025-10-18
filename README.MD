@@ -53,3 +53,8 @@ In administrator mode we can edit article texts and toggle article visibility: p
 
 ## 2025.09
 * Created static version of the website to enable search engine indexing
+
+## 2025.10
+* Added web UI for manually managing Google Search Console URL indexing requests
+	* Available at URL `hinst-website/manual-ping-tracker`
+	* This was necessary because Google Search Console API did not work for me. Either I am doing something wrong, or the API is broken. Perhaps it is a subtle combination of both.
