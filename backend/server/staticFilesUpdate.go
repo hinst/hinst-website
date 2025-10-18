@@ -25,7 +25,7 @@ func (me *staticFilesUpdate) run() {
 	runner.Dir = staticGitPath
 	runner.command("Git pull", true, "git", "pull")
 	runner.command("Git config", true, "git", "config", "core.fileMode", "false")
-	runner.command("Git config", true, "git", "config", "core.autocrlf", "true")
+	runner.command("Git config", true, "git", "config", "core.autocrlf", "false")
 	runner.command("Git config", true, "git", "config", "user.name", getQuotedString(me.getBotName()))
 	runner.command("Git config", true, "git", "config", "user.email", getQuotedString(me.getEmail()))
 
