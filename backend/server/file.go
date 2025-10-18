@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/hinst/hinst-website/server/file_mode"
 )
@@ -92,4 +93,22 @@ func checkFilesEqual(file1, file2 string) bool {
 			return false
 		}
 	}
+}
+
+func checkTextFilesEqual(file1, file2 string) bool {
+	var text1 = ""
+	if checkFileExists(file1) {
+		text1 = readTextFile(file1)
+	}
+	var text2 = ""
+	if checkFileExists(file2) {
+		text2 = readTextFile(file2)
+	}
+	// ignore line breaks
+	text1 = strings.ReplaceAll(text1, "\r\n", "\n")
+	text2 = strings.ReplaceAll(text2, "\r\n", "\n")
+	// trim whitespace
+	text1 = strings.TrimSpace(text1)
+	text2 = strings.TrimSpace(text2)
+	return text1 == text2
 }

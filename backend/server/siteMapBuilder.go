@@ -52,7 +52,7 @@ func (me *siteMapBuilder) createItem(newFilePath string, directory os.DirEntry, 
 	var relativePath = newFilePath[len(me.newFilesPathPrefix):]
 	relativePath = strings.ReplaceAll(relativePath, "\\", "/")
 	var oldFilePath = me.oldFilesPath + "/" + relativePath
-	var haveChange = !checkFilesEqual(oldFilePath, newFilePath)
+	var haveChange = !checkTextFilesEqual(oldFilePath, newFilePath)
 	var url = me.webPath + "/" + relativePath
 	var item = &sitemap.SitemapItem{
 		Loc:        url,
