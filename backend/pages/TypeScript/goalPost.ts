@@ -1,4 +1,7 @@
-function main() {
+/**
+ * @returns Toggle diagonal stripe background for goal post panel depending on its width
+ */
+export function main() {
 	const outerElement = document.querySelector('.goal-post-outer') as HTMLElement;
 	if (!outerElement)
 		return;
@@ -14,6 +17,3 @@ function main() {
 	updateSize();
 	new ResizeObserver(updateSize).observe(outerElement);
 }
-main();
-
-export const goalPost = 1;
