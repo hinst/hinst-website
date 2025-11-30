@@ -22,14 +22,21 @@ async function solveRiddle() {
 	const riddle = await getRiddle();
 	const primeNumbers = await getPrimeNumbers();
 	console.time('solve');
-	const indexes = riddle.solveFull(primeNumbers);
+	const indexes = await riddle.solve(primeNumbers);
 	console.timeEnd('solve');
 	if (!indexes.length)
 		throw new Error('Cannot solve riddle ' + riddle.id);
-	return indexes;
+	return riddle
 }
 
 export async function main() {
-	const url = webCounterUrl + '/ping?url=' + encodeURIComponent(window.location.href);
-	console.log(await solveRiddle());
+	const riddle = await solveRiddle();
+	const url = webCounterUrl + '/ping' +
+		'?url=' + encodeURIComponent(window.location.href) +
+		'&riddleId=' + encodeURIComponent(riddle.id);
+	await fetch(url, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(riddle.indexes),
+	});
 }
