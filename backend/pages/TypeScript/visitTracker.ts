@@ -1,6 +1,6 @@
 import { RiddleEntry } from './riddle';
 
-const webCounterUrl = 'http://localhost:8081/web-counter';
+const webCounterUrl = 'https://orangepizero2w-1.taile07783.ts.net/web-counter';
 
 async function getRiddle(): Promise<RiddleEntry> {
 	const url = webCounterUrl + '/riddle/generate';
@@ -21,9 +21,7 @@ async function getPrimeNumbers(): Promise<number[]> {
 async function solveRiddle() {
 	const riddle = await getRiddle();
 	const primeNumbers = await getPrimeNumbers();
-	console.time('solve');
 	const indexes = await riddle.solve(primeNumbers);
-	console.timeEnd('solve');
 	if (!indexes.length)
 		throw new Error('Cannot solve riddle ' + riddle.id);
 	return riddle
