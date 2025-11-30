@@ -1,6 +1,7 @@
 import { RiddleEntry } from './riddle';
 
 const webCounterUrl = 'https://orangepizero2w-1.taile07783.ts.net/web-counter';
+// const webCounterUrl = 'http://localhost:8081/web-counter';
 
 async function getRiddle(): Promise<RiddleEntry> {
 	const url = webCounterUrl + '/riddle/generate';
