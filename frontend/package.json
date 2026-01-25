@@ -13,7 +13,7 @@
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
     "@types/lodash": "^4.17.23",
-    "@types/luxon": "^3.6.2",
+    "@types/luxon": "^3.7.1",
     "@types/node": "^22.13.10",
     "@types/react-dom": "^19.2.3",
     "parcel": "^2.13.3",
@@ -24,7 +24,7 @@
   "dependencies": {
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.23",
-    "luxon": "^3.6.1",
+    "luxon": "^3.7.2",
     "minstyle.io": "^2.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.2.3",
