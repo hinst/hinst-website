@@ -3,6 +3,7 @@ package server
 import (
 	"log"
 	"slices"
+	"strings"
 	"time"
 
 	"golang.org/x/text/language"
@@ -141,12 +142,54 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 	return
 }
 
-func (me *database) getLanguagePostfix(supportedLanguage language.Tag) string {
+func (database) getLanguagePostfix(supportedLanguage language.Tag) string {
 	var languageName = ""
 	if supportedLanguage != supportedLanguages[0] {
 		languageName = getLanguageName(supportedLanguage)
 	}
 	return languageName
+}
+
+func (me *database) searchGoalPosts(queryText string, includePrivate bool) (results []goalPostRecord) {
+	var db = me.open()
+	defer me.close(db)
+	queryText = strings.ToUpper(queryText)
+	var fieldQueries []string
+	var queryParams []any
+	for _, lang := range supportedLanguages {
+		var field = "title" + me.getLanguagePostfix(lang)
+		fieldQueries = append(fieldQueries, "(UPPER("+field+") LIKE '%?%')")
+		queryParams = append(queryParams, queryText)
+		field = "text" + me.getLanguagePostfix(lang)
+		fieldQueries = append(fieldQueries, "(UPPER("+field+") LIKE '%?%')")
+		queryParams = append(queryParams, queryText)
+	}
+	var sqlQuery = "SELECT goalId, dateTime, " + strings.Join(me.getAllTitleFields(), ",") +
+		" FROM goalPosts WHERE (" + strings.Join(fieldQueries, " OR ") + ")"
+	if !includePrivate {
+		sqlQuery += " AND isPublic=1"
+	}
+	log.Print("Executing search query: ", sqlQuery, " with params: ", queryParams)
+	var rows = assertResultError(db.Query(sqlQuery, queryParams...))
+	for rows.Next() {
+		var record goalPostRecord
+		var scanParams []any
+		scanParams = append(scanParams, &record.GoalId, &record.DateTime)
+		for range supportedLanguages {
+			var titleField = new(string)
+			scanParams = append(scanParams, titleField)
+		}
+		assertError(rows.Scan(scanParams...))
+		results = append(results, record)
+	}
+	return
+}
+
+func (database) getAllTitleFields() (titles []string) {
+	for _, lang := range supportedLanguages {
+		titles = append(titles, "title"+database{}.getLanguagePostfix(lang))
+	}
+	return
 }
 
 func (me *database) migrate() {

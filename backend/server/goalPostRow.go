@@ -2,6 +2,7 @@ package server
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"golang.org/x/text/language"
@@ -22,6 +23,8 @@ type goalPostRow struct {
 	titleEnglish *string
 	titleGerman  *string
 }
+
+var _ fmt.Stringer = &goalPostRow{}
 
 func (me *goalPostRow) scan(rows *sql.Rows) {
 	var dateTimeMilliseconds int64

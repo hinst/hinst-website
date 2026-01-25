@@ -23,6 +23,7 @@ func (me *webAppGoals) init(db *database) []namedWebFunction {
 		{"/api/goalPost/setPublic", me.guardAdminFunction(me.setGoalPostPublic)},
 		{"/api/goalPost/setText", me.guardAdminFunction(me.setGoalPostText)},
 		{"/api/goalPost/setTitle", me.guardAdminFunction(me.setGoalTitleText)},
+		{"/api/goalPost/search", me.searchGoalPosts},
 	}
 }
 
@@ -118,4 +119,13 @@ func (me *webAppGoals) setGoalTitleText(response http.ResponseWriter, request *h
 	var languageTag = assertResultError(language.Parse(languageTagText))
 	var text = string(assertResultError(io.ReadAll(request.Body)))
 	me.db.setGoalPostTitle(goalId, postDateTime, languageTag, text)
+}
+
+func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *http.Request) {
+	var queryText = request.URL.Query().Get("query")
+	var requestedLanguage = getWebLanguage(request)
+	use(requestedLanguage)
+	var goalManagerMode = me.inputCheckGoalManagerMode(request)
+	var posts = me.db.searchGoalPosts(queryText, goalManagerMode)
+	writeJsonResponse(response, posts)
 }
