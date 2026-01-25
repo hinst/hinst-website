@@ -155,22 +155,20 @@ func (me *database) searchGoalPosts(queryText string, includePrivate bool) (resu
 	defer me.close(db)
 	queryText = strings.ToUpper(queryText)
 	var fieldQueries []string
-	var queryParams []any
 	for _, lang := range supportedLanguages {
 		var field = "title" + me.getLanguagePostfix(lang)
-		fieldQueries = append(fieldQueries, "(UPPER("+field+") LIKE '%?%')")
-		queryParams = append(queryParams, queryText)
+		var query = "(UPPER(" + field + ") LIKE '%" + escapeLikeString(queryText) + "%' ESCAPE '\\')"
+		fieldQueries = append(fieldQueries, query)
 		field = "text" + me.getLanguagePostfix(lang)
-		fieldQueries = append(fieldQueries, "(UPPER("+field+") LIKE '%?%')")
-		queryParams = append(queryParams, queryText)
+		query = "(UPPER(" + field + ") LIKE '%" + escapeLikeString(queryText) + "%' ESCAPE '\\')"
+		fieldQueries = append(fieldQueries, query)
 	}
 	var sqlQuery = "SELECT goalId, dateTime, " + strings.Join(me.getAllTitleFields(), ",") +
 		" FROM goalPosts WHERE (" + strings.Join(fieldQueries, " OR ") + ")"
 	if !includePrivate {
 		sqlQuery += " AND isPublic=1"
 	}
-	log.Print("Executing search query: ", sqlQuery, " with params: ", queryParams)
-	var rows = assertResultError(db.Query(sqlQuery, queryParams...))
+	var rows = assertResultError(db.Query(sqlQuery))
 	for rows.Next() {
 		var record goalPostRecord
 		var scanParams []any
