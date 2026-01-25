@@ -42,7 +42,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 		return Cookie.get('goalManagerMode') === '1';
 	}
 
-	const [calendarEnabled, setCalendarEnabled] = useState(true);
+	const [calendarVisible, setCalendarVisible] = useState(isFullMode());
 	const [calendarTransition, setCalendarTransition] = useState('');
 
 	function receivePosts(posts: GoalPostRecord[]) {
@@ -65,7 +65,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 	}, [goalId]);
 
 	useEffect(() => {
-		if (activePostDate) setCalendarEnabled(false);
+		if (activePostDate) setCalendarVisible(false);
 		setTimeout(() => setCalendarTransition('transform 0.3s'));
 	}, [activePostDate]);
 
@@ -177,9 +177,9 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 				<button
 					className={
 						'ms-btn ms-primary ms-rounded ms-box-shadow' +
-						(calendarEnabled ? ' ms-btn-active' : '')
+						(calendarVisible ? ' ms-btn-active' : '')
 					}
-					onClick={() => setCalendarEnabled(!calendarEnabled)}
+					onClick={() => setCalendarVisible(!calendarVisible)}
 					style={{
 						margin: 0,
 						width: 40,
@@ -215,9 +215,11 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 			>
 				{getFloatingCalendarButton()}
 				<div
-					className='ms-bg-light ms-shape-round ms-box-shadow ms-border-main'
+					className={
+						'ms-bg-light ms-shape-round ms-border-main ' +
+						(calendarVisible ? 'ms-box-shadow' : '') // Hide shadow when calendar is hidden to avoid showing ghost shadow on the right
+					}
 					style={{
-						display: calendarEnabled ? 'block' : 'block',
 						position: 'absolute',
 						zIndex: 1,
 						overflowY: 'auto',
@@ -225,14 +227,14 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 						padding: 8,
 						borderWidth: 1,
 						borderStyle: 'solid',
-						transform: calendarEnabled ? 'translate(0,0)' : 'translate(-100%, 0)',
+						transform: calendarVisible ? 'translate(0,0)' : 'translate(-100%, 0)',
 						transition: calendarTransition
 					}}
 				>
 					{getGoalCalendarPanel()}
 				</div>
 				<div
-					onClick={() => setCalendarEnabled(false)}
+					onClick={() => setCalendarVisible(false)}
 					style={{
 						display: 'flex',
 						overflowY: 'auto',
