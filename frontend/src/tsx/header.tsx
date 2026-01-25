@@ -1,25 +1,59 @@
 import { NavLink } from 'react-router';
 // @ts-ignore
 import icon from 'images/icon.webp';
-import { Settings } from 'react-feather';
+import { useState } from 'react';
+import { MenuButton } from './header/menuButton';
+import { HomeButton } from './header/homeButton';
+import { HomeMenu } from './header/homeMenu';
 
 export default function Header(props: { title: string }) {
+	const [menuVisible, setMenuVisible] = useState(false);
 	return (
-		<div style={{ display: 'flex', alignItems: 'center', gap: 10, maxWidth: '100%' }}>
-			<NavLink to='/'>
-				<img
-					src={icon}
-					width={42}
-					height={42}
-					style={{
-						width: 42,
-						height: 42,
-						borderRadius: '50%'
-					}}
-					alt='icon'
-					className='hover-outline'
-				/>
-			</NavLink>
+		<div
+			style={{
+				display: 'flex',
+				alignItems: 'center',
+				gap: 10,
+				maxWidth: '100%'
+			}}
+		>
+			<div
+				className={
+					'ms-bg-light ms-shape-round ms-border-main ' +
+					(menuVisible ? 'ms-box-shadow' : '')
+				}
+				style={{
+					opacity: menuVisible ? 1 : 0,
+					position: 'absolute',
+					zIndex: 1,
+					top: 10,
+					left: 10,
+					overflowY: 'auto',
+					maxHeight: '100%',
+					margin: -10,
+					paddingLeft: 9,
+					paddingTop: 12,
+					paddingRight: 9,
+					paddingBottom: 12,
+					borderWidth: 1,
+					borderStyle: 'solid',
+					transform: menuVisible ? 'translate(0,0)' : 'translate(-100%, 0)',
+					transition: 'transform 0.3s, opacity 0.3s'
+				}}
+			>
+				<div onClick={() => setMenuVisible(false)}>
+					<div>
+						<MenuButton onClick={() => setMenuVisible(!menuVisible)} />
+					</div>
+					<div style={{ marginTop: 10 }}>
+						<HomeMenu />
+					</div>
+				</div>
+			</div>
+			<div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+				<MenuButton onClick={() => setMenuVisible(!menuVisible)} />
+				<HomeButton />
+			</div>
 			<div
 				style={{
 					display: 'flex',
@@ -52,31 +86,6 @@ export default function Header(props: { title: string }) {
 			</div>
 
 			<div style={{ flexGrow: 1 }}></div>
-
-			<div
-				style={{
-					display: 'flex',
-					alignItems: 'center',
-					flexShrink: 1,
-					gap: 10
-				}}
-			>
-				<NavLink
-					to='/settings'
-					className='ms-btn ms-rounded'
-					style={{ width: 40, height: 40, position: 'relative' }}
-				>
-					<Settings
-						size={20}
-						style={{
-							position: 'absolute',
-							left: '50%',
-							top: '50%',
-							transform: 'translate(-50%, -50%)'
-						}}
-					/>
-				</NavLink>
-			</div>
 		</div>
 	);
 }

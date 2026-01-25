@@ -175,6 +175,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 				}}
 			>
 				<button
+					type='button'
 					className={
 						'ms-btn ms-primary ms-rounded ms-box-shadow' +
 						(calendarVisible ? ' ms-btn-active' : '')
