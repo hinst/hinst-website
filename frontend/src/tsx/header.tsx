@@ -1,6 +1,3 @@
-import { NavLink } from 'react-router';
-// @ts-ignore
-import icon from 'images/icon.webp';
 import { useState } from 'react';
 import { MenuButton } from './header/menuButton';
 import { HomeButton } from './header/homeButton';
@@ -18,10 +15,7 @@ export default function Header(props: { title: string }) {
 			}}
 		>
 			<div
-				className={
-					'ms-bg-light ms-shape-round ms-border-main ' +
-					(menuVisible ? 'ms-box-shadow' : '')
-				}
+				className={'ms-bg-light ms-border-main ' + (menuVisible ? 'ms-box-shadow' : '')}
 				style={{
 					opacity: menuVisible ? 1 : 0,
 					position: 'absolute',
@@ -30,6 +24,7 @@ export default function Header(props: { title: string }) {
 					left: 10,
 					overflowY: 'auto',
 					maxHeight: '100%',
+					height: '100%',
 					margin: -10,
 					paddingLeft: 9,
 					paddingTop: 12,
@@ -42,8 +37,9 @@ export default function Header(props: { title: string }) {
 				}}
 			>
 				<div onClick={() => setMenuVisible(false)}>
-					<div>
+					<div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
 						<MenuButton onClick={() => setMenuVisible(!menuVisible)} />
+						<HomeButton />
 					</div>
 					<div style={{ marginTop: 10 }}>
 						<HomeMenu />

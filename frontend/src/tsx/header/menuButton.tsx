@@ -5,7 +5,7 @@ export function MenuButton(props: { onClick: () => void }) {
 		<button
 			type='button'
 			onClick={() => props.onClick()}
-			className='ms-btn ms-primary ms-rounded'
+			className='ms-btn ms-primary ms-rounded ms-outline hover-outline'
 			style={{ width: 40, height: 40, position: 'relative' }}
 		>
 			<Menu
