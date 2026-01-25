@@ -153,14 +153,17 @@ func (database) getLanguagePostfix(supportedLanguage language.Tag) string {
 func (me *database) searchGoalPosts(queryText string, includePrivate bool) (results []goalPostRecord) {
 	var db = me.open()
 	defer me.close(db)
-	queryText = strings.ToUpper(queryText)
+	var matcherText = "%" + escapeLikeString(strings.ToUpper(queryText)) + "%"
 	var fieldQueries []string
+	var queryParameters []any
 	for _, lang := range supportedLanguages {
 		var field = "title" + me.getLanguagePostfix(lang)
-		var query = "(UPPER(" + field + ") LIKE '%" + escapeLikeString(queryText) + "%' ESCAPE '\\')"
+		var query = "(UPPER(" + field + ") LIKE ? ESCAPE '\\')"
+		queryParameters = append(queryParameters, matcherText)
 		fieldQueries = append(fieldQueries, query)
 		field = "text" + me.getLanguagePostfix(lang)
-		query = "(UPPER(" + field + ") LIKE '%" + escapeLikeString(queryText) + "%' ESCAPE '\\')"
+		query = "(UPPER(" + field + ") LIKE ? ESCAPE '\\')"
+		queryParameters = append(queryParameters, matcherText)
 		fieldQueries = append(fieldQueries, query)
 	}
 	var sqlQuery = "SELECT goalId, dateTime, " + strings.Join(me.getAllTitleFields(), ",") +
@@ -168,7 +171,7 @@ func (me *database) searchGoalPosts(queryText string, includePrivate bool) (resu
 	if !includePrivate {
 		sqlQuery += " AND isPublic=1"
 	}
-	var rows = assertResultError(db.Query(sqlQuery))
+	var rows = assertResultError(db.Query(sqlQuery, queryParameters...))
 	for rows.Next() {
 		var record goalPostRecord
 		var scanParams []any
