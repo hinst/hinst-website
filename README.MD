@@ -58,3 +58,7 @@ In administrator mode we can edit article texts and toggle article visibility: p
 * Added web UI for manually managing Google Search Console URL indexing requests
 	* Available at URL `hinst-website/manual-ping-tracker`
 	* This was necessary because Google Search Console API did not work for me. Either I am doing something wrong, or the API is broken. Perhaps it is a subtle combination of both.
+
+## 2026.01
+* Updated Node.js packages to latest versions
+* Updated Node.js version from 22 to 24
