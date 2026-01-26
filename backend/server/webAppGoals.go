@@ -126,6 +126,16 @@ func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *ht
 	var requestedLanguage = getWebLanguage(request)
 	use(requestedLanguage)
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
-	var posts = me.db.searchGoalPosts(queryText, goalManagerMode)
-	writeJsonResponse(response, posts)
+	var rows = me.db.searchGoalPosts(queryText, goalManagerMode)
+	var records []goalPostRecord
+	for _, row := range rows {
+		var record goalPostRecord
+		record.GoalId = row.goalId
+		record.DateTime = row.dateTime.UTC().Unix()
+		record.Type = row.typeString
+		var title = row.getTranslatedTitle(requestedLanguage)
+		record.Title = &title
+		records = append(records, record)
+	}
+	writeJsonResponse(response, records)
 }

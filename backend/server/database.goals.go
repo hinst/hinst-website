@@ -150,38 +150,31 @@ func (database) getLanguagePostfix(supportedLanguage language.Tag) string {
 	return languageName
 }
 
-func (me *database) searchGoalPosts(queryText string, includePrivate bool) (results []goalPostRecord) {
+func (me *database) searchGoalPosts(queryText string, includePrivate bool) (results []*goalPostRow) {
 	var db = me.open()
 	defer me.close(db)
-	var matcherText = "%" + escapeLikeString(strings.ToUpper(queryText)) + "%"
-	var fieldQueries []string
+	queryText = strings.ToUpper(queryText)
 	var queryParameters []any
-	for _, lang := range supportedLanguages {
-		var field = "title" + me.getLanguagePostfix(lang)
-		var query = "(UPPER(" + field + ") LIKE ? ESCAPE '\\')"
-		queryParameters = append(queryParameters, matcherText)
-		fieldQueries = append(fieldQueries, query)
-		field = "text" + me.getLanguagePostfix(lang)
-		query = "(UPPER(" + field + ") LIKE ? ESCAPE '\\')"
-		queryParameters = append(queryParameters, matcherText)
-		fieldQueries = append(fieldQueries, query)
-	}
-	var sqlQuery = "SELECT goalId, dateTime, " + strings.Join(me.getAllTitleFields(), ",") +
-		" FROM goalPosts WHERE (" + strings.Join(fieldQueries, " OR ") + ")"
+	var fieldsToSearch = append(me.getAllTextFields(), me.getAllTitleFields()...)
+	var substringMatcherQuery = SQLite{}.matchSubstringInFields(fieldsToSearch, queryText, &queryParameters)
+	var sqlQuery = "SELECT goalId, dateTime, type, " + strings.Join(me.getAllTitleFields(), ",") +
+		" FROM goalPosts WHERE (" + substringMatcherQuery + ")"
 	if !includePrivate {
 		sqlQuery += " AND isPublic=1"
 	}
+	log.Println("searchGoalPosts SQL:", sqlQuery, " Params:", queryParameters)
 	var rows = assertResultError(db.Query(sqlQuery, queryParameters...))
 	for rows.Next() {
-		var record goalPostRecord
+		var row = new(goalPostRow)
 		var scanParams []any
-		scanParams = append(scanParams, &record.GoalId, &record.DateTime)
-		for range supportedLanguages {
-			var titleField = new(string)
-			scanParams = append(scanParams, titleField)
+		var dateTimeMilliseconds int64
+		scanParams = append(scanParams, &row.goalId, &dateTimeMilliseconds, &row.typeString)
+		for _, supportedLanguage := range supportedLanguages {
+			row.scanTitleField(supportedLanguage, &scanParams)
 		}
 		assertError(rows.Scan(scanParams...))
-		results = append(results, record)
+		row.dateTime = time.Unix(dateTimeMilliseconds, 0)
+		results = append(results, row)
 	}
 	return
 }
@@ -189,6 +182,13 @@ func (me *database) searchGoalPosts(queryText string, includePrivate bool) (resu
 func (database) getAllTitleFields() (titles []string) {
 	for _, lang := range supportedLanguages {
 		titles = append(titles, "title"+database{}.getLanguagePostfix(lang))
+	}
+	return
+}
+
+func (database) getAllTextFields() (texts []string) {
+	for _, lang := range supportedLanguages {
+		texts = append(texts, "text"+database{}.getLanguagePostfix(lang))
 	}
 	return
 }

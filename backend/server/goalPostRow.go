@@ -43,6 +43,17 @@ func (me *goalPostRow) scan(rows *sql.Rows) {
 	me.dateTime = time.Unix(dateTimeMilliseconds, 0)
 }
 
+func (me *goalPostRow) scanTitleField(languageTag language.Tag, scanParameters *[]any) {
+	switch languageTag {
+	case language.English:
+		*scanParameters = append(*scanParameters, &me.titleEnglish)
+	case language.German:
+		*scanParameters = append(*scanParameters, &me.titleGerman)
+	default:
+		*scanParameters = append(*scanParameters, &me.title)
+	}
+}
+
 func (me *goalPostRow) String() string {
 	return "{goalId:" + getStringFromInt64(me.goalId) +
 		", dateTime:" + me.dateTime.String() +
