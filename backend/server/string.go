@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/microcosm-cc/bluemonday"
 	"golang.org/x/text/unicode/norm"
 )
 
@@ -45,4 +46,8 @@ func requireEnvVar(name string) string {
 
 func normalizeString(text string) string {
 	return norm.NFC.String(text)
+}
+
+func stripHtml(text string) string {
+	return bluemonday.StrictPolicy().Sanitize(text)
 }
