@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"strconv"
+
+	"golang.org/x/text/unicode/norm"
 )
 
 func getIntFromString(text string) int {
@@ -39,4 +41,8 @@ func requireEnvVar(name string) string {
 		log.Fatalln("Environment variable is required:", name)
 	}
 	return value
+}
+
+func normalizeString(text string) string {
+	return norm.NFC.String(text)
 }

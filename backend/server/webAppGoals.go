@@ -122,11 +122,12 @@ func (me *webAppGoals) setGoalTitleText(response http.ResponseWriter, request *h
 }
 
 func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *http.Request) {
+	const resultLimit = 100
 	var queryText = request.URL.Query().Get("query")
 	var requestedLanguage = getWebLanguage(request)
 	use(requestedLanguage)
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
-	var rows = me.db.searchGoalPosts(queryText, goalManagerMode)
+	var rows = me.db.searchGoalPosts(queryText, goalManagerMode, resultLimit)
 	var records []goalPostRecord
 	for _, row := range rows {
 		var record goalPostRecord
