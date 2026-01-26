@@ -14,7 +14,7 @@ func (me *database) setGoalPostPublic(row goalPostRow) {
 	defer me.close(db)
 	assertResultError(
 		db.Exec("UPDATE goalPosts SET isPublic = ? WHERE goalId = ? AND dateTime = ?",
-			row.isPublic, row.goalId, row.dateTime.UTC().Unix()),
+			row.isPublic, row.goalId, row.getDateTime().UTC().Unix()),
 	)
 }
 

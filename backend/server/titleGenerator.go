@@ -28,17 +28,17 @@ func (me *titleGenerator) run() {
 		var isUpdated = false
 		if row.title == nil {
 			var title = me.summarizeText(row.text)
-			me.db.setGoalPostTitle(row.goalId, row.dateTime, language.Russian, title)
+			me.db.setGoalPostTitle(row.goalId, row.getDateTime(), language.Russian, title)
 			isUpdated = true
 		}
 		if row.titleEnglish == nil && row.textEnglish != nil {
 			var title = me.summarizeText(*row.textEnglish)
-			me.db.setGoalPostTitle(row.goalId, row.dateTime, language.English, title)
+			me.db.setGoalPostTitle(row.goalId, row.getDateTime(), language.English, title)
 			isUpdated = true
 		}
 		if row.titleGerman == nil && row.textGerman != nil {
 			var title = me.summarizeText(*row.textGerman)
-			me.db.setGoalPostTitle(row.goalId, row.dateTime, language.German, title)
+			me.db.setGoalPostTitle(row.goalId, row.getDateTime(), language.German, title)
 			isUpdated = true
 		}
 		if isUpdated {

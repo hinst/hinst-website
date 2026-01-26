@@ -10,7 +10,8 @@ import (
 
 type goalPostRow struct {
 	goalId   int64
-	dateTime time.Time
+	/* Unix seconds UTC */
+	dateTime int64
 	isPublic bool
 
 	text        string
@@ -27,10 +28,9 @@ type goalPostRow struct {
 var _ fmt.Stringer = &goalPostRow{}
 
 func (me *goalPostRow) scan(rows *sql.Rows) {
-	var dateTimeMilliseconds int64
 	assertError(rows.Scan(
 		&me.goalId,
-		&dateTimeMilliseconds,
+		&me.dateTime,
 		&me.isPublic,
 		&me.text,
 		&me.textEnglish,
@@ -40,12 +40,15 @@ func (me *goalPostRow) scan(rows *sql.Rows) {
 		&me.titleEnglish,
 		&me.titleGerman,
 	))
-	me.dateTime = time.Unix(dateTimeMilliseconds, 0)
+}
+
+func (me *goalPostRow) getDateTime() time.Time {
+	return time.Unix(me.dateTime, 0)
 }
 
 func (me *goalPostRow) String() string {
 	return "{goalId:" + getStringFromInt64(me.goalId) +
-		", dateTime:" + me.dateTime.String() +
+		", dateTime:" + me.getDateTime().String() +
 		", isPublic:" + getStringFromBool(me.isPublic) + "}"
 }
 

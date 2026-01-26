@@ -63,7 +63,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	}
 	var goalPostObject goalPostObject
 	goalPostObject.GoalId = goalPostRow.goalId
-	goalPostObject.DateTime = goalPostRow.dateTime.UTC().Unix()
+	goalPostObject.DateTime = goalPostRow.getDateTime().UTC().Unix()
 	goalPostObject.Text = goalPostRow.text
 	var requestedLanguage = getWebLanguage(request)
 	goalPostObject.LanguageTag = requestedLanguage.String()
@@ -99,7 +99,7 @@ func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var isPublic = request.URL.Query().Get("isPublic") == "true"
-	var row = goalPostRow{goalId: goalId, dateTime: postDateTime, isPublic: isPublic}
+	var row = goalPostRow{goalId: goalId, dateTime: postDateTime.UTC().Unix(), isPublic: isPublic}
 	me.db.setGoalPostPublic(row)
 }
 
@@ -132,7 +132,7 @@ func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *ht
 	for _, row := range rows {
 		var record goalPostRecord
 		record.GoalId = row.goalId
-		record.DateTime = row.dateTime.UTC().Unix()
+		record.DateTime = row.getDateTime().UTC().Unix()
 		record.Type = row.typeString
 		var title = row.getTranslatedTitle(requestedLanguage)
 		record.Title = &title
