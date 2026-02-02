@@ -22,7 +22,7 @@ export function ItemRow({ item }: ItemRowProps) {
 						justifyContent: 'center'
 					}}
 				>
-					<span>{item.dateTime}</span>
+					<span>{item.dateText}</span>
 				</button>
 				<div className='ms-text-main' style={{ display: 'flex', alignItems: 'center' }}>
 					{item.title}

@@ -23,7 +23,7 @@ func (me *webAppGoals) init(db *database) []namedWebFunction {
 		{"/api/goalPost/setPublic", me.guardAdminFunction(me.setGoalPostPublic)},
 		{"/api/goalPost/setText", me.guardAdminFunction(me.setGoalPostText)},
 		{"/api/goalPost/setTitle", me.guardAdminFunction(me.setGoalTitleText)},
-		{"/api/goalPost/search", me.searchGoalPosts},
+		{"/api/goalPosts/search", me.searchGoalPosts},
 	}
 }
 

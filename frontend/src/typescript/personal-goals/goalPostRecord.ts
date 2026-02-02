@@ -13,4 +13,8 @@ export class GoalPostRecord {
 	get yearAndMonthText(): string {
 		return DateTime.fromMillis(this.dateTime * 1000).toFormat('yyyy-MM');
 	}
+
+	get dateText(): string {
+		return DateTime.fromMillis(this.dateTime * 1000).toFormat('yyyy-MM-dd');
+	}
 }
