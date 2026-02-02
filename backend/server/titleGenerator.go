@@ -45,7 +45,7 @@ func (me *titleGenerator) run() {
 			updatedCount++
 		}
 		return true
-	})
+	}, 0)
 	log.Printf("Generated title for %v of %v posts\n", updatedCount, totalCount)
 }
 

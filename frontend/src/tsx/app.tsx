@@ -11,6 +11,7 @@ import { APP_TITLE } from 'src/typescript/global';
 import { settingsStorage } from 'src/typescript/settings';
 import TestRiddlePage from './settings/testRiddlePage';
 import ManualPingTracker from './manual-ping-tracker/manualPingTracker';
+import { PersonalGoalsSearch } from './personal-goals-search/personalGoalsSearch';
 
 export default function App() {
 	settingsStorage.initialize();
@@ -75,6 +76,7 @@ export default function App() {
 							path='/manual-ping-tracker'
 							element={<ManualPingTracker setPageTitle={setPageTitle} />}
 						/>
+						<Route path='/personal-goals-search' element={<PersonalGoalsSearch />} />
 					</Routes>
 				</HashRouter>
 			</div>

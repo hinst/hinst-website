@@ -52,10 +52,14 @@ func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supported
 		})
 }
 
-func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool) {
+func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, sortByDate int) {
 	var db = me.open()
 	defer me.close(db)
-	var rows = assertResultError(db.Query("SELECT * FROM goalPosts"))
+	var querySql = "SELECT * FROM goalPosts"
+	if sortByDate != 0 {
+		querySql += " ORDER BY dateTime " + ifElse(sortByDate > 0, "ASC", "DESC")
+	}
+	var rows = assertResultError(db.Query(querySql))
 	defer rows.Close()
 	for rows.Next() {
 		var row goalPostRow
@@ -170,7 +174,7 @@ func (me *database) searchGoalPosts(queryText string, includePrivate bool, limit
 			}
 		}
 		return true
-	})
+	}, -1)
 	return
 }
 
