@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Search } from 'react-feather';
-import { GoalPostObject } from 'src/typescript/personal-goals/smartPost';
+import { GoalPostRecord } from 'src/typescript/personal-goals/goalPostRecord';
 
 export function PersonalGoalsSearch() {
-	const [items, setItems] = useState<Array<GoalPostObject>>([]);
+	const [items, setItems] = useState<Array<GoalPostRecord>>([
+		new GoalPostRecord(0, 0, true, 'type', 'hello')
+	]);
 	const [queryText, setQueryText] = useState<string>('');
 	return (
-		<div>
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
 			<div style={{ display: 'flex', gap: 5 }}>
 				<input
 					type='text'
@@ -20,34 +22,36 @@ export function PersonalGoalsSearch() {
 					Search
 				</button>
 			</div>
+			<div>Results: {items.length}</div>
 			<div>
-				<div
-					style={{
-						width: 'fit-content',
-						padding: 0,
-						margin: 0,
-						overflow: 'hidden'
-					}}
-					className='ms-card ms-border grayscale'
-				>
-					<a
-						href='{{$.WebPath}}/personal-goals/{{.Id}}{{$.HtmlExtension}}'
-						className='ms-text-main'
-					>
-						<div
-							style={{ display: 'flex', flexDirection: 'column' }}
-							className='ms-bg-light'
+				{items.map((item, index) => (
+					<div key={index}>
+						<a
+							href={`/personal-goals/${item.goalId}/${item.dateTime}.html`}
+							style={{ display: 'inline-flex', gap: 10 }}
 						>
-							<img
-								width='200'
-								height='100'
-								src='{{$.StaticPath}}{{.Image}}'
-								alt='{{.Title}}'
-							/>
-							<div style={{ padding: 8, maxWidth: 200 }}>Title</div>
-						</div>
-					</a>
-				</div>
+							<button
+								type='button'
+								className='ms-btn ms-primary ms-outline'
+								style={{
+									fontFamily: 'monospace',
+									minWidth: 50,
+									padding: 8,
+									display: 'flex',
+									justifyContent: 'center'
+								}}
+							>
+								<span>{item.dateTime}</span>
+							</button>
+							<div
+								className='ms-text-main'
+								style={{ display: 'flex', alignItems: 'center' }}
+							>
+								{item.title}
+							</div>
+						</a>
+					</div>
+				))}
 			</div>
 		</div>
 	);
