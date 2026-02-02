@@ -6,7 +6,8 @@ export class GoalPostRecord {
 		/** Unix timestamp seconds */
 		public dateTime: number = 0,
 		public isPublic: boolean = false,
-		public type: string = ''
+		public type: string = '',
+		public title: string = '',
 	) {}
 
 	get yearAndMonthText(): string {
