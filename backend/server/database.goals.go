@@ -166,12 +166,16 @@ func (me *database) searchGoalPosts(queryText string, includePrivate bool, limit
 		if !isVisible {
 			return true
 		}
+		var isMatched = false
 		for _, lang := range supportedLanguages {
 			var title = strings.ToUpper(row.getTranslatedTitle(lang))
 			var text = stripHtml(strings.ToUpper(row.getTranslatedText(lang)))
 			if strings.Contains(title, queryText) || strings.Contains(text, queryText) {
-				results = append(results, row)
+				isMatched = true
 			}
+		}
+		if isMatched {
+			results = append(results, row)
 		}
 		return true
 	}, -1)
