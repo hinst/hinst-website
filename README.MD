@@ -9,7 +9,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/
 1. Call `build && push` in the root folder
 	1. Call `deploy` in `orange-pi-kubernetes` folder to deploy backend container to my Orange-Pi single board computer
 2. Call `node build.js` in `frontend` folder
-	1. Commit and push `hinst.github.io` repository to make frontend available on GitHub pages
+	1. ~~Commit and push `hinst.github.io` repository to make frontend available on GitHub pages~~
+	1. This is no longer used, because I deploy a static version of my website to hinst.github.io nowadays, without React.js
 
 ## Administrator mode
 In administrator mode we can edit article texts and toggle article visibility: private or public. Initially all newly downloaded articles are private.
