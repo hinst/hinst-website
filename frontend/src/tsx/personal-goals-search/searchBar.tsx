@@ -2,14 +2,15 @@ import { Search } from 'react-feather';
 import { useState } from 'react';
 
 interface Props {
-	text?: string;
+	text: string;
+	disabled: boolean;
 	onSearch: (queryText: string) => void;
 }
 
 export function SearchBar(props: Props) {
 	const [queryText, setQueryText] = useState(props.text || '');
 	return (
-		<div style={{ display: 'flex', gap: 5 }}>
+		<div style={{ display: 'flex', gap: 5, flexGrow: 1 }}>
 			<input
 				type='text'
 				placeholder='Search text...'
@@ -24,6 +25,7 @@ export function SearchBar(props: Props) {
 				type='button'
 				style={{ display: 'flex', gap: 5, alignItems: 'center' }}
 				onClick={() => props.onSearch(queryText)}
+				disabled={props.disabled}
 			>
 				<Search />
 				Search
