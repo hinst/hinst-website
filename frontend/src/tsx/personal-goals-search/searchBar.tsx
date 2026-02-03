@@ -1,12 +1,13 @@
 import { Search } from 'react-feather';
 import { useState } from 'react';
 
-interface SearchBarProps {
+interface Props {
+	text?: string;
 	onSearch: (queryText: string) => void;
 }
 
-export function SearchBar({ onSearch }: SearchBarProps) {
-	const [queryText, setQueryText] = useState('');
+export function SearchBar(props: Props) {
+	const [queryText, setQueryText] = useState(props.text || '');
 	return (
 		<div style={{ display: 'flex', gap: 5 }}>
 			<input
@@ -16,13 +17,13 @@ export function SearchBar({ onSearch }: SearchBarProps) {
 				value={queryText}
 				onChange={(e) => setQueryText(e.target.value)}
 				onKeyDown={(e) => {
-					if (e.key === 'Enter') onSearch(queryText);
+					if (e.key === 'Enter') props.onSearch(queryText);
 				}}
 			/>
 			<button
 				type='button'
 				style={{ display: 'flex', gap: 5, alignItems: 'center' }}
-				onClick={() => onSearch(queryText)}
+				onClick={() => props.onSearch(queryText)}
 			>
 				<Search />
 				Search
