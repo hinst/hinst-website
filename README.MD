@@ -63,3 +63,6 @@ In administrator mode we can edit article texts and toggle article visibility: p
 ## 2026.01
 * Updated Node.js packages to latest versions
 * Updated Node.js version from 22 to 24
+
+## 2026.02
+* Implemented text search for blog posts
