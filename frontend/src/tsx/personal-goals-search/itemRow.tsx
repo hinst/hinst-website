@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router';
 import { GoalPostRecord } from 'src/typescript/personal-goals/goalPostRecord';
 
 interface ItemRowProps {
@@ -7,8 +8,8 @@ interface ItemRowProps {
 export function ItemRow({ item }: ItemRowProps) {
 	return (
 		<div>
-			<a
-				href={`/personal-goals/${item.goalId}/${item.dateTime}.html`}
+			<NavLink
+				to={`/personal-goals/${item.goalId}?activePostDate=${item.dateTime}`}
 				style={{ display: 'inline-flex', gap: 10 }}
 			>
 				<button
@@ -27,7 +28,7 @@ export function ItemRow({ item }: ItemRowProps) {
 				<div className='ms-text-main' style={{ display: 'flex', alignItems: 'center' }}>
 					{item.title}
 				</div>
-			</a>
+			</NavLink>
 		</div>
 	);
 }
