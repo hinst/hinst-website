@@ -2,14 +2,15 @@ package server
 
 import (
 	"database/sql"
-	"fmt"
+	"slices"
+	"strings"
 	"time"
 
 	"golang.org/x/text/language"
 )
 
 type goalPostRow struct {
-	goalId   int64
+	goalId int64
 	/* Unix seconds UTC */
 	dateTime int64
 	isPublic bool
@@ -25,8 +26,6 @@ type goalPostRow struct {
 	titleGerman  *string
 }
 
-var _ fmt.Stringer = &goalPostRow{}
-
 func (me *goalPostRow) scan(rows *sql.Rows) {
 	assertError(rows.Scan(
 		&me.goalId,
@@ -40,6 +39,56 @@ func (me *goalPostRow) scan(rows *sql.Rows) {
 		&me.titleEnglish,
 		&me.titleGerman,
 	))
+}
+
+func (goalPostRow) getAllFields() []string {
+	return []string{
+		"goalId",
+		"dateTime",
+		"isPublic",
+		"text",
+		"textEnglish",
+		"textGerman",
+		"type",
+		"title",
+		"titleEnglish",
+		"titleGerman",
+	}
+}
+
+func (goalPostRow) getFieldsForLanguage(supportedLanguage language.Tag) (fields []string) {
+	var allFields = goalPostRow{}.getAllFields()
+	for _, field := range allFields {
+		var includeField = true
+		for _, lang := range supportedLanguages {
+			if field == "text"+(database{}).getLanguagePostfix(lang) && lang != supportedLanguage {
+				includeField = false
+			}
+			if field == "title"+(database{}).getLanguagePostfix(lang) && lang != supportedLanguage {
+				includeField = false
+			}
+		}
+		if includeField {
+			fields = append(fields, field)
+		}
+	}
+	return fields
+}
+
+func (goalPostRow) getSelectorForLanguage(supportedLanguage language.Tag) string {
+	var requiredFields = goalPostRow{}.getFieldsForLanguage(supportedLanguage)
+	var fields = goalPostRow{}.getAllFields()
+	for index, field := range fields {
+		var isIncluded = slices.Contains(requiredFields, field)
+		if !isIncluded {
+			if field == "text" || field == "title" {
+				fields[index] = "''"
+			} else {
+				fields[index] = "NULL"
+			}
+		}
+	}
+	return strings.Join(fields, ",")
 }
 
 func (me *goalPostRow) getDateTime() time.Time {

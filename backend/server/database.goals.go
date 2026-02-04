@@ -52,10 +52,10 @@ func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supported
 		})
 }
 
-func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, sortByDate int) {
+func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, selector string, sortByDate int) {
 	var db = me.open()
 	defer me.close(db)
-	var querySql = "SELECT * FROM goalPosts"
+	var querySql = "SELECT " + selector + " FROM goalPosts"
 	if sortByDate != 0 {
 		querySql += " ORDER BY dateTime " + ifElse(sortByDate > 0, "ASC", "DESC")
 	}
@@ -156,11 +156,8 @@ func (database) getLanguagePostfix(supportedLanguage language.Tag) string {
 }
 
 func (me *database) searchGoalPosts(
-	queryText string, language language.Tag, includePrivate bool, limit int,
+	queryText string, supportedLanguage language.Tag, includePrivate bool, limit int,
 ) (results []*goalPostRow) {
-	if !slices.Contains(supportedLanguages, language) {
-		panic("This language is not supported: " + language.String())
-	}
 	queryText = strings.ToUpper(queryText)
 	queryText = normalizeString(queryText)
 	me.forEachGoalPost(func(row *goalPostRow) bool {
@@ -171,13 +168,13 @@ func (me *database) searchGoalPosts(
 		if !isVisible {
 			return true
 		}
-		var title = strings.ToUpper(row.getTranslatedTitle(language))
-		var text = stripHtml(strings.ToUpper(row.getTranslatedText(language)))
+		var title = strings.ToUpper(row.getTranslatedTitle(supportedLanguage))
+		var text = stripHtml(strings.ToUpper(row.getTranslatedText(supportedLanguage)))
 		if strings.Contains(title, queryText) || strings.Contains(text, queryText) {
 			results = append(results, row)
 		}
 		return true
-	}, -1)
+	}, (goalPostRow{}).getSelectorForLanguage(supportedLanguage), -1)
 	return
 }
 

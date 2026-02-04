@@ -39,7 +39,7 @@ func (me *translator) run() {
 			translatedCount++
 		}
 		return true
-	}, 0)
+	}, "*", 0)
 	log.Printf("Generated translated text for %v of %v posts", translatedCount, totalCount)
 }
 
