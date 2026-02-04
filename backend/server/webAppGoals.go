@@ -127,7 +127,7 @@ func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *ht
 	var requestedLanguage = getWebLanguage(request)
 	use(requestedLanguage)
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
-	var rows = me.db.searchGoalPosts(queryText, goalManagerMode, resultLimit)
+	var rows = me.db.searchGoalPosts(queryText, requestedLanguage, goalManagerMode, resultLimit)
 	var records []goalPostRecord
 	for _, row := range rows {
 		var record goalPostRecord

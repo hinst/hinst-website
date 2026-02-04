@@ -155,7 +155,12 @@ func (database) getLanguagePostfix(supportedLanguage language.Tag) string {
 	return languageName
 }
 
-func (me *database) searchGoalPosts(queryText string, includePrivate bool, limit int) (results []*goalPostRow) {
+func (me *database) searchGoalPosts(
+	queryText string, language language.Tag, includePrivate bool, limit int,
+) (results []*goalPostRow) {
+	if !slices.Contains(supportedLanguages, language) {
+		panic("This language is not supported: " + language.String())
+	}
 	queryText = strings.ToUpper(queryText)
 	queryText = normalizeString(queryText)
 	me.forEachGoalPost(func(row *goalPostRow) bool {
@@ -166,15 +171,9 @@ func (me *database) searchGoalPosts(queryText string, includePrivate bool, limit
 		if !isVisible {
 			return true
 		}
-		var isMatched = false
-		for _, lang := range supportedLanguages {
-			var title = strings.ToUpper(row.getTranslatedTitle(lang))
-			var text = stripHtml(strings.ToUpper(row.getTranslatedText(lang)))
-			if strings.Contains(title, queryText) || strings.Contains(text, queryText) {
-				isMatched = true
-			}
-		}
-		if isMatched {
+		var title = strings.ToUpper(row.getTranslatedTitle(language))
+		var text = stripHtml(strings.ToUpper(row.getTranslatedText(language)))
+		if strings.Contains(title, queryText) || strings.Contains(text, queryText) {
 			results = append(results, row)
 		}
 		return true
