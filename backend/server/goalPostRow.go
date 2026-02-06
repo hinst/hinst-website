@@ -56,15 +56,16 @@ func (goalPostRow) getAllFields() []string {
 	}
 }
 
-func (goalPostRow) getFieldsForLanguage(supportedLanguage language.Tag) (fields []string) {
+func (goalPostRow) getFieldsForLanguage(desiredLanguage language.Tag) (fields []string) {
 	var allFields = goalPostRow{}.getAllFields()
 	for _, field := range allFields {
 		var includeField = true
-		for _, lang := range supportedLanguages {
-			if field == "text"+(database{}).getLanguagePostfix(lang) && lang != supportedLanguage {
-				includeField = false
+		for _, supportedLanguage := range supportedLanguages {
+			if supportedLanguage == desiredLanguage {
+				continue
 			}
-			if field == "title"+(database{}).getLanguagePostfix(lang) && lang != supportedLanguage {
+			var postfix = database{}.getLanguagePostfix(supportedLanguage)
+			if field == "text"+postfix || field == "title"+postfix {
 				includeField = false
 			}
 		}
