@@ -1,6 +1,6 @@
 package server
 
-import "database/sql"
+import "github.com/jackc/pgx/v5"
 
 type urlPingRecord struct {
 	Url                    string `json:"url"`
@@ -8,7 +8,7 @@ type urlPingRecord struct {
 	GooglePingedManuallyAt *int64 `json:"googlePingedManuallyAt"` // Unix seconds UTC
 }
 
-func (me *urlPingRecord) scan(rows *sql.Rows) {
+func (me *urlPingRecord) scan(rows pgx.Rows) {
 	assertError(rows.Scan(
 		&me.Url,
 		&me.GooglePingedAt,

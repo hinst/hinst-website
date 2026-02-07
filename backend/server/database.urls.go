@@ -1,12 +1,13 @@
 package server
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 func (me *database) getUrlPings() (results []urlPingRecord) {
-	var db = me.open()
-	defer me.close(db)
-	var rows = assertResultError(db.Query("SELECT * FROM urlPings"))
-	defer ioClose(rows)
+	var rows = assertResultError(me.pool.Query(context.Background(), "SELECT * FROM urlPings"))
+	defer rows.Close()
 	for rows.Next() {
 		var record urlPingRecord
 		record.scan(rows)
@@ -16,10 +17,8 @@ func (me *database) getUrlPings() (results []urlPingRecord) {
 }
 
 func (me *database) getUrlPing(url string) *urlPingRecord {
-	var db = me.open()
-	defer me.close(db)
-	var rows = assertResultError(db.Query("SELECT * FROM urlPings WHERE url = ?", url))
-	defer ioClose(rows)
+	var rows = assertResultError(me.pool.Query(context.Background(), "SELECT * FROM urlPings WHERE url = $1", url))
+	defer rows.Close()
 	if rows.Next() {
 		var record urlPingRecord
 		record.scan(rows)
@@ -29,26 +28,19 @@ func (me *database) getUrlPing(url string) *urlPingRecord {
 }
 
 func (me *database) insertUrlPing(url string) {
-	var db = me.open()
-	defer me.close(db)
-	var result = assertResultError(db.Exec("INSERT INTO urlPings (url, googlePingedAt) VALUES (?, NULL)", url))
-	assertResultError(result.RowsAffected())
+	assertResultError(me.pool.Exec(context.Background(), "INSERT INTO urlPings (url, googlePingedAt) VALUES ($1, NULL)", url))
 }
 
 func (me *database) updateUrlPingGoogle(url string, dateTime time.Time) bool {
-	var db = me.open()
-	defer me.close(db)
 	var unixSeconds = dateTime.UTC().Unix()
-	var result = assertResultError(db.Exec("UPDATE urlPings SET googlePingedAt = ? WHERE url = ?", unixSeconds, url))
-	var rowCount = assertResultError(result.RowsAffected())
+	var result = assertResultError(me.pool.Exec(context.Background(), "UPDATE urlPings SET googlePingedAt = $1 WHERE url = $2", unixSeconds, url))
+	var rowCount = result.RowsAffected()
 	return rowCount > 0
 }
 
 func (me *database) updateUrlPingGoogleManually(url string, dateTime time.Time) bool {
-	var db = me.open()
-	defer me.close(db)
 	var unixSeconds = dateTime.UTC().Unix()
-	var result = assertResultError(db.Exec("UPDATE urlPings SET googlePingedManuallyAt = ? WHERE url = ?", unixSeconds, url))
-	var rowCount = assertResultError(result.RowsAffected())
+	var result = assertResultError(me.pool.Exec(context.Background(), "UPDATE urlPings SET googlePingedManuallyAt = $1 WHERE url = $2", unixSeconds, url))
+	var rowCount = result.RowsAffected()
 	return rowCount > 0
 }
