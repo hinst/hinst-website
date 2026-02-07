@@ -14,9 +14,12 @@
 		"cSpell.words": [
 			"github",
 			"hinst",
-			"sqlite",
 			"luxon",
-			"Millis"
+			"Millis",
+			"pgxpool",
+			"postgre",
+			"Postgre",
+			"sqlite"
 		]
 	}
 }

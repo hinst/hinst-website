@@ -4,6 +4,9 @@
 		"gohtml",
 		"hinst",
 		"mattn",
+		"pgxpool",
+		"postgre",
+		"Postgre",
 		"sqlite"
 	],
 	"go.lintTool": "golangci-lint"

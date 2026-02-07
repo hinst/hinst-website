@@ -1,12 +1,13 @@
 package server
 
 import (
+	"context"
 	"database/sql"
-	"strconv"
 	"time"
 
 	_ "embed"
 
+	pgxpool "github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -14,30 +15,19 @@ import (
 var dbTimeout = time.Hour / time.Millisecond
 
 //go:embed schema.sql
-var dbSchema string
+var dbSchemaSqLite string
+
+//go:embed schema.postgre.sql
+var dbSchemaPostgre string
 
 type database struct {
-	dataDirectory string
+	pool *pgxpool.Pool
 }
 
 func (me *database) init(dataDirectory string) {
-	me.dataDirectory = dataDirectory
-	var db = me.open()
-	defer me.close(db)
-	assertError(db.Ping())
-	assertResultError(db.Exec(dbSchema))
-	me.collectGarbage()
-}
-
-func (me *database) open() *sql.DB {
-	return me.openFile(me.getFilePath())
-}
-
-func (me *database) openFile(filePath string) *sql.DB {
-	const journalMode = "_journal_mode=WAL"
-	var busyTimeout = "_busy_timeout=" + strconv.Itoa(int(dbTimeout))
-	var url = "file:" + filePath + "?" + journalMode + "&" + busyTimeout
-	return assertResultError(sql.Open("sqlite3", url))
+	var config = assertResultError(pgxpool.ParseConfig(requireEnvVar("POSTGRES_URL")))
+	me.pool = assertResultError(pgxpool.NewWithConfig(context.Background(), config))
+	assertResultError(me.pool.Exec(context.Background(), dbSchemaPostgre))
 }
 
 func (me *database) close(db *sql.DB) *sql.DB {
@@ -45,17 +35,4 @@ func (me *database) close(db *sql.DB) *sql.DB {
 		assertError(db.Close())
 	}
 	return nil
-}
-
-func (me *database) getFilePath() string {
-	return me.dataDirectory + "/hinst-website.db"
-}
-
-func (me *database) collectGarbage() {
-	var db = me.open()
-	defer me.close(db)
-
-	assertResultError(db.Exec("PRAGMA wal_checkpoint(TRUNCATE);"))
-	assertResultError(db.Exec("VACUUM;"))
-	assertResultError(db.Exec("PRAGMA wal_checkpoint(TRUNCATE);"))
 }
