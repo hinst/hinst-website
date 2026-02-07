@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"log"
 	"slices"
 	"strings"
@@ -9,47 +10,27 @@ import (
 	"golang.org/x/text/language"
 )
 
-func (me *database) setGoalPostPublic(row goalPostRow) {
-	var db = me.open()
-	defer me.close(db)
-	assertResultError(
-		db.Exec("UPDATE goalPosts SET isPublic = ? WHERE goalId = ? AND dateTime = ?",
-			row.isPublic, row.goalId, row.getDateTime().UTC().Unix()),
-	)
+func (me *database) setGoalPostPublic(row goalPostRow) int64 {
+	var query = "UPDATE goalPosts SET isPublic = $1 WHERE goalId = $2 AND dateTime = $3"
+	var result = assertResultError(me.pool.Exec(context.Background(), query,
+		row.isPublic, row.goalId, row.getDateTime().UTC().Unix()))
+	return result.RowsAffected()
 }
 
-func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) {
-	var db = me.open()
-	defer me.close(db)
-	assertCondition(slices.Contains(supportedLanguages, supportedLanguage),
-		func() string { return "Unsupported language: " + supportedLanguage.String() })
+func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) int64 {
 	var textField = "text" + me.getLanguagePostfix(supportedLanguage)
-	var queryText = "UPDATE goalPosts SET " + textField + " = ? WHERE goalId = ? AND dateTime = ?"
+	var queryText = "UPDATE goalPosts SET " + textField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()
-	var result = assertResultError(db.Exec(queryText, text, goalId, dateTimeEpoch))
-	var changedRowCount = assertResultError(result.RowsAffected())
-	assertCondition(changedRowCount > 0,
-		func() string {
-			return "Cannot update translated text for goalId=" +
-				getStringFromInt64(goalId) + " dateTime=" + getStringFromInt64(dateTimeEpoch)
-		})
+	var result = assertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
+	return result.RowsAffected()
 }
 
-func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) {
-	var db = me.open()
-	defer me.close(db)
-	assertCondition(slices.Contains(supportedLanguages, supportedLanguage),
-		func() string { return "Unsupported language: " + supportedLanguage.String() })
+func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) int64 {
 	var titleField = "title" + me.getLanguagePostfix(supportedLanguage)
-	var queryText = "UPDATE goalPosts SET " + titleField + " = ? WHERE goalId = ? AND dateTime = ?"
+	var queryText = "UPDATE goalPosts SET " + titleField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()
-	var result = assertResultError(db.Exec(queryText, text, goalId, dateTimeEpoch))
-	var changedRowCount = assertResultError(result.RowsAffected())
-	assertCondition(changedRowCount > 0,
-		func() string {
-			return "Cannot update translated title for goalId=" +
-				getStringFromInt64(goalId) + " dateTime=" + getStringFromInt64(dateTimeEpoch)
-		})
+	var result = assertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
+	return result.RowsAffected()
 }
 
 func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, selector string, sortByDate int) {
@@ -148,6 +129,8 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 }
 
 func (database) getLanguagePostfix(supportedLanguage language.Tag) string {
+	assertCondition(slices.Contains(supportedLanguages, supportedLanguage),
+		func() string { return "Unsupported language: " + supportedLanguage.String() })
 	var languageName = ""
 	if supportedLanguage != supportedLanguages[0] {
 		languageName = getLanguageName(supportedLanguage)
