@@ -106,7 +106,7 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 	var titleField = "title" + me.getLanguagePostfix(language)
 	var queryText = "SELECT goalId, dateTime, isPublic, type, " + titleField + " FROM goalPosts WHERE goalId = $1"
 	if !includePrivate {
-		queryText += " AND isPublic = 1"
+		queryText += " AND isPublic = TRUE"
 	}
 	var rows = assertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
@@ -152,6 +152,11 @@ func (me *database) searchGoalPosts(
 }
 
 func (me *database) migrate() {
-	log.Println("Migrating table urlPings")
-	assertResultError(me.pool.Exec(context.Background(), "ALTER TABLE urlPings ADD COLUMN googlePingedManuallyAt BIGINT"))
+	log.Println("Migrating isPublic field to BOOLEAN")
+	assertResultError(me.pool.Exec(context.Background(),
+		"ALTER TABLE goalPosts ALTER COLUMN isPublic DROP DEFAULT"))
+	assertResultError(me.pool.Exec(context.Background(),
+		"ALTER TABLE goalPosts ALTER COLUMN isPublic TYPE BOOLEAN USING (isPublic != 0)"))
+	assertResultError(me.pool.Exec(context.Background(),
+		"ALTER TABLE goalPosts ALTER COLUMN isPublic SET DEFAULT FALSE"))
 }
