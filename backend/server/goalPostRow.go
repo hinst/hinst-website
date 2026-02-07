@@ -1,11 +1,11 @@
 package server
 
 import (
-	"database/sql"
 	"slices"
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"golang.org/x/text/language"
 )
 
@@ -26,7 +26,7 @@ type goalPostRow struct {
 	titleGerman  *string
 }
 
-func (me *goalPostRow) scan(rows *sql.Rows) {
+func (me *goalPostRow) scan(rows pgx.Rows) {
 	assertError(rows.Scan(
 		&me.goalId,
 		&me.dateTime,
