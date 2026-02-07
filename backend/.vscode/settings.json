@@ -3,6 +3,7 @@
 		"github",
 		"gohtml",
 		"hinst",
+		"jackc",
 		"mattn",
 		"pgxpool",
 		"postgre",
