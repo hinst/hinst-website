@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"slices"
 	"strings"
@@ -152,11 +153,39 @@ func (me *database) searchGoalPosts(
 }
 
 func (me *database) migrate() {
-	log.Println("Migrating isPublic field to BOOLEAN")
-	assertResultError(me.pool.Exec(context.Background(),
-		"ALTER TABLE goalPosts ALTER COLUMN isPublic DROP DEFAULT"))
-	assertResultError(me.pool.Exec(context.Background(),
-		"ALTER TABLE goalPosts ALTER COLUMN isPublic TYPE BOOLEAN USING (isPublic != 0)"))
-	assertResultError(me.pool.Exec(context.Background(),
-		"ALTER TABLE goalPosts ALTER COLUMN isPublic SET DEFAULT FALSE"))
+	me.migrateUrlPings()
+}
+
+func (me *database) migrateUrlPings() {
+	log.Println("Migrating urlPings from SQLite to PostgreSQL")
+
+	// Open SQLite database
+	var sqlitePath = "./saved-goals/hinst-website.db"
+	log.Printf("Opening SQLite database: %v", sqlitePath)
+	var sqliteDb = assertResultError(sql.Open("sqlite3", sqlitePath))
+	defer me.close(sqliteDb)
+
+	// Read all urlPings from SQLite
+	var sqliteRows = assertResultError(sqliteDb.Query("SELECT url, googlePingedAt, googlePingedManuallyAt FROM urlPings"))
+	defer sqliteRows.Close()
+
+	var count = 0
+	for sqliteRows.Next() {
+		var url string
+		var googlePingedAt *int64
+		var googlePingedManuallyAt *int64
+		assertError(sqliteRows.Scan(&url, &googlePingedAt, &googlePingedManuallyAt))
+
+		// Insert into PostgreSQL with ON CONFLICT DO UPDATE
+		var query = `INSERT INTO urlPings (url, googlePingedAt, googlePingedManuallyAt)
+			VALUES ($1, $2, $3)
+			ON CONFLICT (url) DO UPDATE SET
+				googlePingedAt = EXCLUDED.googlePingedAt,
+				googlePingedManuallyAt = EXCLUDED.googlePingedManuallyAt`
+		assertResultError(me.pool.Exec(context.Background(), query, url, googlePingedAt, googlePingedManuallyAt))
+		count++
+	}
+	assertError(sqliteRows.Err())
+
+	log.Printf("Migrated %d urlPing records from SQLite to PostgreSQL", count)
 }
