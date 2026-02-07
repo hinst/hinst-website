@@ -180,7 +180,6 @@ func (me *database) migrateUrlPings() {
 		var query = `INSERT INTO urlPings (url, googlePingedAt, googlePingedManuallyAt)
 			VALUES ($1, $2, $3)
 			ON CONFLICT (url) DO UPDATE SET
-				googlePingedAt = EXCLUDED.googlePingedAt,
 				googlePingedManuallyAt = EXCLUDED.googlePingedManuallyAt`
 		assertResultError(me.pool.Exec(context.Background(), query, url, googlePingedAt, googlePingedManuallyAt))
 		count++
