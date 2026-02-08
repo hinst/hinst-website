@@ -13,6 +13,10 @@ func getIntFromString(text string) int {
 	return assertResultError(strconv.Atoi(text))
 }
 
+func getInt32FromString(text string) int32 {
+	return int32(assertResultError(strconv.ParseInt(text, 10, 32)))
+}
+
 func getInt64FromString(text string) int64 {
 	return assertResultError(strconv.ParseInt(text, 10, 64))
 }
@@ -40,6 +44,14 @@ func requireEnvVar(name string) string {
 	var value = os.Getenv(name)
 	if value == "" {
 		log.Fatalln("Environment variable is required:", name)
+	}
+	return value
+}
+
+func readEnvVar(name string, defaultValue string) string {
+	var value = os.Getenv(name)
+	if value == "" {
+		return defaultValue
 	}
 	return value
 }
