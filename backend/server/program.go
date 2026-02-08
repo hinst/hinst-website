@@ -31,7 +31,7 @@ func (me *program) create() *program {
 }
 
 func (me *program) runWeb() {
-	me.database.init(me.savedGoalsPath)
+	me.database.init()
 
 	var webApp = &webApp{
 		allowOrigin: me.allowOrigin,
@@ -48,7 +48,7 @@ func (me *program) runWeb() {
 }
 
 func (me *program) update() {
-	me.database.init(me.savedGoalsPath)
+	me.database.init()
 	me.updateTranslations()
 	me.updateTitles()
 	me.generateStatic(me.savedGoalsPath + "/static")
@@ -82,7 +82,7 @@ func (me *program) uploadStatic() {
 }
 
 func (me *program) migrate() {
-	me.database.init(me.savedGoalsPath)
+	me.database.init()
 	me.database.migrate()
 }
 
@@ -99,7 +99,7 @@ func (me *program) generatePrimeNumbers() {
 }
 
 func (me *program) generateStatic(folder string) {
-	me.database.init(me.savedGoalsPath)
+	me.database.init()
 	var webApp = &webApp{webPath: "/"}
 	webApp.init(me.database)
 	go func() {

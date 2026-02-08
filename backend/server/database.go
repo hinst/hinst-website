@@ -24,7 +24,7 @@ type database struct {
 	pool *pgxpool.Pool
 }
 
-func (me *database) init(dataDirectory string) {
+func (me *database) init() {
 	var config = assertResultError(pgxpool.ParseConfig(requireEnvVar("POSTGRES_URL")))
 	me.pool = assertResultError(pgxpool.NewWithConfig(context.Background(), config))
 	assertResultError(me.pool.Exec(context.Background(), dbSchemaPostgre))
