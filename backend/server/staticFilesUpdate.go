@@ -61,7 +61,7 @@ func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
 }
 
 func (me *staticFilesUpdate) checkPreservedFile(fileName string) bool {
-	var preservedFiles = []string{".git", "posts", "robots.txt"}
+	var preservedFiles = []string{".git", "posts", "robots.txt", "dynamic"}
 	return slices.Contains(preservedFiles, fileName) || strings.HasPrefix(fileName, "googled")
 }
 
