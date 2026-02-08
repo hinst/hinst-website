@@ -3,15 +3,11 @@ package server
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	_ "embed"
 
 	pgxpool "github.com/jackc/pgx/v5/pgxpool"
 )
-
-// Measured in milliseconds
-var dbTimeout = time.Hour / time.Millisecond
 
 //go:embed schema.postgre.sql
 var dbSchemaPostgre string
