@@ -2,8 +2,6 @@ package server
 
 import (
 	"context"
-	"database/sql"
-	"log"
 	"slices"
 	"strings"
 	"time"
