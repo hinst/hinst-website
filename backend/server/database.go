@@ -8,14 +8,10 @@ import (
 	_ "embed"
 
 	pgxpool "github.com/jackc/pgx/v5/pgxpool"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 // Measured in milliseconds
 var dbTimeout = time.Hour / time.Millisecond
-
-//go:embed schema.sql
-var dbSchemaSqLite string
 
 //go:embed schema.postgre.sql
 var dbSchemaPostgre string
