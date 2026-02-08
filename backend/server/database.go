@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"database/sql"
 
 	_ "embed"
 
@@ -23,9 +22,9 @@ func (me *database) init() {
 	assertResultError(me.pool.Exec(context.Background(), dbSchemaPostgre))
 }
 
-func (me *database) close(db *sql.DB) *sql.DB {
-	if db != nil {
-		assertError(db.Close())
+func (me *database) close() {
+	if me.pool != nil {
+		me.pool.Close()
+		me.pool = nil
 	}
-	return nil
 }
