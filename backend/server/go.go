@@ -1,6 +1,12 @@
 package server
 
-import "io"
+import (
+	"fmt"
+	"io"
+	"runtime"
+	"strconv"
+	"strings"
+)
 
 func use(v any) {
 }
@@ -19,4 +25,21 @@ func ifElse[T any](condition bool, ifTrue T, ifFalse T) T {
 	} else {
 		return ifFalse
 	}
+}
+
+// Source: https://dev.to/leapcell/how-to-get-the-goroutine-id-1h5o
+func getThreadId() int64 {
+	var (
+		buf [64]byte
+		n   = runtime.Stack(buf[:], false)
+		stk = strings.TrimPrefix(string(buf[:n]), "goroutine")
+	)
+
+	idField := strings.Fields(stk)[0]
+	id, err := strconv.ParseInt(idField, 10, 64)
+	if err != nil {
+		panic(fmt.Errorf("cannot get goroutine id: %v", err))
+	}
+
+	return int64(id)
 }
