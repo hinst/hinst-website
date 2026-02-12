@@ -2,16 +2,16 @@ package server
 
 import (
 	"context"
-	"sync"
 	"time"
 
 	"github.com/jackc/pgx/v5"
 	pgxpool "github.com/jackc/pgx/v5/pgxpool"
+	gwrap "github.com/muir/gwrap"
 )
 
 type ConnectionPoolTracer struct {
 	timeout   time.Duration
-	cancelMap sync.Map
+	cancelMap gwrap.SyncMap[context.Context, context.CancelFunc]
 }
 
 var _ pgxpool.AcquireTracer = &ConnectionPoolTracer{}
@@ -36,9 +36,8 @@ func (me *ConnectionPoolTracer) TraceAcquireStart(ctx context.Context, pool *pgx
 }
 
 func (me *ConnectionPoolTracer) TraceAcquireEnd(ctx context.Context, pool *pgxpool.Pool, data pgxpool.TraceAcquireEndData) {
-	var cancelObject, cancelExists = me.cancelMap.Load(ctx)
+	var cancel, cancelExists = me.cancelMap.Load(ctx)
 	if cancelExists {
-		var cancel = cancelObject.(context.CancelFunc)
 		cancel()
 		me.cancelMap.Delete(ctx)
 	} else {
