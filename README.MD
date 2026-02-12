@@ -67,3 +67,4 @@ In administrator mode we can edit article texts and toggle article visibility: p
 ## 2026.02
 * Implemented text search for blog posts
 * Migrated database from SQLite to PostgreSQL
+	* Fixed connection pool bug: infinite waiting
