@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
-	pgxpool "github.com/jackc/pgx/v5/pgxpool"
-	gwrap "github.com/muir/gwrap"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/muir/gwrap"
 )
 
 type ConnectionPoolTracer struct {

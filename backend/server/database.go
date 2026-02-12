@@ -6,7 +6,7 @@ import (
 
 	_ "embed"
 
-	pgxpool "github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 //go:embed schema.postgre.sql
