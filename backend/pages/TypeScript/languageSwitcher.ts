@@ -1,5 +1,5 @@
-const headerLanguageButton = document.getElementById('header-language-button') as HTMLButtonElement;
-const headerLanguagePopup = document.getElementById('header-language-popup') as HTMLDivElement;
+const headerLanguageButton = document.getElementById('hamburger-menu-button') as HTMLButtonElement;
+const headerLanguagePopup = document.getElementById('hamburger-menu-popup') as HTMLDivElement;
 
 export function main() {
 	if (headerLanguageButton && headerLanguagePopup) {

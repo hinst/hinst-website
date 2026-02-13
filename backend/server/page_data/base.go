@@ -13,4 +13,5 @@ type Base struct {
 
 	SettingsSvg template.HTML
 	GlobeSvg    template.HTML
+	MenuSvg     template.HTML
 }
