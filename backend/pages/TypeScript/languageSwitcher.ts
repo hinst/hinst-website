@@ -1,14 +1,14 @@
-const headerLanguageButton = document.getElementById('hamburger-menu-button') as HTMLButtonElement;
-const headerLanguagePopup = document.getElementById('hamburger-menu-popup') as HTMLDivElement;
+const hamburgerMenuButton = document.getElementById('hamburger-menu-button') as HTMLButtonElement;
+const hamburgerMenuPopup = document.getElementById('hamburger-menu-popup') as HTMLDivElement;
 
 export function main() {
-	if (headerLanguageButton && headerLanguagePopup) {
+	if (hamburgerMenuButton && hamburgerMenuPopup) {
 		const displayStyle = 'flex';
-		headerLanguageButton.onclick = () => {
-			const isVisible = headerLanguagePopup.style.display === displayStyle;
-			headerLanguagePopup.style.display = isVisible ? 'none' : displayStyle;
+		hamburgerMenuButton.onclick = () => {
+			const isVisible = hamburgerMenuPopup.style.display === displayStyle;
+			hamburgerMenuPopup.style.display = isVisible ? 'none' : displayStyle;
 		};
-		const links = headerLanguagePopup.getElementsByTagName('a');
+		const links = hamburgerMenuPopup.getElementsByTagName('a');
 		let lastLink: HTMLAnchorElement | null = null;
 		for (const link of links) {
 			const href = link.getAttribute('href') || '';
