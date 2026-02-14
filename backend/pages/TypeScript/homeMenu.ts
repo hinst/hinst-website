@@ -6,6 +6,15 @@ const hamburgerMenuPopup = document.getElementById('hamburger-menu-popup') as HT
 
 let hamburgerMenuVisible = false;
 
+function clickOutsideHamburgerMenu(e: PointerEvent) {
+	if (!e.target) return;
+	const inside = hamburgerMenuPopup.contains(e.target as Node);
+	if (!inside) {
+		hamburgerMenuVisible = false;
+		updateHamburgerMenuVisibility();
+	}
+}
+
 function updateHamburgerMenuVisibility() {
 	if (null == hamburgerMenuButton || null == hamburgerMenuPopup) {
 		console.error('Hamburger menu elements are missing found');
@@ -15,10 +24,12 @@ function updateHamburgerMenuVisibility() {
 		hamburgerMenuPopup.style.transform = 'translate(0,0)';
 		hamburgerMenuPopup.style.opacity = '1';
 		hamburgerMenuPopup.classList.add('ms-box-shadow');
+		setTimeout(() => document.addEventListener('click', clickOutsideHamburgerMenu, false));
 	} else {
 		hamburgerMenuPopup.style.transform = 'translate(-100%, 0)';
 		hamburgerMenuPopup.style.opacity = '0';
 		hamburgerMenuPopup.classList.remove('ms-box-shadow');
+		document.removeEventListener('click', clickOutsideHamburgerMenu, false);
 	}
 }
 
