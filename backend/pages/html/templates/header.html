@@ -1,4 +1,42 @@
 <div style="display: flex; align-items: center; max-width: 100%">
+	<div
+		id="hamburger-menu-popup"
+		class="ms-bg-light ms-border-main"
+		style="
+			opacity: 0;
+			position: absolute;
+			z-index: 1;
+			top: 10px;
+			left: 10px;
+			overflow-y: auto;
+			max-height: 100%;
+			height: 100%;
+			margin: -10px;
+			padding-left: 9px;
+			padding-top: 12px;
+			padding-right: 9px;
+			padding-bottom: 12px;
+			border-width: 1px;
+			border-style: solid;
+			transform: translate(-100%, 0);
+			transition:
+				transform 0.3s,
+				opacity 0.3s;
+		"
+	>
+		<div>
+			<div style="display: flex; align-items: center; gap: 5px">
+				<!-- MenuButton placeholder -->
+				<div style="cursor: pointer">MenuButton</div>
+				<!-- HomeButton placeholder -->
+				<div>HomeButton</div>
+			</div>
+			<div style="margin-top: 10px">
+				<!-- HomeMenu placeholder -->
+				HomeMenu
+			</div>
+		</div>
+	</div>
 	<div>
 		<button
 			id="hamburger-menu-button"
@@ -19,7 +57,7 @@
 			</div>
 		</button>
 		<div
-			id="hamburger-menu-popup"
+			id="hamburger-menu-popup-old"
 			class="ms-bg-light"
 			style="
 				left: auto;
