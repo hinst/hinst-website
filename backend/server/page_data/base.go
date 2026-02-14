@@ -12,6 +12,5 @@ type Base struct {
 	HtmlExtension string
 
 	SettingsSvg template.HTML
-	GlobeSvg    template.HTML
 	MenuSvg     template.HTML
 }
