@@ -25,15 +25,53 @@
 		"
 	>
 		<div>
-			<div style="display: flex; align-items: center; gap: 5px">
-				<!-- MenuButton placeholder -->
-				<div style="cursor: pointer">MenuButton</div>
-				<!-- HomeButton placeholder -->
-				<div>HomeButton</div>
+			<div style="display: flex; align-items: center">
+				<button
+					id="hamburger-menu-button-inner"
+					type="button"
+					class="ms-btn ms-rounded ms-primary ms-outline hover-outline"
+					style="width: 40px; height: 40px"
+				>
+					<div
+						style="
+							width: 24px;
+							height: 24px;
+							border-radius: 50%;
+							transform: translate(-10px, 0px);
+						"
+						alt="settings"
+					>
+						{{.MenuSvg}}
+					</div>
+				</button>
+				<a href="{{if .WebPath}}{{.WebPath}}{{else}}/{{end}}">
+					<img
+						src="{{.StaticPath}}/static/images/favicon.png"
+						width="42"
+						height="42"
+						style="width: 42px; height: 42px; border-radius: 50%; margin-left: 5px"
+						alt="icon"
+						class="hover-outline"
+					/>
+				</a>
 			</div>
-			<div style="margin-top: 10px">
-				<!-- HomeMenu placeholder -->
-				HomeMenu
+			<div
+				style="
+					margin-top: 10px;
+					display: flex;
+					flex-direction: column;
+					gap: 5px;
+					width: 160px;
+				"
+			>
+				<a
+					class="ms-btn ms-outline"
+					href="{{if .StaticPath}}{{.StaticPath}}{{else}}/{{end}}"
+				>
+					English
+				</a>
+				<a class="ms-btn ms-outline" href="{{.StaticPath}}/de"> German </a>
+				<a class="ms-btn ms-outline" href="{{.StaticPath}}/ru"> Russian </a>
 			</div>
 		</div>
 	</div>
@@ -71,20 +109,7 @@
 				margin-right: 10px;
 				z-index: 1;
 			"
-		>
-			<a
-				class="ms-btn ms-outline ms-rounded ms-primary"
-				href="{{if .StaticPath}}{{.StaticPath}}{{else}}/{{end}}"
-			>
-				English
-			</a>
-			<a class="ms-btn ms-outline ms-rounded ms-primary" href="{{.StaticPath}}/de">
-				German
-			</a>
-			<a class="ms-btn ms-outline ms-rounded ms-primary" href="{{.StaticPath}}/ru">
-				Russian
-			</a>
-		</div>
+		></div>
 	</div>
 
 	<a href="{{if .WebPath}}{{.WebPath}}{{else}}/{{end}}">
