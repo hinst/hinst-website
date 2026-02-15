@@ -8,6 +8,7 @@ import (
 	"golang.org/x/text/language"
 )
 
+// Static website generator for personal goals
 type webStaticGoals struct {
 	folder string
 	url    string
@@ -21,11 +22,21 @@ func (me *webStaticGoals) init(url string, db *database, folder string) {
 }
 
 func (me *webStaticGoals) run() {
-	assertError(os.RemoveAll(me.folder))
 	assertError(os.MkdirAll(me.folder, file_mode.OS_USER_RWX))
+	me.deleteOldFiles()
 	assertError(os.CopyFS(me.folder+"/static", os.DirFS("pages/static")))
 	for _, lang := range supportedLanguages {
 		me.generate(lang)
+	}
+}
+
+func (me *webStaticGoals) deleteOldFiles() {
+	for _, file := range assertResultError(os.ReadDir(me.folder)) {
+		var filePath = me.folder + "/" + file.Name()
+		var isPreserved = staticFilesUpdate{}.checkPreservedFile(file.Name())
+		if !isPreserved {
+			assertError(os.RemoveAll(filePath))
+		}
 	}
 }
 

@@ -60,7 +60,7 @@ func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
 	assertError(os.CopyFS(staticGitPath, os.DirFS(me.savedGoalsPath+"/static")))
 }
 
-func (me *staticFilesUpdate) checkPreservedFile(fileName string) bool {
+func (staticFilesUpdate) checkPreservedFile(fileName string) bool {
 	var preservedFiles = []string{".git", "posts", "robots.txt", "dynamic"}
 	return slices.Contains(preservedFiles, fileName) || strings.HasPrefix(fileName, "googled")
 }
