@@ -3,6 +3,7 @@ package server
 import (
 	"bytes"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -111,11 +112,18 @@ func buildUrl(base string, parameters map[string]string) string {
 
 func formatHtml(text string) string {
 	var client = &http.Client{Timeout: 1 * time.Minute}
-	var url = requireEnvVar("PRETTIER_SERVER_URL")
+	var url = requireEnvVar("PRETTIER_SERVER_URL") +
+		buildUrl("", map[string]string{"filename": "index.html"})
 	var textBytes = []byte(text)
-	var req = assertResultError(http.NewRequest("POST", url, bytes.NewBuffer(textBytes)))
-	var response = assertResultError(client.Do(req))
+	var request = assertResultError(http.NewRequest("POST", url, bytes.NewBuffer(textBytes)))
+	request.Header.Set(contentTypeHeader, "text/html")
+	var response = assertResultError(client.Do(request))
 	defer ioCloseSilently(response.Body)
 	var responseBytes = assertResultError(io.ReadAll(response.Body))
-	return string(responseBytes)
+	var responseText = string(responseBytes)
+	if response.StatusCode != http.StatusOK {
+		log.Println("Cannot format HTML text; status: " + response.Status + "; response: " + responseText)
+		panic(webError{Message: "Cannot format HTML text", Status: http.StatusInternalServerError})
+	}
+	return responseText
 }
