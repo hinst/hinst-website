@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/json"
 	"io"
 	"net/http"
 	"net/url"
@@ -62,13 +61,6 @@ func inputValidWebInteger(text string) int {
 	}
 	assertCondition(parseError == nil, createWebError)
 	return result
-}
-
-func decodeWebJson(input io.ReadCloser, value any) {
-	var decodeError = json.NewDecoder(input).Decode(value)
-	if decodeError != nil {
-		panic(webError{Message: "Invalid JSON body: " + decodeError.Error(), Status: http.StatusBadRequest})
-	}
 }
 
 func writeJsonResponse(response http.ResponseWriter, value any) {
