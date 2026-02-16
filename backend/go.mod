@@ -7,7 +7,6 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/muir/gwrap v0.4.0
-	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4
 	golang.org/x/oauth2 v0.34.0
 	golang.org/x/text v0.33.0
 )

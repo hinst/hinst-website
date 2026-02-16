@@ -1,13 +1,13 @@
 package server
 
 import (
+	"bytes"
 	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
 
-	"github.com/yosssi/gohtml"
 	"golang.org/x/text/language"
 )
 
@@ -68,7 +68,7 @@ func writeJsonResponse(response http.ResponseWriter, value any) {
 }
 
 func writeHtmlResponse(response http.ResponseWriter, text string) {
-	text = gohtml.Format(text)
+	text = formatHtml(text)
 	response.Header().Set("Content-Type", "text/html; charset=utf-8")
 	var _, _ = response.Write([]byte(text))
 }
@@ -107,4 +107,15 @@ func buildUrl(base string, parameters map[string]string) string {
 		theUrl += key + "=" + url.QueryEscape(value)
 	}
 	return theUrl
+}
+
+func formatHtml(text string) string {
+	var client = &http.Client{Timeout: 1 * time.Minute}
+	var url = requireEnvVar("PRETTIER_SERVER_URL")
+	var textBytes = []byte(text)
+	var req = assertResultError(http.NewRequest("POST", url, bytes.NewBuffer(textBytes)))
+	var response = assertResultError(client.Do(req))
+	defer ioCloseSilently(response.Body)
+	var responseBytes = assertResultError(io.ReadAll(response.Body))
+	return string(responseBytes)
 }
