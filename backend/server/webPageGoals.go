@@ -10,6 +10,8 @@ import (
 	"golang.org/x/text/language"
 )
 
+// Server side rendering for personal goals pages.
+// This code is used to generate static files to be displayed on a hosting service without backend API.
 type webPageGoals struct {
 	webAppGoalsBase
 	webPath         string
