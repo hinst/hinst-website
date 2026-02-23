@@ -50,7 +50,7 @@ func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, select
 }
 
 func (me *database) getGoals() (results []goalRecord) {
-	var rows = assertResultError(me.pool.Query(context.Background(), "SELECT id, title FROM goals"))
+	var rows = assertResultError(me.pool.Query(context.Background(), "SELECT id, title FROM goals ORDER BY id"))
 	defer rows.Close()
 	for rows.Next() {
 		var record goalRecord
@@ -107,6 +107,7 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 	if !includePrivate {
 		queryText += " AND isPublic = TRUE"
 	}
+	queryText += " ORDER BY dateTime DESC"
 	var rows = assertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	for rows.Next() {
