@@ -43,3 +43,4 @@
 * Implemented text search for blog posts
 * Migrated database from SQLite to PostgreSQL
 	* Fixed connection pool bug: infinite waiting
+* Use Prettier to format generated HTML files for static website
