@@ -111,7 +111,7 @@ func buildUrl(base string, parameters map[string]string) string {
 }
 
 func formatHtml(text string) string {
-	var client = &http.Client{Timeout: 1 * time.Minute}
+	var client = &http.Client{Timeout: 10 * time.Minute}
 	var url = requireEnvVar("PRETTIER_SERVER_URL") +
 		buildUrl("", map[string]string{"filename": "index.html"})
 	var textBytes = []byte(text)
