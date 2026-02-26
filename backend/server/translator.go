@@ -43,8 +43,52 @@ func (me *translator) run() {
 	log.Printf("Generated translated text for %v of %v posts", translatedCount, totalCount)
 }
 
+func (me *translator) migrate() {
+	var totalCount = 0
+	var translatedCount = 0
+	me.db.forEachGoalPost(func(row *goalPostRow) bool {
+		log.Println("Checking...")
+		var isDone = false
+		if row.textEnglish != nil {
+			var _, e = formatHtml(*row.textEnglish)
+			if e != nil {
+				log.Printf("English text is not valid HTML. Regenerating translation for goalId=%v, dateTime=%v. Error: %v",
+					row.goalId, row.getDateTime(), e)
+				me.translate(row, language.English)
+				isDone = true
+			}
+		}
+		if row.textGerman != nil {
+			var _, e = formatHtml(*row.textGerman)
+			if e != nil {
+				log.Printf("German text is not valid HTML. Regenerating translation for goalId=%v, dateTime=%v. Error: %v",
+					row.goalId, row.getDateTime(), e)
+				me.translate(row, language.German)
+				isDone = true
+			}
+		}
+		totalCount++
+		if isDone {
+			translatedCount++
+		}
+		return true
+	}, "*", 0)
+	log.Printf("Regenerated translated text for %v of %v posts", translatedCount, totalCount)
+}
+
 func (me *translator) translate(row *goalPostRow, tag language.Tag) {
-	var text = me.translateText(row.text, tag)
+	var text = ""
+	const attemptLimit = 10
+	for i := range attemptLimit {
+		text = me.translateText(row.text, tag)
+		var _, e = formatHtml(text)
+		if e == nil {
+			break
+		} else if i == attemptLimit-1 {
+			log.Printf("Cannot generate valid HTML text after %v attempts for goalId=%v, dateTime=%v, language=%v. Last error: %v. Last generated text: %v",
+				attemptLimit, row.goalId, row.getDateTime(), tag, e, text)
+		}
+	}
 	me.db.setGoalPostText(row.goalId, row.getDateTime(), tag, text)
 }
 

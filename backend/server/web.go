@@ -2,8 +2,8 @@ package server
 
 import (
 	"bytes"
+	"errors"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -69,7 +69,7 @@ func writeJsonResponse(response http.ResponseWriter, value any) {
 }
 
 func writeHtmlResponse(response http.ResponseWriter, text string) {
-	text = formatHtml(text)
+	text = assertResultError(formatHtml(text))
 	response.Header().Set("Content-Type", "text/html; charset=utf-8")
 	var _, _ = response.Write([]byte(text))
 }
@@ -110,7 +110,7 @@ func buildUrl(base string, parameters map[string]string) string {
 	return theUrl
 }
 
-func formatHtml(text string) string {
+func formatHtml(text string) (string, error) {
 	var client = &http.Client{Timeout: 10 * time.Minute}
 	var url = requireEnvVar("PRETTIER_SERVER_URL") +
 		buildUrl("", map[string]string{"filename": "index.html"})
@@ -121,9 +121,15 @@ func formatHtml(text string) string {
 	defer ioCloseSilently(response.Body)
 	var responseBytes = assertResultError(io.ReadAll(response.Body))
 	var responseText = string(responseBytes)
-	if response.StatusCode != http.StatusOK {
-		log.Println("Cannot format HTML text; status: " + response.Status + "; response: " + responseText)
-		panic(webError{Message: "Cannot format HTML text", Status: http.StatusInternalServerError})
+	if response.StatusCode == http.StatusOK {
+		return responseText, nil
+	} else {
+		var errorText = "Cannot format HTML text; status: " + response.Status + "; response: " + responseText
+		if response.StatusCode == http.StatusBadRequest {
+			// The supplied text was not a valid HTML
+			return text, errors.New(errorText)
+		} else {
+			panic(errorText)
+		}
 	}
-	return responseText
 }

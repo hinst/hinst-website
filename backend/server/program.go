@@ -61,6 +61,7 @@ func (me *program) updateTranslations() {
 		translator.apiUrl = me.translatorApiUrl + "/v1/chat/completions"
 	}
 	translator.db = me.database
+	translator.migrate()
 	translator.run()
 }
 
