@@ -50,7 +50,7 @@ func (me *translator) migrate() {
 		log.Println("Checking...")
 		var isDone = false
 		if row.textEnglish != nil {
-			var _, e = formatHtml(*row.textEnglish)
+			var e = validateHtml(*row.textEnglish)
 			if e != nil {
 				log.Printf("English text is not valid HTML. Regenerating translation for goalId=%v, dateTime=%v. Error: %v",
 					row.goalId, row.dateTime, e)
@@ -59,7 +59,7 @@ func (me *translator) migrate() {
 			}
 		}
 		if row.textGerman != nil {
-			var _, e = formatHtml(*row.textGerman)
+			var e = validateHtml(*row.textGerman)
 			if e != nil {
 				log.Printf("German text is not valid HTML. Regenerating translation for goalId=%v, dateTime=%v. Error: %v",
 					row.goalId, row.dateTime, e)
@@ -82,7 +82,7 @@ func (me *translator) translate(row *goalPostRow, tag language.Tag) {
 	for i := range attemptLimit {
 		var text = assertResultError(formatHtml(row.text))
 		text = me.translateText(text, tag)
-		var _, e = formatHtml(text)
+		var e = validateHtml(text)
 		if e == nil {
 			break
 		} else if i == attemptLimit-1 {

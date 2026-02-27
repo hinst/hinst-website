@@ -133,3 +133,8 @@ func formatHtml(text string) (string, error) {
 		}
 	}
 }
+
+func validateHtml(text string) error {
+	var _, e = formatHtml("<div>" + text + "</div>")
+	return e
+}
