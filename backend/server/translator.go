@@ -107,7 +107,7 @@ func (me *translator) translateText(text string, tag language.Tag) string {
 	})
 	var client = &http.Client{Timeout: 1 * time.Hour}
 	var req = common.AssertResultError(http.NewRequest("POST", me.apiUrl, bytes.NewBuffer(request)))
-	req.Header.Set(contentTypeHeader, contentTypeJson)
+	req.Header.Set(common.ContentTypeHeader, common.ContentTypeJson)
 	var response = common.AssertResultError(client.Do(req))
 	defer ioCloseSilently(response.Body)
 	common.AssertCondition(response.StatusCode == http.StatusOK, func() error {

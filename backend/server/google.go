@@ -35,7 +35,7 @@ func (me *GoogleIndexingClient) updateUrl(url string) bool {
 	}
 	var apiUrl = "https://indexing.googleapis.com/v3/urlNotifications:publish"
 	var response = common.AssertResultError(me.client.Post(apiUrl,
-		contentTypeJson, bytes.NewReader(common.EncodeJson(data))))
+		common.ContentTypeJson, bytes.NewReader(common.EncodeJson(data))))
 	defer ioCloseSilently(response.Body)
 	if response.StatusCode == http.StatusTooManyRequests {
 		return false

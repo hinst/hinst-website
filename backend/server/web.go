@@ -47,10 +47,6 @@ func parseLanguageHeader(text string) language.Tag {
 	return tag
 }
 
-func setCacheAge(response http.ResponseWriter, duration time.Duration) {
-	response.Header().Set(common.CacheControlHeader, "max-age="+strconv.Itoa(int(duration.Seconds())))
-}
-
 func inputValidWebInteger(text string) int {
 	var result, parseError = strconv.Atoi(text)
 	var createWebError = func() webError {

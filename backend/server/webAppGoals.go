@@ -36,7 +36,7 @@ func (me *webAppGoals) getGoals(response http.ResponseWriter, request *http.Requ
 func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
 	var goal = me.db.getGoal(goalId)
-	setCacheAge(response, time.Minute)
+	common.SetCacheAge(response, time.Minute)
 	writeJsonResponse(response, goal)
 }
 
@@ -91,7 +91,7 @@ func (me *webAppGoals) getGoalPostImage(response http.ResponseWriter, request *h
 	if image == nil {
 		panic(webError{"Image not found", http.StatusNotFound})
 	}
-	setCacheAge(response, time.Hour)
+	common.SetCacheAge(response, time.Hour)
 	response.Header().Set(common.ContentTypeHeader, image.contentType)
 	var _, _ = response.Write(image.file)
 }

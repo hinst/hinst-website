@@ -3,6 +3,8 @@ package server
 import (
 	"net/http"
 	"os"
+
+	"github.com/hinst/go-common"
 )
 
 type webAppBase struct {
@@ -36,7 +38,7 @@ func (me *webAppBase) getAdminPassword() string {
 	return os.Getenv("ADMIN_PASSWORD")
 }
 
-func (me *webAppBase) guardAdminFunction(function webFunction) webFunction {
+func (me *webAppBase) guardAdminFunction(function common.WebFunction) common.WebFunction {
 	return func(response http.ResponseWriter, request *http.Request) {
 		me.inputAssertAdminPassword(request)
 		function(response, request)
