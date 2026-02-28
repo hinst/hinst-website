@@ -3,7 +3,7 @@ module github.com/hinst/hinst-website
 go 1.26.0
 
 require (
-	github.com/hinst/go-common v0.1.13
+	github.com/hinst/go-common v0.1.14
 	github.com/jackc/pgx/v5 v5.8.0
 	github.com/joho/godotenv v1.5.1
 	github.com/microcosm-cc/bluemonday v1.0.27
