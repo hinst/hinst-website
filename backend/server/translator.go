@@ -97,7 +97,7 @@ func (me *translator) translate(row *goalPostRow, tag language.Tag) {
 func (me *translator) translateText(text string, tag language.Tag) string {
 	var prompt = prompt_Russian_to_something
 	prompt = strings.ReplaceAll(prompt, "{something}", getLanguageName(tag))
-	var request = encodeJson(lmStudioRequest{
+	var request = common.EncodeJson(lmStudioRequest{
 		Model: lm_studio_multilingual_model_id,
 		Messages: []lmStudioMessage{
 			{Role: lm_studio_role_system, Content: prompt},
@@ -114,6 +114,6 @@ func (me *translator) translateText(text string, tag language.Tag) string {
 		return errors.New("Cannot translate text. Status: " + response.Status)
 	})
 	var responseText = common.AssertResultError(io.ReadAll(response.Body))
-	var responseObject = decodeJson(responseText, new(lmStudioResponse))
+	var responseObject = common.DecodeJson(responseText, new(lmStudioResponse))
 	return responseObject.Choices[0].Message.Content
 }

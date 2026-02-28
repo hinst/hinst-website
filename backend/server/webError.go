@@ -8,9 +8,3 @@ type webError struct {
 func (me webError) Error() string {
 	return me.Message
 }
-
-func assertWebError(err error, webErr webError) {
-	if err != nil {
-		panic(webErr)
-	}
-}

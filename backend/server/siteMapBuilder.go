@@ -36,8 +36,7 @@ func (me *siteMapBuilder) loadOldSitemap() {
 		return
 	}
 	var text = readBytesFile(me.oldFilesPath + "/sitemap.xml")
-	me.oldSiteMap = &sitemap.XmlSitemap{}
-	readXml(text, me.oldSiteMap)
+	me.oldSiteMap = common.DecodeJson(text, new(sitemap.XmlSitemap))
 }
 
 func (me *siteMapBuilder) createItem(newFilePath string, directory os.DirEntry, err error) error {

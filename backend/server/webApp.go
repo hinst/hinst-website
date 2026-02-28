@@ -3,6 +3,8 @@ package server
 import (
 	"log"
 	"net/http"
+
+	"github.com/hinst/go-common"
 )
 
 type webApp struct {
@@ -50,7 +52,7 @@ func (me *webApp) wrap(function webFunction) webFunction {
 				var webError, isWebError = exception.(webError)
 				if isWebError {
 					response.WriteHeader(webError.Status)
-					var _, _ = response.Write(encodeJson(webError))
+					var _, _ = response.Write(common.EncodeJson(webError))
 				} else {
 					response.WriteHeader(http.StatusInternalServerError)
 					panic(exception)

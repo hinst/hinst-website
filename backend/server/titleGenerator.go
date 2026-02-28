@@ -51,7 +51,7 @@ func (me *titleGenerator) run() {
 }
 
 func (me *titleGenerator) summarizeText(text string) string {
-	var request = encodeJson(lmStudioRequest{
+	var request = common.EncodeJson(lmStudioRequest{
 		Model: lm_studio_multilingual_model_id,
 		Messages: []lmStudioMessage{
 			{Role: lm_studio_role_system, Content: prompt_generate_title},
@@ -65,7 +65,7 @@ func (me *titleGenerator) summarizeText(text string) string {
 		return errors.New("Cannot summarize text. Status: " + response.Status)
 	})
 	var responseText = common.AssertResultError(io.ReadAll(response.Body))
-	var responseObject = decodeJson(responseText, new(lmStudioResponse))
+	var responseObject = common.DecodeJson(responseText, new(lmStudioResponse))
 	var resultText = responseObject.Choices[0].Message.Content
 	resultText = me.trim(resultText)
 	return resultText

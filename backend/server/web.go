@@ -66,7 +66,7 @@ func inputValidWebInteger(text string) int {
 
 func writeJsonResponse(response http.ResponseWriter, value any) {
 	response.Header().Set("Content-Type", contentTypeJson)
-	var _, _ = response.Write(encodeJson(value))
+	var _, _ = response.Write(common.EncodeJson(value))
 }
 
 func writeHtmlResponse(response http.ResponseWriter, text string) {
