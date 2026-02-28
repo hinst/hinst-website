@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/hinst/go-common"
-	"github.com/hinst/hinst-website/server/file_mode"
+	"github.com/hinst/go-common/file_mode"
 	"golang.org/x/text/language"
 )
 
