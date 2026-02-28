@@ -1,1 +1,1 @@
-"C:\App\cloc-2.06.exe" . --list-file=cloc-include.txt --exclude-list-file=cloc-exclude.txt
+"A:\App\cloc-2.08.exe" . --list-file=cloc-include.txt --exclude-list-file=cloc-exclude.txt
