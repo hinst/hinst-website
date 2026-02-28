@@ -89,18 +89,6 @@ func (me *program) migrate() {
 	me.database.migrate()
 }
 
-func (me *program) generatePrimeNumbers() {
-	var primeNumbers = calculatePrimeNumbers(100_000)
-	primeNumbers = primeNumbers[10_000:]
-	var outputs []int
-	for index, primeNumber := range primeNumbers {
-		if (index % 10) == 0 {
-			outputs = append(outputs, primeNumber)
-		}
-	}
-	writeJsonFile(primeNumbersFileName, outputs)
-}
-
 func (me *program) generateStatic(folder string) {
 	me.database.init()
 	var webApp = &webApp{webPath: "/"}

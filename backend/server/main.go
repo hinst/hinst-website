@@ -31,9 +31,6 @@ func Main() {
 	case "migrate":
 		var theProgram = new(program).create()
 		theProgram.migrate()
-	case "generatePrimeNumbers":
-		var theProgram = new(program).create()
-		theProgram.generatePrimeNumbers()
 	case "generateStatic":
 		var theProgram = new(program).create()
 		theProgram.generateStatic("static")
