@@ -12,8 +12,6 @@ require (
 	golang.org/x/text v0.33.0
 )
 
-replace github.com/hinst/go-common => ../../go-common
-
 require (
 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect

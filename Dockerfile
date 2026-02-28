@@ -1,8 +1,6 @@
 FROM golang AS backend
 ADD backend /app
 WORKDIR /app
-RUN bash build/go_mod_no_replace.sh
-RUN go mod tidy
 ENV CGO_ENABLED=1
 RUN go mod download
 ENV GOCACHE=/root/.cache/go-build
