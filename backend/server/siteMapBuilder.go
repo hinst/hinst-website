@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hinst/go-common"
 	"github.com/hinst/hinst-website/server/sitemap"
 )
 
@@ -22,10 +23,10 @@ func (me *siteMapBuilder) run() {
 	me.loadOldSitemap()
 	me.newFilesPathPrefix = me.newFilesPath
 	me.newFilesPathPrefix = strings.TrimPrefix(me.newFilesPathPrefix, "./") + "/"
-	AssertError(filepath.WalkDir(me.newFilesPath, me.createItem))
+	common.AssertError(filepath.WalkDir(me.newFilesPath, me.createItem))
 	var options = sitemap.Options{PrettyOutput: true, WithXMLHeader: true, Validate: true}
 	var siteMap = sitemap.NewSitemap(me.items, &options)
-	var siteMapText = AssertResultError(siteMap.ToXMLString())
+	var siteMapText = common.AssertResultError(siteMap.ToXMLString())
 	writeTextFile(me.newFilesPath+"/sitemap.xml", siteMapText)
 }
 
@@ -87,7 +88,7 @@ func (me *siteMapBuilder) findPreviousLastMod(url string) *time.Time {
 	}
 	for _, item := range me.oldSiteMap.URL {
 		if item.Loc == url {
-			var previousTime = AssertResultError(time.Parse(time.DateOnly, item.LastMod)).UTC()
+			var previousTime = common.AssertResultError(time.Parse(time.DateOnly, item.LastMod)).UTC()
 			return &previousTime
 		}
 	}

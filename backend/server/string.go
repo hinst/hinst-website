@@ -5,20 +5,21 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/hinst/go-common"
 	"github.com/microcosm-cc/bluemonday"
 	"golang.org/x/text/unicode/norm"
 )
 
 func getIntFromString(text string) int {
-	return AssertResultError(strconv.Atoi(text))
+	return common.AssertResultError(strconv.Atoi(text))
 }
 
 func getInt32FromString(text string) int32 {
-	return int32(AssertResultError(strconv.ParseInt(text, 10, 32)))
+	return int32(common.AssertResultError(strconv.ParseInt(text, 10, 32)))
 }
 
 func getInt64FromString(text string) int64 {
-	return AssertResultError(strconv.ParseInt(text, 10, 64))
+	return common.AssertResultError(strconv.ParseInt(text, 10, 64))
 }
 
 func getStringFromInt64(number int64) string {

@@ -1,5 +1,7 @@
 package server
 
+import "github.com/hinst/go-common"
+
 const primeNumbersFileName = "primeNumbers.json"
 const primeNumbersLimit = 1000
 
@@ -27,7 +29,7 @@ func init() {
 		if len(globalPrimeNumbers) > primeNumbersLimit {
 			globalPrimeNumbers = globalPrimeNumbers[0:primeNumbersLimit]
 		}
-		AssertCondition(
+		common.AssertCondition(
 			len(globalPrimeNumbers) > 0,
 			func() string { return "Need prime numbers" },
 		)

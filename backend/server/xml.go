@@ -1,7 +1,11 @@
 package server
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+
+	"github.com/hinst/go-common"
+)
 
 func readXml(data []byte, v interface{}) {
-	AssertError(xml.Unmarshal(data, v))
+	common.AssertError(xml.Unmarshal(data, v))
 }

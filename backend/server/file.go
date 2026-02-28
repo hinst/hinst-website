@@ -7,13 +7,14 @@ import (
 	"os"
 	"strings"
 
+	"github.com/hinst/go-common"
 	"github.com/hinst/hinst-website/server/file_mode"
 )
 
 func readJsonFile[T any](filePath string, receiver T) T {
-	var file = AssertResultError(os.Open(filePath))
+	var file = common.AssertResultError(os.Open(filePath))
 	defer ioCloseSilently(file)
-	AssertError(json.NewDecoder(file).Decode(receiver))
+	common.AssertError(json.NewDecoder(file).Decode(receiver))
 	return receiver
 }
 
@@ -22,21 +23,21 @@ func readTextFile(filePath string) string {
 }
 
 func readBytesFile(filePath string) []byte {
-	var fileContent = AssertResultError(os.ReadFile(filePath))
+	var fileContent = common.AssertResultError(os.ReadFile(filePath))
 	return fileContent
 }
 
 func writeBytesFile(filePath string, data []byte) {
-	AssertError(os.WriteFile(filePath, data, file_mode.OS_USER_RW))
+	common.AssertError(os.WriteFile(filePath, data, file_mode.OS_USER_RW))
 }
 
 func writeJsonFile[T any](filePath string, data T) {
-	var jsonBytes = AssertResultError(json.Marshal(data))
-	AssertError(os.WriteFile(filePath, jsonBytes, file_mode.OS_USER_RW))
+	var jsonBytes = common.AssertResultError(json.Marshal(data))
+	common.AssertError(os.WriteFile(filePath, jsonBytes, file_mode.OS_USER_RW))
 }
 
 func writeTextFile(filePath string, text string) {
-	AssertError(os.WriteFile(filePath, []byte(text), file_mode.OS_USER_RW))
+	common.AssertError(os.WriteFile(filePath, []byte(text), file_mode.OS_USER_RW))
 }
 
 func checkFileExists(filePath string) bool {
@@ -50,11 +51,11 @@ func checkDirectoryExists(directoryPath string) bool {
 }
 
 func copyFile(destinationPath string, sourcePath string) (size int64) {
-	var sourceFile = AssertResultError(os.Open(sourcePath))
+	var sourceFile = common.AssertResultError(os.Open(sourcePath))
 	defer ioCloseSilently(sourceFile)
-	var destinationFile = AssertResultError(os.Create(destinationPath))
+	var destinationFile = common.AssertResultError(os.Create(destinationPath))
 	defer ioClose(destinationFile)
-	return AssertResultError(io.Copy(destinationFile, sourceFile))
+	return common.AssertResultError(io.Copy(destinationFile, sourceFile))
 }
 
 // https://stackoverflow.com/questions/29505089/how-can-i-compare-two-files-in-golang

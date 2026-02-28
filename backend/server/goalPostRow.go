@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hinst/go-common"
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/text/language"
 )
@@ -27,7 +28,7 @@ type goalPostRow struct {
 }
 
 func (me *goalPostRow) scan(rows pgx.Rows) {
-	AssertError(rows.Scan(
+	common.AssertError(rows.Scan(
 		&me.goalId,
 		&me.dateTime,
 		&me.isPublic,

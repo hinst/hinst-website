@@ -1,6 +1,9 @@
 package server
 
-import "github.com/jackc/pgx/v5"
+import (
+	"github.com/hinst/go-common"
+	"github.com/jackc/pgx/v5"
+)
 
 type urlPingRecord struct {
 	Url                    string `json:"url"`
@@ -9,7 +12,7 @@ type urlPingRecord struct {
 }
 
 func (me *urlPingRecord) scan(rows pgx.Rows) {
-	AssertError(rows.Scan(
+	common.AssertError(rows.Scan(
 		&me.Url,
 		&me.GooglePingedAt,
 		&me.GooglePingedManuallyAt,

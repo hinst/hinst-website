@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/hinst/go-common"
 	"golang.org/x/text/language"
 )
 
@@ -107,8 +108,8 @@ func (me *webAppGoals) setGoalPostText(response http.ResponseWriter, request *ht
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var languageTagText = request.URL.Query().Get("languageTag")
-	var languageTag = AssertResultError(language.Parse(languageTagText))
-	var text = string(AssertResultError(io.ReadAll(request.Body)))
+	var languageTag = common.AssertResultError(language.Parse(languageTagText))
+	var text = string(common.AssertResultError(io.ReadAll(request.Body)))
 	me.db.setGoalPostText(goalId, postDateTime, languageTag, text)
 }
 
@@ -116,8 +117,8 @@ func (me *webAppGoals) setGoalTitleText(response http.ResponseWriter, request *h
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var languageTagText = request.URL.Query().Get("languageTag")
-	var languageTag = AssertResultError(language.Parse(languageTagText))
-	var text = string(AssertResultError(io.ReadAll(request.Body)))
+	var languageTag = common.AssertResultError(language.Parse(languageTagText))
+	var text = string(common.AssertResultError(io.ReadAll(request.Body)))
 	me.db.setGoalPostTitle(goalId, postDateTime, languageTag, text)
 }
 

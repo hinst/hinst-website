@@ -6,6 +6,8 @@ import (
 	"os"
 	"slices"
 	"strings"
+
+	"github.com/hinst/go-common"
 )
 
 type staticFilesUpdate struct {
@@ -44,20 +46,20 @@ func (me *staticFilesUpdate) run() {
 // Copy old files from Git repository
 // Copy new files into Git repository
 func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
-	AssertError(os.RemoveAll(me.savedGoalsPath + "/static-old"))
-	for _, file := range AssertResultError(os.ReadDir(staticGitPath)) {
+	common.AssertError(os.RemoveAll(me.savedGoalsPath + "/static-old"))
+	for _, file := range common.AssertResultError(os.ReadDir(staticGitPath)) {
 		if !me.checkPreservedFile(file.Name()) {
 			var filePath = staticGitPath + "/" + file.Name()
 			var oldFilePath = me.savedGoalsPath + "/static-old/" + file.Name()
 			if file.IsDir() {
-				AssertError(os.CopyFS(oldFilePath, os.DirFS(filePath)))
+				common.AssertError(os.CopyFS(oldFilePath, os.DirFS(filePath)))
 			} else {
 				copyFile(oldFilePath, filePath)
 			}
-			AssertError(os.RemoveAll(filePath))
+			common.AssertError(os.RemoveAll(filePath))
 		}
 	}
-	AssertError(os.CopyFS(staticGitPath, os.DirFS(me.savedGoalsPath+"/static")))
+	common.AssertError(os.CopyFS(staticGitPath, os.DirFS(me.savedGoalsPath+"/static")))
 }
 
 func (staticFilesUpdate) checkPreservedFile(fileName string) bool {

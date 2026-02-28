@@ -5,6 +5,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/hinst/go-common"
 	"golang.org/x/oauth2/google"
 )
 
@@ -23,7 +24,7 @@ func (GoogleIndexingClient) getScope() string {
 
 func (me *GoogleIndexingClient) connect() {
 	var jsonText = readBytesFile(requireEnvVar("GOOGLE_ACCOUNT_JSON"))
-	var conf = AssertResultError(google.JWTConfigFromJSON(jsonText, me.getScope()))
+	var conf = common.AssertResultError(google.JWTConfigFromJSON(jsonText, me.getScope()))
 	me.client = conf.Client(context.Background())
 }
 
@@ -33,7 +34,7 @@ func (me *GoogleIndexingClient) updateUrl(url string) bool {
 		Type: "URL_UPDATED",
 	}
 	var apiUrl = "https://indexing.googleapis.com/v3/urlNotifications:publish"
-	var response = AssertResultError(me.client.Post(apiUrl,
+	var response = common.AssertResultError(me.client.Post(apiUrl,
 		contentTypeJson, bytes.NewReader(encodeJson(data))))
 	defer ioCloseSilently(response.Body)
 	if response.StatusCode == http.StatusTooManyRequests {

@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/hinst/go-common"
 	"golang.org/x/text/language"
 )
 
@@ -44,7 +45,7 @@ func parseLanguageHeader(text string) language.Tag {
 	if parsedError != nil {
 		panic(webError{"Invalid language header: " + text, http.StatusBadRequest})
 	}
-	AssertError(parsedError)
+	common.AssertError(parsedError)
 	var _, index, _ = supportedLanguagesMatcher.Match(tags...)
 	var tag = supportedLanguages[index]
 	return tag
@@ -59,7 +60,7 @@ func inputValidWebInteger(text string) int {
 	var createWebError = func() webError {
 		return webError{"Need integer. Received: " + text, http.StatusBadRequest}
 	}
-	AssertCondition(parseError == nil, createWebError)
+	common.AssertCondition(parseError == nil, createWebError)
 	return result
 }
 
@@ -69,7 +70,7 @@ func writeJsonResponse(response http.ResponseWriter, value any) {
 }
 
 func writeHtmlResponse(response http.ResponseWriter, text string) {
-	text = AssertResultError(formatHtml(text))
+	text = common.AssertResultError(formatHtml(text))
 	response.Header().Set("Content-Type", "text/html; charset=utf-8")
 	var _, _ = response.Write([]byte(text))
 }
@@ -79,10 +80,10 @@ func readTextFromUrl(url string) string {
 }
 
 func readBytesFromUrl(url string) []byte {
-	var response = AssertResultError(http.Get(url))
+	var response = common.AssertResultError(http.Get(url))
 	defer ioCloseSilently(response.Body)
 	assertResponse(response)
-	var data = AssertResultError(io.ReadAll(response.Body))
+	var data = common.AssertResultError(io.ReadAll(response.Body))
 	return data
 }
 
@@ -115,11 +116,11 @@ func formatHtml(text string) (string, error) {
 	var url = requireEnvVar("PRETTIER_SERVER_URL") +
 		buildUrl("", map[string]string{"filename": "index.html"})
 	var textBytes = []byte(text)
-	var request = AssertResultError(http.NewRequest("POST", url, bytes.NewBuffer(textBytes)))
+	var request = common.AssertResultError(http.NewRequest("POST", url, bytes.NewBuffer(textBytes)))
 	request.Header.Set(contentTypeHeader, "text/html")
-	var response = AssertResultError(client.Do(request))
+	var response = common.AssertResultError(client.Do(request))
 	defer ioCloseSilently(response.Body)
-	var responseBytes = AssertResultError(io.ReadAll(response.Body))
+	var responseBytes = common.AssertResultError(io.ReadAll(response.Body))
 	var responseText = string(responseBytes)
 	if response.StatusCode == http.StatusOK {
 		return responseText, nil

@@ -1,12 +1,16 @@
 package server
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/hinst/go-common"
+)
 
 func encodeJson[T any](value T) []byte {
-	return AssertResultError(json.Marshal(value))
+	return common.AssertResultError(json.Marshal(value))
 }
 
 func decodeJson[T any](data []byte, value T) T {
-	AssertError(json.Unmarshal(data, value))
+	common.AssertError(json.Unmarshal(data, value))
 	return value
 }

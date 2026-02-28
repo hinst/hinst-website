@@ -3,6 +3,8 @@ package server
 import (
 	"database/sql"
 	"time"
+
+	"github.com/hinst/go-common"
 )
 
 type riddleRow struct {
@@ -13,6 +15,6 @@ type riddleRow struct {
 
 func (me *riddleRow) scan(row *sql.Rows) {
 	var createdAt int64
-	AssertError(row.Scan(&me.id, &me.product, &createdAt))
+	common.AssertError(row.Scan(&me.id, &me.product, &createdAt))
 	me.createdAt = time.Unix(createdAt, 0)
 }

@@ -6,17 +6,19 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+
+	"github.com/hinst/go-common"
 )
 
 func use(v any) {
 }
 
 func ioCloseSilently(v io.Closer) {
-	IgnoreError(v.Close())
+	common.IgnoreError(v.Close())
 }
 
 func ioClose(v io.Closer) {
-	AssertError(v.Close())
+	common.AssertError(v.Close())
 }
 
 func ifElse[T any](condition bool, ifTrue T, ifFalse T) T {

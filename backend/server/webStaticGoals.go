@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/hinst/go-common"
 	"github.com/hinst/hinst-website/server/file_mode"
 	"golang.org/x/text/language"
 )
@@ -22,34 +23,34 @@ func (me *webStaticGoals) init(url string, db *database, folder string) {
 }
 
 func (me *webStaticGoals) run() {
-	AssertError(os.MkdirAll(me.folder, file_mode.OS_USER_RWX))
+	common.AssertError(os.MkdirAll(me.folder, file_mode.OS_USER_RWX))
 	me.deleteOldFiles()
-	AssertError(os.CopyFS(me.folder+"/static", os.DirFS("pages/static")))
+	common.AssertError(os.CopyFS(me.folder+"/static", os.DirFS("pages/static")))
 	for _, lang := range supportedLanguages {
 		me.generate(lang)
 	}
 }
 
 func (me *webStaticGoals) deleteOldFiles() {
-	for _, file := range AssertResultError(os.ReadDir(me.folder)) {
+	for _, file := range common.AssertResultError(os.ReadDir(me.folder)) {
 		var filePath = me.folder + "/" + file.Name()
 		var isPreserved = staticFilesUpdate{}.checkPreservedFile(file.Name())
 		if !isPreserved {
-			AssertError(os.RemoveAll(filePath))
+			common.AssertError(os.RemoveAll(filePath))
 		}
 	}
 }
 
 func (me *webStaticGoals) generate(lang language.Tag) {
 	var path = me.folder + me.getLanguagePath(lang)
-	AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
+	common.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
 	var homeUrl = buildUrl(me.url+"/pages", me.getPathQuery(lang))
 	var homePageText = readTextFromUrl(homeUrl)
 	writeTextFile(path+"/index.html", homePageText)
 
 	var goals = me.db.getGoals()
 	var goalsPath = path + "/personal-goals"
-	AssertError(os.MkdirAll(goalsPath, file_mode.OS_USER_RWX))
+	common.AssertError(os.MkdirAll(goalsPath, file_mode.OS_USER_RWX))
 	for _, goal := range goals {
 		me.generateGoal(lang, goalsPath, goal)
 	}
@@ -62,7 +63,7 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 	writeTextFile(goalsPath+"/"+getStringFromInt64(goalId)+".html", goalPageText)
 
 	var path = goalsPath + "/" + getStringFromInt64(goalId)
-	AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
+	common.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
 	var posts = me.db.getGoalPosts(goalId, false, lang)
 	for _, post := range posts {
 		me.generateGoalPost(lang, goalsPath, goalId, post.DateTime)
@@ -88,7 +89,7 @@ func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64
 	var image = readBytesFromUrl(url)
 	var path = me.folder + "/personal-goals/image/" + getStringFromInt64(goalId) + "/" +
 		getStringFromInt64(postDateTime)
-	AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
+	common.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
 	path += "/" + getStringFromInt(imageIndex) + ".jpg"
 	if checkFileExists(path) {
 		return // already saved

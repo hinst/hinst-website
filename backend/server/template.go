@@ -3,6 +3,8 @@ package server
 import (
 	"bytes"
 	"html/template"
+
+	"github.com/hinst/go-common"
 )
 
 var templateFunctions = template.FuncMap{
@@ -17,8 +19,8 @@ var templateFunctions = template.FuncMap{
 
 func executeTemplateFile(filePath string, data any) string {
 	var text = readTextFile(filePath)
-	var compiledTemplate = AssertResultError(template.New("page").Funcs(templateFunctions).Parse(text))
+	var compiledTemplate = common.AssertResultError(template.New("page").Funcs(templateFunctions).Parse(text))
 	var buffer = &bytes.Buffer{}
-	AssertError(compiledTemplate.Execute(buffer, data))
+	common.AssertError(compiledTemplate.Execute(buffer, data))
 	return buffer.String()
 }
