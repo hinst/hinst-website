@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/hinst/go-common"
 	"github.com/hinst/hinst-website/server/page_data"
 	"golang.org/x/text/language"
 )
@@ -174,7 +175,7 @@ func (me *webPageGoals) getGoalPostImage(response http.ResponseWriter, request *
 		panic(webError{"Image not found", http.StatusNotFound})
 	}
 	setCacheAge(response, time.Hour)
-	response.Header().Set("Content-Type", image.contentType)
+	response.Header().Set(common.ContentTypeHeader, image.contentType)
 	var _, _ = response.Write(image.file)
 }
 

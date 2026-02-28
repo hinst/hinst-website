@@ -92,7 +92,7 @@ func (me *webAppGoals) getGoalPostImage(response http.ResponseWriter, request *h
 		panic(webError{"Image not found", http.StatusNotFound})
 	}
 	setCacheAge(response, time.Hour)
-	response.Header().Set("Content-Type", image.contentType)
+	response.Header().Set(common.ContentTypeHeader, image.contentType)
 	var _, _ = response.Write(image.file)
 }
 

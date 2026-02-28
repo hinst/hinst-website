@@ -13,13 +13,9 @@ import (
 	"golang.org/x/text/language"
 )
 
-const contentTypeHeader = "Content-Type"
-const contentTypeJson = "application/json"
-
-type webFunction func(response http.ResponseWriter, request *http.Request)
 type namedWebFunction struct {
 	Name     string
-	Function webFunction
+	Function common.WebFunction
 }
 
 func getWebLanguage(request *http.Request) language.Tag {
@@ -52,7 +48,7 @@ func parseLanguageHeader(text string) language.Tag {
 }
 
 func setCacheAge(response http.ResponseWriter, duration time.Duration) {
-	response.Header().Set("Cache-Control", "max-age="+strconv.Itoa(int(duration.Seconds())))
+	response.Header().Set(common.CacheControlHeader, "max-age="+strconv.Itoa(int(duration.Seconds())))
 }
 
 func inputValidWebInteger(text string) int {
@@ -65,13 +61,13 @@ func inputValidWebInteger(text string) int {
 }
 
 func writeJsonResponse(response http.ResponseWriter, value any) {
-	response.Header().Set("Content-Type", contentTypeJson)
+	response.Header().Set(common.ContentTypeHeader, common.ContentTypeJson)
 	var _, _ = response.Write(common.EncodeJson(value))
 }
 
 func writeHtmlResponse(response http.ResponseWriter, text string) {
 	text = common.AssertResultError(formatHtml(text))
-	response.Header().Set("Content-Type", "text/html; charset=utf-8")
+	response.Header().Set(common.ContentTypeHeader, "text/html; charset=utf-8")
 	var _, _ = response.Write([]byte(text))
 }
 
@@ -117,7 +113,7 @@ func formatHtml(text string) (string, error) {
 		buildUrl("", map[string]string{"filename": "index.html"})
 	var textBytes = []byte(text)
 	var request = common.AssertResultError(http.NewRequest("POST", url, bytes.NewBuffer(textBytes)))
-	request.Header.Set(contentTypeHeader, "text/html")
+	request.Header.Set(common.ContentTypeHeader, "text/html")
 	var response = common.AssertResultError(client.Do(request))
 	defer ioCloseSilently(response.Body)
 	var responseBytes = common.AssertResultError(io.ReadAll(response.Body))
