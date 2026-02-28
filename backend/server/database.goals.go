@@ -36,7 +36,7 @@ func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supported
 func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, selector string, sortByDate int) {
 	var querySql = "SELECT " + selector + " FROM goalPosts"
 	if sortByDate != 0 {
-		querySql += " ORDER BY dateTime " + ifElse(sortByDate > 0, "ASC", "DESC")
+		querySql += " ORDER BY dateTime " + common.IfElse(sortByDate > 0, "ASC", "DESC")
 	}
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), querySql))
 	defer rows.Close()

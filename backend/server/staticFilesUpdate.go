@@ -18,7 +18,7 @@ type staticFilesUpdate struct {
 func (me *staticFilesUpdate) run() {
 	var staticGitPath = me.savedGoalsPath + "/static-git"
 	var runner = new(commandRunner)
-	if !checkDirectoryExists(staticGitPath) {
+	if !common.CheckDirectoryExists(staticGitPath) {
 		runner.command("Git clone", true, "git", "clone", me.getStaticWebsiteGitUrl(), staticGitPath)
 	}
 	me.flushFiles(staticGitPath)
@@ -54,7 +54,7 @@ func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
 			if file.IsDir() {
 				common.AssertError(os.CopyFS(oldFilePath, os.DirFS(filePath)))
 			} else {
-				copyFile(oldFilePath, filePath)
+				common.CopyFile(oldFilePath, filePath)
 			}
 			common.AssertError(os.RemoveAll(filePath))
 		}
@@ -74,7 +74,7 @@ func (me *staticFilesUpdate) buildSiteMap() {
 		oldFilesPath: me.savedGoalsPath + "/static-old",
 	}
 	builder.run()
-	copyFile(me.savedGoalsPath+"/static-git/sitemap.xml", me.savedGoalsPath+"/static/sitemap.xml")
+	common.CopyFile(me.savedGoalsPath+"/static-git/sitemap.xml", me.savedGoalsPath+"/static/sitemap.xml")
 }
 
 func (me *staticFilesUpdate) submitSiteMap() {

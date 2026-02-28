@@ -126,7 +126,6 @@ func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *ht
 	const resultLimit = 100
 	var queryText = request.URL.Query().Get("query")
 	var requestedLanguage = getWebLanguage(request)
-	use(requestedLanguage)
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
 	var rows = me.db.searchGoalPosts(queryText, requestedLanguage, goalManagerMode, resultLimit)
 	var records []goalPostRecord

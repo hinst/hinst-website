@@ -23,7 +23,7 @@ func (GoogleIndexingClient) getScope() string {
 }
 
 func (me *GoogleIndexingClient) connect() {
-	var jsonText = readBytesFile(requireEnvVar("GOOGLE_ACCOUNT_JSON"))
+	var jsonText = common.ReadBytesFile(requireEnvVar("GOOGLE_ACCOUNT_JSON"))
 	var conf = common.AssertResultError(google.JWTConfigFromJSON(jsonText, me.getScope()))
 	me.client = conf.Client(context.Background())
 }
@@ -36,7 +36,7 @@ func (me *GoogleIndexingClient) updateUrl(url string) bool {
 	var apiUrl = "https://indexing.googleapis.com/v3/urlNotifications:publish"
 	var response = common.AssertResultError(me.client.Post(apiUrl,
 		common.ContentTypeJson, bytes.NewReader(common.EncodeJson(data))))
-	defer ioCloseSilently(response.Body)
+	defer common.IoCloseSilently(response.Body)
 	if response.StatusCode == http.StatusTooManyRequests {
 		return false
 	}

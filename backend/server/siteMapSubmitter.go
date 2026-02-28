@@ -15,7 +15,7 @@ type siteMapSubmitter struct {
 }
 
 func (me *siteMapSubmitter) run() {
-	var siteMap = common.DecodeXml(readBytesFile(me.siteMapPath), new(sitemap.XmlSitemap))
+	var siteMap = common.DecodeXml(common.ReadBytesFile(me.siteMapPath), new(sitemap.XmlSitemap))
 	var siteMapItems = siteMap.URL
 	var pingedEarlierCount = 0
 	var pingedNowCount = 0

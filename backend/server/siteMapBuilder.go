@@ -27,16 +27,15 @@ func (me *siteMapBuilder) run() {
 	var options = sitemap.Options{PrettyOutput: true, WithXMLHeader: true, Validate: true}
 	var siteMap = sitemap.NewSitemap(me.items, &options)
 	var siteMapText = common.AssertResultError(siteMap.ToXMLString())
-	writeTextFile(me.newFilesPath+"/sitemap.xml", siteMapText)
+	common.WriteTextFile(me.newFilesPath+"/sitemap.xml", siteMapText)
 }
 
 func (me *siteMapBuilder) loadOldSitemap() {
 	var oldSiteMapPath = me.oldFilesPath + "/sitemap.xml"
-	if !checkFileExists(oldSiteMapPath) {
+	if !common.CheckFileExists(oldSiteMapPath) {
 		return
 	}
-	var text = readBytesFile(me.oldFilesPath + "/sitemap.xml")
-	me.oldSiteMap = common.DecodeJson(text, new(sitemap.XmlSitemap))
+	me.oldSiteMap = common.ReadJsonFile(me.oldFilesPath+"/sitemap.xml", new(sitemap.XmlSitemap))
 }
 
 func (me *siteMapBuilder) createItem(newFilePath string, directory os.DirEntry, err error) error {
@@ -52,7 +51,7 @@ func (me *siteMapBuilder) createItem(newFilePath string, directory os.DirEntry, 
 	var relativePath = newFilePath[len(me.newFilesPathPrefix):]
 	relativePath = strings.ReplaceAll(relativePath, "\\", "/")
 	var oldFilePath = me.oldFilesPath + "/" + relativePath
-	var haveChange = !checkTextFilesEqual(oldFilePath, newFilePath)
+	var haveChange = !common.CheckTextFilesEqual(oldFilePath, newFilePath)
 	var url = me.webPath + "/" + relativePath
 	var item = &sitemap.SitemapItem{
 		Loc:        url,

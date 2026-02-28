@@ -46,7 +46,7 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 	common.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
 	var homeUrl = me.url + "/pages" + common.BuildUrlQueryParams(me.getPathQuery(lang))
 	var homePageText = readTextFromUrl(homeUrl)
-	writeTextFile(path+"/index.html", homePageText)
+	common.WriteTextFile(path+"/index.html", homePageText)
 
 	var goals = me.db.getGoals()
 	var goalsPath = path + "/personal-goals"
@@ -61,7 +61,7 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) +
 		common.BuildUrlQueryParams(me.getPathQuery(lang))
 	var goalPageText = readTextFromUrl(url)
-	writeTextFile(goalsPath+"/"+getStringFromInt64(goalId)+".html", goalPageText)
+	common.WriteTextFile(goalsPath+"/"+getStringFromInt64(goalId)+".html", goalPageText)
 
 	var path = goalsPath + "/" + getStringFromInt64(goalId)
 	common.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
@@ -76,7 +76,7 @@ func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, 
 		getStringFromInt64(postDateTime) + common.BuildUrlQueryParams(me.getPathQuery(lang))
 	var postPageText = readTextFromUrl(url)
 	var path = goalsPath + "/" + getStringFromInt64(goalId)
-	writeTextFile(path+"/"+getStringFromInt64(postDateTime)+".html", postPageText)
+	common.WriteTextFile(path+"/"+getStringFromInt64(postDateTime)+".html", postPageText)
 
 	var imageCount = me.db.getGoalPostImageCount(goalId, time.Unix(postDateTime, 0))
 	for imageIndex := range imageCount {
@@ -92,10 +92,10 @@ func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64
 		getStringFromInt64(postDateTime)
 	common.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
 	path += "/" + getStringFromInt(imageIndex) + ".jpg"
-	if checkFileExists(path) {
+	if common.CheckFileExists(path) {
 		return // already saved
 	}
-	writeBytesFile(path, image)
+	common.WriteBytesFile(path, image)
 }
 
 func (me *webStaticGoals) getLanguagePath(tag language.Tag) string {

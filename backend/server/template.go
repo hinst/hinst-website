@@ -18,7 +18,7 @@ var templateFunctions = template.FuncMap{
 }
 
 func executeTemplateFile(filePath string, data any) string {
-	var text = readTextFile(filePath)
+	var text = common.ReadTextFile(filePath)
 	var compiledTemplate = common.AssertResultError(template.New("page").Funcs(templateFunctions).Parse(text))
 	var buffer = &bytes.Buffer{}
 	common.AssertError(compiledTemplate.Execute(buffer, data))

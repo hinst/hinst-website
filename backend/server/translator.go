@@ -109,7 +109,7 @@ func (me *translator) translateText(text string, tag language.Tag) string {
 	var req = common.AssertResultError(http.NewRequest("POST", me.apiUrl, bytes.NewBuffer(request)))
 	req.Header.Set(common.ContentTypeHeader, common.ContentTypeJson)
 	var response = common.AssertResultError(client.Do(req))
-	defer ioCloseSilently(response.Body)
+	defer common.IoCloseSilently(response.Body)
 	common.AssertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot translate text. Status: " + response.Status)
 	})

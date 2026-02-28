@@ -60,7 +60,7 @@ func (me *titleGenerator) summarizeText(text string) string {
 		Stream: false,
 	})
 	var response = common.AssertResultError(http.Post(me.apiUrl, common.ContentTypeJson, bytes.NewBuffer(request)))
-	defer ioCloseSilently(response.Body)
+	defer common.IoCloseSilently(response.Body)
 	common.AssertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot summarize text. Status: " + response.Status)
 	})

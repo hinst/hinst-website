@@ -9,7 +9,7 @@ import (
 )
 
 func Main() {
-	if checkFileExists(".env") {
+	if common.CheckFileExists(".env") {
 		common.AssertError(godotenv.Load())
 	}
 	var modePtr = flag.String("mode", "web", "")

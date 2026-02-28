@@ -72,7 +72,7 @@ func readTextFromUrl(url string) string {
 
 func readBytesFromUrl(url string) []byte {
 	var response = common.AssertResultError(http.Get(url))
-	defer ioCloseSilently(response.Body)
+	defer common.IoCloseSilently(response.Body)
 	assertResponse(response)
 	var data = common.AssertResultError(io.ReadAll(response.Body))
 	return data
@@ -95,7 +95,7 @@ func formatHtml(text string) (string, error) {
 	var request = common.AssertResultError(http.NewRequest("POST", url, bytes.NewBuffer(textBytes)))
 	request.Header.Set(common.ContentTypeHeader, "text/html")
 	var response = common.AssertResultError(client.Do(request))
-	defer ioCloseSilently(response.Body)
+	defer common.IoCloseSilently(response.Body)
 	var responseBytes = common.AssertResultError(io.ReadAll(response.Body))
 	var responseText = string(responseBytes)
 	if response.StatusCode == http.StatusOK {
