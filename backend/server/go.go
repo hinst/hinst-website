@@ -12,11 +12,11 @@ func use(v any) {
 }
 
 func ioCloseSilently(v io.Closer) {
-	ignoreError(v.Close())
+	IgnoreError(v.Close())
 }
 
 func ioClose(v io.Closer) {
-	assertError(v.Close())
+	AssertError(v.Close())
 }
 
 func ifElse[T any](condition bool, ifTrue T, ifFalse T) T {

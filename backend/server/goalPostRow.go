@@ -27,7 +27,7 @@ type goalPostRow struct {
 }
 
 func (me *goalPostRow) scan(rows pgx.Rows) {
-	assertError(rows.Scan(
+	AssertError(rows.Scan(
 		&me.goalId,
 		&me.dateTime,
 		&me.isPublic,

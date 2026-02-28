@@ -58,12 +58,12 @@ func (me *titleGenerator) summarizeText(text string) string {
 		},
 		Stream: false,
 	})
-	var response = assertResultError(http.Post(me.apiUrl, contentTypeJson, bytes.NewBuffer(request)))
+	var response = AssertResultError(http.Post(me.apiUrl, contentTypeJson, bytes.NewBuffer(request)))
 	defer ioCloseSilently(response.Body)
-	assertCondition(response.StatusCode == http.StatusOK, func() error {
+	AssertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot summarize text. Status: " + response.Status)
 	})
-	var responseText = assertResultError(io.ReadAll(response.Body))
+	var responseText = AssertResultError(io.ReadAll(response.Body))
 	var responseObject = decodeJson(responseText, new(lmStudioResponse))
 	var resultText = responseObject.Choices[0].Message.Content
 	resultText = me.trim(resultText)

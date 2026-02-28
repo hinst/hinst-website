@@ -1,21 +1,21 @@
 package server
 
-func assertError(err error) {
+func AssertError(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
-func assertResultError[T any](result T, err error) T {
-	assertError(err)
+func AssertResultError[T any](result T, err error) T {
+	AssertError(err)
 	return result
 }
 
-func assertCondition[T any](condition bool, exception func() T) {
+func AssertCondition[T any](condition bool, exception func() T) {
 	if !condition {
 		panic(exception())
 	}
 }
 
-func ignoreError(err error) {
+func IgnoreError(err error) {
 }

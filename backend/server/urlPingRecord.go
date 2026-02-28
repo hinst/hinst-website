@@ -9,7 +9,7 @@ type urlPingRecord struct {
 }
 
 func (me *urlPingRecord) scan(rows pgx.Rows) {
-	assertError(rows.Scan(
+	AssertError(rows.Scan(
 		&me.Url,
 		&me.GooglePingedAt,
 		&me.GooglePingedManuallyAt,

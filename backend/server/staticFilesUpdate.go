@@ -44,20 +44,20 @@ func (me *staticFilesUpdate) run() {
 // Copy old files from Git repository
 // Copy new files into Git repository
 func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
-	assertError(os.RemoveAll(me.savedGoalsPath + "/static-old"))
-	for _, file := range assertResultError(os.ReadDir(staticGitPath)) {
+	AssertError(os.RemoveAll(me.savedGoalsPath + "/static-old"))
+	for _, file := range AssertResultError(os.ReadDir(staticGitPath)) {
 		if !me.checkPreservedFile(file.Name()) {
 			var filePath = staticGitPath + "/" + file.Name()
 			var oldFilePath = me.savedGoalsPath + "/static-old/" + file.Name()
 			if file.IsDir() {
-				assertError(os.CopyFS(oldFilePath, os.DirFS(filePath)))
+				AssertError(os.CopyFS(oldFilePath, os.DirFS(filePath)))
 			} else {
 				copyFile(oldFilePath, filePath)
 			}
-			assertError(os.RemoveAll(filePath))
+			AssertError(os.RemoveAll(filePath))
 		}
 	}
-	assertError(os.CopyFS(staticGitPath, os.DirFS(me.savedGoalsPath+"/static")))
+	AssertError(os.CopyFS(staticGitPath, os.DirFS(me.savedGoalsPath+"/static")))
 }
 
 func (staticFilesUpdate) checkPreservedFile(fileName string) bool {

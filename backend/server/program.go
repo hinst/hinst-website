@@ -44,7 +44,7 @@ func (me *program) runWeb() {
 
 	log.Printf("Starting: netAddress=%v, webPath=%v, webFilesPath=%v",
 		me.netAddress, webApp.webPath, me.webFilesPath)
-	assertError(http.ListenAndServe(me.netAddress, nil))
+	AssertError(http.ListenAndServe(me.netAddress, nil))
 }
 
 func (me *program) update() {
@@ -104,7 +104,7 @@ func (me *program) generateStatic(folder string) {
 	var webApp = &webApp{webPath: "/"}
 	webApp.init(me.database)
 	go func() {
-		assertError(http.ListenAndServe(me.netAddress, nil))
+		AssertError(http.ListenAndServe(me.netAddress, nil))
 	}()
 	time.Sleep(1000 * time.Millisecond)
 

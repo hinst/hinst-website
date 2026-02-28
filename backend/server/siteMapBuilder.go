@@ -22,10 +22,10 @@ func (me *siteMapBuilder) run() {
 	me.loadOldSitemap()
 	me.newFilesPathPrefix = me.newFilesPath
 	me.newFilesPathPrefix = strings.TrimPrefix(me.newFilesPathPrefix, "./") + "/"
-	assertError(filepath.WalkDir(me.newFilesPath, me.createItem))
+	AssertError(filepath.WalkDir(me.newFilesPath, me.createItem))
 	var options = sitemap.Options{PrettyOutput: true, WithXMLHeader: true, Validate: true}
 	var siteMap = sitemap.NewSitemap(me.items, &options)
-	var siteMapText = assertResultError(siteMap.ToXMLString())
+	var siteMapText = AssertResultError(siteMap.ToXMLString())
 	writeTextFile(me.newFilesPath+"/sitemap.xml", siteMapText)
 }
 
@@ -87,7 +87,7 @@ func (me *siteMapBuilder) findPreviousLastMod(url string) *time.Time {
 	}
 	for _, item := range me.oldSiteMap.URL {
 		if item.Loc == url {
-			var previousTime = assertResultError(time.Parse(time.DateOnly, item.LastMod)).UTC()
+			var previousTime = AssertResultError(time.Parse(time.DateOnly, item.LastMod)).UTC()
 			return &previousTime
 		}
 	}

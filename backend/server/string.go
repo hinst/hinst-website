@@ -10,15 +10,15 @@ import (
 )
 
 func getIntFromString(text string) int {
-	return assertResultError(strconv.Atoi(text))
+	return AssertResultError(strconv.Atoi(text))
 }
 
 func getInt32FromString(text string) int32 {
-	return int32(assertResultError(strconv.ParseInt(text, 10, 32)))
+	return int32(AssertResultError(strconv.ParseInt(text, 10, 32)))
 }
 
 func getInt64FromString(text string) int64 {
-	return assertResultError(strconv.ParseInt(text, 10, 64))
+	return AssertResultError(strconv.ParseInt(text, 10, 64))
 }
 
 func getStringFromInt64(number int64) string {

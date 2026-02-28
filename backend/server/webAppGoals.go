@@ -107,8 +107,8 @@ func (me *webAppGoals) setGoalPostText(response http.ResponseWriter, request *ht
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var languageTagText = request.URL.Query().Get("languageTag")
-	var languageTag = assertResultError(language.Parse(languageTagText))
-	var text = string(assertResultError(io.ReadAll(request.Body)))
+	var languageTag = AssertResultError(language.Parse(languageTagText))
+	var text = string(AssertResultError(io.ReadAll(request.Body)))
 	me.db.setGoalPostText(goalId, postDateTime, languageTag, text)
 }
 
@@ -116,8 +116,8 @@ func (me *webAppGoals) setGoalTitleText(response http.ResponseWriter, request *h
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var languageTagText = request.URL.Query().Get("languageTag")
-	var languageTag = assertResultError(language.Parse(languageTagText))
-	var text = string(assertResultError(io.ReadAll(request.Body)))
+	var languageTag = AssertResultError(language.Parse(languageTagText))
+	var text = string(AssertResultError(io.ReadAll(request.Body)))
 	me.db.setGoalPostTitle(goalId, postDateTime, languageTag, text)
 }
 

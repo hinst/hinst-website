@@ -80,7 +80,7 @@ func (me *translator) translate(row *goalPostRow, tag language.Tag) {
 	var text = ""
 	const attemptLimit = 30
 	for i := range attemptLimit {
-		var text = assertResultError(formatHtml(row.text))
+		var text = AssertResultError(formatHtml(row.text))
 		text = me.translateText(text, tag)
 		var e = validateHtml(text)
 		if e == nil {
@@ -105,14 +105,14 @@ func (me *translator) translateText(text string, tag language.Tag) string {
 		Stream: false,
 	})
 	var client = &http.Client{Timeout: 1 * time.Hour}
-	var req = assertResultError(http.NewRequest("POST", me.apiUrl, bytes.NewBuffer(request)))
+	var req = AssertResultError(http.NewRequest("POST", me.apiUrl, bytes.NewBuffer(request)))
 	req.Header.Set(contentTypeHeader, contentTypeJson)
-	var response = assertResultError(client.Do(req))
+	var response = AssertResultError(client.Do(req))
 	defer ioCloseSilently(response.Body)
-	assertCondition(response.StatusCode == http.StatusOK, func() error {
+	AssertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot translate text. Status: " + response.Status)
 	})
-	var responseText = assertResultError(io.ReadAll(response.Body))
+	var responseText = AssertResultError(io.ReadAll(response.Body))
 	var responseObject = decodeJson(responseText, new(lmStudioResponse))
 	return responseObject.Choices[0].Message.Content
 }

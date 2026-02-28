@@ -27,7 +27,7 @@ func init() {
 		if len(globalPrimeNumbers) > primeNumbersLimit {
 			globalPrimeNumbers = globalPrimeNumbers[0:primeNumbersLimit]
 		}
-		assertCondition(
+		AssertCondition(
 			len(globalPrimeNumbers) > 0,
 			func() string { return "Need prime numbers" },
 		)

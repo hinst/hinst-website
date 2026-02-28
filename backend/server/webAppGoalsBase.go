@@ -16,7 +16,7 @@ func (me *webAppGoalsBase) inputValidGoalId(goalId string) int64 {
 	var createWebError = func() webError {
 		return webError{"Need goal id. Received: " + goalId, http.StatusBadRequest}
 	}
-	assertCondition(parseError == nil, createWebError)
+	AssertCondition(parseError == nil, createWebError)
 	return result
 }
 
@@ -28,6 +28,6 @@ func (me *webAppGoalsBase) inputValidPostDateTime(text string) time.Time {
 			http.StatusBadRequest,
 		}
 	}
-	assertCondition(nil == parseIntError, createWebError)
+	AssertCondition(nil == parseIntError, createWebError)
 	return time.Unix(unixEpochSeconds, 0)
 }

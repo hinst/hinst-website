@@ -9,7 +9,7 @@ import (
 
 func Main() {
 	if checkFileExists(".env") {
-		assertError(godotenv.Load())
+		AssertError(godotenv.Load())
 	}
 	var modePtr = flag.String("mode", "web", "")
 	var wwwPtr = flag.String("www", programTemplate.webFilesPath, "")

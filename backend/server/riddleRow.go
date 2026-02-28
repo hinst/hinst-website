@@ -13,6 +13,6 @@ type riddleRow struct {
 
 func (me *riddleRow) scan(row *sql.Rows) {
 	var createdAt int64
-	assertError(row.Scan(&me.id, &me.product, &createdAt))
+	AssertError(row.Scan(&me.id, &me.product, &createdAt))
 	me.createdAt = time.Unix(createdAt, 0)
 }

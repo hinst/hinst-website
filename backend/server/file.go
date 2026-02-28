@@ -11,9 +11,9 @@ import (
 )
 
 func readJsonFile[T any](filePath string, receiver T) T {
-	var file = assertResultError(os.Open(filePath))
+	var file = AssertResultError(os.Open(filePath))
 	defer ioCloseSilently(file)
-	assertError(json.NewDecoder(file).Decode(receiver))
+	AssertError(json.NewDecoder(file).Decode(receiver))
 	return receiver
 }
 
@@ -22,21 +22,21 @@ func readTextFile(filePath string) string {
 }
 
 func readBytesFile(filePath string) []byte {
-	var fileContent = assertResultError(os.ReadFile(filePath))
+	var fileContent = AssertResultError(os.ReadFile(filePath))
 	return fileContent
 }
 
 func writeBytesFile(filePath string, data []byte) {
-	assertError(os.WriteFile(filePath, data, file_mode.OS_USER_RW))
+	AssertError(os.WriteFile(filePath, data, file_mode.OS_USER_RW))
 }
 
 func writeJsonFile[T any](filePath string, data T) {
-	var jsonBytes = assertResultError(json.Marshal(data))
-	assertError(os.WriteFile(filePath, jsonBytes, file_mode.OS_USER_RW))
+	var jsonBytes = AssertResultError(json.Marshal(data))
+	AssertError(os.WriteFile(filePath, jsonBytes, file_mode.OS_USER_RW))
 }
 
 func writeTextFile(filePath string, text string) {
-	assertError(os.WriteFile(filePath, []byte(text), file_mode.OS_USER_RW))
+	AssertError(os.WriteFile(filePath, []byte(text), file_mode.OS_USER_RW))
 }
 
 func checkFileExists(filePath string) bool {
@@ -50,11 +50,11 @@ func checkDirectoryExists(directoryPath string) bool {
 }
 
 func copyFile(destinationPath string, sourcePath string) (size int64) {
-	var sourceFile = assertResultError(os.Open(sourcePath))
+	var sourceFile = AssertResultError(os.Open(sourcePath))
 	defer ioCloseSilently(sourceFile)
-	var destinationFile = assertResultError(os.Create(destinationPath))
+	var destinationFile = AssertResultError(os.Create(destinationPath))
 	defer ioClose(destinationFile)
-	return assertResultError(io.Copy(destinationFile, sourceFile))
+	return AssertResultError(io.Copy(destinationFile, sourceFile))
 }
 
 // https://stackoverflow.com/questions/29505089/how-can-i-compare-two-files-in-golang

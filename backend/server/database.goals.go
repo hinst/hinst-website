@@ -11,7 +11,7 @@ import (
 
 func (me *database) setGoalPostPublic(row goalPostRow) int64 {
 	var query = "UPDATE goalPosts SET isPublic = $1 WHERE goalId = $2 AND dateTime = $3"
-	var result = assertResultError(me.pool.Exec(context.Background(), query,
+	var result = AssertResultError(me.pool.Exec(context.Background(), query,
 		row.isPublic, row.goalId, row.getDateTime().UTC().Unix()))
 	return result.RowsAffected()
 }
@@ -20,7 +20,7 @@ func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedL
 	var textField = "text" + me.getLanguagePostfix(supportedLanguage)
 	var queryText = "UPDATE goalPosts SET " + textField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()
-	var result = assertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
+	var result = AssertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
 	return result.RowsAffected()
 }
 
@@ -28,7 +28,7 @@ func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supported
 	var titleField = "title" + me.getLanguagePostfix(supportedLanguage)
 	var queryText = "UPDATE goalPosts SET " + titleField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()
-	var result = assertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
+	var result = AssertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
 	return result.RowsAffected()
 }
 
@@ -37,12 +37,12 @@ func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, select
 	if sortByDate != 0 {
 		querySql += " ORDER BY dateTime " + ifElse(sortByDate > 0, "ASC", "DESC")
 	}
-	var rows = assertResultError(me.pool.Query(context.Background(), querySql))
+	var rows = AssertResultError(me.pool.Query(context.Background(), querySql))
 	defer rows.Close()
 	for rows.Next() {
 		var row goalPostRow
 		row.scan(rows)
-		assertError(rows.Err())
+		AssertError(rows.Err())
 		if !callback(&row) {
 			break
 		}
@@ -50,11 +50,11 @@ func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, select
 }
 
 func (me *database) getGoals() (results []goalRecord) {
-	var rows = assertResultError(me.pool.Query(context.Background(), "SELECT id, title FROM goals ORDER BY id"))
+	var rows = AssertResultError(me.pool.Query(context.Background(), "SELECT id, title FROM goals ORDER BY id"))
 	defer rows.Close()
 	for rows.Next() {
 		var record goalRecord
-		assertError(rows.Scan(&record.Id, &record.Title))
+		AssertError(rows.Scan(&record.Id, &record.Title))
 		results = append(results, record)
 	}
 	return
@@ -62,18 +62,18 @@ func (me *database) getGoals() (results []goalRecord) {
 
 func (me *database) getGoal(goalId int64) (result *goalRecord) {
 	var queryText = "SELECT id, title FROM goals WHERE id = $1"
-	var rows = assertResultError(me.pool.Query(context.Background(), queryText, goalId))
+	var rows = AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	if rows.Next() {
 		result = new(goalRecord)
-		assertError(rows.Scan(&result.Id, &result.Title))
+		AssertError(rows.Scan(&result.Id, &result.Title))
 	}
 	return
 }
 
 func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *goalPostRow) {
 	var queryText = "SELECT * FROM goalPosts WHERE goalId = $1 AND dateTime = $2"
-	var rows = assertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix()))
+	var rows = AssertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix()))
 	defer rows.Close()
 	if rows.Next() {
 		result = new(goalPostRow)
@@ -85,11 +85,11 @@ func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *goalP
 func (me *database) getGoalPostImage(goalId int64, dateTime time.Time, index int) (result *goalPostImageRow) {
 	var queryText = "SELECT contentType, file FROM goalPostImages" +
 		" WHERE goalId = $1 AND parentDateTime = $2 AND sequenceIndex = $3"
-	var rows = assertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix(), index))
+	var rows = AssertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix(), index))
 	defer rows.Close()
 	if rows.Next() {
 		result = new(goalPostImageRow)
-		assertError(rows.Scan(&result.contentType, &result.file))
+		AssertError(rows.Scan(&result.contentType, &result.file))
 	}
 	return
 }
@@ -97,7 +97,7 @@ func (me *database) getGoalPostImage(goalId int64, dateTime time.Time, index int
 func (me *database) getGoalPostImageCount(goalId int64, dateTime time.Time) (count int) {
 	var queryText = "SELECT COUNT(*) FROM goalPostImages WHERE goalId = $1 AND parentDateTime = $2"
 	var row = me.pool.QueryRow(context.Background(), queryText, goalId, dateTime.UTC().Unix())
-	assertError(row.Scan(&count))
+	AssertError(row.Scan(&count))
 	return
 }
 
@@ -108,18 +108,18 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 		queryText += " AND isPublic = TRUE"
 	}
 	queryText += " ORDER BY dateTime DESC"
-	var rows = assertResultError(me.pool.Query(context.Background(), queryText, goalId))
+	var rows = AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	for rows.Next() {
 		var record goalPostRecord
-		assertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.Type, &record.Title))
+		AssertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.Type, &record.Title))
 		results = append(results, record)
 	}
 	return
 }
 
 func (database) getLanguagePostfix(supportedLanguage language.Tag) string {
-	assertCondition(slices.Contains(supportedLanguages, supportedLanguage),
+	AssertCondition(slices.Contains(supportedLanguages, supportedLanguage),
 		func() string { return "Unsupported language: " + supportedLanguage.String() })
 	var languageName = ""
 	if supportedLanguage != supportedLanguages[0] {
