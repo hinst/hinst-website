@@ -6,12 +6,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hinst/go-common"
 	"golang.org/x/text/language"
 )
 
 func (me *database) setGoalPostPublic(row goalPostRow) int64 {
 	var query = "UPDATE goalPosts SET isPublic = $1 WHERE goalId = $2 AND dateTime = $3"
-	var result = AssertResultError(me.pool.Exec(context.Background(), query,
+	var result = common.AssertResultError(me.pool.Exec(context.Background(), query,
 		row.isPublic, row.goalId, row.getDateTime().UTC().Unix()))
 	return result.RowsAffected()
 }

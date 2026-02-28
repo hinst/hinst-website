@@ -3,6 +3,7 @@ module github.com/hinst/hinst-website
 go 1.26.0
 
 require (
+	github.com/hinst/go-common v0.1.7-0.20260228175352-614ddd36b01a
 	github.com/jackc/pgx/v5 v5.8.0
 	github.com/joho/godotenv v1.5.1
 	github.com/microcosm-cc/bluemonday v1.0.27
@@ -10,6 +11,8 @@ require (
 	golang.org/x/oauth2 v0.34.0
 	golang.org/x/text v0.33.0
 )
+
+replace github.com/hinst/go-common => ../../go-common
 
 require (
 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
