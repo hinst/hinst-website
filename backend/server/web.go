@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/hinst/go-common"
@@ -88,25 +89,25 @@ func assertResponse(response *http.Response) {
 	}
 }
 
-func buildUrl(base string, parameters map[string]string) string {
-	var theUrl = base
+func BuildUrlQueryParams(parameters map[string]string) string {
+	var parts []string
 	var first = true
 	for key, value := range parameters {
 		if first {
-			theUrl += "?"
+			parts = append(parts, "?")
 			first = false
 		} else {
-			theUrl += "&"
+			parts = append(parts, "&")
 		}
-		theUrl += key + "=" + url.QueryEscape(value)
+		parts = append(parts, url.QueryEscape(key), "=", url.QueryEscape(value))
 	}
-	return theUrl
+	return strings.Join(parts, "")
 }
 
 func formatHtml(text string) (string, error) {
 	var client = &http.Client{Timeout: 10 * time.Minute}
 	var url = requireEnvVar("PRETTIER_SERVER_URL") +
-		buildUrl("", map[string]string{"filename": "index.html"})
+		BuildUrlQueryParams(map[string]string{"filename": "index.html"})
 	var textBytes = []byte(text)
 	var request = common.AssertResultError(http.NewRequest("POST", url, bytes.NewBuffer(textBytes)))
 	request.Header.Set(common.ContentTypeHeader, "text/html")

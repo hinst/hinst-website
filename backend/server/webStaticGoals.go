@@ -44,7 +44,7 @@ func (me *webStaticGoals) deleteOldFiles() {
 func (me *webStaticGoals) generate(lang language.Tag) {
 	var path = me.folder + me.getLanguagePath(lang)
 	common.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
-	var homeUrl = buildUrl(me.url+"/pages", me.getPathQuery(lang))
+	var homeUrl = me.url + "/pages" + BuildUrlQueryParams(me.getPathQuery(lang))
 	var homePageText = readTextFromUrl(homeUrl)
 	writeTextFile(path+"/index.html", homePageText)
 
@@ -58,7 +58,8 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 
 func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal goalRecord) {
 	var goalId = goal.Id
-	var url = buildUrl(me.url+pagesWebPath+"/personal-goals/"+getStringFromInt64(goalId), me.getPathQuery(lang))
+	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) +
+		BuildUrlQueryParams(me.getPathQuery(lang))
 	var goalPageText = readTextFromUrl(url)
 	writeTextFile(goalsPath+"/"+getStringFromInt64(goalId)+".html", goalPageText)
 
@@ -71,8 +72,8 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 }
 
 func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, goalId int64, postDateTime int64) {
-	var url = buildUrl(me.url+pagesWebPath+"/personal-goals/"+getStringFromInt64(goalId)+"/"+
-		getStringFromInt64(postDateTime), me.getPathQuery(lang))
+	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) + "/" +
+		getStringFromInt64(postDateTime) + BuildUrlQueryParams(me.getPathQuery(lang))
 	var postPageText = readTextFromUrl(url)
 	var path = goalsPath + "/" + getStringFromInt64(goalId)
 	writeTextFile(path+"/"+getStringFromInt64(postDateTime)+".html", postPageText)
@@ -84,8 +85,8 @@ func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, 
 }
 
 func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64, imageIndex int) {
-	var url = buildUrl(me.url+pagesWebPath+"/personal-goals/image/"+getStringFromInt64(goalId)+"/"+
-		getStringFromInt64(postDateTime)+"/"+getStringFromInt(imageIndex), nil)
+	var url = me.url + pagesWebPath + "/personal-goals/image/" + getStringFromInt64(goalId) + "/" +
+		getStringFromInt64(postDateTime) + "/" + getStringFromInt(imageIndex)
 	var image = readBytesFromUrl(url)
 	var path = me.folder + "/personal-goals/image/" + getStringFromInt64(goalId) + "/" +
 		getStringFromInt64(postDateTime)
