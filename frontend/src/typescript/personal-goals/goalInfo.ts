@@ -1,8 +1,8 @@
 import { SupportedLanguage as SupportedLanguage } from 'src/typescript/language';
 //@ts-ignore
-import codingWeekly from 'images/codingWeekly.jpg';
+import codingWeekly from 'url:images/codingWeekly.jpg';
 //@ts-ignore
-import bicycle from 'images/bicycle.jpg';
+import bicycle from 'url:images/bicycle.jpg';
 
 export interface GoalInfo {
 	englishTitle: string;

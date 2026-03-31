@@ -1,5 +1,5 @@
-// @ts-ignore
-import icon from 'images/icon.webp';
+//@ts-ignore
+import icon from 'url:images/icon.webp';
 import { NavLink } from 'react-router';
 
 export function HomeButton() {
