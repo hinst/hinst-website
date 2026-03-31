@@ -110,7 +110,7 @@ func (me *webAppGoals) setGoalPostText(response http.ResponseWriter, request *ht
 	var languageTagText = request.URL.Query().Get("languageTag")
 	var languageTag = common.AssertResultError(language.Parse(languageTagText))
 	var text = string(common.AssertResultError(io.ReadAll(request.Body)))
-	me.db.setGoalPostText(goalId, postDateTime, languageTag, text)
+	me.db.setGoalPostText(goalId, postDateTime, languageTag, &text)
 }
 
 func (me *webAppGoals) setGoalTitleText(response http.ResponseWriter, request *http.Request) {

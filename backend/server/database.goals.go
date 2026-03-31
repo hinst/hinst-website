@@ -17,7 +17,7 @@ func (me *database) setGoalPostPublic(row goalPostRow) int64 {
 	return result.RowsAffected()
 }
 
-func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) int64 {
+func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text *string) int64 {
 	var textField = "text" + me.getLanguagePostfix(supportedLanguage)
 	var queryText = "UPDATE goalPosts SET " + textField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()

@@ -61,7 +61,7 @@ func (me *translator) translate(row *goalPostRow, tag language.Tag) {
 				attemptLimit, row.goalId, row.dateTime, tag, e)
 		}
 	}
-	me.db.setGoalPostText(row.goalId, row.getDateTime(), tag, text)
+	me.db.setGoalPostText(row.goalId, row.getDateTime(), tag, &text)
 }
 
 func (me *translator) translateText(text string, tag language.Tag) string {
