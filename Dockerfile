@@ -6,7 +6,7 @@ RUN go mod download
 ENV GOCACHE=/root/.cache/go-build
 RUN --mount=type=cache,target="/root/.cache/go-build" go build
 
-FROM node:22 AS frontend
+FROM node:24 AS frontend
 ADD frontend /app
 WORKDIR /app
 RUN rm -rf node_modules
