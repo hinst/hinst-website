@@ -51,7 +51,7 @@ func (me *translator) translate(row *goalPostRow, tag language.Tag) {
 	var text = ""
 	const attemptLimit = 30
 	for i := range attemptLimit {
-		var text = common.AssertResultError(formatHtml(row.text))
+		text = common.AssertResultError(formatHtml(row.text))
 		text = me.translateText(text, tag)
 		var e = validateHtml(text)
 		if e == nil {
