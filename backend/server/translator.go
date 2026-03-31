@@ -45,36 +45,6 @@ func (me *translator) run() {
 }
 
 func (me *translator) migrate() {
-	var totalCount = 0
-	var translatedCount = 0
-	me.db.forEachGoalPost(func(row *goalPostRow) bool {
-		log.Println("Checking...")
-		var isDone = false
-		if row.textEnglish != nil {
-			var e = validateHtml(*row.textEnglish)
-			if e != nil {
-				log.Printf("English text is not valid HTML. Regenerating translation for goalId=%v, dateTime=%v. Error: %v",
-					row.goalId, row.dateTime, e)
-				me.translate(row, language.English)
-				isDone = true
-			}
-		}
-		if row.textGerman != nil {
-			var e = validateHtml(*row.textGerman)
-			if e != nil {
-				log.Printf("German text is not valid HTML. Regenerating translation for goalId=%v, dateTime=%v. Error: %v",
-					row.goalId, row.dateTime, e)
-				me.translate(row, language.German)
-				isDone = true
-			}
-		}
-		totalCount++
-		if isDone {
-			translatedCount++
-		}
-		return true
-	}, "*", 0)
-	log.Printf("Regenerated translated text for %v of %v posts", translatedCount, totalCount)
 }
 
 func (me *translator) translate(row *goalPostRow, tag language.Tag) {
