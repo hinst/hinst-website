@@ -44,9 +44,6 @@ func (me *translator) run() {
 	log.Printf("Generated translated text for %v of %v posts", translatedCount, totalCount)
 }
 
-func (me *translator) migrate() {
-}
-
 func (me *translator) translate(row *goalPostRow, tag language.Tag) {
 	var text = ""
 	const attemptLimit = 30
