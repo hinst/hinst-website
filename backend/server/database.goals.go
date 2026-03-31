@@ -153,4 +153,9 @@ func (me *database) searchGoalPosts(
 }
 
 func (me *database) migrate() {
+	var query = `
+		UPDATE goalPosts SET textEnglish = NULL, titleEnglish = NULL WHERE textEnglish = '';
+		UPDATE goalPosts SET textGerman = NULL, titleGerman = NULL WHERE textGerman = '';
+	`;
+	common.AssertResultError(me.pool.Exec(context.Background(), query))
 }
