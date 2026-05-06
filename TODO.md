@@ -17,3 +17,7 @@
 		1. PostgreSQL
 		1. Prettier-Server
 	1. Set up and use my own container registry, instead of Docker.io
+1. Automate dynamic website deployment
+1. Show comments
+1. Allow creating new comments
+1. Put translated texts into separate tables
