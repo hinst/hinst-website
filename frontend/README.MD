@@ -1,6 +1,6 @@
 # Hinst Website Frontend
 
-- Node.js version: `24`
+- Node.js version: `24.15.0`
 - Before launch: `npm install`
 - Launcher script: `run.bat`
 - Compile script: `npm run build`
