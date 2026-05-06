@@ -2,7 +2,7 @@ import { SupportedLanguage as SupportedLanguage } from 'src/typescript/language'
 //@ts-ignore
 import codingWeekly from 'url:images/codingWeekly.jpg';
 //@ts-ignore
-import bicycle from 'url:images/bicycle.jpg';
+import eScooter from 'url:images/Navee.jpg';
 
 export interface GoalInfo {
 	englishTitle: string;
@@ -18,10 +18,10 @@ export const GOAL_INFOS = new Map<string, GoalInfo>([
 		}
 	],
 	[
-		'Окупить стоимость велосипеда и самоката',
+		'Экономные поездки на двух колёсах',
 		{
-			englishTitle: 'Bicycle and E-Scooter',
-			coverImage: bicycle
+			englishTitle: 'Savvy trips on two wheels',
+			coverImage: eScooter
 		}
 	]
 ]);
