@@ -44,3 +44,6 @@
 * Migrated database from SQLite to PostgreSQL
 	* Fixed connection pool bug: infinite waiting
 * Use Prettier to format generated HTML files for static website
+
+## 2026.03
+* Using latest Parcel.js bundler version
