@@ -12,7 +12,7 @@
 	1. After: use hinst-website as primary source and Smart Progress for publishing
 1. Better structure for source code files: group by package
 1. Improvements for Kubernetes
-	1. Upgrade Kubernetes to latest version 1.36 on Orange Pi
+	1. ~~Upgrade Kubernetes to latest version 1.36 on Orange Pi~~
 	1. Put all required deployments into the same namespace `hinst-website`
 		1. PostgreSQL
 		1. Prettier-Server
