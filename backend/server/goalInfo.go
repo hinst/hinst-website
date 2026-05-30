@@ -3,7 +3,6 @@ package server
 type goalInfo struct {
 	title        string
 	englishTitle string
-	coverImage   string
 }
 
 func (goalInfo) findByTitle(array []goalInfo, title string) *goalInfo {

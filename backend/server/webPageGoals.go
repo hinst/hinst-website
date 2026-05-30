@@ -12,6 +12,9 @@ import (
 	"golang.org/x/text/language"
 )
 
+const pagesWebPath = "/pages"
+const staticWebPath = "/static"
+
 // Server side rendering for personal goals pages.
 // This code is used to generate static files to be displayed on a hosting service without backend API.
 type webPageGoals struct {
@@ -49,7 +52,8 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 		common.AssertCondition(metaInfo != nil, func() error {
 			return errors.New("Meta info not found for goal: " + goalRecord.Title)
 		})
-		item.Image = metaInfo.coverImage
+		var imageDataUrl = getUrlBase64(goalRecord.ImageContentType, goalRecord.ImageData)
+		item.Image = template.URL(imageDataUrl)
 		if requestedLanguage != supportedLanguages[0] {
 			item.Title = metaInfo.englishTitle
 		}

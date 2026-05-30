@@ -1,8 +1,19 @@
 package server
 
+import (
+	"github.com/hinst/go-common"
+	"github.com/jackc/pgx/v5"
+)
+
 type goalRecord struct {
-	Id    int64  `json:"id"`
-	Title string `json:"title"`
+	Id               int64  `json:"id"`
+	Title            string `json:"title"`
+	ImageData        []byte
+	ImageContentType string
+}
+
+func (me *goalRecord) scan(rows pgx.Rows) {
+	common.AssertError(rows.Scan(&me.Id, &me.Title, &me.ImageData, &me.ImageContentType))
 }
 
 type goalPostRecord struct {

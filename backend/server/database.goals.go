@@ -51,23 +51,25 @@ func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, select
 }
 
 func (me *database) getGoals() (results []goalRecord) {
-	var rows = common.AssertResultError(me.pool.Query(context.Background(), "SELECT id, title FROM goals ORDER BY id"))
+	var fields = strings.Join(getFieldNames[goalRecord](), ",")
+	var rows = common.AssertResultError(me.pool.Query(context.Background(), "SELECT "+fields+" FROM goals ORDER BY id"))
 	defer rows.Close()
 	for rows.Next() {
 		var record goalRecord
-		common.AssertError(rows.Scan(&record.Id, &record.Title))
+		record.scan(rows)
 		results = append(results, record)
 	}
 	return
 }
 
 func (me *database) getGoal(goalId int64) (result *goalRecord) {
-	var queryText = "SELECT id, title FROM goals WHERE id = $1"
+	var fields = strings.Join(getFieldNames[goalRecord](), ",")
+	var queryText = "SELECT " + fields + " FROM goals WHERE id = $1"
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	if rows.Next() {
 		result = new(goalRecord)
-		common.AssertError(rows.Scan(&result.Id, &result.Title))
+		result.scan(rows)
 	}
 	return
 }
@@ -166,6 +168,6 @@ func (me *database) migrate() {
 	var query = `
 		UPDATE goalPosts SET textEnglish = NULL, titleEnglish = NULL WHERE textEnglish = '';
 		UPDATE goalPosts SET textGerman = NULL, titleGerman = NULL WHERE textGerman = '';
-	`;
+	`
 	common.AssertResultError(me.pool.Exec(context.Background(), query))
 }
