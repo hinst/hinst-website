@@ -1,8 +1,9 @@
 import { NavLink } from 'react-router';
 import { GoalRecord } from 'src/typescript/personal-goals/goalRecord';
-import { GOAL_INFOS, translateGoalTitle } from 'src/typescript/personal-goals/goalInfo';
+import { translateGoalTitle } from 'src/typescript/personal-goals/goalInfo';
 import { AppContext } from '../context';
 import { useContext } from 'react';
+import { apiClient } from 'src/typescript/apiClient';
 
 export function GoalCard(props: { goal: GoalRecord }) {
 	const context = useContext(AppContext);
@@ -25,7 +26,7 @@ export function GoalCard(props: { goal: GoalRecord }) {
 					<img
 						width={200}
 						height={100}
-						src={GOAL_INFOS.get(props.goal.title)?.coverImage}
+						src={apiClient.getGoalImageUrl(parseInt(props.goal.id, 10))}
 						alt={props.goal.title}
 					/>
 					<div

@@ -91,6 +91,10 @@ class ApiClient {
 		);
 	}
 
+	getGoalImageUrl(goalId: number): string {
+		return this.url + '/goal/image?goalId=' + goalId;
+	}
+
 	async getUrlPings(): Promise<UrlPingRecord[]> {
 		const url = '/urlPings';
 		const response = await this.fetch(url);

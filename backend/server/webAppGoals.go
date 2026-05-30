@@ -17,6 +17,7 @@ func (me *webAppGoals) init(db *database) []namedWebFunction {
 	me.db = db
 	return []namedWebFunction{
 		{"/api/goals", me.getGoals},
+		{"/api/goal/image", me.getGoalImage},
 		{"/api/goal", me.getGoal},
 		{"/api/goalPosts", me.getGoalPosts},
 		{"/api/goalPost", me.getGoalPost},
@@ -36,8 +37,15 @@ func (me *webAppGoals) getGoals(response http.ResponseWriter, request *http.Requ
 func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
 	var goal = me.db.getGoal(goalId)
-	common.SetCacheAge(response, time.Minute)
 	writeJsonResponse(response, goal)
+}
+
+func (me *webAppGoals) getGoalImage(response http.ResponseWriter, request *http.Request) {
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
+	var imageData, imageContentType = me.db.getGoalImage(goalId)
+	common.SetCacheAge(response, time.Hour)
+	response.Header().Set(common.ContentTypeHeader, imageContentType)
+	var _, _ = response.Write(imageData)
 }
 
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {

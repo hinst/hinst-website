@@ -72,6 +72,16 @@ func (me *database) getGoal(goalId int64) (result *goalRecord) {
 	return
 }
 
+func (me *database) getGoalImage(goalId int64) (imageData []byte, imageContentType string) {
+	var queryText = "SELECT imageData, imageContentType FROM goals WHERE id = $1"
+	var rows = common.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
+	defer rows.Close()
+	if rows.Next() {
+		common.AssertError(rows.Scan(&imageData, &imageContentType))
+	}
+	return
+}
+
 func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *goalPostRow) {
 	var queryText = "SELECT * FROM goalPosts WHERE goalId = $1 AND dateTime = $2"
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix()))
