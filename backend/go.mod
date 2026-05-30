@@ -1,6 +1,6 @@
 module github.com/hinst/hinst-website
 
-go 1.26.0
+go 1.26.3
 
 require (
 	github.com/hinst/go-common v0.1.16
