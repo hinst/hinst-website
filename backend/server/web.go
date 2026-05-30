@@ -2,6 +2,7 @@ package server
 
 import (
 	"bytes"
+	"encoding/base64"
 	"errors"
 	"io"
 	"net/http"
@@ -114,4 +115,8 @@ func formatHtml(text string) (string, error) {
 func validateHtml(text string) error {
 	var _, e = formatHtml("<div>" + text + "</div>")
 	return e
+}
+
+func getUrlBase64(contentType string, array []byte) string {
+	return "data:" + contentType + ";base64," + base64.StdEncoding.EncodeToString(array)
 }
