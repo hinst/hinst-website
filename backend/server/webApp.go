@@ -3,6 +3,7 @@ package server
 import (
 	"log"
 	"net/http"
+	"runtime/debug"
 
 	"github.com/hinst/go-common"
 )
@@ -55,7 +56,7 @@ func (me *webApp) wrap(function common.WebFunction) common.WebFunction {
 					var _, _ = response.Write(common.EncodeJson(webError))
 				} else {
 					response.WriteHeader(http.StatusInternalServerError)
-					log.Printf("Error in web function: %v\n", exception)
+					log.Printf("Error in web function: %v\n%s", exception, debug.Stack())
 				}
 			}
 		}()
