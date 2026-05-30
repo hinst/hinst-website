@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"html/template"
 	"net/http"
 	"sync"
@@ -42,9 +43,12 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 	var data = page_data.GoalList{Base: me.getBaseTemplate(request)}
 	for _, goalRecord := range goalRecords {
 		var item page_data.GoalCard
-		var metaInfo = goalInfo{}.findByTitle(personalGoalInfos, goalRecord.Title)
 		item.Id = goalRecord.Id
 		item.Title = goalRecord.Title
+		var metaInfo = goalInfo{}.findByTitle(personalGoalInfos, goalRecord.Title)
+		common.AssertCondition(metaInfo != nil, func() error {
+			return errors.New("Meta info not found for goal: " + goalRecord.Title)
+		})
 		item.Image = metaInfo.coverImage
 		if requestedLanguage != supportedLanguages[0] {
 			item.Title = metaInfo.englishTitle
