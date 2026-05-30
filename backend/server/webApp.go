@@ -55,7 +55,7 @@ func (me *webApp) wrap(function common.WebFunction) common.WebFunction {
 					var _, _ = response.Write(common.EncodeJson(webError))
 				} else {
 					response.WriteHeader(http.StatusInternalServerError)
-					panic(exception)
+					log.Printf("Error in web function: %v\n", exception)
 				}
 			}
 		}()
