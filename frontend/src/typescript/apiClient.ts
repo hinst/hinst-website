@@ -92,7 +92,7 @@ class ApiClient {
 	}
 
 	getGoalImageUrl(goalId: number): string {
-		return this.url + '/goal/image?goalId=' + goalId;
+		return this.url + '/goal/image?id=' + goalId;
 	}
 
 	async getUrlPings(): Promise<UrlPingRecord[]> {
