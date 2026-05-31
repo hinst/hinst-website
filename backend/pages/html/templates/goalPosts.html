@@ -1,35 +1,29 @@
 <div style="display: flex; flex-wrap: wrap; gap: 10px; flex-direction: column">
-	{{range $i, $month := .Months}}
-		{{if ne $i 0}}
-			<div style="min-height: 10px"></div>
-		{{end}}
-		<div
-			class="ms-text-light"
-			style="font-family: monospace"
-		>
-			{{.YearAndMonth}}
-		</div>
-		{{range .Posts}}
-			<div>
-				<a
-					href="{{$.WebPath}}/personal-goals/{{$.GoalId}}/{{.DateTime}}{{$.HtmlExtension}}"
-					style="display: inline-flex; gap: 10px"
-				>
-					<button
-						type="button"
-						class="ms-btn ms-primary ms-outline"
-						style="font-family: monospace; min-width: 50px; padding: 8px; display: flex; justify-content: center;"
-					>
-						<span>{{.Day}}</span>
-					</button>
-					<div
-						class="ms-text-main"
-						style="display: flex; align-items: center"
-					>
-						{{.Title}}
-					</div>
-				</a>
-			</div>
-		{{end}}
+	{{range $i, $month := .Months}} {{if ne $i 0}}
+	<div style="min-height: 10px"></div>
 	{{end}}
+	<div class="ms-text-light" style="font-family: monospace">{{.YearAndMonth}}</div>
+	{{range .Posts}}
+	<div>
+		<a
+			href="{{$.WebPath}}/personal-goals/{{$.GoalId}}/{{.DateTime}}{{$.HtmlExtension}}"
+			style="display: inline-flex; gap: 10px"
+		>
+			<button
+				type="button"
+				class="ms-btn ms-primary ms-outline"
+				style="
+					font-family: monospace;
+					min-width: 50px;
+					padding: 8px;
+					display: flex;
+					justify-content: center;
+				"
+			>
+				<span>{{.Day}}</span>
+			</button>
+			<div class="ms-text-main" style="display: flex; align-items: center">{{.Title}}</div>
+		</a>
+	</div>
+	{{end}} {{end}}
 </div>

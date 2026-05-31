@@ -1,63 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" href="{{.StaticPath}}/static/images/favicon.png" />
+		<link rel="stylesheet" href="{{.StaticPath}}/static/css/minstyle.css" />
+		<link rel="stylesheet" href="{{.StaticPath}}/static/css/index.css" />
+		<meta name="description" content="{{.Description}}" />
+		<meta http-equiv="content-language" content="{{.LanguageTag}}" />
+		<title>{{.Title}}</title>
+		<style>
+			html,
+			body {
+				height: 100%;
+				max-height: 100%;
+			}
 
-<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="icon" href="{{.StaticPath}}/static/images/favicon.png" />
-	<link rel="stylesheet" href="{{.StaticPath}}/static/css/minstyle.css" />
-	<link rel="stylesheet" href="{{.StaticPath}}/static/css/index.css" />
-	<meta name="description" content="{{.Description}}" />
-	<meta http-equiv="content-language" content="{{.LanguageTag}}">
-	<title>{{.Title}}</title>
-	<style>
-		html,
-		body {
-			height: 100%;
-			max-height: 100%;
-		}
+			body {
+				display: flex;
+				flex-direction: column;
+			}
 
-		body {
-			display: flex;
-			flex-direction: column;
-		}
+			.content {
+				flex-grow: 1;
+				min-height: 0;
+				max-width: 100%;
+			}
 
-		.content {
-			flex-grow: 1;
-			min-height: 0;
-			max-width: 100%;
-		}
+			#app {
+				display: flex;
+				height: 100%;
+				max-width: 100%;
+			}
+		</style>
+	</head>
 
-		#app {
-			display: flex;
-			height: 100%;
-			max-width: 100%;
-		}
-	</style>
-</head>
-
-<body>
-	<script src="{{.StaticPath}}/static/js/dist/initialize.js"></script>
-	<div class="content">
-		<div id="app">
-			<div
-				style="
-					padding: 10px;
-					padding-bottom: 0;
-					display: flex;
-					flex-direction: column;
-					width: 100%;
-					max-width: 100%;
-					max-height: 100%
-				"
-			>
-				<div style="padding-bottom: 10px">
-					{{.Header}}
+	<body>
+		<script src="{{.StaticPath}}/static/js/dist/initialize.js"></script>
+		<div class="content">
+			<div id="app">
+				<div
+					style="
+						padding: 10px;
+						padding-bottom: 0;
+						display: flex;
+						flex-direction: column;
+						width: 100%;
+						max-width: 100%;
+						max-height: 100%;
+					"
+				>
+					<div style="padding-bottom: 10px">{{.Header}}</div>
+					{{.Content}}
 				</div>
-				{{.Content}}
 			</div>
 		</div>
-	</div>
-	<script src="{{.StaticPath}}/static/js/dist/main.js"></script>
-</body>
-
+		<script src="{{.StaticPath}}/static/js/dist/main.js"></script>
+	</body>
 </html>
