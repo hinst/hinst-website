@@ -8,12 +8,15 @@ import (
 type goalRecord struct {
 	Id               int64  `json:"id"`
 	Title            string `json:"title"`
+	TitleEnglish     string `json:"titleEnglish"`
+	TitleGerman      string `json:"titleGerman"`
 	ImageData        []byte
 	ImageContentType string
 }
 
 func (me *goalRecord) scan(rows pgx.Rows) {
-	common.AssertError(rows.Scan(&me.Id, &me.Title, &me.ImageData, &me.ImageContentType))
+	common.AssertError(rows.Scan(&me.Id, &me.Title, &me.TitleEnglish, &me.TitleGerman,
+		&me.ImageData, &me.ImageContentType))
 }
 
 type goalPostRecord struct {
