@@ -1,7 +1,6 @@
 package server
 
 import (
-	"errors"
 	"html/template"
 	"net/http"
 	"sync"
@@ -9,11 +8,9 @@ import (
 
 	"github.com/hinst/go-common"
 	"github.com/hinst/hinst-website/server/page_data"
-	"golang.org/x/text/language"
 )
 
 const pagesWebPath = "/pages"
-const staticWebPath = "/static"
 
 // Server side rendering for personal goals pages.
 // This code is used to generate static files to be displayed on a hosting service without backend API.
@@ -48,15 +45,9 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 		var item page_data.GoalCard
 		item.Id = goalRecord.Id
 		item.Title = goalRecord.Title
-		var metaInfo = goalInfo{}.findByTitle(personalGoalInfos, goalRecord.Title)
-		common.AssertCondition(metaInfo != nil, func() error {
-			return errors.New("Meta info not found for goal: " + goalRecord.Title)
-		})
 		var imageDataUrl = getUrlBase64(goalRecord.ImageContentType, goalRecord.ImageData)
 		item.Image = template.URL(imageDataUrl)
-		if requestedLanguage != supportedLanguages[0] {
-			item.Title = metaInfo.englishTitle
-		}
+		item.Title = goalRecord.getTranslatedTitle(requestedLanguage)
 		data.Goals = append(data.Goals, item)
 	}
 	var content = executeTemplateFile("pages/html/templates/goalList.html", data)
@@ -93,15 +84,10 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 	data.GoalId = goalId
 	data.Load(goalPosts)
 
-	var metaInfo = goalInfo{}.findByTitle(personalGoalInfos, goalRecord.Title)
-	var goalTitle = goalRecord.Title
-	if requestedLanguage != supportedLanguages[0] {
-		goalTitle = metaInfo.englishTitle
-	}
 	var content = executeTemplateFile("pages/html/templates/goalPosts.html", data)
 	writeHtmlResponse(response, me.wrapTemplatePage(request, page_data.Content{
 		LanguageTag: requestedLanguage.String(),
-		Title:       "Goal diary: " + goalTitle,
+		Title:       "Goal diary: " + goalRecord.getTranslatedTitle(requestedLanguage),
 		Content:     template.HTML(content),
 	}))
 }
@@ -136,7 +122,7 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 		data.Images = append(data.Images, i)
 	}
 
-	var goalTitle = me.getTranslatedTitle(goalRecord.Title, requestedLanguage)
+	var goalTitle = goalRecord.getTranslatedTitle(requestedLanguage)
 	var pageTitle = goalTitle + " • " +
 		dateTime.UTC().Format("2006-01-02")
 	var pageDescription = goalTitle + " - " +
@@ -149,17 +135,6 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 		Description: pageDescription,
 		Content:     template.HTML(content),
 	}))
-}
-
-func (me *webPageGoals) getTranslatedTitle(title string, language language.Tag) string {
-	if language == supportedLanguages[0] {
-		return title
-	}
-	var metaInfo = goalInfo{}.findByTitle(personalGoalInfos, title)
-	if metaInfo == nil {
-		return title
-	}
-	return metaInfo.englishTitle
 }
 
 func (me *webPageGoals) wrapTemplatePage(request *http.Request, content page_data.Content) string {
