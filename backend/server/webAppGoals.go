@@ -136,9 +136,9 @@ func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *ht
 	var requestedLanguage = getWebLanguage(request)
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
 	var rows = me.db.searchGoalPosts(queryText, requestedLanguage, goalManagerMode, resultLimit)
-	var records []goalPostRecord
+	var records []goalPostHeader
 	for _, row := range rows {
-		var record goalPostRecord
+		var record goalPostHeader
 		record.GoalId = row.goalId
 		record.DateTime = row.getDateTime().UTC().Unix()
 		record.Type = row.typeString

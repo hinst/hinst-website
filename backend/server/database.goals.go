@@ -114,7 +114,7 @@ func (me *database) getGoalPostImageCount(goalId int64, dateTime time.Time) (cou
 	return
 }
 
-func (me *database) getGoalPosts(goalId int64, includePrivate bool, language language.Tag) (results []goalPostRecord) {
+func (me *database) getGoalPosts(goalId int64, includePrivate bool, language language.Tag) (results []goalPostHeader) {
 	var titleField = "title" + me.getLanguagePostfix(language)
 	var queryText = "SELECT goalId, dateTime, isPublic, type, " + titleField + " FROM goalPosts WHERE goalId = $1"
 	if !includePrivate {
@@ -124,7 +124,7 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	for rows.Next() {
-		var record goalPostRecord
+		var record goalPostHeader
 		common.AssertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.Type, &record.Title))
 		results = append(results, record)
 	}
