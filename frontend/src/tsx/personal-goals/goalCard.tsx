@@ -1,6 +1,5 @@
 import { NavLink } from 'react-router';
 import { GoalHeader } from 'src/typescript/personal-goals/goalRecord';
-import { translateGoalTitle } from 'src/typescript/personal-goals/goalInfo';
 import { AppContext } from '../context';
 import { useContext } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
@@ -35,7 +34,7 @@ export function GoalCard(props: { goal: GoalHeader }) {
 							maxWidth: 200
 						}}
 					>
-						{translateGoalTitle(context.currentLanguage, props.goal.title)}
+						{props.goal.getTitle(context.currentLanguage)}
 					</div>
 				</div>
 			</NavLink>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { GoalHeader } from 'src/typescript/personal-goals/goalRecord';
 import { API_URL } from 'src/typescript/global';
 import GoalList from './goalList';
+import { apiClient } from 'src/typescript/apiClient';
 
 export default function GoalListPanel() {
 	const [isLoading, setIsLoading] = useState(false);
@@ -9,10 +10,7 @@ export default function GoalListPanel() {
 	async function loadGoals() {
 		setIsLoading(true);
 		try {
-			const response = await fetch(API_URL + '/goals');
-			if (!response.ok) throw new Error(response.statusText);
-			const data = await response.json();
-			setGoals(data);
+			setGoals(await apiClient.getGoals());
 		} finally {
 			setIsLoading(false);
 		}
