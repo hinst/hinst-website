@@ -18,13 +18,3 @@ func (me *goalRow) scan(rows pgx.Rows) {
 	common.AssertError(rows.Scan(&me.Id, &me.Title, &me.TitleEnglish, &me.TitleGerman,
 		&me.ImageData, &me.ImageContentType))
 }
-
-type goalPostHeader struct {
-	GoalId int64 `json:"goalId"`
-	// Unix epoch time seconds
-	DateTime int64 `json:"dateTime"`
-	IsPublic bool  `json:"isPublic"`
-	// "post" or "comment"
-	Type  string  `json:"type"`
-	Title *string `json:"title"`
-}

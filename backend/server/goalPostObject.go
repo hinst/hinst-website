@@ -13,3 +13,13 @@ type goalPostObject struct {
 	IsPublic             bool   `json:"isPublic"`
 	ImageCount           int    `json:"imageCount"`
 }
+
+type goalPostHeader struct {
+	GoalId int64 `json:"goalId"`
+	// Unix epoch time seconds
+	DateTime int64 `json:"dateTime"`
+	IsPublic bool  `json:"isPublic"`
+	// "post" or "comment"
+	Type  string  `json:"type"`
+	Title *string `json:"title"`
+}
