@@ -35,7 +35,7 @@ func (me *siteMapBuilder) loadOldSitemap() {
 	if !common.CheckFileExists(oldSiteMapPath) {
 		return
 	}
-	me.oldSiteMap = common.ReadJsonFile(me.oldFilesPath+"/sitemap.xml", new(sitemap.XmlSitemap))
+	me.oldSiteMap = common.ReadXmlFile(me.oldFilesPath+"/sitemap.xml", new(sitemap.XmlSitemap))
 }
 
 func (me *siteMapBuilder) createItem(newFilePath string, directory os.DirEntry, err error) error {
