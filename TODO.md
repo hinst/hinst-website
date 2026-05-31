@@ -4,6 +4,7 @@
 1. ~~Import additional information from Smart Progress~~
 	1. ~~Cover image~~
 	1. ~~Description~~
+1. Introduce reusable structure for storing translated texts, instead of copy-pasting `title`, `titleEnglish`, `titleGerman`
 1. Use new model for AI translations: Gemma-4 instead of Aya-expanse
 1. Use CPU only mode for model, to avoid video memory usage in background
 1. Use markdown for storing blog posts
