@@ -5,7 +5,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type goalRecord struct {
+type goalRow struct {
 	Id               int64  `json:"id"`
 	Title            string `json:"title"`
 	TitleEnglish     string `json:"titleEnglish"`
@@ -14,7 +14,7 @@ type goalRecord struct {
 	ImageContentType string
 }
 
-func (me *goalRecord) scan(rows pgx.Rows) {
+func (me *goalRow) scan(rows pgx.Rows) {
 	common.AssertError(rows.Scan(&me.Id, &me.Title, &me.TitleEnglish, &me.TitleGerman,
 		&me.ImageData, &me.ImageContentType))
 }

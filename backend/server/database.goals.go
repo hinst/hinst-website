@@ -50,25 +50,25 @@ func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, select
 	}
 }
 
-func (me *database) getGoals() (results []goalRecord) {
-	var fields = strings.Join(getFieldNames[goalRecord](), ",")
+func (me *database) getGoals() (results []goalRow) {
+	var fields = strings.Join(getFieldNames[goalRow](), ",")
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), "SELECT "+fields+" FROM goals ORDER BY id"))
 	defer rows.Close()
 	for rows.Next() {
-		var record goalRecord
+		var record goalRow
 		record.scan(rows)
 		results = append(results, record)
 	}
 	return
 }
 
-func (me *database) getGoal(goalId int64) (result *goalRecord) {
-	var fields = strings.Join(getFieldNames[goalRecord](), ",")
+func (me *database) getGoal(goalId int64) (result *goalRow) {
+	var fields = strings.Join(getFieldNames[goalRow](), ",")
 	var queryText = "SELECT " + fields + " FROM goals WHERE id = $1"
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	if rows.Next() {
-		result = new(goalRecord)
+		result = new(goalRow)
 		result.scan(rows)
 	}
 	return

@@ -56,7 +56,7 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 	}
 }
 
-func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal goalRecord) {
+func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal goalRow) {
 	var goalId = goal.Id
 	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) +
 		common.BuildUrlQueryParams(me.getPathQuery(lang))
