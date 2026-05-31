@@ -1,15 +1,13 @@
 import { useParams, useSearchParams } from 'react-router';
 import GoalCalendarPanel from './goalCalendarPanel';
-import { GoalRecord } from 'src/typescript/personal-goals/goalRecord';
 import { GoalPostRecord } from 'src/typescript/personal-goals/goalPostRecord';
 import { useContext, useEffect, useState } from 'react';
-import { API_URL } from 'src/typescript/global';
-import { translateGoalTitle } from 'src/typescript/personal-goals/goalInfo';
 import { AppContext } from 'src/tsx/context';
 import { Calendar } from 'react-feather';
 import Cookie from 'js-cookie';
 import GoalPostPanel from './goalPostPanel';
 import { DateTime } from 'luxon';
+import { apiClient } from 'src/typescript/apiClient';
 
 const ARTICLE_PADDING = 20;
 const ARTICLE_WIDTH = 1000 + ARTICLE_PADDING * 2;
@@ -53,11 +51,8 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 	}
 
 	async function loadGoal(goalId: string) {
-		const response = await fetch(API_URL + '/goal?id=' + encodeURIComponent(goalId));
-		if (response.ok) {
-			const goalHeader: GoalRecord = await response.json();
-			setGoalTitle(translateGoalTitle(context.currentLanguage, goalHeader.title));
-		}
+		const goalHeader = await apiClient.getGoal(parseInt(goalId, 10));
+		setGoalTitle(goalHeader.title);
 	}
 
 	useEffect(() => {

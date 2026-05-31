@@ -1,11 +1,11 @@
 import { NavLink } from 'react-router';
-import { GoalRecord } from 'src/typescript/personal-goals/goalRecord';
+import { GoalHeader } from 'src/typescript/personal-goals/goalRecord';
 import { translateGoalTitle } from 'src/typescript/personal-goals/goalInfo';
 import { AppContext } from '../context';
 import { useContext } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
 
-export function GoalCard(props: { goal: GoalRecord }) {
+export function GoalCard(props: { goal: GoalHeader }) {
 	const context = useContext(AppContext);
 	return (
 		<div

@@ -1,3 +1,4 @@
+import { GoalHeader } from 'src/typescript/personal-goals/goalRecord';
 import { GoalPostRecord } from './personal-goals/goalPostRecord';
 import { GoalPostObject } from './personal-goals/smartPost';
 import { RiddleItem } from './riddle';
@@ -7,7 +8,7 @@ import { UrlPingRecord } from './urlPing';
 class ApiClient {
 	readonly url: string = process.env.API_URL || '/hinst-website/api';
 
-	async fetch(url: string, options?: RequestInit): Promise<Response> {
+	private async fetch(url: string, options?: RequestInit): Promise<Response> {
 		if (settingsStorage.language) {
 			options = options || {};
 			options.headers = {
@@ -17,6 +18,11 @@ class ApiClient {
 		}
 		const response = await fetchSafe(this.url + url, options);
 		return response;
+	}
+
+	async getGoal(id: number): Promise<GoalHeader> {
+		const url = '/goal?id=' + encodeURIComponent(id);
+		return (await this.fetch(url)).json() as Promise<GoalHeader>;
 	}
 
 	async goalPostSetPublic(
@@ -109,8 +115,8 @@ class ApiClient {
 	async searchGoalPosts(query: string): Promise<GoalPostRecord[]> {
 		const url = '/goalPosts/search?query=' + encodeURIComponent(query);
 		const response = await this.fetch(url);
-		const items = (await response.json()) as unknown[] || [];
-		return items.map(item => Object.assign(new GoalPostRecord(), item));
+		const items = ((await response.json()) as unknown[]) || [];
+		return items.map((item) => Object.assign(new GoalPostRecord(), item));
 	}
 }
 
