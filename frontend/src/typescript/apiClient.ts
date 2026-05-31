@@ -22,7 +22,8 @@ class ApiClient {
 
 	async getGoal(id: number): Promise<GoalHeader> {
 		const url = '/goal?id=' + encodeURIComponent(id);
-		return (await this.fetch(url)).json() as Promise<GoalHeader>;
+		const response = await (await this.fetch(url)).json();
+		return Object.assign(new GoalHeader('', '', '', ''), response);
 	}
 
 	async goalPostSetPublic(

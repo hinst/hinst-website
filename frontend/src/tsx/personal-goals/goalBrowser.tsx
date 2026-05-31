@@ -52,7 +52,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 
 	async function loadGoal(goalId: string) {
 		const goalHeader = await apiClient.getGoal(parseInt(goalId, 10));
-		setGoalTitle(goalHeader.title);
+		setGoalTitle(goalHeader.getTitle(context.currentLanguage));
 	}
 
 	useEffect(() => {
