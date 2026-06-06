@@ -23,6 +23,9 @@ func (me *database) init() {
 	config.ConnConfig.Tracer = (&ConnectionPoolTracer{timeout: 1 * time.Minute}).init()
 	me.pool = common.AssertResultError(pgxpool.NewWithConfig(context.Background(), config))
 	common.AssertResultError(me.pool.Exec(context.Background(), dbSchemaPostgre))
+	common.InstallShutdownReceiver(func() {
+		me.close()
+	})
 }
 
 func (me *database) close() {
