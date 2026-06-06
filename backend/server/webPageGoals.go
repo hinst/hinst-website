@@ -47,7 +47,7 @@ func (me *webPageGoals) getHomePage(response http.ResponseWriter, request *http.
 		item.Title = goalRecord.Title
 		var imageDataUrl = getUrlBase64(goalRecord.ImageContentType, goalRecord.ImageData)
 		item.Image = template.URL(imageDataUrl)
-		item.Title = goalRecord.getTranslatedTitle(requestedLanguage)
+		item.Title = goalRecord.GetTranslatedTitle(requestedLanguage)
 		data.Goals = append(data.Goals, item)
 	}
 	var content = executeTemplateFile("pages/html/templates/goalList.html", data)
@@ -87,7 +87,7 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 	var content = executeTemplateFile("pages/html/templates/goalPosts.html", data)
 	writeHtmlResponse(response, me.wrapTemplatePage(request, page_data.Content{
 		LanguageTag: requestedLanguage.String(),
-		Title:       "Goal diary: " + goalRecord.getTranslatedTitle(requestedLanguage),
+		Title:       "Goal diary: " + goalRecord.GetTranslatedTitle(requestedLanguage),
 		Content:     template.HTML(content),
 	}))
 }
@@ -122,7 +122,7 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 		data.Images = append(data.Images, i)
 	}
 
-	var goalTitle = goalRecord.getTranslatedTitle(requestedLanguage)
+	var goalTitle = goalRecord.GetTranslatedTitle(requestedLanguage)
 	var pageTitle = goalTitle + " • " +
 		dateTime.UTC().Format("2006-01-02")
 	var pageDescription = goalTitle + " - " +

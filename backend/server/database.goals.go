@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/hinst/go-common"
+	"github.com/hinst/hinst-website/server/database_objects"
+	"github.com/hinst/hinst-website/server/rest_objects"
 	"golang.org/x/text/language"
 )
 
@@ -50,26 +52,26 @@ func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, select
 	}
 }
 
-func (me *database) getGoals() (results []goalRow) {
-	var fields = strings.Join(getFieldNames[goalRow](), ",")
+func (me *database) getGoals() (results []database_objects.GoalRow) {
+	var fields = strings.Join(getFieldNames[database_objects.GoalRow](), ",")
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), "SELECT "+fields+" FROM goals ORDER BY id"))
 	defer rows.Close()
 	for rows.Next() {
-		var record goalRow
-		record.scan(rows)
+		var record database_objects.GoalRow
+		record.Scan(rows)
 		results = append(results, record)
 	}
 	return
 }
 
-func (me *database) getGoal(goalId int64) (result *goalRow) {
-	var fields = strings.Join(getFieldNames[goalRow](), ",")
+func (me *database) getGoal(goalId int64) (result *database_objects.GoalRow) {
+	var fields = strings.Join(getFieldNames[database_objects.GoalRow](), ",")
 	var queryText = "SELECT " + fields + " FROM goals WHERE id = $1"
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	if rows.Next() {
-		result = new(goalRow)
-		result.scan(rows)
+		result = new(database_objects.GoalRow)
+		result.Scan(rows)
 	}
 	return
 }
@@ -114,7 +116,7 @@ func (me *database) getGoalPostImageCount(goalId int64, dateTime time.Time) (cou
 	return
 }
 
-func (me *database) getGoalPosts(goalId int64, includePrivate bool, language language.Tag) (results []goalPostHeader) {
+func (me *database) getGoalPosts(goalId int64, includePrivate bool, language language.Tag) (results []rest_objects.GoalPostHeader) {
 	var titleField = "title" + me.getLanguagePostfix(language)
 	var queryText = "SELECT goalId, dateTime, isPublic, type, " + titleField + " FROM goalPosts WHERE goalId = $1"
 	if !includePrivate {
@@ -124,7 +126,7 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	for rows.Next() {
-		var record goalPostHeader
+		var record rest_objects.GoalPostHeader
 		common.AssertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.Type, &record.Title))
 		results = append(results, record)
 	}

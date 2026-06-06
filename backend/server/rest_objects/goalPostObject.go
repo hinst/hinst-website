@@ -1,6 +1,6 @@
-package server
+package rest_objects
 
-type goalPostObject struct {
+type GoalPostObject struct {
 	GoalId int64 `json:"goalId"`
 	// Unix epoch seconds
 	DateTime int64 `json:"dateTime"`
@@ -14,7 +14,7 @@ type goalPostObject struct {
 	ImageCount           int    `json:"imageCount"`
 }
 
-type goalPostHeader struct {
+type GoalPostHeader struct {
 	GoalId int64 `json:"goalId"`
 	// Unix epoch time seconds
 	DateTime int64 `json:"dateTime"`

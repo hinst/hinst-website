@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/hinst/go-common"
+	"github.com/hinst/hinst-website/server/rest_objects"
 	"golang.org/x/text/language"
 )
 
@@ -70,7 +71,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	if !goalPostRow.isPublic && !goalManagerMode {
 		panic(webError{"Need goal manager access level", http.StatusUnauthorized})
 	}
-	var goalPostObject goalPostObject
+	var goalPostObject rest_objects.GoalPostObject
 	goalPostObject.GoalId = goalPostRow.goalId
 	goalPostObject.DateTime = goalPostRow.getDateTime().UTC().Unix()
 	goalPostObject.Text = goalPostRow.text
@@ -136,9 +137,9 @@ func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *ht
 	var requestedLanguage = getWebLanguage(request)
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
 	var rows = me.db.searchGoalPosts(queryText, requestedLanguage, goalManagerMode, resultLimit)
-	var records []goalPostHeader
+	var records []rest_objects.GoalPostHeader
 	for _, row := range rows {
-		var record goalPostHeader
+		var record rest_objects.GoalPostHeader
 		record.GoalId = row.goalId
 		record.DateTime = row.getDateTime().UTC().Unix()
 		record.Type = row.typeString
