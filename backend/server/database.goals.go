@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/hinst/go-common"
+	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/database_objects"
 	"github.com/hinst/hinst-website/server/rest_objects"
 	"golang.org/x/text/language"
@@ -134,11 +135,11 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 }
 
 func (database) getLanguagePostfix(supportedLanguage language.Tag) string {
-	common.AssertCondition(slices.Contains(supportedLanguages, supportedLanguage),
+	common.AssertCondition(slices.Contains(base.SupportedLanguages, supportedLanguage),
 		func() string { return "Unsupported language: " + supportedLanguage.String() })
 	var languageName = ""
-	if supportedLanguage != supportedLanguages[0] {
-		languageName = getLanguageName(supportedLanguage)
+	if supportedLanguage != base.SupportedLanguages[0] {
+		languageName = base.GetLanguageName(supportedLanguage)
 	}
 	return languageName
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/hinst/go-common"
 	"github.com/hinst/go-common/file_mode"
+	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/database_objects"
 	"golang.org/x/text/language"
 )
@@ -27,7 +28,7 @@ func (me *webStaticGoals) run() {
 	common.AssertError(os.MkdirAll(me.folder, file_mode.OS_USER_RWX))
 	me.deleteOldFiles()
 	common.AssertError(os.CopyFS(me.folder+"/static", os.DirFS("pages/static")))
-	for _, lang := range supportedLanguages {
+	for _, lang := range base.SupportedLanguages {
 		me.generate(lang)
 	}
 }

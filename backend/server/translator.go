@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/hinst/go-common"
+	"github.com/hinst/hinst-website/server/base"
 	"golang.org/x/text/language"
 )
 
@@ -63,7 +64,7 @@ func (me *translator) translate(row *goalPostRow, tag language.Tag) {
 
 func (me *translator) translateText(text string, tag language.Tag) string {
 	var prompt = prompt_Russian_to_something
-	prompt = strings.ReplaceAll(prompt, "{something}", getLanguageName(tag))
+	prompt = strings.ReplaceAll(prompt, "{something}", base.GetLanguageName(tag))
 	var request = common.EncodeJson(lmStudioRequest{
 		Model: lm_studio_multilingual_model_id,
 		Messages: []lmStudioMessage{

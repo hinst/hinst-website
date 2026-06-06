@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/hinst/go-common"
+	"github.com/hinst/hinst-website/server/base"
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/text/language"
 )
@@ -61,7 +62,7 @@ func (goalPostRow) getFieldsForLanguage(desiredLanguage language.Tag) (fields []
 	var allFields = goalPostRow{}.getAllFields()
 	for _, field := range allFields {
 		var includeField = true
-		for _, supportedLanguage := range supportedLanguages {
+		for _, supportedLanguage := range base.SupportedLanguages {
 			if supportedLanguage == desiredLanguage {
 				continue
 			}

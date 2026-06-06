@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/hinst/go-common"
+	"github.com/hinst/hinst-website/server/base"
 	"golang.org/x/text/language"
 )
 
@@ -32,8 +33,8 @@ func parseLanguageTag(text string) language.Tag {
 	if parsedError != nil {
 		panic(webError{"Invalid language tag: " + text, http.StatusBadRequest})
 	}
-	var _, index, _ = supportedLanguagesMatcher.Match([]language.Tag{tag}...)
-	return supportedLanguages[index]
+	var _, index, _ = base.SupportedLanguagesMatcher.Match([]language.Tag{tag}...)
+	return base.SupportedLanguages[index]
 }
 
 func parseLanguageHeader(text string) language.Tag {
@@ -42,8 +43,8 @@ func parseLanguageHeader(text string) language.Tag {
 		panic(webError{"Invalid language header: " + text, http.StatusBadRequest})
 	}
 	common.AssertError(parsedError)
-	var _, index, _ = supportedLanguagesMatcher.Match(tags...)
-	var tag = supportedLanguages[index]
+	var _, index, _ = base.SupportedLanguagesMatcher.Match(tags...)
+	var tag = base.SupportedLanguages[index]
 	return tag
 }
 

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"log"
 	"time"
 
 	_ "embed"
@@ -29,6 +30,7 @@ func (me *database) init() {
 }
 
 func (me *database) close() {
+	log.Print("Closing...")
 	if me.pool != nil {
 		me.pool.Close()
 		me.pool = nil

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/hinst/go-common"
+	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/rest_objects"
 	"golang.org/x/text/language"
 )
@@ -77,8 +78,8 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 	goalPostObject.Text = goalPostRow.text
 	var requestedLanguage = getWebLanguage(request)
 	goalPostObject.LanguageTag = requestedLanguage.String()
-	goalPostObject.LanguageName = getLanguageName(requestedLanguage)
-	if requestedLanguage != supportedLanguages[0] {
+	goalPostObject.LanguageName = base.GetLanguageName(requestedLanguage)
+	if requestedLanguage != base.SupportedLanguages[0] {
 		var translatedText = goalPostRow.getTranslatedText(requestedLanguage)
 		if translatedText != "" {
 			goalPostObject.IsAutoTranslated = true
