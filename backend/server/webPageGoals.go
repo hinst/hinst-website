@@ -158,8 +158,8 @@ func (me *webPageGoals) getGoalPostImage(response http.ResponseWriter, request *
 		panic(webError{"Image not found", http.StatusNotFound})
 	}
 	common.SetCacheAge(response, time.Hour)
-	response.Header().Set(common.ContentTypeHeader, image.contentType)
-	var _, _ = response.Write(image.file)
+	response.Header().Set(common.ContentTypeHeader, image.ContentType)
+	var _, _ = response.Write(image.File)
 }
 
 func (me *webPageGoals) getBaseTemplate(request *http.Request) page_data.Base {

@@ -5,25 +5,26 @@ import (
 	"time"
 
 	"github.com/hinst/go-common"
+	"github.com/hinst/hinst-website/server/db_objects"
 )
 
-func (me *database) getUrlPings() (results []urlPingRecord) {
+func (me *database) getUrlPings() (results []db_objects.UrlPingRecord) {
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), "SELECT * FROM urlPings"))
 	defer rows.Close()
 	for rows.Next() {
-		var record urlPingRecord
-		record.scan(rows)
+		var record db_objects.UrlPingRecord
+		record.Scan(rows)
 		results = append(results, record)
 	}
 	return
 }
 
-func (me *database) getUrlPing(url string) *urlPingRecord {
+func (me *database) getUrlPing(url string) *db_objects.UrlPingRecord {
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), "SELECT * FROM urlPings WHERE url = $1", url))
 	defer rows.Close()
 	if rows.Next() {
-		var record urlPingRecord
-		record.scan(rows)
+		var record db_objects.UrlPingRecord
+		record.Scan(rows)
 		return &record
 	}
 	return nil

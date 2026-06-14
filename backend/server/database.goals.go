@@ -96,14 +96,14 @@ func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_ob
 	return
 }
 
-func (me *database) getGoalPostImage(goalId int64, dateTime time.Time, index int) (result *goalPostImageRow) {
+func (me *database) getGoalPostImage(goalId int64, dateTime time.Time, index int) (result *db_objects.GoalPostImageRow) {
 	var queryText = "SELECT contentType, file FROM goalPostImages" +
 		" WHERE goalId = $1 AND parentDateTime = $2 AND sequenceIndex = $3"
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix(), index))
 	defer rows.Close()
 	if rows.Next() {
-		result = new(goalPostImageRow)
-		common.AssertError(rows.Scan(&result.contentType, &result.file))
+		result = new(db_objects.GoalPostImageRow)
+		common.AssertError(rows.Scan(&result.ContentType, &result.File))
 	}
 	return
 }
