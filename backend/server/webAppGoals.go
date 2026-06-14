@@ -7,6 +7,7 @@ import (
 
 	"github.com/hinst/go-common"
 	"github.com/hinst/hinst-website/server/base"
+	"github.com/hinst/hinst-website/server/database_objects"
 	"github.com/hinst/hinst-website/server/rest_objects"
 	"golang.org/x/text/language"
 )
@@ -65,22 +66,22 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 
 	var goalPostRow = me.db.getGoalPost(goalId, postDateTime)
 	if goalPostRow == nil {
-		var errorMessage = "Cannot find goalId=" + getStringFromInt64(goalId) +
+		var errorMessage = "Cannot find goalId=" + common.GetStringFromInt64(goalId) +
 			" postDateTime=" + postDateTime.String()
 		panic(webError{errorMessage, http.StatusNotFound})
 	}
-	if !goalPostRow.isPublic && !goalManagerMode {
+	if !goalPostRow.IsPublic && !goalManagerMode {
 		panic(webError{"Need goal manager access level", http.StatusUnauthorized})
 	}
 	var goalPostObject rest_objects.GoalPostObject
-	goalPostObject.GoalId = goalPostRow.goalId
-	goalPostObject.DateTime = goalPostRow.getDateTime().UTC().Unix()
-	goalPostObject.Text = goalPostRow.text
+	goalPostObject.GoalId = goalPostRow.GoalId
+	goalPostObject.DateTime = goalPostRow.GetDateTime().UTC().Unix()
+	goalPostObject.Text = goalPostRow.Text
 	var requestedLanguage = getWebLanguage(request)
 	goalPostObject.LanguageTag = requestedLanguage.String()
 	goalPostObject.LanguageName = base.GetLanguageName(requestedLanguage)
 	if requestedLanguage != base.SupportedLanguages[0] {
-		var translatedText = goalPostRow.getTranslatedText(requestedLanguage)
+		var translatedText = goalPostRow.GetTranslatedText(requestedLanguage)
 		if translatedText != "" {
 			goalPostObject.IsAutoTranslated = true
 			goalPostObject.Text = translatedText
@@ -88,7 +89,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 			goalPostObject.IsTranslationPending = true
 		}
 	}
-	goalPostObject.IsPublic = goalPostRow.isPublic
+	goalPostObject.IsPublic = goalPostRow.IsPublic
 	goalPostObject.ImageCount = me.db.getGoalPostImageCount(goalId, postDateTime)
 	writeJsonResponse(response, goalPostObject)
 }
@@ -110,7 +111,7 @@ func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var isPublic = request.URL.Query().Get("isPublic") == "true"
-	var row = goalPostRow{goalId: goalId, dateTime: postDateTime.UTC().Unix(), isPublic: isPublic}
+	var row = database_objects.GoalPostRow{GoalId: goalId, DateTime: postDateTime.UTC().Unix(), IsPublic: isPublic}
 	me.db.setGoalPostPublic(row)
 }
 
@@ -141,10 +142,10 @@ func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *ht
 	var records []rest_objects.GoalPostHeader
 	for _, row := range rows {
 		var record rest_objects.GoalPostHeader
-		record.GoalId = row.goalId
-		record.DateTime = row.getDateTime().UTC().Unix()
-		record.Type = row.typeString
-		var title = row.getTranslatedTitle(requestedLanguage)
+		record.GoalId = row.GoalId
+		record.DateTime = row.GetDateTime().UTC().Unix()
+		record.Type = row.TypeString
+		var title = row.GetTranslatedTitle(requestedLanguage)
 		record.Title = &title
 		records = append(records, record)
 	}

@@ -28,8 +28,8 @@ func (me *staticFilesUpdate) run() {
 	runner.command("Git pull", true, "git", "pull")
 	runner.command("Git config", true, "git", "config", "core.fileMode", "false")
 	runner.command("Git config", true, "git", "config", "core.autocrlf", "false")
-	runner.command("Git config", true, "git", "config", "user.name", getQuotedString(me.getBotName()))
-	runner.command("Git config", true, "git", "config", "user.email", getQuotedString(me.getEmail()))
+	runner.command("Git config", true, "git", "config", "user.name", common.GetQuotedString(me.getBotName()))
+	runner.command("Git config", true, "git", "config", "user.email", common.GetQuotedString(me.getEmail()))
 
 	runner.command("Git add", true, "git", "add", ".")
 	runner.command("Git status", true, "git", "status")
@@ -86,7 +86,7 @@ func (me *staticFilesUpdate) submitSiteMap() {
 }
 
 func (staticFilesUpdate) getStaticWebsiteGitUrl() string {
-	return fmt.Sprintf("https://%v@github.com/hinst/hinst.github.io.git", requireEnvVar("GIT_TOKEN"))
+	return fmt.Sprintf("https://%v@github.com/hinst/hinst.github.io.git", common.RequireEnvVar("GIT_TOKEN"))
 }
 
 func (staticFilesUpdate) getPublicUrl() string {
@@ -94,9 +94,9 @@ func (staticFilesUpdate) getPublicUrl() string {
 }
 
 func (me *staticFilesUpdate) getBotName() string {
-	return requireEnvVar("GIT_BOT_NAME")
+	return common.RequireEnvVar("GIT_BOT_NAME")
 }
 
 func (me *staticFilesUpdate) getEmail() string {
-	return requireEnvVar("GIT_EMAIL")
+	return common.RequireEnvVar("GIT_EMAIL")
 }

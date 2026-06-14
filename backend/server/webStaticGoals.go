@@ -60,12 +60,12 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 
 func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal database_objects.GoalRow) {
 	var goalId = goal.Id
-	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) +
+	var url = me.url + pagesWebPath + "/personal-goals/" + common.GetStringFromInt64(goalId) +
 		common.BuildUrlQueryParams(me.getPathQuery(lang))
 	var goalPageText = readTextFromUrl(url)
-	common.WriteTextFile(goalsPath+"/"+getStringFromInt64(goalId)+".html", goalPageText)
+	common.WriteTextFile(goalsPath+"/"+common.GetStringFromInt64(goalId)+".html", goalPageText)
 
-	var path = goalsPath + "/" + getStringFromInt64(goalId)
+	var path = goalsPath + "/" + common.GetStringFromInt64(goalId)
 	common.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
 	var posts = me.db.getGoalPosts(goalId, false, lang)
 	for _, post := range posts {
@@ -74,11 +74,11 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 }
 
 func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, goalId int64, postDateTime int64) {
-	var url = me.url + pagesWebPath + "/personal-goals/" + getStringFromInt64(goalId) + "/" +
-		getStringFromInt64(postDateTime) + common.BuildUrlQueryParams(me.getPathQuery(lang))
+	var url = me.url + pagesWebPath + "/personal-goals/" + common.GetStringFromInt64(goalId) + "/" +
+		common.GetStringFromInt64(postDateTime) + common.BuildUrlQueryParams(me.getPathQuery(lang))
 	var postPageText = readTextFromUrl(url)
-	var path = goalsPath + "/" + getStringFromInt64(goalId)
-	common.WriteTextFile(path+"/"+getStringFromInt64(postDateTime)+".html", postPageText)
+	var path = goalsPath + "/" + common.GetStringFromInt64(goalId)
+	common.WriteTextFile(path+"/"+common.GetStringFromInt64(postDateTime)+".html", postPageText)
 
 	var imageCount = me.db.getGoalPostImageCount(goalId, time.Unix(postDateTime, 0))
 	for imageIndex := range imageCount {
@@ -87,13 +87,13 @@ func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, 
 }
 
 func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64, imageIndex int) {
-	var url = me.url + pagesWebPath + "/personal-goals/image/" + getStringFromInt64(goalId) + "/" +
-		getStringFromInt64(postDateTime) + "/" + getStringFromInt(imageIndex)
+	var url = me.url + pagesWebPath + "/personal-goals/image/" + common.GetStringFromInt64(goalId) + "/" +
+		common.GetStringFromInt64(postDateTime) + "/" + common.GetStringFromInt(imageIndex)
 	var image = readBytesFromUrl(url)
-	var path = me.folder + "/personal-goals/image/" + getStringFromInt64(goalId) + "/" +
-		getStringFromInt64(postDateTime)
+	var path = me.folder + "/personal-goals/image/" + common.GetStringFromInt64(goalId) + "/" +
+		common.GetStringFromInt64(postDateTime)
 	common.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
-	path += "/" + getStringFromInt(imageIndex) + ".jpg"
+	path += "/" + common.GetStringFromInt(imageIndex) + ".jpg"
 	if common.CheckFileExists(path) {
 		return // already saved
 	}

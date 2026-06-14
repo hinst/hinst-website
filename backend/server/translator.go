@@ -11,6 +11,7 @@ import (
 
 	"github.com/hinst/go-common"
 	"github.com/hinst/hinst-website/server/base"
+	"github.com/hinst/hinst-website/server/database_objects"
 	"golang.org/x/text/language"
 )
 
@@ -26,13 +27,13 @@ var translatorPreset = translator{
 func (me *translator) run() {
 	var totalCount = 0
 	var translatedCount = 0
-	me.db.forEachGoalPost(func(row *goalPostRow) bool {
+	me.db.forEachGoalPost(func(row *database_objects.GoalPostRow) bool {
 		var isDone = false
-		if row.textEnglish == nil {
+		if row.TextEnglish == nil {
 			me.translate(row, language.English)
 			isDone = true
 		}
-		if row.textGerman == nil {
+		if row.TextGerman == nil {
 			me.translate(row, language.German)
 			isDone = true
 		}
@@ -45,21 +46,21 @@ func (me *translator) run() {
 	log.Printf("Generated translated text for %v of %v posts", translatedCount, totalCount)
 }
 
-func (me *translator) translate(row *goalPostRow, tag language.Tag) {
+func (me *translator) translate(row *database_objects.GoalPostRow, tag language.Tag) {
 	var text = ""
 	const attemptLimit = 30
 	for i := range attemptLimit {
-		text = common.AssertResultError(formatHtml(row.text))
+		text = common.AssertResultError(formatHtml(row.Text))
 		text = me.translateText(text, tag)
 		var e = validateHtml(text)
 		if e == nil {
 			break
 		} else if i == attemptLimit-1 {
 			log.Printf("Cannot generate valid HTML text after %v attempts for goalId=%v, dateTime=%v, language=%v. Last error: %v",
-				attemptLimit, row.goalId, row.dateTime, tag, e)
+				attemptLimit, row.GoalId, row.DateTime, tag, e)
 		}
 	}
-	me.db.setGoalPostText(row.goalId, row.getDateTime(), tag, &text)
+	me.db.setGoalPostText(row.GoalId, row.GetDateTime(), tag, &text)
 }
 
 func (me *translator) translateText(text string, tag language.Tag) string {

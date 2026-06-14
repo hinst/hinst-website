@@ -63,7 +63,7 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 	var goalId = me.inputValidGoalId(request.PathValue("id"))
 	var goalRecord = me.db.getGoal(goalId)
 	if goalRecord == nil {
-		var errorMessage = "Cannot find goal with id=" + getStringFromInt64(goalId)
+		var errorMessage = "Cannot find goal with id=" + common.GetStringFromInt64(goalId)
 		panic(webError{errorMessage, http.StatusNotFound})
 	}
 	var goalPostRecords = me.db.getGoalPosts(goalId, false, requestedLanguage)
@@ -99,17 +99,17 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 
 	var goalRecord = me.db.getGoal(goalId)
 	if goalRecord == nil {
-		var errorMessage = "Cannot find goal with id=" + getStringFromInt64(goalId)
+		var errorMessage = "Cannot find goal with id=" + common.GetStringFromInt64(goalId)
 		panic(webError{errorMessage, http.StatusNotFound})
 	}
 
 	var goalPostRecord = me.db.getGoalPost(goalId, dateTime)
 	if goalPostRecord == nil {
-		var errorMessage = "Cannot find goal post with id=" + getStringFromInt64(goalId) +
+		var errorMessage = "Cannot find goal post with id=" + common.GetStringFromInt64(goalId) +
 			" and dateTime=" + dateTime.UTC().Format(time.DateTime)
 		panic(webError{errorMessage, http.StatusNotFound})
 	}
-	var text = goalPostRecord.getTranslatedText(requestedLanguage)
+	var text = goalPostRecord.GetTranslatedText(requestedLanguage)
 	var data = page_data.GoalPost{
 		Base:     me.getBaseTemplate(request),
 		GoalId:   goalId,
@@ -127,7 +127,7 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 		dateTime.UTC().Format("2006-01-02")
 	var pageDescription = goalTitle + " - " +
 		dateTime.UTC().Format("2006-01-02") + " - " +
-		goalPostRecord.getTranslatedTitle(requestedLanguage)
+		goalPostRecord.GetTranslatedTitle(requestedLanguage)
 	var content = executeTemplateFile("pages/html/templates/goalPost.html", data)
 	writeHtmlResponse(response, me.wrapTemplatePage(request, page_data.Content{
 		LanguageTag: requestedLanguage.String(),

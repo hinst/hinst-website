@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/hinst/go-common"
+	"github.com/hinst/hinst-website/server/database_objects"
 	"golang.org/x/text/language"
 )
 
@@ -24,22 +25,22 @@ var titleGeneratorPreset = titleGenerator{
 func (me *titleGenerator) run() {
 	var totalCount int64
 	var updatedCount int64
-	me.db.forEachGoalPost(func(row *goalPostRow) bool {
+	me.db.forEachGoalPost(func(row *database_objects.GoalPostRow) bool {
 		totalCount++
 		var isUpdated = false
-		if row.title == nil {
-			var title = me.summarizeText(row.text)
-			me.db.setGoalPostTitle(row.goalId, row.getDateTime(), language.Russian, title)
+		if row.Title == nil {
+			var title = me.summarizeText(row.Text)
+			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.Russian, title)
 			isUpdated = true
 		}
-		if row.titleEnglish == nil && row.textEnglish != nil {
-			var title = me.summarizeText(*row.textEnglish)
-			me.db.setGoalPostTitle(row.goalId, row.getDateTime(), language.English, title)
+		if row.TitleEnglish == nil && row.TextEnglish != nil {
+			var title = me.summarizeText(*row.TextEnglish)
+			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.English, title)
 			isUpdated = true
 		}
-		if row.titleGerman == nil && row.textGerman != nil {
-			var title = me.summarizeText(*row.textGerman)
-			me.db.setGoalPostTitle(row.goalId, row.getDateTime(), language.German, title)
+		if row.TitleGerman == nil && row.TextGerman != nil {
+			var title = me.summarizeText(*row.TextGerman)
+			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.German, title)
 			isUpdated = true
 		}
 		if isUpdated {

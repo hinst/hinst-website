@@ -19,8 +19,8 @@ type database struct {
 }
 
 func (me *database) init() {
-	var config = common.AssertResultError(pgxpool.ParseConfig(requireEnvVar("POSTGRES_URL")))
-	config.MaxConns = getInt32FromString(readEnvVar("POSTGRES_MAX_CONNS", "2"))
+	var config = common.AssertResultError(pgxpool.ParseConfig(common.RequireEnvVar("POSTGRES_URL")))
+	config.MaxConns = common.GetInt32FromString(common.ReadEnvVar("POSTGRES_MAX_CONNS", "2"))
 	config.ConnConfig.Tracer = (&ConnectionPoolTracer{timeout: 1 * time.Minute}).init()
 	me.pool = common.AssertResultError(pgxpool.NewWithConfig(context.Background(), config))
 	common.AssertResultError(me.pool.Exec(context.Background(), dbSchemaPostgre))

@@ -11,6 +11,7 @@ import (
 
 	"github.com/hinst/go-common"
 	"github.com/hinst/hinst-website/server/base"
+	"github.com/microcosm-cc/bluemonday"
 	"golang.org/x/text/language"
 )
 
@@ -91,7 +92,7 @@ func assertResponse(response *http.Response) {
 
 func formatHtml(text string) (string, error) {
 	var client = &http.Client{Timeout: 10 * time.Minute}
-	var url = requireEnvVar("PRETTIER_SERVER_URL") +
+	var url = common.RequireEnvVar("PRETTIER_SERVER_URL") +
 		common.BuildUrlQueryParams(map[string]string{"filename": "index.html"})
 	var textBytes = []byte(text)
 	var request = common.AssertResultError(http.NewRequest("POST", url, bytes.NewBuffer(textBytes)))
@@ -120,4 +121,8 @@ func validateHtml(text string) error {
 
 func getUrlBase64(contentType string, array []byte) string {
 	return "data:" + contentType + ";base64," + base64.StdEncoding.EncodeToString(array)
+}
+
+func stripHtml(text string) string {
+	return bluemonday.StrictPolicy().Sanitize(text)
 }

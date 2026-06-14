@@ -23,7 +23,7 @@ func (GoogleIndexingClient) getScope() string {
 }
 
 func (me *GoogleIndexingClient) connect() {
-	var jsonText = common.ReadBytesFile(requireEnvVar("GOOGLE_ACCOUNT_JSON"))
+	var jsonText = common.ReadBytesFile(common.RequireEnvVar("GOOGLE_ACCOUNT_JSON"))
 	var conf = common.AssertResultError(google.JWTConfigFromJSON(jsonText, me.getScope()))
 	me.client = conf.Client(context.Background())
 }

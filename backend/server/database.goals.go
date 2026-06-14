@@ -2,26 +2,24 @@ package server
 
 import (
 	"context"
-	"slices"
 	"strings"
 	"time"
 
 	"github.com/hinst/go-common"
-	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/database_objects"
 	"github.com/hinst/hinst-website/server/rest_objects"
 	"golang.org/x/text/language"
 )
 
-func (me *database) setGoalPostPublic(row goalPostRow) int64 {
+func (me *database) setGoalPostPublic(row database_objects.GoalPostRow) int64 {
 	var query = "UPDATE goalPosts SET isPublic = $1 WHERE goalId = $2 AND dateTime = $3"
 	var result = common.AssertResultError(me.pool.Exec(context.Background(), query,
-		row.isPublic, row.goalId, row.getDateTime().UTC().Unix()))
+		row.IsPublic, row.GoalId, row.GetDateTime().UTC().Unix()))
 	return result.RowsAffected()
 }
 
 func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text *string) int64 {
-	var textField = "text" + me.getLanguagePostfix(supportedLanguage)
+	var textField = "text" + database_objects.GetLanguagePostfix(supportedLanguage)
 	var queryText = "UPDATE goalPosts SET " + textField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()
 	var result = common.AssertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
@@ -29,14 +27,14 @@ func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedL
 }
 
 func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) int64 {
-	var titleField = "title" + me.getLanguagePostfix(supportedLanguage)
+	var titleField = "title" + database_objects.GetLanguagePostfix(supportedLanguage)
 	var queryText = "UPDATE goalPosts SET " + titleField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()
 	var result = common.AssertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
 	return result.RowsAffected()
 }
 
-func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, selector string, sortByDate int) {
+func (me *database) forEachGoalPost(callback func(row *database_objects.GoalPostRow) bool, selector string, sortByDate int) {
 	var querySql = "SELECT " + selector + " FROM goalPosts"
 	if sortByDate != 0 {
 		querySql += " ORDER BY dateTime " + common.IfElse(sortByDate > 0, "ASC", "DESC")
@@ -44,8 +42,8 @@ func (me *database) forEachGoalPost(callback func(row *goalPostRow) bool, select
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), querySql))
 	defer rows.Close()
 	for rows.Next() {
-		var row goalPostRow
-		row.scan(rows)
+		var row database_objects.GoalPostRow
+		row.Scan(rows)
 		common.AssertError(rows.Err())
 		if !callback(&row) {
 			break
@@ -87,13 +85,13 @@ func (me *database) getGoalImage(goalId int64) (imageData []byte, imageContentTy
 	return
 }
 
-func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *goalPostRow) {
+func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *database_objects.GoalPostRow) {
 	var queryText = "SELECT * FROM goalPosts WHERE goalId = $1 AND dateTime = $2"
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix()))
 	defer rows.Close()
 	if rows.Next() {
-		result = new(goalPostRow)
-		result.scan(rows)
+		result = new(database_objects.GoalPostRow)
+		result.Scan(rows)
 	}
 	return
 }
@@ -118,7 +116,7 @@ func (me *database) getGoalPostImageCount(goalId int64, dateTime time.Time) (cou
 }
 
 func (me *database) getGoalPosts(goalId int64, includePrivate bool, language language.Tag) (results []rest_objects.GoalPostHeader) {
-	var titleField = "title" + me.getLanguagePostfix(language)
+	var titleField = "title" + database_objects.GetLanguagePostfix(language)
 	var queryText = "SELECT goalId, dateTime, isPublic, type, " + titleField + " FROM goalPosts WHERE goalId = $1"
 	if !includePrivate {
 		queryText += " AND isPublic = TRUE"
@@ -134,36 +132,26 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 	return
 }
 
-func (database) getLanguagePostfix(supportedLanguage language.Tag) string {
-	common.AssertCondition(slices.Contains(base.SupportedLanguages, supportedLanguage),
-		func() string { return "Unsupported language: " + supportedLanguage.String() })
-	var languageName = ""
-	if supportedLanguage != base.SupportedLanguages[0] {
-		languageName = base.GetLanguageName(supportedLanguage)
-	}
-	return languageName
-}
-
 func (me *database) searchGoalPosts(
 	queryText string, supportedLanguage language.Tag, includePrivate bool, limit int,
-) (results []*goalPostRow) {
+) (results []*database_objects.GoalPostRow) {
 	queryText = strings.ToUpper(queryText)
-	queryText = normalizeString(queryText)
-	me.forEachGoalPost(func(row *goalPostRow) bool {
+	queryText = common.NormalizeString(queryText)
+	me.forEachGoalPost(func(row *database_objects.GoalPostRow) bool {
 		if limit <= len(results) {
 			return false
 		}
-		var isVisible = includePrivate || row.isPublic
+		var isVisible = includePrivate || row.IsPublic
 		if !isVisible {
 			return true
 		}
-		var title = strings.ToUpper(row.getTranslatedTitle(supportedLanguage))
-		var text = stripHtml(strings.ToUpper(row.getTranslatedText(supportedLanguage)))
+		var title = strings.ToUpper(row.GetTranslatedTitle(supportedLanguage))
+		var text = stripHtml(strings.ToUpper(row.GetTranslatedText(supportedLanguage)))
 		if strings.Contains(title, queryText) || strings.Contains(text, queryText) {
 			results = append(results, row)
 		}
 		return true
-	}, (goalPostRow{}).getSelectorForLanguage(supportedLanguage), -1)
+	}, (database_objects.GoalPostRow{}).GetSelectorForLanguage(supportedLanguage), -1)
 	return
 }
 
