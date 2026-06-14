@@ -5,7 +5,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 	"golang.org/x/oauth2/google"
 )
 
@@ -23,8 +23,8 @@ func (GoogleIndexingClient) getScope() string {
 }
 
 func (me *GoogleIndexingClient) connect() {
-	var jsonText = common.ReadBytesFile(common.RequireEnvVar("GOOGLE_ACCOUNT_JSON"))
-	var conf = common.AssertResultError(google.JWTConfigFromJSON(jsonText, me.getScope()))
+	var jsonText = gophers.ReadBytesFile(gophers.RequireEnvVar("GOOGLE_ACCOUNT_JSON"))
+	var conf = gophers.AssertResultError(google.JWTConfigFromJSON(jsonText, me.getScope()))
 	me.client = conf.Client(context.Background())
 }
 
@@ -34,9 +34,9 @@ func (me *GoogleIndexingClient) updateUrl(url string) bool {
 		Type: "URL_UPDATED",
 	}
 	var apiUrl = "https://indexing.googleapis.com/v3/urlNotifications:publish"
-	var response = common.AssertResultError(me.client.Post(apiUrl,
-		common.ContentTypeJson, bytes.NewReader(common.EncodeJson(data))))
-	defer common.IoCloseSilently(response.Body)
+	var response = gophers.AssertResultError(me.client.Post(apiUrl,
+		gophers.ContentTypeJson, bytes.NewReader(gophers.EncodeJson(data))))
+	defer gophers.IoCloseSilently(response.Body)
 	if response.StatusCode == http.StatusTooManyRequests {
 		return false
 	}

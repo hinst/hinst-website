@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/db_objects"
 	"golang.org/x/text/language"
 )
@@ -52,7 +52,7 @@ func (me *titleGenerator) run() {
 }
 
 func (me *titleGenerator) summarizeText(text string) string {
-	var request = common.EncodeJson(lmStudioRequest{
+	var request = gophers.EncodeJson(lmStudioRequest{
 		Model: lm_studio_multilingual_model_id,
 		Messages: []lmStudioMessage{
 			{Role: lm_studio_role_system, Content: prompt_generate_title},
@@ -60,13 +60,13 @@ func (me *titleGenerator) summarizeText(text string) string {
 		},
 		Stream: false,
 	})
-	var response = common.AssertResultError(http.Post(me.apiUrl, common.ContentTypeJson, bytes.NewBuffer(request)))
-	defer common.IoCloseSilently(response.Body)
-	common.AssertCondition(response.StatusCode == http.StatusOK, func() error {
+	var response = gophers.AssertResultError(http.Post(me.apiUrl, gophers.ContentTypeJson, bytes.NewBuffer(request)))
+	defer gophers.IoCloseSilently(response.Body)
+	gophers.AssertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot summarize text. Status: " + response.Status)
 	})
-	var responseText = common.AssertResultError(io.ReadAll(response.Body))
-	var responseObject = common.DecodeJson(responseText, new(lmStudioResponse))
+	var responseText = gophers.AssertResultError(io.ReadAll(response.Body))
+	var responseObject = gophers.DecodeJson(responseText, new(lmStudioResponse))
 	var resultText = responseObject.Choices[0].Message.Content
 	resultText = me.trim(resultText)
 	return resultText

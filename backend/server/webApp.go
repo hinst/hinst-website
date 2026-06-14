@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"runtime/debug"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 )
 
 type webApp struct {
@@ -44,7 +44,7 @@ func (me *webApp) addFunctions(path string, functions []namedWebFunction) {
 	}
 }
 
-func (me *webApp) wrap(function common.WebFunction) common.WebFunction {
+func (me *webApp) wrap(function gophers.WebFunction) gophers.WebFunction {
 	return func(response http.ResponseWriter, request *http.Request) {
 		response.Header().Set("Access-Control-Allow-Origin", me.allowOrigin)
 		defer func() {
@@ -53,7 +53,7 @@ func (me *webApp) wrap(function common.WebFunction) common.WebFunction {
 				var webError, isWebError = exception.(webError)
 				if isWebError {
 					response.WriteHeader(webError.Status)
-					var _, _ = response.Write(common.EncodeJson(webError))
+					var _, _ = response.Write(gophers.EncodeJson(webError))
 				} else {
 					response.WriteHeader(http.StatusInternalServerError)
 					log.Printf("Error in web function: %v\n%s", exception, debug.Stack())

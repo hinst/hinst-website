@@ -7,7 +7,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 )
 
 type staticFilesUpdate struct {
@@ -18,7 +18,7 @@ type staticFilesUpdate struct {
 func (me *staticFilesUpdate) run() {
 	var staticGitPath = me.savedGoalsPath + "/static-git"
 	var runner = new(commandRunner)
-	if !common.CheckDirectoryExists(staticGitPath) {
+	if !gophers.CheckDirectoryExists(staticGitPath) {
 		runner.command("Git clone", true, "git", "clone", me.getStaticWebsiteGitUrl(), staticGitPath)
 	}
 	me.flushFiles(staticGitPath)
@@ -28,8 +28,8 @@ func (me *staticFilesUpdate) run() {
 	runner.command("Git pull", true, "git", "pull")
 	runner.command("Git config", true, "git", "config", "core.fileMode", "false")
 	runner.command("Git config", true, "git", "config", "core.autocrlf", "false")
-	runner.command("Git config", true, "git", "config", "user.name", common.GetQuotedString(me.getBotName()))
-	runner.command("Git config", true, "git", "config", "user.email", common.GetQuotedString(me.getEmail()))
+	runner.command("Git config", true, "git", "config", "user.name", gophers.GetQuotedString(me.getBotName()))
+	runner.command("Git config", true, "git", "config", "user.email", gophers.GetQuotedString(me.getEmail()))
 
 	runner.command("Git add", true, "git", "add", ".")
 	runner.command("Git status", true, "git", "status")
@@ -46,20 +46,20 @@ func (me *staticFilesUpdate) run() {
 // Copy old files from Git repository
 // Copy new files into Git repository
 func (me *staticFilesUpdate) flushFiles(staticGitPath string) {
-	common.AssertError(os.RemoveAll(me.savedGoalsPath + "/static-old"))
-	for _, file := range common.AssertResultError(os.ReadDir(staticGitPath)) {
+	gophers.AssertError(os.RemoveAll(me.savedGoalsPath + "/static-old"))
+	for _, file := range gophers.AssertResultError(os.ReadDir(staticGitPath)) {
 		if !me.checkPreservedFile(file.Name()) {
 			var filePath = staticGitPath + "/" + file.Name()
 			var oldFilePath = me.savedGoalsPath + "/static-old/" + file.Name()
 			if file.IsDir() {
-				common.AssertError(os.CopyFS(oldFilePath, os.DirFS(filePath)))
+				gophers.AssertError(os.CopyFS(oldFilePath, os.DirFS(filePath)))
 			} else {
-				common.CopyFile(oldFilePath, filePath)
+				gophers.CopyFile(oldFilePath, filePath)
 			}
-			common.AssertError(os.RemoveAll(filePath))
+			gophers.AssertError(os.RemoveAll(filePath))
 		}
 	}
-	common.AssertError(os.CopyFS(staticGitPath, os.DirFS(me.savedGoalsPath+"/static")))
+	gophers.AssertError(os.CopyFS(staticGitPath, os.DirFS(me.savedGoalsPath+"/static")))
 }
 
 func (staticFilesUpdate) checkPreservedFile(fileName string) bool {
@@ -74,7 +74,7 @@ func (me *staticFilesUpdate) buildSiteMap() {
 		oldFilesPath: me.savedGoalsPath + "/static-old",
 	}
 	builder.run()
-	common.CopyFile(me.savedGoalsPath+"/static-git/sitemap.xml", me.savedGoalsPath+"/static/sitemap.xml")
+	gophers.CopyFile(me.savedGoalsPath+"/static-git/sitemap.xml", me.savedGoalsPath+"/static/sitemap.xml")
 }
 
 func (me *staticFilesUpdate) submitSiteMap() {
@@ -86,7 +86,7 @@ func (me *staticFilesUpdate) submitSiteMap() {
 }
 
 func (staticFilesUpdate) getStaticWebsiteGitUrl() string {
-	return fmt.Sprintf("https://%v@github.com/hinst/hinst.github.io.git", common.RequireEnvVar("GIT_TOKEN"))
+	return fmt.Sprintf("https://%v@github.com/hinst/hinst.github.io.git", gophers.RequireEnvVar("GIT_TOKEN"))
 }
 
 func (staticFilesUpdate) getPublicUrl() string {
@@ -94,9 +94,9 @@ func (staticFilesUpdate) getPublicUrl() string {
 }
 
 func (me *staticFilesUpdate) getBotName() string {
-	return common.RequireEnvVar("GIT_BOT_NAME")
+	return gophers.RequireEnvVar("GIT_BOT_NAME")
 }
 
 func (me *staticFilesUpdate) getEmail() string {
-	return common.RequireEnvVar("GIT_EMAIL")
+	return gophers.RequireEnvVar("GIT_EMAIL")
 }

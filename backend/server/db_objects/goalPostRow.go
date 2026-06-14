@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/text/language"
@@ -29,7 +29,7 @@ type GoalPostRow struct {
 }
 
 func (me *GoalPostRow) Scan(rows pgx.Rows) {
-	common.AssertError(rows.Scan(
+	gophers.AssertError(rows.Scan(
 		&me.GoalId,
 		&me.DateTime,
 		&me.IsPublic,
@@ -100,9 +100,9 @@ func (me *GoalPostRow) GetDateTime() time.Time {
 }
 
 func (me *GoalPostRow) String() string {
-	return "{goalId:" + common.GetStringFromInt64(me.GoalId) +
+	return "{goalId:" + gophers.GetStringFromInt64(me.GoalId) +
 		", dateTime:" + me.GetDateTime().String() +
-		", isPublic:" + common.GetStringFromBool(me.IsPublic) + "}"
+		", isPublic:" + gophers.GetStringFromBool(me.IsPublic) + "}"
 }
 
 func (me *GoalPostRow) GetTranslatedText(languageTag language.Tag) string {

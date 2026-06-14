@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
 	"github.com/hinst/hinst-website/server/rest_objects"
@@ -46,8 +46,8 @@ func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Reque
 func (me *webAppGoals) getGoalImage(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
 	var imageData, imageContentType = me.db.getGoalImage(goalId)
-	common.SetCacheAge(response, time.Hour)
-	response.Header().Set(common.ContentTypeHeader, imageContentType)
+	gophers.SetCacheAge(response, time.Hour)
+	response.Header().Set(gophers.ContentTypeHeader, imageContentType)
 	var _, _ = response.Write(imageData)
 }
 
@@ -66,7 +66,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 
 	var goalPostRow = me.db.getGoalPost(goalId, postDateTime)
 	if goalPostRow == nil {
-		var errorMessage = "Cannot find goalId=" + common.GetStringFromInt64(goalId) +
+		var errorMessage = "Cannot find goalId=" + gophers.GetStringFromInt64(goalId) +
 			" postDateTime=" + postDateTime.String()
 		panic(webError{errorMessage, http.StatusNotFound})
 	}
@@ -102,8 +102,8 @@ func (me *webAppGoals) getGoalPostImage(response http.ResponseWriter, request *h
 	if image == nil {
 		panic(webError{"Image not found", http.StatusNotFound})
 	}
-	common.SetCacheAge(response, time.Hour)
-	response.Header().Set(common.ContentTypeHeader, image.ContentType)
+	gophers.SetCacheAge(response, time.Hour)
+	response.Header().Set(gophers.ContentTypeHeader, image.ContentType)
 	var _, _ = response.Write(image.File)
 }
 
@@ -119,8 +119,8 @@ func (me *webAppGoals) setGoalPostText(response http.ResponseWriter, request *ht
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var languageTagText = request.URL.Query().Get("languageTag")
-	var languageTag = common.AssertResultError(language.Parse(languageTagText))
-	var text = string(common.AssertResultError(io.ReadAll(request.Body)))
+	var languageTag = gophers.AssertResultError(language.Parse(languageTagText))
+	var text = string(gophers.AssertResultError(io.ReadAll(request.Body)))
 	me.db.setGoalPostText(goalId, postDateTime, languageTag, &text)
 }
 
@@ -128,8 +128,8 @@ func (me *webAppGoals) setGoalTitleText(response http.ResponseWriter, request *h
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var languageTagText = request.URL.Query().Get("languageTag")
-	var languageTag = common.AssertResultError(language.Parse(languageTagText))
-	var text = string(common.AssertResultError(io.ReadAll(request.Body)))
+	var languageTag = gophers.AssertResultError(language.Parse(languageTagText))
+	var text = string(gophers.AssertResultError(io.ReadAll(request.Body)))
 	me.db.setGoalPostTitle(goalId, postDateTime, languageTag, text)
 }
 

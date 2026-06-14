@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 )
 
 type webAppGoalsBase struct {
@@ -18,7 +18,7 @@ func (me *webAppGoalsBase) inputValidGoalId(goalId string) int64 {
 	var createWebError = func() webError {
 		return webError{"Need goal id. Received: " + goalId, http.StatusBadRequest}
 	}
-	common.AssertCondition(parseError == nil, createWebError)
+	gophers.AssertCondition(parseError == nil, createWebError)
 	return result
 }
 
@@ -30,6 +30,6 @@ func (me *webAppGoalsBase) inputValidPostDateTime(text string) time.Time {
 			http.StatusBadRequest,
 		}
 	}
-	common.AssertCondition(nil == parseIntError, createWebError)
+	gophers.AssertCondition(nil == parseIntError, createWebError)
 	return time.Unix(unixEpochSeconds, 0)
 }

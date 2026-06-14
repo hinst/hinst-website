@@ -1,7 +1,7 @@
 package db_objects
 
 import (
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -12,7 +12,7 @@ type UrlPingRecord struct {
 }
 
 func (me *UrlPingRecord) Scan(rows pgx.Rows) {
-	common.AssertError(rows.Scan(
+	gophers.AssertError(rows.Scan(
 		&me.Url,
 		&me.GooglePingedAt,
 		&me.GooglePingedManuallyAt,

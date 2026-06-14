@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/microcosm-cc/bluemonday"
 	"golang.org/x/text/language"
@@ -17,7 +17,7 @@ import (
 
 type namedWebFunction struct {
 	Name     string
-	Function common.WebFunction
+	Function gophers.WebFunction
 }
 
 func getWebLanguage(request *http.Request) language.Tag {
@@ -43,7 +43,7 @@ func parseLanguageHeader(text string) language.Tag {
 	if parsedError != nil {
 		panic(webError{"Invalid language header: " + text, http.StatusBadRequest})
 	}
-	common.AssertError(parsedError)
+	gophers.AssertError(parsedError)
 	var _, index, _ = base.SupportedLanguagesMatcher.Match(tags...)
 	var tag = base.SupportedLanguages[index]
 	return tag
@@ -54,18 +54,18 @@ func inputValidWebInteger(text string) int {
 	var createWebError = func() webError {
 		return webError{"Need integer. Received: " + text, http.StatusBadRequest}
 	}
-	common.AssertCondition(parseError == nil, createWebError)
+	gophers.AssertCondition(parseError == nil, createWebError)
 	return result
 }
 
 func writeJsonResponse(response http.ResponseWriter, value any) {
-	response.Header().Set(common.ContentTypeHeader, common.ContentTypeJson)
-	var _, _ = response.Write(common.EncodeJson(value))
+	response.Header().Set(gophers.ContentTypeHeader, gophers.ContentTypeJson)
+	var _, _ = response.Write(gophers.EncodeJson(value))
 }
 
 func writeHtmlResponse(response http.ResponseWriter, text string) {
-	text = common.AssertResultError(formatHtml(text))
-	response.Header().Set(common.ContentTypeHeader, "text/html; charset=utf-8")
+	text = gophers.AssertResultError(formatHtml(text))
+	response.Header().Set(gophers.ContentTypeHeader, "text/html; charset=utf-8")
 	var _, _ = response.Write([]byte(text))
 }
 
@@ -74,10 +74,10 @@ func readTextFromUrl(url string) string {
 }
 
 func readBytesFromUrl(url string) []byte {
-	var response = common.AssertResultError(http.Get(url))
-	defer common.IoCloseSilently(response.Body)
+	var response = gophers.AssertResultError(http.Get(url))
+	defer gophers.IoCloseSilently(response.Body)
 	assertResponse(response)
-	var data = common.AssertResultError(io.ReadAll(response.Body))
+	var data = gophers.AssertResultError(io.ReadAll(response.Body))
 	return data
 }
 
@@ -92,14 +92,14 @@ func assertResponse(response *http.Response) {
 
 func formatHtml(text string) (string, error) {
 	var client = &http.Client{Timeout: 10 * time.Minute}
-	var url = common.RequireEnvVar("PRETTIER_SERVER_URL") +
-		common.BuildUrlQueryParams(map[string]string{"filename": "index.html"})
+	var url = gophers.RequireEnvVar("PRETTIER_SERVER_URL") +
+		gophers.BuildUrlQueryParams(map[string]string{"filename": "index.html"})
 	var textBytes = []byte(text)
-	var request = common.AssertResultError(http.NewRequest("POST", url, bytes.NewBuffer(textBytes)))
-	request.Header.Set(common.ContentTypeHeader, "text/html")
-	var response = common.AssertResultError(client.Do(request))
-	defer common.IoCloseSilently(response.Body)
-	var responseBytes = common.AssertResultError(io.ReadAll(response.Body))
+	var request = gophers.AssertResultError(http.NewRequest("POST", url, bytes.NewBuffer(textBytes)))
+	request.Header.Set(gophers.ContentTypeHeader, "text/html")
+	var response = gophers.AssertResultError(client.Do(request))
+	defer gophers.IoCloseSilently(response.Body)
+	var responseBytes = gophers.AssertResultError(io.ReadAll(response.Body))
 	var responseText = string(responseBytes)
 	if response.StatusCode == http.StatusOK {
 		return responseText, nil

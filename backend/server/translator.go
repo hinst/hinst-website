@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
 	"golang.org/x/text/language"
@@ -50,7 +50,7 @@ func (me *translator) translate(row *db_objects.GoalPostRow, tag language.Tag) {
 	var text = ""
 	const attemptLimit = 30
 	for i := range attemptLimit {
-		text = common.AssertResultError(formatHtml(row.Text))
+		text = gophers.AssertResultError(formatHtml(row.Text))
 		text = me.translateText(text, tag)
 		var e = validateHtml(text)
 		if e == nil {
@@ -66,7 +66,7 @@ func (me *translator) translate(row *db_objects.GoalPostRow, tag language.Tag) {
 func (me *translator) translateText(text string, tag language.Tag) string {
 	var prompt = prompt_Russian_to_something
 	prompt = strings.ReplaceAll(prompt, "{something}", base.GetLanguageName(tag))
-	var request = common.EncodeJson(lmStudioRequest{
+	var request = gophers.EncodeJson(lmStudioRequest{
 		Model: lm_studio_multilingual_model_id,
 		Messages: []lmStudioMessage{
 			{Role: lm_studio_role_system, Content: prompt},
@@ -75,14 +75,14 @@ func (me *translator) translateText(text string, tag language.Tag) string {
 		Stream: false,
 	})
 	var client = &http.Client{Timeout: 1 * time.Hour}
-	var req = common.AssertResultError(http.NewRequest("POST", me.apiUrl, bytes.NewBuffer(request)))
-	req.Header.Set(common.ContentTypeHeader, common.ContentTypeJson)
-	var response = common.AssertResultError(client.Do(req))
-	defer common.IoCloseSilently(response.Body)
-	common.AssertCondition(response.StatusCode == http.StatusOK, func() error {
+	var req = gophers.AssertResultError(http.NewRequest("POST", me.apiUrl, bytes.NewBuffer(request)))
+	req.Header.Set(gophers.ContentTypeHeader, gophers.ContentTypeJson)
+	var response = gophers.AssertResultError(client.Do(req))
+	defer gophers.IoCloseSilently(response.Body)
+	gophers.AssertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot translate text. Status: " + response.Status)
 	})
-	var responseText = common.AssertResultError(io.ReadAll(response.Body))
-	var responseObject = common.DecodeJson(responseText, new(lmStudioResponse))
+	var responseText = gophers.AssertResultError(io.ReadAll(response.Body))
+	var responseObject = gophers.DecodeJson(responseText, new(lmStudioResponse))
 	return responseObject.Choices[0].Message.Content
 }

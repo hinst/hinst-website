@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"html/template"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 )
 
 var templateFunctions = template.FuncMap{
@@ -18,9 +18,9 @@ var templateFunctions = template.FuncMap{
 }
 
 func executeTemplateFile(filePath string, data any) string {
-	var text = common.ReadTextFile(filePath)
-	var compiledTemplate = common.AssertResultError(template.New("page").Funcs(templateFunctions).Parse(text))
+	var text = gophers.ReadTextFile(filePath)
+	var compiledTemplate = gophers.AssertResultError(template.New("page").Funcs(templateFunctions).Parse(text))
 	var buffer = &bytes.Buffer{}
-	common.AssertError(compiledTemplate.Execute(buffer, data))
+	gophers.AssertError(compiledTemplate.Execute(buffer, data))
 	return buffer.String()
 }

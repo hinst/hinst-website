@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/sitemap"
 )
 
@@ -23,19 +23,19 @@ func (me *siteMapBuilder) run() {
 	me.loadOldSitemap()
 	me.newFilesPathPrefix = me.newFilesPath
 	me.newFilesPathPrefix = strings.TrimPrefix(me.newFilesPathPrefix, "./") + "/"
-	common.AssertError(filepath.WalkDir(me.newFilesPath, me.createItem))
+	gophers.AssertError(filepath.WalkDir(me.newFilesPath, me.createItem))
 	var options = sitemap.Options{PrettyOutput: true, WithXMLHeader: true, Validate: true}
 	var siteMap = sitemap.NewSitemap(me.items, &options)
-	var siteMapText = common.AssertResultError(siteMap.ToXMLString())
-	common.WriteTextFile(me.newFilesPath+"/sitemap.xml", siteMapText)
+	var siteMapText = gophers.AssertResultError(siteMap.ToXMLString())
+	gophers.WriteTextFile(me.newFilesPath+"/sitemap.xml", siteMapText)
 }
 
 func (me *siteMapBuilder) loadOldSitemap() {
 	var oldSiteMapPath = me.oldFilesPath + "/sitemap.xml"
-	if !common.CheckFileExists(oldSiteMapPath) {
+	if !gophers.CheckFileExists(oldSiteMapPath) {
 		return
 	}
-	me.oldSiteMap = common.ReadXmlFile(me.oldFilesPath+"/sitemap.xml", new(sitemap.XmlSitemap))
+	me.oldSiteMap = gophers.ReadXmlFile(me.oldFilesPath+"/sitemap.xml", new(sitemap.XmlSitemap))
 }
 
 func (me *siteMapBuilder) createItem(newFilePath string, directory os.DirEntry, err error) error {
@@ -51,7 +51,7 @@ func (me *siteMapBuilder) createItem(newFilePath string, directory os.DirEntry, 
 	var relativePath = newFilePath[len(me.newFilesPathPrefix):]
 	relativePath = strings.ReplaceAll(relativePath, "\\", "/")
 	var oldFilePath = me.oldFilesPath + "/" + relativePath
-	var haveChange = !common.CheckTextFilesEqual(oldFilePath, newFilePath)
+	var haveChange = !gophers.CheckTextFilesEqual(oldFilePath, newFilePath)
 	var url = me.webPath + "/" + relativePath
 	var item = &sitemap.SitemapItem{
 		Loc:        url,
@@ -86,7 +86,7 @@ func (me *siteMapBuilder) findPreviousLastMod(url string) *time.Time {
 	}
 	for _, item := range me.oldSiteMap.URL {
 		if item.Loc == url {
-			var previousTime = common.AssertResultError(time.Parse(time.DateOnly, item.LastMod)).UTC()
+			var previousTime = gophers.AssertResultError(time.Parse(time.DateOnly, item.LastMod)).UTC()
 			return &previousTime
 		}
 	}

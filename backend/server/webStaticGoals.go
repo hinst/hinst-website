@@ -4,8 +4,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/hinst/go-common"
-	"github.com/hinst/go-common/file_mode"
+	"github.com/hinst/go-gophers"
+	"github.com/hinst/go-gophers/file_mode"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
 	"golang.org/x/text/language"
@@ -25,34 +25,34 @@ func (me *webStaticGoals) init(url string, db *database, folder string) {
 }
 
 func (me *webStaticGoals) run() {
-	common.AssertError(os.MkdirAll(me.folder, file_mode.OS_USER_RWX))
+	gophers.AssertError(os.MkdirAll(me.folder, file_mode.OS_USER_RWX))
 	me.deleteOldFiles()
-	common.AssertError(os.CopyFS(me.folder+"/static", os.DirFS("pages/static")))
+	gophers.AssertError(os.CopyFS(me.folder+"/static", os.DirFS("pages/static")))
 	for _, lang := range base.SupportedLanguages {
 		me.generate(lang)
 	}
 }
 
 func (me *webStaticGoals) deleteOldFiles() {
-	for _, file := range common.AssertResultError(os.ReadDir(me.folder)) {
+	for _, file := range gophers.AssertResultError(os.ReadDir(me.folder)) {
 		var filePath = me.folder + "/" + file.Name()
 		var isPreserved = staticFilesUpdate{}.checkPreservedFile(file.Name())
 		if !isPreserved {
-			common.AssertError(os.RemoveAll(filePath))
+			gophers.AssertError(os.RemoveAll(filePath))
 		}
 	}
 }
 
 func (me *webStaticGoals) generate(lang language.Tag) {
 	var path = me.folder + me.getLanguagePath(lang)
-	common.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
-	var homeUrl = me.url + "/pages" + common.BuildUrlQueryParams(me.getPathQuery(lang))
+	gophers.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
+	var homeUrl = me.url + "/pages" + gophers.BuildUrlQueryParams(me.getPathQuery(lang))
 	var homePageText = readTextFromUrl(homeUrl)
-	common.WriteTextFile(path+"/index.html", homePageText)
+	gophers.WriteTextFile(path+"/index.html", homePageText)
 
 	var goals = me.db.getGoals()
 	var goalsPath = path + "/personal-goals"
-	common.AssertError(os.MkdirAll(goalsPath, file_mode.OS_USER_RWX))
+	gophers.AssertError(os.MkdirAll(goalsPath, file_mode.OS_USER_RWX))
 	for _, goal := range goals {
 		me.generateGoal(lang, goalsPath, goal)
 	}
@@ -60,13 +60,13 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 
 func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal db_objects.GoalRow) {
 	var goalId = goal.Id
-	var url = me.url + pagesWebPath + "/personal-goals/" + common.GetStringFromInt64(goalId) +
-		common.BuildUrlQueryParams(me.getPathQuery(lang))
+	var url = me.url + pagesWebPath + "/personal-goals/" + gophers.GetStringFromInt64(goalId) +
+		gophers.BuildUrlQueryParams(me.getPathQuery(lang))
 	var goalPageText = readTextFromUrl(url)
-	common.WriteTextFile(goalsPath+"/"+common.GetStringFromInt64(goalId)+".html", goalPageText)
+	gophers.WriteTextFile(goalsPath+"/"+gophers.GetStringFromInt64(goalId)+".html", goalPageText)
 
-	var path = goalsPath + "/" + common.GetStringFromInt64(goalId)
-	common.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
+	var path = goalsPath + "/" + gophers.GetStringFromInt64(goalId)
+	gophers.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
 	var posts = me.db.getGoalPosts(goalId, false, lang)
 	for _, post := range posts {
 		me.generateGoalPost(lang, goalsPath, goalId, post.DateTime)
@@ -74,11 +74,11 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 }
 
 func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, goalId int64, postDateTime int64) {
-	var url = me.url + pagesWebPath + "/personal-goals/" + common.GetStringFromInt64(goalId) + "/" +
-		common.GetStringFromInt64(postDateTime) + common.BuildUrlQueryParams(me.getPathQuery(lang))
+	var url = me.url + pagesWebPath + "/personal-goals/" + gophers.GetStringFromInt64(goalId) + "/" +
+		gophers.GetStringFromInt64(postDateTime) + gophers.BuildUrlQueryParams(me.getPathQuery(lang))
 	var postPageText = readTextFromUrl(url)
-	var path = goalsPath + "/" + common.GetStringFromInt64(goalId)
-	common.WriteTextFile(path+"/"+common.GetStringFromInt64(postDateTime)+".html", postPageText)
+	var path = goalsPath + "/" + gophers.GetStringFromInt64(goalId)
+	gophers.WriteTextFile(path+"/"+gophers.GetStringFromInt64(postDateTime)+".html", postPageText)
 
 	var imageCount = me.db.getGoalPostImageCount(goalId, time.Unix(postDateTime, 0))
 	for imageIndex := range imageCount {
@@ -87,17 +87,17 @@ func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, 
 }
 
 func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64, imageIndex int) {
-	var url = me.url + pagesWebPath + "/personal-goals/image/" + common.GetStringFromInt64(goalId) + "/" +
-		common.GetStringFromInt64(postDateTime) + "/" + common.GetStringFromInt(imageIndex)
+	var url = me.url + pagesWebPath + "/personal-goals/image/" + gophers.GetStringFromInt64(goalId) + "/" +
+		gophers.GetStringFromInt64(postDateTime) + "/" + gophers.GetStringFromInt(imageIndex)
 	var image = readBytesFromUrl(url)
-	var path = me.folder + "/personal-goals/image/" + common.GetStringFromInt64(goalId) + "/" +
-		common.GetStringFromInt64(postDateTime)
-	common.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
-	path += "/" + common.GetStringFromInt(imageIndex) + ".jpg"
-	if common.CheckFileExists(path) {
+	var path = me.folder + "/personal-goals/image/" + gophers.GetStringFromInt64(goalId) + "/" +
+		gophers.GetStringFromInt64(postDateTime)
+	gophers.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
+	path += "/" + gophers.GetStringFromInt(imageIndex) + ".jpg"
+	if gophers.CheckFileExists(path) {
 		return // already saved
 	}
-	common.WriteBytesFile(path, image)
+	gophers.WriteBytesFile(path, image)
 }
 
 func (me *webStaticGoals) getLanguagePath(tag language.Tag) string {

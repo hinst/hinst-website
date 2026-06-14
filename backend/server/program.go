@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 )
 
 type program struct {
@@ -46,7 +46,7 @@ func (me *program) runWeb() {
 
 	log.Printf("Starting: netAddress=%v, webPath=%v, webFilesPath=%v",
 		me.netAddress, webApp.webPath, me.webFilesPath)
-	common.AssertError(http.ListenAndServe(me.netAddress, nil))
+	gophers.AssertError(http.ListenAndServe(me.netAddress, nil))
 }
 
 func (me *program) update() {
@@ -93,7 +93,7 @@ func (me *program) generateStatic(folder string) {
 	var webApp = &webApp{webPath: "/"}
 	webApp.init(me.database)
 	go func() {
-		common.AssertError(http.ListenAndServe(me.netAddress, nil))
+		gophers.AssertError(http.ListenAndServe(me.netAddress, nil))
 	}()
 	time.Sleep(1000 * time.Millisecond)
 

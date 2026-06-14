@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 )
 
 type webAppBase struct {
@@ -38,7 +38,7 @@ func (me *webAppBase) getAdminPassword() string {
 	return os.Getenv("ADMIN_PASSWORD")
 }
 
-func (me *webAppBase) guardAdminFunction(function common.WebFunction) common.WebFunction {
+func (me *webAppBase) guardAdminFunction(function gophers.WebFunction) gophers.WebFunction {
 	return func(response http.ResponseWriter, request *http.Request) {
 		me.inputAssertAdminPassword(request)
 		function(response, request)

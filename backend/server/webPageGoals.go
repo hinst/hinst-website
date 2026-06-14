@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/page_data"
 )
 
@@ -63,7 +63,7 @@ func (me *webPageGoals) getGoalPage(response http.ResponseWriter, request *http.
 	var goalId = me.inputValidGoalId(request.PathValue("id"))
 	var goalRecord = me.db.getGoal(goalId)
 	if goalRecord == nil {
-		var errorMessage = "Cannot find goal with id=" + common.GetStringFromInt64(goalId)
+		var errorMessage = "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId)
 		panic(webError{errorMessage, http.StatusNotFound})
 	}
 	var goalPostRecords = me.db.getGoalPosts(goalId, false, requestedLanguage)
@@ -99,13 +99,13 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 
 	var goalRecord = me.db.getGoal(goalId)
 	if goalRecord == nil {
-		var errorMessage = "Cannot find goal with id=" + common.GetStringFromInt64(goalId)
+		var errorMessage = "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId)
 		panic(webError{errorMessage, http.StatusNotFound})
 	}
 
 	var goalPostRecord = me.db.getGoalPost(goalId, dateTime)
 	if goalPostRecord == nil {
-		var errorMessage = "Cannot find goal post with id=" + common.GetStringFromInt64(goalId) +
+		var errorMessage = "Cannot find goal post with id=" + gophers.GetStringFromInt64(goalId) +
 			" and dateTime=" + dateTime.UTC().Format(time.DateTime)
 		panic(webError{errorMessage, http.StatusNotFound})
 	}
@@ -157,8 +157,8 @@ func (me *webPageGoals) getGoalPostImage(response http.ResponseWriter, request *
 	if image == nil {
 		panic(webError{"Image not found", http.StatusNotFound})
 	}
-	common.SetCacheAge(response, time.Hour)
-	response.Header().Set(common.ContentTypeHeader, image.ContentType)
+	gophers.SetCacheAge(response, time.Hour)
+	response.Header().Set(gophers.ContentTypeHeader, image.ContentType)
 	var _, _ = response.Write(image.File)
 }
 
@@ -169,8 +169,8 @@ func (me *webPageGoals) getBaseTemplate(request *http.Request) page_data.Base {
 		StaticPath:    me.inputWebPath(request.URL.Query().Get("staticPath"), me.webPath),
 		JpegExtension: request.URL.Query().Get("jpegExtension"),
 		HtmlExtension: request.URL.Query().Get("htmlExtension"),
-		SettingsSvg:   template.HTML(common.ReadTextFile("pages/static/images/settings.svg")),
-		MenuSvg:       template.HTML(common.ReadTextFile("pages/static/images/menu.svg")),
+		SettingsSvg:   template.HTML(gophers.ReadTextFile("pages/static/images/settings.svg")),
+		MenuSvg:       template.HTML(gophers.ReadTextFile("pages/static/images/menu.svg")),
 	}
 }
 

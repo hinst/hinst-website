@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/sitemap"
 )
 
@@ -15,7 +15,7 @@ type siteMapSubmitter struct {
 }
 
 func (me *siteMapSubmitter) run() {
-	var siteMap = common.DecodeXml(common.ReadBytesFile(me.siteMapPath), new(sitemap.XmlSitemap))
+	var siteMap = gophers.DecodeXml(gophers.ReadBytesFile(me.siteMapPath), new(sitemap.XmlSitemap))
 	var siteMapItems = siteMap.URL
 	var pingedEarlierCount = 0
 	var pingedNowCount = 0

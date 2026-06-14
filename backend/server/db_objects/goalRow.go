@@ -1,7 +1,7 @@
 package db_objects
 
 import (
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/text/language"
 )
@@ -16,7 +16,7 @@ type GoalRow struct {
 }
 
 func (me *GoalRow) Scan(rows pgx.Rows) {
-	common.AssertError(rows.Scan(&me.Id, &me.Title, &me.TitleEnglish, &me.TitleGerman,
+	gophers.AssertError(rows.Scan(&me.Id, &me.Title, &me.TitleEnglish, &me.TitleGerman,
 		&me.ImageData, &me.ImageContentType))
 }
 

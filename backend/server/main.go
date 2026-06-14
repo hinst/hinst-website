@@ -4,13 +4,13 @@ import (
 	"flag"
 	"log"
 
-	"github.com/hinst/go-common"
+	"github.com/hinst/go-gophers"
 	"github.com/joho/godotenv"
 )
 
 func Main() {
-	if common.CheckFileExists(".env") {
-		common.AssertError(godotenv.Load())
+	if gophers.CheckFileExists(".env") {
+		gophers.AssertError(godotenv.Load())
 	}
 	var modePtr = flag.String("mode", "web", "")
 	var wwwPtr = flag.String("www", programTemplate.webFilesPath, "")
