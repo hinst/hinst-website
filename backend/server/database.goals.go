@@ -52,7 +52,7 @@ func (me *database) forEachGoalPost(callback func(row *db_objects.GoalPostRow) b
 }
 
 func (me *database) getGoals() (results []db_objects.GoalRow) {
-	var fields = strings.Join(getFieldNames[db_objects.GoalRow](), ",")
+	var fields = strings.Join(gophers.GetFieldNames[db_objects.GoalRow](), ",")
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), "SELECT "+fields+" FROM goals ORDER BY id"))
 	defer rows.Close()
 	for rows.Next() {
@@ -64,7 +64,7 @@ func (me *database) getGoals() (results []db_objects.GoalRow) {
 }
 
 func (me *database) getGoal(goalId int64) (result *db_objects.GoalRow) {
-	var fields = strings.Join(getFieldNames[db_objects.GoalRow](), ",")
+	var fields = strings.Join(gophers.GetFieldNames[db_objects.GoalRow](), ",")
 	var queryText = "SELECT " + fields + " FROM goals WHERE id = $1"
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
