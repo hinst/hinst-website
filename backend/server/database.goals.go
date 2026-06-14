@@ -6,12 +6,12 @@ import (
 	"time"
 
 	"github.com/hinst/go-common"
-	"github.com/hinst/hinst-website/server/database_objects"
+	"github.com/hinst/hinst-website/server/db_objects"
 	"github.com/hinst/hinst-website/server/rest_objects"
 	"golang.org/x/text/language"
 )
 
-func (me *database) setGoalPostPublic(row database_objects.GoalPostRow) int64 {
+func (me *database) setGoalPostPublic(row db_objects.GoalPostRow) int64 {
 	var query = "UPDATE goalPosts SET isPublic = $1 WHERE goalId = $2 AND dateTime = $3"
 	var result = common.AssertResultError(me.pool.Exec(context.Background(), query,
 		row.IsPublic, row.GoalId, row.GetDateTime().UTC().Unix()))
@@ -19,7 +19,7 @@ func (me *database) setGoalPostPublic(row database_objects.GoalPostRow) int64 {
 }
 
 func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text *string) int64 {
-	var textField = "text" + database_objects.GetLanguagePostfix(supportedLanguage)
+	var textField = "text" + db_objects.GetLanguagePostfix(supportedLanguage)
 	var queryText = "UPDATE goalPosts SET " + textField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()
 	var result = common.AssertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
@@ -27,14 +27,14 @@ func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedL
 }
 
 func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) int64 {
-	var titleField = "title" + database_objects.GetLanguagePostfix(supportedLanguage)
+	var titleField = "title" + db_objects.GetLanguagePostfix(supportedLanguage)
 	var queryText = "UPDATE goalPosts SET " + titleField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()
 	var result = common.AssertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
 	return result.RowsAffected()
 }
 
-func (me *database) forEachGoalPost(callback func(row *database_objects.GoalPostRow) bool, selector string, sortByDate int) {
+func (me *database) forEachGoalPost(callback func(row *db_objects.GoalPostRow) bool, selector string, sortByDate int) {
 	var querySql = "SELECT " + selector + " FROM goalPosts"
 	if sortByDate != 0 {
 		querySql += " ORDER BY dateTime " + common.IfElse(sortByDate > 0, "ASC", "DESC")
@@ -42,7 +42,7 @@ func (me *database) forEachGoalPost(callback func(row *database_objects.GoalPost
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), querySql))
 	defer rows.Close()
 	for rows.Next() {
-		var row database_objects.GoalPostRow
+		var row db_objects.GoalPostRow
 		row.Scan(rows)
 		common.AssertError(rows.Err())
 		if !callback(&row) {
@@ -51,25 +51,25 @@ func (me *database) forEachGoalPost(callback func(row *database_objects.GoalPost
 	}
 }
 
-func (me *database) getGoals() (results []database_objects.GoalRow) {
-	var fields = strings.Join(getFieldNames[database_objects.GoalRow](), ",")
+func (me *database) getGoals() (results []db_objects.GoalRow) {
+	var fields = strings.Join(getFieldNames[db_objects.GoalRow](), ",")
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), "SELECT "+fields+" FROM goals ORDER BY id"))
 	defer rows.Close()
 	for rows.Next() {
-		var record database_objects.GoalRow
+		var record db_objects.GoalRow
 		record.Scan(rows)
 		results = append(results, record)
 	}
 	return
 }
 
-func (me *database) getGoal(goalId int64) (result *database_objects.GoalRow) {
-	var fields = strings.Join(getFieldNames[database_objects.GoalRow](), ",")
+func (me *database) getGoal(goalId int64) (result *db_objects.GoalRow) {
+	var fields = strings.Join(getFieldNames[db_objects.GoalRow](), ",")
 	var queryText = "SELECT " + fields + " FROM goals WHERE id = $1"
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	if rows.Next() {
-		result = new(database_objects.GoalRow)
+		result = new(db_objects.GoalRow)
 		result.Scan(rows)
 	}
 	return
@@ -85,12 +85,12 @@ func (me *database) getGoalImage(goalId int64) (imageData []byte, imageContentTy
 	return
 }
 
-func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *database_objects.GoalPostRow) {
+func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_objects.GoalPostRow) {
 	var queryText = "SELECT * FROM goalPosts WHERE goalId = $1 AND dateTime = $2"
 	var rows = common.AssertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix()))
 	defer rows.Close()
 	if rows.Next() {
-		result = new(database_objects.GoalPostRow)
+		result = new(db_objects.GoalPostRow)
 		result.Scan(rows)
 	}
 	return
@@ -116,7 +116,7 @@ func (me *database) getGoalPostImageCount(goalId int64, dateTime time.Time) (cou
 }
 
 func (me *database) getGoalPosts(goalId int64, includePrivate bool, language language.Tag) (results []rest_objects.GoalPostHeader) {
-	var titleField = "title" + database_objects.GetLanguagePostfix(language)
+	var titleField = "title" + db_objects.GetLanguagePostfix(language)
 	var queryText = "SELECT goalId, dateTime, isPublic, type, " + titleField + " FROM goalPosts WHERE goalId = $1"
 	if !includePrivate {
 		queryText += " AND isPublic = TRUE"
@@ -134,10 +134,10 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 
 func (me *database) searchGoalPosts(
 	queryText string, supportedLanguage language.Tag, includePrivate bool, limit int,
-) (results []*database_objects.GoalPostRow) {
+) (results []*db_objects.GoalPostRow) {
 	queryText = strings.ToUpper(queryText)
 	queryText = common.NormalizeString(queryText)
-	me.forEachGoalPost(func(row *database_objects.GoalPostRow) bool {
+	me.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
 		if limit <= len(results) {
 			return false
 		}
@@ -151,7 +151,7 @@ func (me *database) searchGoalPosts(
 			results = append(results, row)
 		}
 		return true
-	}, (database_objects.GoalPostRow{}).GetSelectorForLanguage(supportedLanguage), -1)
+	}, (db_objects.GoalPostRow{}).GetSelectorForLanguage(supportedLanguage), -1)
 	return
 }
 

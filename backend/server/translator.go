@@ -11,7 +11,7 @@ import (
 
 	"github.com/hinst/go-common"
 	"github.com/hinst/hinst-website/server/base"
-	"github.com/hinst/hinst-website/server/database_objects"
+	"github.com/hinst/hinst-website/server/db_objects"
 	"golang.org/x/text/language"
 )
 
@@ -27,7 +27,7 @@ var translatorPreset = translator{
 func (me *translator) run() {
 	var totalCount = 0
 	var translatedCount = 0
-	me.db.forEachGoalPost(func(row *database_objects.GoalPostRow) bool {
+	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
 		var isDone = false
 		if row.TextEnglish == nil {
 			me.translate(row, language.English)
@@ -46,7 +46,7 @@ func (me *translator) run() {
 	log.Printf("Generated translated text for %v of %v posts", translatedCount, totalCount)
 }
 
-func (me *translator) translate(row *database_objects.GoalPostRow, tag language.Tag) {
+func (me *translator) translate(row *db_objects.GoalPostRow, tag language.Tag) {
 	var text = ""
 	const attemptLimit = 30
 	for i := range attemptLimit {

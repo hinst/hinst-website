@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/hinst/go-common"
-	"github.com/hinst/hinst-website/server/database_objects"
+	"github.com/hinst/hinst-website/server/db_objects"
 	"golang.org/x/text/language"
 )
 
@@ -25,7 +25,7 @@ var titleGeneratorPreset = titleGenerator{
 func (me *titleGenerator) run() {
 	var totalCount int64
 	var updatedCount int64
-	me.db.forEachGoalPost(func(row *database_objects.GoalPostRow) bool {
+	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
 		totalCount++
 		var isUpdated = false
 		if row.Title == nil {

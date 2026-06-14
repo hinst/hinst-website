@@ -7,7 +7,7 @@ import (
 	"github.com/hinst/go-common"
 	"github.com/hinst/go-common/file_mode"
 	"github.com/hinst/hinst-website/server/base"
-	"github.com/hinst/hinst-website/server/database_objects"
+	"github.com/hinst/hinst-website/server/db_objects"
 	"golang.org/x/text/language"
 )
 
@@ -58,7 +58,7 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 	}
 }
 
-func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal database_objects.GoalRow) {
+func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal db_objects.GoalRow) {
 	var goalId = goal.Id
 	var url = me.url + pagesWebPath + "/personal-goals/" + common.GetStringFromInt64(goalId) +
 		common.BuildUrlQueryParams(me.getPathQuery(lang))

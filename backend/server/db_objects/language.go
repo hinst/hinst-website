@@ -1,4 +1,4 @@
-package database_objects
+package db_objects
 
 import (
 	"slices"

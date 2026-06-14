@@ -7,7 +7,7 @@ import (
 
 	"github.com/hinst/go-common"
 	"github.com/hinst/hinst-website/server/base"
-	"github.com/hinst/hinst-website/server/database_objects"
+	"github.com/hinst/hinst-website/server/db_objects"
 	"github.com/hinst/hinst-website/server/rest_objects"
 	"golang.org/x/text/language"
 )
@@ -111,7 +111,7 @@ func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
 	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
 	var isPublic = request.URL.Query().Get("isPublic") == "true"
-	var row = database_objects.GoalPostRow{GoalId: goalId, DateTime: postDateTime.UTC().Unix(), IsPublic: isPublic}
+	var row = db_objects.GoalPostRow{GoalId: goalId, DateTime: postDateTime.UTC().Unix(), IsPublic: isPublic}
 	me.db.setGoalPostPublic(row)
 }
 
