@@ -3,6 +3,7 @@ module github.com/hinst/hinst-website
 go 1.26
 
 require (
+	github.com/gomarkdown/markdown v0.0.0-20260614204949-e08cff860f76
 	github.com/hinst/go-gophers v0.1.22
 	github.com/jackc/pgx/v5 v5.8.0
 	github.com/joho/godotenv v1.5.1
