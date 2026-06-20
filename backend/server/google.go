@@ -3,6 +3,8 @@ package server
 import (
 	"bytes"
 	"context"
+	"io"
+	"log"
 	"net/http"
 
 	"github.com/hinst/go-gophers"
@@ -40,6 +42,8 @@ func (me *GoogleIndexingClient) updateUrl(url string) bool {
 	if response.StatusCode == http.StatusTooManyRequests {
 		return false
 	}
+	var responseBody = gophers.AssertResultError(io.ReadAll(response.Body))
+	log.Println(responseBody)
 	assertResponse(response)
 	return true
 }
