@@ -1,8 +1,12 @@
 package server
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/hinst/go-gophers"
@@ -46,7 +50,15 @@ func (me *program) runWeb() {
 
 	log.Printf("Starting: netAddress=%v, webPath=%v, webFilesPath=%v",
 		me.netAddress, webApp.webPath, me.webFilesPath)
-	gophers.AssertError(http.ListenAndServe(me.netAddress, nil))
+
+	var terminatingContext, _ = signal.NotifyContext(context.Background(), os.Interrupt,
+		syscall.SIGTERM, syscall.SIGINT)
+	go func() {
+		gophers.AssertError(http.ListenAndServe(me.netAddress, nil))
+	}()
+	<-terminatingContext.Done()
+
+	me.database.close()
 }
 
 func (me *program) update() {

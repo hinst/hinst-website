@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"log"
 	"time"
 
 	_ "embed"
@@ -15,22 +14,24 @@ import (
 var dbSchemaPostgre string
 
 type database struct {
-	pool *pgxpool.Pool
+	tracer *ConnectionPoolTracer
+	pool   *pgxpool.Pool
 }
 
 func (me *database) init() {
 	var config = gophers.AssertResultError(pgxpool.ParseConfig(gophers.RequireEnvVar("POSTGRES_URL")))
 	config.MaxConns = gophers.GetInt32FromString(gophers.ReadEnvVar("POSTGRES_MAX_CONNS", "2"))
-	config.ConnConfig.Tracer = (&ConnectionPoolTracer{timeout: 1 * time.Minute}).init()
+	me.tracer = (&ConnectionPoolTracer{timeout: 1 * time.Minute}).init()
+	config.ConnConfig.Tracer = me.tracer
 	me.pool = gophers.AssertResultError(pgxpool.NewWithConfig(context.Background(), config))
 	gophers.AssertResultError(me.pool.Exec(context.Background(), dbSchemaPostgre))
-	gophers.InstallShutdownReceiver(func() {
-		me.close()
-	})
 }
 
 func (me *database) close() {
-	log.Print("Closing...")
+	if me.tracer != nil {
+		me.tracer.Close()
+		me.tracer = nil
+	}
 	if me.pool != nil {
 		me.pool.Close()
 		me.pool = nil
