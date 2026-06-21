@@ -7,12 +7,14 @@ import (
 )
 
 func convertMarkdownToHtml(text string) string {
-	return string(convertMarkdownBytesToHtml([]byte(text)))
+	var textBytes = []byte(text)
+	text = string(convertMarkdownBytesToHtml(textBytes))
+	return text
 }
 
 func convertMarkdownBytesToHtml(md []byte) []byte {
 	// create markdown parser with extensions
-	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
+	extensions := parser.CommonExtensions | parser.NoEmptyLineBeforeBlock
 	p := parser.NewWithExtensions(extensions)
 	doc := p.Parse(md)
 
