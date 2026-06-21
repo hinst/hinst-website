@@ -6,7 +6,11 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 )
 
-func convertMarkdownToHtml(md []byte) []byte {
+func convertMarkdownToHtml(text string) string {
+	return string(convertMarkdownBytesToHtml([]byte(text)))
+}
+
+func convertMarkdownBytesToHtml(md []byte) []byte {
 	// create markdown parser with extensions
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
 	p := parser.NewWithExtensions(extensions)

@@ -114,7 +114,7 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 		Base:     me.getBaseTemplate(request),
 		GoalId:   goalId,
 		DateTime: dateTime.Unix(),
-		Text:     template.HTML(text),
+		Text:     template.HTML(convertMarkdownToHtml(text)),
 	}
 
 	var imageCount = me.db.getGoalPostImageCount(goalId, dateTime)
