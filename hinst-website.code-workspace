@@ -16,6 +16,7 @@
 			"hinst",
 			"luxon",
 			"Millis",
+			"ollama",
 			"pgxpool",
 			"postgre",
 			"Postgre",
