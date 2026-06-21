@@ -15,9 +15,8 @@ import (
 	"golang.org/x/text/language"
 )
 
-const prompt_Russian_to_something = "You are a professional Russian-to-{something} translator specializing in diary blog posts. " +
-	" Your task is to provide accurate, contextually appropriate translations while preserving markdown formatting. " +
-	" Do not provide any explanations or commentary - just the direct translation."
+const PROMPT_TRANSLATE_INTO_LANGUAGE = "Translate provided text into {LANGUAGE} language. " +
+	"Output only the translated text itself. Commentary stays in the 'thinking' section. "
 
 type translator struct {
 	apiUrl string
@@ -68,8 +67,8 @@ func (me *translator) translate(row *db_objects.GoalPostRow, tag language.Tag) {
 }
 
 func (me *translator) translateText(text string, tag language.Tag) string {
-	var prompt = prompt_Russian_to_something
-	prompt = strings.ReplaceAll(prompt, "{something}", base.GetLanguageName(tag))
+	var prompt = PROMPT_TRANSLATE_INTO_LANGUAGE
+	prompt = strings.ReplaceAll(prompt, "{LANGUAGE}", base.GetLanguageName(tag))
 	var request = gophers.EncodeJson(openAiRequest{
 		Model: ollama_model_id,
 		Messages: []openAiMessage{
