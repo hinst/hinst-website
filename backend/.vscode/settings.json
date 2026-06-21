@@ -10,7 +10,8 @@
 		"pgxpool",
 		"postgre",
 		"Postgre",
-		"sqlite"
+		"sqlite",
+		"ollama"
 	],
 	"[html]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
