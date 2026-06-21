@@ -70,11 +70,11 @@ func (me *translator) translate(row *db_objects.GoalPostRow, tag language.Tag) {
 func (me *translator) translateText(text string, tag language.Tag) string {
 	var prompt = prompt_Russian_to_something
 	prompt = strings.ReplaceAll(prompt, "{something}", base.GetLanguageName(tag))
-	var request = gophers.EncodeJson(lmStudioRequest{
-		Model: lm_studio_multilingual_model_id,
-		Messages: []lmStudioMessage{
-			{Role: lm_studio_role_system, Content: prompt},
-			{Role: lm_studio_role_user, Content: text},
+	var request = gophers.EncodeJson(openAiRequest{
+		Model: ollama_model_id,
+		Messages: []openAiMessage{
+			{Role: AI_ROLE_SYSTEM, Content: prompt},
+			{Role: AI_ROLE_USER, Content: text},
 		},
 		Stream: false,
 	})
@@ -87,6 +87,6 @@ func (me *translator) translateText(text string, tag language.Tag) string {
 		return errors.New("Cannot translate text. Status: " + response.Status)
 	})
 	var responseText = gophers.AssertResultError(io.ReadAll(response.Body))
-	var responseObject = gophers.DecodeJson(responseText, new(lmStudioResponse))
+	var responseObject = gophers.DecodeJson(responseText, new(openAiResponse))
 	return responseObject.Choices[0].Message.Content
 }
