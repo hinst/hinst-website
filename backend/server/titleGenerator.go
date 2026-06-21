@@ -9,12 +9,13 @@ import (
 	"strings"
 
 	"github.com/hinst/go-gophers"
+	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
 	"golang.org/x/text/language"
 )
 
 const prompt_generate_title = "Generate title for the provided blog post. " +
-	"The title should be one sentence in plain text. " +
+	"The title should be one sentence in {LANGUAGE} language, plain text. " +
 	"Output only the title sentence itself. Commentary stays in the 'thinking' section."
 
 type titleGenerator struct {
@@ -33,17 +34,17 @@ func (me *titleGenerator) run() {
 		totalCount++
 		var isUpdated = false
 		if row.Title == nil {
-			var title = me.summarizeText(row.Text)
+			var title = me.summarizeText(row.Text, base.SupportedLanguages[0])
 			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.Russian, title)
 			isUpdated = true
 		}
 		if row.TitleEnglish == nil && row.TextEnglish != nil {
-			var title = me.summarizeText(*row.TextEnglish)
+			var title = me.summarizeText(*row.TextEnglish, language.English)
 			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.English, title)
 			isUpdated = true
 		}
 		if row.TitleGerman == nil && row.TextGerman != nil {
-			var title = me.summarizeText(*row.TextGerman)
+			var title = me.summarizeText(*row.TextGerman, language.German)
 			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.German, title)
 			isUpdated = true
 		}
@@ -55,11 +56,13 @@ func (me *titleGenerator) run() {
 	log.Printf("Generated title for %v of %v posts\n", updatedCount, totalCount)
 }
 
-func (me *titleGenerator) summarizeText(text string) string {
+func (me *titleGenerator) summarizeText(text string, theLanguage language.Tag) string {
+	var prompt = strings.ReplaceAll(prompt_generate_title,
+		"{LANGUAGE}", base.GetLanguageName(theLanguage))
 	var request = gophers.EncodeJson(openAiRequest{
 		Model: ollama_model_id,
 		Messages: []openAiMessage{
-			{Role: AI_ROLE_SYSTEM, Content: prompt_generate_title},
+			{Role: AI_ROLE_SYSTEM, Content: prompt},
 			{Role: AI_ROLE_USER, Content: text},
 		},
 		Stream: false,
