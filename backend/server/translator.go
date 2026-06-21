@@ -15,8 +15,8 @@ import (
 	"golang.org/x/text/language"
 )
 
-const PROMPT_TRANSLATE_INTO_LANGUAGE = "Translate provided text into {LANGUAGE} language. " +
-	"Output only the translated text itself. Commentary stays in the 'thinking' section. "
+const PROMPT_TRANSLATE_INTO_LANGUAGE = "Translate provided blog post into {LANGUAGE} language. " +
+	"Output only the translated text itself. Commentary stays in the 'thinking' section."
 
 type translator struct {
 	apiUrl string
