@@ -58,7 +58,7 @@ func (me *titleGenerator) run() {
 
 func (me *titleGenerator) summarizeText(text string) string {
 	var request = gophers.EncodeJson(openAiRequest{
-		Model: lm_studio_multilingual_model_id,
+		Model: ollama_model_id,
 		Messages: []openAiMessage{
 			{Role: AI_ROLE_SYSTEM, Content: prompt_generate_title},
 			{Role: AI_ROLE_USER, Content: text},

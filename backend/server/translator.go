@@ -23,10 +23,6 @@ type translator struct {
 	db     *database
 }
 
-var translatorPreset = translator{
-	apiUrl: lm_studio_default_url,
-}
-
 func (me *translator) run() {
 	var totalCount = 0
 	var translatedCount = 0
@@ -50,19 +46,7 @@ func (me *translator) run() {
 }
 
 func (me *translator) translate(row *db_objects.GoalPostRow, tag language.Tag) {
-	var text = ""
-	const attemptLimit = 30
-	for i := range attemptLimit {
-		text = gophers.AssertResultError(formatHtml(row.Text))
-		text = me.translateText(text, tag)
-		var e = validateHtml(text)
-		if e == nil {
-			break
-		} else if i == attemptLimit-1 {
-			log.Printf("Cannot generate valid HTML text after %v attempts for goalId=%v, dateTime=%v, language=%v. Last error: %v",
-				attemptLimit, row.GoalId, row.DateTime, tag, e)
-		}
-	}
+	var text = me.translateText(row.Text, tag)
 	me.db.setGoalPostText(row.GoalId, row.GetDateTime(), tag, &text)
 }
 

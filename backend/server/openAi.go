@@ -24,3 +24,5 @@ type openAiResponse struct {
 type lmStudioChoice struct {
 	Message openAiMessage
 }
+
+const OLLAMA_DEFAULT_PORT = 11434

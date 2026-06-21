@@ -27,7 +27,7 @@ var programTemplate = program{
 	webFilesPath:     "./www",
 	savedGoalsPath:   "./saved-goals",
 	allowOrigin:      "http://localhost:1234",
-	translatorApiUrl: "http://localhost:1235",
+	translatorApiUrl: "http://localhost:11434",
 }
 
 func (me *program) create() *program {
@@ -64,18 +64,19 @@ func (me *program) runWeb() {
 func (me *program) update() {
 	me.database.init()
 	me.updateTranslations()
+	return
 	me.updateTitles()
 	me.generateStatic(me.savedGoalsPath + "/static")
 	me.uploadStatic()
 }
 
 func (me *program) updateTranslations() {
-	var translator = translatorPreset
+	var theTranslator translator
 	if me.translatorApiUrl != "" {
-		translator.apiUrl = me.translatorApiUrl + "/v1/chat/completions"
+		theTranslator.apiUrl = me.translatorApiUrl + "/v1/chat/completions"
 	}
-	translator.db = me.database
-	translator.run()
+	theTranslator.db = me.database
+	theTranslator.run()
 }
 
 func (me *program) updateTitles() {
