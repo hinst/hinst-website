@@ -3,6 +3,7 @@ import SafeHtmlView from '../safeHtmlView';
 import { apiClient } from 'src/typescript/apiClient';
 import { Info } from 'react-feather';
 import { getHashFromString } from 'src/typescript/string';
+import Markdown from 'react-markdown';
 
 export default function GoalPostView(props: { postData: GoalPostObject }) {
 	return (
@@ -36,7 +37,7 @@ export default function GoalPostView(props: { postData: GoalPostObject }) {
 				</div>
 			) : undefined}
 			<div className='goalPostViewText'>
-				<SafeHtmlView htmlText={props.postData.text} updateDocument={removeRedirect} />
+				<Markdown>props.postData.text</Markdown>
 			</div>
 			<div
 				style={{
