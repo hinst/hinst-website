@@ -64,7 +64,6 @@ func (me *program) runWeb() {
 func (me *program) update() {
 	me.database.init()
 	me.updateTranslations()
-	return
 	me.updateTitles()
 	me.generateStatic(me.savedGoalsPath + "/static")
 	me.uploadStatic()
