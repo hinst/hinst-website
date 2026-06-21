@@ -15,6 +15,10 @@ import (
 	"golang.org/x/text/language"
 )
 
+const prompt_Russian_to_something = "You are a professional Russian-to-{something} translator specializing in diary blog posts. " +
+	" Your task is to provide accurate, contextually appropriate translations while preserving markdown formatting. " +
+	" Do not provide any explanations or commentary - just the direct translation."
+
 type translator struct {
 	apiUrl string
 	db     *database

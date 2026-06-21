@@ -13,6 +13,11 @@ import (
 	"golang.org/x/text/language"
 )
 
+const prompt_generate_title = "You are a professional blog post editor. " +
+	"Your task is to create an engaging title for the following text. " +
+	"The title should be one sentence in plain text. " +
+	"Do not provide any explanations or commentary - just the title in the same language as the original text."
+
 type titleGenerator struct {
 	apiUrl string
 	db     *database
