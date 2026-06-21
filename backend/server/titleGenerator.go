@@ -14,7 +14,7 @@ import (
 	"golang.org/x/text/language"
 )
 
-const prompt_generate_title = "Generate title for the provided blog post. " +
+const prompt_generate_title = "Generate engaging title for the provided blog post. " +
 	"The title should be one sentence in {LANGUAGE} language, plain text. " +
 	"Output only the title sentence itself. Commentary stays in the 'thinking' section."
 
