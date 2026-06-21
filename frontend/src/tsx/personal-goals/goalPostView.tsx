@@ -37,7 +37,7 @@ export default function GoalPostView(props: { postData: GoalPostObject }) {
 				</div>
 			) : undefined}
 			<div className='goalPostViewText'>
-				<Markdown>props.postData.text</Markdown>
+				<Markdown>{props.postData.text}</Markdown>
 			</div>
 			<div
 				style={{
