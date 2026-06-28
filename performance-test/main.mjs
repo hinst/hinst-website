@@ -1,4 +1,4 @@
-import { Requests } from "./requests.mjs";
+import { Requests } from './requests.mjs';
 
 async function main() {
 	const requests = new Requests();
