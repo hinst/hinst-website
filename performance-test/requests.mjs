@@ -16,8 +16,8 @@ export class Requests {
 			},
 			method: 'GET'
 		});
-		const buffer = await response.arrayBuffer();
 		if (response.status !== 200) throw new Error(`main returned status ${response.status}`);
+		const buffer = await response.arrayBuffer();
 		return buffer.byteLength;
 	}
 
@@ -32,8 +32,8 @@ export class Requests {
 			},
 			method: 'GET'
 		});
-		const buffer = await response.arrayBuffer();
 		if (response.status !== 200) throw new Error(`css1 returned status ${response.status}`);
+		const buffer = await response.arrayBuffer();
 		return buffer.byteLength;
 	}
 
@@ -48,8 +48,8 @@ export class Requests {
 			},
 			method: 'GET'
 		});
-		const buffer = await response.arrayBuffer();
 		if (response.status !== 200) throw new Error(`css2 returned status ${response.status}`);
+		const buffer = await response.arrayBuffer();
 		return buffer.byteLength;
 	}
 
@@ -64,9 +64,9 @@ export class Requests {
 			},
 			method: 'GET'
 		});
-		const buffer = await response.arrayBuffer();
 		if (response.status !== 200)
 			throw new Error(`javaScript returned status ${response.status}`);
+		const buffer = await response.arrayBuffer();
 		return buffer.byteLength;
 	}
 
@@ -81,8 +81,8 @@ export class Requests {
 			},
 			method: 'GET'
 		});
-		const buffer = await response.arrayBuffer();
 		if (response.status !== 200) throw new Error(`icon returned status ${response.status}`);
+		const buffer = await response.arrayBuffer();
 		return buffer.byteLength;
 	}
 
@@ -100,12 +100,11 @@ export class Requests {
 				method: 'GET'
 			}
 		);
-		const text = await response.text();
 		if (response.status !== 200) throw new Error(`api1 returned status ${response.status}`);
-		const data = JSON.parse(text);
+		const data = await response.json();
 		if (!Array.isArray(data)) throw new Error(`api1: expected array, got ${typeof data}`);
 		this.dateTimes = data.map((item) => item.dateTime);
-		return new TextEncoder().encode(text).byteLength;
+		return new TextEncoder().encode(JSON.stringify(data)).byteLength;
 	}
 
 	async api2() {
@@ -119,8 +118,8 @@ export class Requests {
 			},
 			method: 'GET'
 		});
-		const buffer = await response.arrayBuffer();
 		if (response.status !== 200) throw new Error(`api2 returned status ${response.status}`);
+		const buffer = await response.arrayBuffer();
 		return buffer.byteLength;
 	}
 
@@ -141,11 +140,10 @@ export class Requests {
 				method: 'GET'
 			}
 		);
-		const text = await response.text();
 		if (response.status !== 200) throw new Error(`api3 returned status ${response.status}`);
-		const data = JSON.parse(text);
+		const data = await response.json();
 		this.lastImageCount = data.imageCount;
-		return new TextEncoder().encode(text).byteLength;
+		return new TextEncoder().encode(JSON.stringify(data)).byteLength;
 	}
 
 	async favicon() {
@@ -162,8 +160,8 @@ export class Requests {
 				method: 'GET'
 			}
 		);
-		const buffer = await response.arrayBuffer();
 		if (response.status !== 200) throw new Error(`favicon returned status ${response.status}`);
+		const buffer = await response.arrayBuffer();
 		return buffer.byteLength;
 	}
 
@@ -185,8 +183,8 @@ export class Requests {
 				method: 'GET'
 			}
 		);
-		const buffer = await response.arrayBuffer();
 		if (response.status !== 200) throw new Error(`image returned status ${response.status}`);
+		const buffer = await response.arrayBuffer();
 		return buffer.byteLength;
 	}
 
