@@ -1,105 +1,84 @@
 //@ts-check
+const BASE_URL = 'http://192.168.0.23:30001/hinst-website';
+const GOAL_ID = 247488;
+
+/** @type {Record<string, string>} */
+const defaultHeaders = {
+	'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
+	'cache-control': 'no-cache',
+	pragma: 'no-cache',
+	Referer: `${BASE_URL}/`
+};
+
 export class Requests {
 	/** @type {number[]} */
 	dateTimes = [];
 	/** @type {number} */
 	lastImageCount = 0;
 
-	async main() {
-		const response = await fetch('http://192.168.0.23:30001/hinst-website/', {
-			headers: {
-				accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-				'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
-				'cache-control': 'no-cache',
-				pragma: 'no-cache',
-				'upgrade-insecure-requests': '1'
-			},
+	/**
+		@param {string} path
+		@param {string} accept
+		@param {string} label
+	*/
+	async fetchResource(path, accept, label) {
+		const response = await fetch(`${BASE_URL}${path}`, {
+			headers: { ...defaultHeaders, accept },
 			method: 'GET'
 		});
-		if (response.status !== 200) throw new Error(`main returned status ${response.status}`);
+		if (response.status !== 200) throw new Error(`${label} returned status ${response.status}`);
 		const buffer = await response.arrayBuffer();
 		return buffer.byteLength;
+	}
+
+	/**
+		@param {string} path
+		@param {string} accept
+		@param {string} label
+	*/
+	async fetchJSON(path, accept, label) {
+		const response = await fetch(`${BASE_URL}${path}`, {
+			headers: { ...defaultHeaders, accept },
+			method: 'GET'
+		});
+		if (response.status !== 200) throw new Error(`${label} returned status ${response.status}`);
+		const data = await response.json();
+		return new TextEncoder().encode(JSON.stringify(data)).byteLength;
+	}
+
+	async main() {
+		return this.fetchResource(
+			'/',
+			'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+			'main'
+		);
 	}
 
 	async css1() {
-		const response = await fetch('http://192.168.0.23:30001/hinst-website/app.3e369f90.css', {
-			headers: {
-				accept: 'text/css,*/*;q=0.1',
-				'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
-				'cache-control': 'no-cache',
-				pragma: 'no-cache',
-				Referer: 'http://192.168.0.23:30001/hinst-website/'
-			},
-			method: 'GET'
-		});
-		if (response.status !== 200) throw new Error(`css1 returned status ${response.status}`);
-		const buffer = await response.arrayBuffer();
-		return buffer.byteLength;
+		return this.fetchResource('/app.3e369f90.css', 'text/css,*/*;q=0.1', 'css1');
 	}
 
 	async css2() {
-		const response = await fetch('http://192.168.0.23:30001/hinst-website/app.bef21471.css', {
-			headers: {
-				accept: 'text/css,*/*;q=0.1',
-				'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
-				'cache-control': 'no-cache',
-				pragma: 'no-cache',
-				Referer: 'http://192.168.0.23:30001/hinst-website/'
-			},
-			method: 'GET'
-		});
-		if (response.status !== 200) throw new Error(`css2 returned status ${response.status}`);
-		const buffer = await response.arrayBuffer();
-		return buffer.byteLength;
+		return this.fetchResource('/app.bef21471.css', 'text/css,*/*;q=0.1', 'css2');
 	}
 
 	async javaScript() {
-		const response = await fetch('http://192.168.0.23:30001/hinst-website/app.9da11e27.js', {
-			headers: {
-				accept: '*/*',
-				'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
-				'cache-control': 'no-cache',
-				pragma: 'no-cache',
-				Referer: 'http://192.168.0.23:30001/hinst-website/'
-			},
-			method: 'GET'
-		});
-		if (response.status !== 200)
-			throw new Error(`javaScript returned status ${response.status}`);
-		const buffer = await response.arrayBuffer();
-		return buffer.byteLength;
+		return this.fetchResource('/app.9da11e27.js', '*/*', 'javaScript');
 	}
 
 	async icon() {
-		const response = await fetch('http://192.168.0.23:30001/hinst-website/icon.fd8aa8a2.webp', {
-			headers: {
-				accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-				'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
-				'cache-control': 'no-cache',
-				pragma: 'no-cache',
-				Referer: 'http://192.168.0.23:30001/hinst-website/'
-			},
-			method: 'GET'
-		});
-		if (response.status !== 200) throw new Error(`icon returned status ${response.status}`);
-		const buffer = await response.arrayBuffer();
-		return buffer.byteLength;
+		return this.fetchResource(
+			'/icon.fd8aa8a2.webp',
+			'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+			'icon'
+		);
 	}
 
 	async api1() {
-		const response = await fetch(
-			'http://192.168.0.23:30001/hinst-website/api/goalPosts?id=247488',
-			{
-				headers: {
-					accept: '*/*',
-					'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
-					'cache-control': 'no-cache',
-					pragma: 'no-cache',
-					Referer: 'http://192.168.0.23:30001/hinst-website/'
-				},
-				method: 'GET'
-			}
-		);
+		const response = await fetch(`${BASE_URL}/api/goalPosts?id=${GOAL_ID}`, {
+			headers: { ...defaultHeaders, accept: '*/*' },
+			method: 'GET'
+		});
 		if (response.status !== 200) throw new Error(`api1 returned status ${response.status}`);
 		const data = await response.json();
 		if (!Array.isArray(data)) throw new Error(`api1: expected array, got ${typeof data}`);
@@ -108,19 +87,7 @@ export class Requests {
 	}
 
 	async api2() {
-		const response = await fetch('http://192.168.0.23:30001/hinst-website/api/goal?id=247488', {
-			headers: {
-				accept: '*/*',
-				'accept-language': 'ru',
-				'cache-control': 'no-cache',
-				pragma: 'no-cache',
-				Referer: 'http://192.168.0.23:30001/hinst-website/'
-			},
-			method: 'GET'
-		});
-		if (response.status !== 200) throw new Error(`api2 returned status ${response.status}`);
-		const buffer = await response.arrayBuffer();
-		return buffer.byteLength;
+		return this.fetchResource(`/api/goal?id=${GOAL_ID}`, '*/*', 'api2');
 	}
 
 	/**
@@ -128,15 +95,9 @@ export class Requests {
 	*/
 	async api3(postDateTime) {
 		const response = await fetch(
-			`http://192.168.0.23:30001/hinst-website/api/goalPost?goalId=247488&postDateTime=${postDateTime}`,
+			`${BASE_URL}/api/goalPost?goalId=${GOAL_ID}&postDateTime=${postDateTime}`,
 			{
-				headers: {
-					accept: '*/*',
-					'accept-language': 'ru',
-					'cache-control': 'no-cache',
-					pragma: 'no-cache',
-					Referer: 'http://192.168.0.23:30001/hinst-website/'
-				},
+				headers: { ...defaultHeaders, accept: '*/*', 'accept-language': 'ru' },
 				method: 'GET'
 			}
 		);
@@ -147,22 +108,11 @@ export class Requests {
 	}
 
 	async favicon() {
-		const response = await fetch(
-			'http://192.168.0.23:30001/hinst-website/favicon.ce92f6f7.png',
-			{
-				headers: {
-					accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-					'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
-					'cache-control': 'no-cache',
-					pragma: 'no-cache',
-					Referer: 'http://192.168.0.23:30001/hinst-website/'
-				},
-				method: 'GET'
-			}
+		return this.fetchResource(
+			'/favicon.ce92f6f7.png',
+			'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+			'favicon'
 		);
-		if (response.status !== 200) throw new Error(`favicon returned status ${response.status}`);
-		const buffer = await response.arrayBuffer();
-		return buffer.byteLength;
 	}
 
 	/**
@@ -170,22 +120,11 @@ export class Requests {
 		@param {number} index
 	*/
 	async image(postDateTime, index) {
-		const response = await fetch(
-			`http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=${postDateTime}&index=${index}`,
-			{
-				headers: {
-					accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-					'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
-					'cache-control': 'no-cache',
-					pragma: 'no-cache',
-					Referer: 'http://192.168.0.23:30001/hinst-website/'
-				},
-				method: 'GET'
-			}
+		return this.fetchResource(
+			`/api/goalPost/image?goalId=${GOAL_ID}&postDateTime=${postDateTime}&index=${index}`,
+			'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+			'image'
 		);
-		if (response.status !== 200) throw new Error(`image returned status ${response.status}`);
-		const buffer = await response.arrayBuffer();
-		return buffer.byteLength;
 	}
 
 	async all() {
