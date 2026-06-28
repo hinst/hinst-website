@@ -15,6 +15,8 @@ export class Requests {
 	dateTimes = [];
 	/** @type {number} */
 	lastImageCount = 0;
+	/** @type {number} */
+	requestCount = 0;
 
 	/**
 		@param {string} path
@@ -22,6 +24,7 @@ export class Requests {
 		@param {string} label
 	*/
 	async fetchResource(path, accept, label) {
+		this.requestCount++;
 		const response = await fetch(`${BASE_URL}${path}`, {
 			headers: { ...defaultHeaders, accept },
 			method: 'GET'
@@ -36,9 +39,10 @@ export class Requests {
 		@param {string} accept
 		@param {string} label
 		@param {object} [extraHeaders]
-		@returns {Promise<object>}
+		@returns {Promise<any>}
 	*/
 	async fetchJSON(path, accept, label, extraHeaders = {}) {
+		this.requestCount++;
 		const response = await fetch(`${BASE_URL}${path}`, {
 			headers: { ...defaultHeaders, accept, ...extraHeaders },
 			method: 'GET'
