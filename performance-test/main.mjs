@@ -34,7 +34,8 @@ async function worker(requests, initialSizes) {
 async function main() {
 	const requests = new Requests();
 	const initialSizes = await requests.all();
-	console.log('Initial sizes:', initialSizes);
+	const megabytes = (initialSizes.reduce((a, b) => a + b, 0) / (1024 * 1024)).toFixed(1);
+	console.log(`Initial sizes: ${megabytes} MB`);
 
 	const startTime = Date.now();
 	setInterval(() => {
