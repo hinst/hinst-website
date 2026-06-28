@@ -16,7 +16,8 @@ export class Requests {
 			body: null,
 			method: 'GET'
 		});
-		return [response.status, await response.text()];
+		const buffer = await response.arrayBuffer();
+		return [response.status, buffer.byteLength];
 	}
 
 	async css1() {
@@ -32,7 +33,8 @@ export class Requests {
 			body: null,
 			method: 'GET'
 		});
-		return [response.status, await response.text()];
+		const buffer = await response.arrayBuffer();
+		return [response.status, buffer.byteLength];
 	}
 
 	async css2() {
@@ -48,7 +50,8 @@ export class Requests {
 			body: null,
 			method: 'GET'
 		});
-		return [response.status, await response.text()];
+		const buffer = await response.arrayBuffer();
+		return [response.status, buffer.byteLength];
 	}
 
 	async javaScript() {
@@ -64,7 +67,8 @@ export class Requests {
 			body: null,
 			method: 'GET'
 		});
-		return [response.status, await response.text()];
+		const buffer = await response.arrayBuffer();
+		return [response.status, buffer.byteLength];
 	}
 
 	async icon() {
@@ -80,7 +84,8 @@ export class Requests {
 			body: null,
 			method: 'GET'
 		});
-		return [response.status, await response.arrayBuffer()];
+		const buffer = await response.arrayBuffer();
+		return [response.status, buffer.byteLength];
 	}
 
 	async api1() {
@@ -99,9 +104,10 @@ export class Requests {
 				method: 'GET'
 			}
 		);
-		const data = await response.json();
+		const text = await response.text();
+		const data = JSON.parse(text);
 		this.dateTimes = data.map((item) => item.dateTime);
-		return [response.status, data];
+		return [response.status, new TextEncoder().encode(text).byteLength];
 	}
 
 	async api2() {
@@ -117,7 +123,8 @@ export class Requests {
 			body: null,
 			method: 'GET'
 		});
-		return [response.status, await response.json()];
+		const buffer = await response.arrayBuffer();
+		return [response.status, buffer.byteLength];
 	}
 
 	/**
@@ -139,7 +146,10 @@ export class Requests {
 				method: 'GET'
 			}
 		);
-		return [response.status, await response.json()];
+		const text = await response.text();
+		const data = JSON.parse(text);
+		this.lastImageCount = data.imageCount;
+		return [response.status, new TextEncoder().encode(text).byteLength];
 	}
 
 	async favicon() {
@@ -158,7 +168,8 @@ export class Requests {
 				method: 'GET'
 			}
 		);
-		return [response.status, await response.arrayBuffer()];
+		const buffer = await response.arrayBuffer();
+		return [response.status, buffer.byteLength];
 	}
 
 	/**
@@ -181,47 +192,30 @@ export class Requests {
 				method: 'GET'
 			}
 		);
-		return [response.status, await response.arrayBuffer()];
+		const buffer = await response.arrayBuffer();
+		return [response.status, buffer.byteLength];
 	}
 
 	async all() {
 		const methods = ['main', 'css1', 'css2', 'javaScript', 'icon', 'api1', 'api2'];
 		const sizes = [];
 		for (const name of methods) {
-			const [status, response] = await this[name]();
-			let responseSize = -1;
-			if (typeof response === 'string') responseSize = response.length;
-			else if (response instanceof ArrayBuffer) responseSize = response.byteLength;
-			else if (typeof response === 'object') responseSize = JSON.stringify(response).length;
-			if (status === 200) sizes.push(responseSize);
+			const [status, size] = await this[name]();
+			if (status === 200) sizes.push(size);
 			else throw new Error(`${name} returned status ${status}`);
 		}
 		for (const dateTime of this.dateTimes) {
-			const [status, response] = await this.api3(dateTime);
-			let responseSize = -1;
-			if (typeof response === 'string') responseSize = response.length;
-			else if (response instanceof ArrayBuffer) responseSize = response.byteLength;
-			else if (typeof response === 'object') responseSize = JSON.stringify(response).length;
-			if (status === 200) sizes.push(responseSize);
+			const [status, size] = await this.api3(dateTime);
+			if (status === 200) sizes.push(size);
 			else throw new Error(`api3 returned status ${status}`);
 
-			for (let i = 0; i < response.imageCount; i++) {
-				const [imgStatus, imgResponse] = await this.image(dateTime, i);
-				let imgSize = -1;
-				if (typeof imgResponse === 'string') imgSize = imgResponse.length;
-				else if (imgResponse instanceof ArrayBuffer) imgSize = imgResponse.byteLength;
-				else if (typeof imgResponse === 'object')
-					imgSize = JSON.stringify(imgResponse).length;
+			for (let i = 0; i < this.lastImageCount; i++) {
+				const [imgStatus, imgSize] = await this.image(dateTime, i);
 				if (imgStatus === 200) sizes.push(imgSize);
 				else throw new Error(`image returned status ${imgStatus}`);
 			}
 		}
-		const [faviconStatus, faviconResponse] = await this.favicon();
-		let faviconSize = -1;
-		if (typeof faviconResponse === 'string') faviconSize = faviconResponse.length;
-		else if (faviconResponse instanceof ArrayBuffer) faviconSize = faviconResponse.byteLength;
-		else if (typeof faviconResponse === 'object')
-			faviconSize = JSON.stringify(faviconResponse).length;
+		const [faviconStatus, faviconSize] = await this.favicon();
 		if (faviconStatus === 200) sizes.push(faviconSize);
 		else throw new Error(`favicon returned status ${faviconStatus}`);
 
