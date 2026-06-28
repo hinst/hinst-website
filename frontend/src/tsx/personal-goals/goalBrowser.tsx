@@ -45,7 +45,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 
 	function receivePosts(posts: GoalPostRecord[]) {
 		if (posts.length && !activePostDate) {
-			const newActivePostDate = posts[posts.length - 1].dateTime;
+			const newActivePostDate = posts[0].dateTime;
 			setSearchParams({ activePostDate: '' + newActivePostDate }, { replace: true });
 		}
 	}
