@@ -1,8 +1,8 @@
 //@ts-check
 import { Requests } from './requests.mjs';
 
-const WORKER_COUNT = 8;
-const REPORT_INTERVAL_SECONDS = 9;
+const WORKER_COUNT = 10;
+const REPORT_INTERVAL_SECONDS = 10;
 
 /**
 	@param {number[]} initialSizes
