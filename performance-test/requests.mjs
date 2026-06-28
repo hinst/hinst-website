@@ -1,5 +1,8 @@
 //@ts-check
 export class Requests {
+	/** @type {number[]} */
+	dateTimes = [];
+
 	async main() {
 		const response = await fetch('http://192.168.0.23:30001/hinst-website/', {
 			headers: {
@@ -96,7 +99,9 @@ export class Requests {
 				method: 'GET'
 			}
 		);
-		return [response.status, await response.json()];
+		const data = await response.json();
+		this.dateTimes = data.map(item => item.dateTime);
+		return [response.status, data];
 	}
 
 	async api2() {
@@ -115,9 +120,9 @@ export class Requests {
 		return [response.status, await response.json()];
 	}
 
-	async api3() {
+	async api3(postDateTime) {
 		const response = await fetch(
-			'http://192.168.0.23:30001/hinst-website/api/goalPost?goalId=247488&postDateTime=1782122907',
+			`http://192.168.0.23:30001/hinst-website/api/goalPost?goalId=247488&postDateTime=${postDateTime}`,
 			{
 				headers: {
 					accept: '*/*',
@@ -153,9 +158,12 @@ export class Requests {
 		return [response.status, await response.arrayBuffer()];
 	}
 
-	async image1() {
+	/**
+		@param {number} postDateTime
+	*/
+	async image1(postDateTime) {
 		const response = await fetch(
-			'http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=1782122907&index=0',
+			`http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=${postDateTime}&index=0`,
 			{
 				headers: {
 					accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
@@ -172,9 +180,12 @@ export class Requests {
 		return [response.status, await response.arrayBuffer()];
 	}
 
-	async image2() {
+	/**
+		@param {number} postDateTime
+	*/
+	async image2(postDateTime) {
 		const response = await fetch(
-			'http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=1782122907&index=1',
+			`http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=${postDateTime}&index=1`,
 			{
 				headers: {
 					accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
@@ -191,9 +202,12 @@ export class Requests {
 		return [response.status, await response.arrayBuffer()];
 	}
 
-	async image3() {
+	/**
+		@param {number} postDateTime
+	*/
+	async image3(postDateTime) {
 		const response = await fetch(
-			'http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=1782122907&index=2',
+			`http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=${postDateTime}&index=2`,
 			{
 				headers: {
 					accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
@@ -218,12 +232,7 @@ export class Requests {
 			'javaScript',
 			'icon',
 			'api1',
-			'api2',
-			'api3',
-			'favicon',
-			'image1',
-			'image2',
-			'image3'
+			'api2'
 		];
 		const sizes = [];
 		for (const name of methods) {
@@ -235,6 +244,33 @@ export class Requests {
 			if (status === 200) sizes.push(responseSize);
 			else throw new Error(`${name} returned status ${status}`);
 		}
+		for (const dateTime of this.dateTimes) {
+			const [status, response] = await this.api3(dateTime);
+			let responseSize = -1;
+			if (typeof response === 'string') responseSize = response.length;
+			else if (response instanceof ArrayBuffer) responseSize = response.byteLength;
+			else if (typeof response === 'object') responseSize = JSON.stringify(response).length;
+			if (status === 200) sizes.push(responseSize);
+			else throw new Error(`api3 returned status ${status}`);
+
+			for (const imageMethod of ['image1', 'image2', 'image3']) {
+				const [imgStatus, imgResponse] = await this[imageMethod](dateTime);
+				let imgSize = -1;
+				if (typeof imgResponse === 'string') imgSize = imgResponse.length;
+				else if (imgResponse instanceof ArrayBuffer) imgSize = imgResponse.byteLength;
+				else if (typeof imgResponse === 'object') imgSize = JSON.stringify(imgResponse).length;
+				if (imgStatus === 200) sizes.push(imgSize);
+				else throw new Error(`${imageMethod} returned status ${imgStatus}`);
+			}
+		}
+		const [faviconStatus, faviconResponse] = await this.favicon();
+		let faviconSize = -1;
+		if (typeof faviconResponse === 'string') faviconSize = faviconResponse.length;
+		else if (faviconResponse instanceof ArrayBuffer) faviconSize = faviconResponse.byteLength;
+		else if (typeof faviconResponse === 'object') faviconSize = JSON.stringify(faviconResponse).length;
+		if (faviconStatus === 200) sizes.push(faviconSize);
+		else throw new Error(`favicon returned status ${faviconStatus}`);
+
 		return sizes;
 	}
 }
