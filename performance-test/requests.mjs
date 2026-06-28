@@ -35,15 +35,16 @@ export class Requests {
 		@param {string} path
 		@param {string} accept
 		@param {string} label
+		@param {object} [extraHeaders]
+		@returns {Promise<object>}
 	*/
-	async fetchJSON(path, accept, label) {
+	async fetchJSON(path, accept, label, extraHeaders = {}) {
 		const response = await fetch(`${BASE_URL}${path}`, {
-			headers: { ...defaultHeaders, accept },
+			headers: { ...defaultHeaders, accept, ...extraHeaders },
 			method: 'GET'
 		});
 		if (response.status !== 200) throw new Error(`${label} returned status ${response.status}`);
-		const data = await response.json();
-		return new TextEncoder().encode(JSON.stringify(data)).byteLength;
+		return response.json();
 	}
 
 	async main() {
@@ -75,12 +76,7 @@ export class Requests {
 	}
 
 	async api1() {
-		const response = await fetch(`${BASE_URL}/api/goalPosts?id=${GOAL_ID}`, {
-			headers: { ...defaultHeaders, accept: '*/*' },
-			method: 'GET'
-		});
-		if (response.status !== 200) throw new Error(`api1 returned status ${response.status}`);
-		const data = await response.json();
+		const data = await this.fetchJSON(`/api/goalPosts?id=${GOAL_ID}`, '*/*', 'api1');
 		if (!Array.isArray(data)) throw new Error(`api1: expected array, got ${typeof data}`);
 		this.dateTimes = data.map((item) => item.dateTime);
 		return new TextEncoder().encode(JSON.stringify(data)).byteLength;
@@ -94,15 +90,12 @@ export class Requests {
 		@param {number} postDateTime
 	*/
 	async api3(postDateTime) {
-		const response = await fetch(
-			`${BASE_URL}/api/goalPost?goalId=${GOAL_ID}&postDateTime=${postDateTime}`,
-			{
-				headers: { ...defaultHeaders, accept: '*/*', 'accept-language': 'ru' },
-				method: 'GET'
-			}
+		const data = await this.fetchJSON(
+			`/api/goalPost?goalId=${GOAL_ID}&postDateTime=${postDateTime}`,
+			'*/*',
+			'api3',
+			{ 'accept-language': 'ru' }
 		);
-		if (response.status !== 200) throw new Error(`api3 returned status ${response.status}`);
-		const data = await response.json();
 		this.lastImageCount = data.imageCount;
 		return new TextEncoder().encode(JSON.stringify(data)).byteLength;
 	}
