@@ -17,7 +17,8 @@ export class Requests {
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
-		return [response.status, buffer.byteLength];
+		if (response.status !== 200) throw new Error(`main returned status ${response.status}`);
+		return buffer.byteLength;
 	}
 
 	async css1() {
@@ -32,7 +33,8 @@ export class Requests {
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
-		return [response.status, buffer.byteLength];
+		if (response.status !== 200) throw new Error(`css1 returned status ${response.status}`);
+		return buffer.byteLength;
 	}
 
 	async css2() {
@@ -47,7 +49,8 @@ export class Requests {
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
-		return [response.status, buffer.byteLength];
+		if (response.status !== 200) throw new Error(`css2 returned status ${response.status}`);
+		return buffer.byteLength;
 	}
 
 	async javaScript() {
@@ -62,7 +65,8 @@ export class Requests {
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
-		return [response.status, buffer.byteLength];
+		if (response.status !== 200) throw new Error(`javaScript returned status ${response.status}`);
+		return buffer.byteLength;
 	}
 
 	async icon() {
@@ -77,7 +81,8 @@ export class Requests {
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
-		return [response.status, buffer.byteLength];
+		if (response.status !== 200) throw new Error(`icon returned status ${response.status}`);
+		return buffer.byteLength;
 	}
 
 	async api1() {
@@ -95,10 +100,11 @@ export class Requests {
 			}
 		);
 		const text = await response.text();
+		if (response.status !== 200) throw new Error(`api1 returned status ${response.status}`);
 		const data = JSON.parse(text);
 		if (!Array.isArray(data)) throw new Error(`api1: expected array, got ${typeof data}`);
 		this.dateTimes = data.map((item) => item.dateTime);
-		return [response.status, new TextEncoder().encode(text).byteLength];
+		return new TextEncoder().encode(text).byteLength;
 	}
 
 	async api2() {
@@ -113,7 +119,8 @@ export class Requests {
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
-		return [response.status, buffer.byteLength];
+		if (response.status !== 200) throw new Error(`api2 returned status ${response.status}`);
+		return buffer.byteLength;
 	}
 
 	/**
@@ -134,9 +141,10 @@ export class Requests {
 			}
 		);
 		const text = await response.text();
+		if (response.status !== 200) throw new Error(`api3 returned status ${response.status}`);
 		const data = JSON.parse(text);
 		this.lastImageCount = data.imageCount;
-		return [response.status, new TextEncoder().encode(text).byteLength];
+		return new TextEncoder().encode(text).byteLength;
 	}
 
 	async favicon() {
@@ -154,7 +162,8 @@ export class Requests {
 			}
 		);
 		const buffer = await response.arrayBuffer();
-		return [response.status, buffer.byteLength];
+		if (response.status !== 200) throw new Error(`favicon returned status ${response.status}`);
+		return buffer.byteLength;
 	}
 
 	/**
@@ -176,31 +185,24 @@ export class Requests {
 			}
 		);
 		const buffer = await response.arrayBuffer();
-		return [response.status, buffer.byteLength];
+		if (response.status !== 200) throw new Error(`image returned status ${response.status}`);
+		return buffer.byteLength;
 	}
 
 	async all() {
 		const methods = ['main', 'css1', 'css2', 'javaScript', 'icon', 'api1', 'api2'];
 		const sizes = [];
 		for (const name of methods) {
-			const [status, size] = await this[name]();
-			if (status === 200) sizes.push(size);
-			else throw new Error(`${name} returned status ${status}`);
+			sizes.push(await this[name]());
 		}
 		for (const dateTime of this.dateTimes) {
-			const [status, size] = await this.api3(dateTime);
-			if (status === 200) sizes.push(size);
-			else throw new Error(`api3 returned status ${status}`);
+			sizes.push(await this.api3(dateTime));
 
 			for (let i = 0; i < this.lastImageCount; i++) {
-				const [imgStatus, imgSize] = await this.image(dateTime, i);
-				if (imgStatus === 200) sizes.push(imgSize);
-				else throw new Error(`image returned status ${imgStatus}`);
+				sizes.push(await this.image(dateTime, i));
 			}
 		}
-		const [faviconStatus, faviconSize] = await this.favicon();
-		if (faviconStatus === 200) sizes.push(faviconSize);
-		else throw new Error(`favicon returned status ${faviconStatus}`);
+		sizes.push(await this.favicon());
 
 		return sizes;
 	}
