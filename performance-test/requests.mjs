@@ -20,7 +20,7 @@ export class Requests {
 	}
 
 	async css1() {
-		fetch("http://192.168.0.23:30001/hinst-website/app.3e369f90.css", {
+		const response = await fetch("http://192.168.0.23:30001/hinst-website/app.3e369f90.css", {
 			headers: {
 				accept: "text/css,*/*;q=0.1",
 				"accept-language":
@@ -33,10 +33,11 @@ export class Requests {
 			body: null,
 			method: "GET",
 		});
+		return [response.status, await response.text()];
 	}
 
 	async css2() {
-		fetch("http://192.168.0.23:30001/hinst-website/app.bef21471.css", {
+		const response = await fetch("http://192.168.0.23:30001/hinst-website/app.bef21471.css", {
 			headers: {
 				accept: "text/css,*/*;q=0.1",
 				"accept-language":
@@ -49,10 +50,11 @@ export class Requests {
 			body: null,
 			method: "GET",
 		});
+		return [response.status, await response.text()];
 	}
 
 	async javaScript() {
-		fetch("http://192.168.0.23:30001/hinst-website/app.9da11e27.js", {
+		const response = await fetch("http://192.168.0.23:30001/hinst-website/app.9da11e27.js", {
 			headers: {
 				accept: "*/*",
 				"accept-language":
@@ -65,10 +67,11 @@ export class Requests {
 			body: null,
 			method: "GET",
 		});
+		return [response.status, await response.text()];
 	}
 
 	async icon() {
-		fetch("http://192.168.0.23:30001/hinst-website/icon.fd8aa8a2.webp", {
+		const response = await fetch("http://192.168.0.23:30001/hinst-website/icon.fd8aa8a2.webp", {
 			headers: {
 				accept: "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
 				"accept-language":
@@ -81,10 +84,11 @@ export class Requests {
 			body: null,
 			method: "GET",
 		});
+		return [response.status, await response.arrayBuffer()];
 	}
 
 	async api1() {
-		fetch(
+		const response = await fetch(
 			"http://192.168.0.23:30001/hinst-website/api/goalPosts?id=247488",
 			{
 				headers: {
@@ -100,10 +104,11 @@ export class Requests {
 				method: "GET",
 			},
 		);
+		return [response.status, await response.json()];
 	}
 
 	async api2() {
-		fetch("http://192.168.0.23:30001/hinst-website/api/goal?id=247488", {
+		const response = await fetch("http://192.168.0.23:30001/hinst-website/api/goal?id=247488", {
 			headers: {
 				accept: "*/*",
 				"accept-language": "ru",
@@ -115,10 +120,11 @@ export class Requests {
 			body: null,
 			method: "GET",
 		});
+		return [response.status, await response.json()];
 	}
 
 	async api3() {
-		fetch(
+		const response = await fetch(
 			"http://192.168.0.23:30001/hinst-website/api/goalPost?goalId=247488&postDateTime=1782122907",
 			{
 				headers: {
@@ -133,10 +139,11 @@ export class Requests {
 				method: "GET",
 			},
 		);
+		return [response.status, await response.json()];
 	}
 
 	async favicon() {
-		fetch("http://192.168.0.23:30001/hinst-website/favicon.ce92f6f7.png", {
+		const response = await fetch("http://192.168.0.23:30001/hinst-website/favicon.ce92f6f7.png", {
 			headers: {
 				accept: "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
 				"accept-language":
@@ -149,10 +156,11 @@ export class Requests {
 			body: null,
 			method: "GET",
 		});
+		return [response.status, await response.arrayBuffer()];
 	}
 
 	async image1() {
-		fetch(
+		const response = await fetch(
 			"http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=1782122907&index=0",
 			{
 				headers: {
@@ -168,10 +176,11 @@ export class Requests {
 				method: "GET",
 			},
 		);
+		return [response.status, await response.arrayBuffer()];
 	}
 
 	async image2() {
-		fetch(
+		const response = await fetch(
 			"http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=1782122907&index=1",
 			{
 				headers: {
@@ -187,10 +196,11 @@ export class Requests {
 				method: "GET",
 			},
 		);
+		return [response.status, await response.arrayBuffer()];
 	}
 
 	async image3() {
-		fetch(
+		const response = await fetch(
 			"http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=1782122907&index=2",
 			{
 				headers: {
@@ -206,5 +216,6 @@ export class Requests {
 				method: "GET",
 			},
 		);
+		return [response.status, await response.arrayBuffer()];
 	}
 }
