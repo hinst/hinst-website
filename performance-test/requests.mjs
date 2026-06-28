@@ -75,25 +75,25 @@ export class Requests {
 		);
 	}
 
-	async api1() {
-		const data = await this.fetchJSON(`/api/goalPosts?id=${GOAL_ID}`, '*/*', 'api1');
-		if (!Array.isArray(data)) throw new Error(`api1: expected array, got ${typeof data}`);
+	async getGoalPosts() {
+		const data = await this.fetchJSON(`/api/goalPosts?id=${GOAL_ID}`, '*/*', 'getGoalPosts');
+		if (!Array.isArray(data)) throw new Error(`getGoalPosts: expected array, got ${typeof data}`);
 		this.dateTimes = data.map((item) => item.dateTime);
 		return new TextEncoder().encode(JSON.stringify(data)).byteLength;
 	}
 
-	async api2() {
-		return this.fetchResource(`/api/goal?id=${GOAL_ID}`, '*/*', 'api2');
+	async getGoal() {
+		return this.fetchResource(`/api/goal?id=${GOAL_ID}`, '*/*', 'getGoal');
 	}
 
 	/**
 		@param {number} postDateTime
 	*/
-	async api3(postDateTime) {
+	async getGoalPost(postDateTime) {
 		const data = await this.fetchJSON(
 			`/api/goalPost?goalId=${GOAL_ID}&postDateTime=${postDateTime}`,
 			'*/*',
-			'api3',
+			'getGoalPost',
 			{ 'accept-language': 'ru' }
 		);
 		this.lastImageCount = data.imageCount;
@@ -121,13 +121,13 @@ export class Requests {
 	}
 
 	async all() {
-		const methods = ['main', 'css1', 'css2', 'javaScript', 'icon', 'api1', 'api2'];
+		const methods = ['main', 'css1', 'css2', 'javaScript', 'icon', 'getGoalPosts', 'getGoal'];
 		const sizes = [];
 		for (const name of methods) {
 			sizes.push(await this[name]());
 		}
 		for (const dateTime of this.dateTimes) {
-			sizes.push(await this.api3(dateTime));
+			sizes.push(await this.getGoalPost(dateTime));
 
 			for (let i = 0; i < this.lastImageCount; i++) {
 				sizes.push(await this.image(dateTime, i));
