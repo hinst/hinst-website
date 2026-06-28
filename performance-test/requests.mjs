@@ -2,6 +2,8 @@
 export class Requests {
 	/** @type {number[]} */
 	dateTimes = [];
+	/** @type {number} */
+	lastImageCount = 0;
 
 	async main() {
 		const response = await fetch('http://192.168.0.23:30001/hinst-website/', {
@@ -13,7 +15,6 @@ export class Requests {
 				'upgrade-insecure-requests': '1',
 				cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg'
 			},
-			body: null,
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
@@ -30,7 +31,6 @@ export class Requests {
 				cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 				Referer: 'http://192.168.0.23:30001/hinst-website/'
 			},
-			body: null,
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
@@ -47,7 +47,6 @@ export class Requests {
 				cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 				Referer: 'http://192.168.0.23:30001/hinst-website/'
 			},
-			body: null,
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
@@ -64,7 +63,6 @@ export class Requests {
 				cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 				Referer: 'http://192.168.0.23:30001/hinst-website/'
 			},
-			body: null,
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
@@ -81,7 +79,6 @@ export class Requests {
 				cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 				Referer: 'http://192.168.0.23:30001/hinst-website/'
 			},
-			body: null,
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
@@ -100,12 +97,12 @@ export class Requests {
 					cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 					Referer: 'http://192.168.0.23:30001/hinst-website/'
 				},
-				body: null,
 				method: 'GET'
 			}
 		);
 		const text = await response.text();
 		const data = JSON.parse(text);
+		if (!Array.isArray(data)) throw new Error(`api1: expected array, got ${typeof data}`);
 		this.dateTimes = data.map((item) => item.dateTime);
 		return [response.status, new TextEncoder().encode(text).byteLength];
 	}
@@ -120,7 +117,6 @@ export class Requests {
 				cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 				Referer: 'http://192.168.0.23:30001/hinst-website/'
 			},
-			body: null,
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
@@ -142,7 +138,6 @@ export class Requests {
 					cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 					Referer: 'http://192.168.0.23:30001/hinst-website/'
 				},
-				body: null,
 				method: 'GET'
 			}
 		);
@@ -164,7 +159,6 @@ export class Requests {
 					cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 					Referer: 'http://192.168.0.23:30001/hinst-website/'
 				},
-				body: null,
 				method: 'GET'
 			}
 		);
@@ -188,7 +182,6 @@ export class Requests {
 					cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 					Referer: 'http://192.168.0.23:30001/hinst-website/'
 				},
-				body: null,
 				method: 'GET'
 			}
 		);

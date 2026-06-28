@@ -26,7 +26,7 @@ let totalRequestCount = 0;
 async function worker(requests, initialSizes) {
 	while (true) {
 		const sizes = await requests.all();
-		assertSizes(sizes, initialSizes);
+		assertSizes(initialSizes, sizes);
 		requestCount++;
 		totalRequestCount++;
 	}
