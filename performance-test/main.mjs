@@ -2,6 +2,7 @@
 import { Requests } from './requests.mjs';
 
 const WORKER_COUNT = 8;
+const REPORT_INTERVAL_SECONDS = 9;
 
 /**
 	@param {number[]} initialSizes
@@ -43,14 +44,15 @@ async function main() {
 	setInterval(() => {
 		const elapsed = (Date.now() - startTime) / 1000;
 		const avgThroughput = (totalRequestCount / elapsed).toFixed(1);
+		const throughputPerSecond = (requestCount / REPORT_INTERVAL_SECONDS).toFixed(1);
 		console.log(
-			`Throughput: ${requestCount} requests.all() per second (avg: ${avgThroughput})`
+			`Throughput: ${throughputPerSecond} requests.all() per second (avg: ${avgThroughput})`
 		);
 		requestCount = 0;
-	}, 9000);
+	}, REPORT_INTERVAL_SECONDS * 1000);
 
 	const workers = [];
-	for (let i = 0; i < WORKER_COUNT; i++) workers.push(worker(requests, initialSizes));
+	for (let i = 0; i < WORKER_COUNT; i++) workers.push(worker(new Requests(), initialSizes));
 	await Promise.all(workers);
 }
 
