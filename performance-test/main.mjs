@@ -1,7 +1,7 @@
 //@ts-check
 import { Requests } from './requests.mjs';
 
-const WORKER_COUNT = 30;
+const WORKER_COUNT = 8;
 
 /**
 	@param {number[]} initialSizes
@@ -33,7 +33,9 @@ async function worker(requests, initialSizes) {
 
 async function main() {
 	const requests = new Requests();
+	console.time('Initializing...');
 	const initialSizes = await requests.all();
+	console.timeEnd('Initializing...');
 	const megabytes = (initialSizes.reduce((a, b) => a + b, 0) / (1024 * 1024)).toFixed(1);
 	console.log(`Initial sizes: ${megabytes} MB`);
 
@@ -45,7 +47,7 @@ async function main() {
 			`Throughput: ${requestCount} requests.all() per second (avg: ${avgThroughput})`
 		);
 		requestCount = 0;
-	}, 2000);
+	}, 9000);
 
 	const workers = [];
 	for (let i = 0; i < WORKER_COUNT; i++) workers.push(worker(requests, initialSizes));

@@ -100,7 +100,7 @@ export class Requests {
 			}
 		);
 		const data = await response.json();
-		this.dateTimes = data.map(item => item.dateTime);
+		this.dateTimes = data.map((item) => item.dateTime);
 		return [response.status, data];
 	}
 
@@ -120,6 +120,9 @@ export class Requests {
 		return [response.status, await response.json()];
 	}
 
+	/**
+		@param {number} postDateTime
+	*/
 	async api3(postDateTime) {
 		const response = await fetch(
 			`http://192.168.0.23:30001/hinst-website/api/goalPost?goalId=247488&postDateTime=${postDateTime}`,
@@ -160,54 +163,11 @@ export class Requests {
 
 	/**
 		@param {number} postDateTime
+		@param {number} index
 	*/
-	async image1(postDateTime) {
+	async image(postDateTime, index) {
 		const response = await fetch(
-			`http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=${postDateTime}&index=0`,
-			{
-				headers: {
-					accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-					'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
-					'cache-control': 'no-cache',
-					pragma: 'no-cache',
-					cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
-					Referer: 'http://192.168.0.23:30001/hinst-website/'
-				},
-				body: null,
-				method: 'GET'
-			}
-		);
-		return [response.status, await response.arrayBuffer()];
-	}
-
-	/**
-		@param {number} postDateTime
-	*/
-	async image2(postDateTime) {
-		const response = await fetch(
-			`http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=${postDateTime}&index=1`,
-			{
-				headers: {
-					accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-					'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
-					'cache-control': 'no-cache',
-					pragma: 'no-cache',
-					cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
-					Referer: 'http://192.168.0.23:30001/hinst-website/'
-				},
-				body: null,
-				method: 'GET'
-			}
-		);
-		return [response.status, await response.arrayBuffer()];
-	}
-
-	/**
-		@param {number} postDateTime
-	*/
-	async image3(postDateTime) {
-		const response = await fetch(
-			`http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=${postDateTime}&index=2`,
+			`http://192.168.0.23:30001/hinst-website/api/goalPost/image?goalId=247488&postDateTime=${postDateTime}&index=${index}`,
 			{
 				headers: {
 					accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
@@ -225,15 +185,7 @@ export class Requests {
 	}
 
 	async all() {
-		const methods = [
-			'main',
-			'css1',
-			'css2',
-			'javaScript',
-			'icon',
-			'api1',
-			'api2'
-		];
+		const methods = ['main', 'css1', 'css2', 'javaScript', 'icon', 'api1', 'api2'];
 		const sizes = [];
 		for (const name of methods) {
 			const [status, response] = await this[name]();
@@ -253,21 +205,23 @@ export class Requests {
 			if (status === 200) sizes.push(responseSize);
 			else throw new Error(`api3 returned status ${status}`);
 
-			for (const imageMethod of ['image1', 'image2', 'image3']) {
-				const [imgStatus, imgResponse] = await this[imageMethod](dateTime);
+			for (let i = 0; i < response.imageCount; i++) {
+				const [imgStatus, imgResponse] = await this.image(dateTime, i);
 				let imgSize = -1;
 				if (typeof imgResponse === 'string') imgSize = imgResponse.length;
 				else if (imgResponse instanceof ArrayBuffer) imgSize = imgResponse.byteLength;
-				else if (typeof imgResponse === 'object') imgSize = JSON.stringify(imgResponse).length;
+				else if (typeof imgResponse === 'object')
+					imgSize = JSON.stringify(imgResponse).length;
 				if (imgStatus === 200) sizes.push(imgSize);
-				else throw new Error(`${imageMethod} returned status ${imgStatus}`);
+				else throw new Error(`image returned status ${imgStatus}`);
 			}
 		}
 		const [faviconStatus, faviconResponse] = await this.favicon();
 		let faviconSize = -1;
 		if (typeof faviconResponse === 'string') faviconSize = faviconResponse.length;
 		else if (faviconResponse instanceof ArrayBuffer) faviconSize = faviconResponse.byteLength;
-		else if (typeof faviconResponse === 'object') faviconSize = JSON.stringify(faviconResponse).length;
+		else if (typeof faviconResponse === 'object')
+			faviconSize = JSON.stringify(faviconResponse).length;
 		if (faviconStatus === 200) sizes.push(faviconSize);
 		else throw new Error(`favicon returned status ${faviconStatus}`);
 
