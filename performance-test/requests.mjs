@@ -12,8 +12,7 @@ export class Requests {
 				'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
 				'cache-control': 'no-cache',
 				pragma: 'no-cache',
-				'upgrade-insecure-requests': '1',
-				cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg'
+				'upgrade-insecure-requests': '1'
 			},
 			method: 'GET'
 		});
@@ -28,7 +27,6 @@ export class Requests {
 				'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
 				'cache-control': 'no-cache',
 				pragma: 'no-cache',
-				cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 				Referer: 'http://192.168.0.23:30001/hinst-website/'
 			},
 			method: 'GET'
@@ -44,7 +42,6 @@ export class Requests {
 				'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
 				'cache-control': 'no-cache',
 				pragma: 'no-cache',
-				cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 				Referer: 'http://192.168.0.23:30001/hinst-website/'
 			},
 			method: 'GET'
@@ -60,7 +57,6 @@ export class Requests {
 				'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
 				'cache-control': 'no-cache',
 				pragma: 'no-cache',
-				cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 				Referer: 'http://192.168.0.23:30001/hinst-website/'
 			},
 			method: 'GET'
@@ -76,7 +72,6 @@ export class Requests {
 				'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
 				'cache-control': 'no-cache',
 				pragma: 'no-cache',
-				cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 				Referer: 'http://192.168.0.23:30001/hinst-website/'
 			},
 			method: 'GET'
@@ -94,7 +89,6 @@ export class Requests {
 					'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
 					'cache-control': 'no-cache',
 					pragma: 'no-cache',
-					cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 					Referer: 'http://192.168.0.23:30001/hinst-website/'
 				},
 				method: 'GET'
@@ -114,7 +108,6 @@ export class Requests {
 				'accept-language': 'ru',
 				'cache-control': 'no-cache',
 				pragma: 'no-cache',
-				cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 				Referer: 'http://192.168.0.23:30001/hinst-website/'
 			},
 			method: 'GET'
@@ -135,7 +128,6 @@ export class Requests {
 					'accept-language': 'ru',
 					'cache-control': 'no-cache',
 					pragma: 'no-cache',
-					cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 					Referer: 'http://192.168.0.23:30001/hinst-website/'
 				},
 				method: 'GET'
@@ -156,7 +148,6 @@ export class Requests {
 					'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
 					'cache-control': 'no-cache',
 					pragma: 'no-cache',
-					cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 					Referer: 'http://192.168.0.23:30001/hinst-website/'
 				},
 				method: 'GET'
@@ -179,7 +170,6 @@ export class Requests {
 					'accept-language': 'en,ru;q=0.9,en-GB;q=0.8,en-US;q=0.7,de;q=0.6',
 					'cache-control': 'no-cache',
 					pragma: 'no-cache',
-					cookie: 'CSRF-Token-AYTHB54=CJF9aQ4o4abMGtjmsSMfwRfzA6TtUts7F2H5XhZCrMvmwRNayveChbaGUE5tr2da; sessionid-AYTHB54=rUuuDpYYT4utPG7C2eREsXaGVEttCNFh2She3kps36U6Y5Rv7zgFmDVs7mQgLNYg',
 					Referer: 'http://192.168.0.23:30001/hinst-website/'
 				},
 				method: 'GET'

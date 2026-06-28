@@ -16,8 +16,8 @@ function assertSizes(initialSizes, sizes) {
 			);
 }
 
-let requestCount = 0;
-let totalRequestCount = 0;
+let blogPostCount = 0;
+let totalBlogPostCount = 0;
 
 /**
 	@param {Requests} requests
@@ -27,8 +27,9 @@ async function worker(requests, initialSizes) {
 	while (true) {
 		const sizes = await requests.all();
 		assertSizes(initialSizes, sizes);
-		requestCount++;
-		totalRequestCount++;
+		const posts = requests.dateTimes.length;
+		blogPostCount += posts;
+		totalBlogPostCount += posts;
 	}
 }
 
@@ -38,17 +39,17 @@ async function main() {
 	const initialSizes = await requests.all();
 	console.timeEnd('Initializing...');
 	const megabytes = (initialSizes.reduce((a, b) => a + b, 0) / (1024 * 1024)).toFixed(1);
-	console.log(`Initial sizes: ${megabytes} MB`);
+	console.log(`Initial sizes: ${megabytes} MB, total blog posts: ${requests.dateTimes.length}`);
 
 	const startTime = Date.now();
 	setInterval(() => {
 		const elapsed = (Date.now() - startTime) / 1000;
-		const avgThroughput = (totalRequestCount / elapsed).toFixed(1);
-		const throughputPerSecond = (requestCount / REPORT_INTERVAL_SECONDS).toFixed(1);
+		const avgThroughput = (totalBlogPostCount / elapsed).toFixed(1);
+		const throughputPerSecond = (blogPostCount / REPORT_INTERVAL_SECONDS).toFixed(1);
 		console.log(
-			`Throughput: ${throughputPerSecond} requests.all() per second (avg: ${avgThroughput})`
+			`Throughput: ${throughputPerSecond} blog posts per second (avg: ${avgThroughput})`
 		);
-		requestCount = 0;
+		blogPostCount = 0;
 	}, REPORT_INTERVAL_SECONDS * 1000);
 
 	const workers = [];
