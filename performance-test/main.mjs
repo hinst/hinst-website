@@ -1,6 +1,8 @@
 //@ts-check
 import { Requests } from './requests.mjs';
 
+const WORKER_COUNT = 10;
+
 /**
 	@param {number[]} initialSizes
 	@param {number[]} sizes
@@ -30,11 +32,8 @@ async function main() {
 	const requests = new Requests();
 	const initialSizes = await requests.all();
 	console.log('Initial sizes:', initialSizes);
-	const N = 10;
 	const workers = [];
-	for (let i = 0; i < N; i++) {
-		workers.push(worker(requests, initialSizes));
-	}
+	for (let i = 0; i < WORKER_COUNT; i++) workers.push(worker(requests, initialSizes));
 	await Promise.all(workers);
 }
 
