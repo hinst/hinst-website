@@ -17,3 +17,4 @@
 1. Show comments
 1. Allow creating new comments
 1. Put translated texts into separate tables
+1. Run performance tests to see how many requests per second my website can handle
