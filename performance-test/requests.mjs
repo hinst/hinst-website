@@ -1,3 +1,4 @@
+//@ts-check
 export class Requests {
 	async main() {
 		const response = await fetch(
@@ -252,21 +253,18 @@ export class Requests {
 			"image2",
 			"image3",
 		];
-
+		const sizes = [];
 		for (const name of methods) {
 			const [status, response] = await this[name]();
-			let responseInfo = '?';
-			if (typeof response === 'string')
-				responseInfo = response.length;
+			let responseInfo = -1;
+			if (typeof response === "string") responseInfo = response.length;
 			else if (response instanceof ArrayBuffer)
 				responseInfo = response.byteLength;
-			else if (typeof response === 'object' && response !== null)
+			else if (typeof response === "object" && response !== null)
 				responseInfo = Object.keys(response).length;
-			if (status === 200) {
-				console.log(responseInfo);
-			} else {
-				throw new Error(`${name} returned status ${status}`);
-			}
+			if (status === 200) sizes.push(responseInfo);
+			else throw new Error(`${name} returned status ${status}`);
 		}
+		return sizes;
 	}
 }

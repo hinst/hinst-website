@@ -2,7 +2,7 @@ import { Requests } from "./requests.mjs";
 
 async function main() {
 	const requests = new Requests();
-	await requests.all();
+	const responseSizes = await requests.all();
 }
 
 main();
