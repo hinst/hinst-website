@@ -3,21 +3,20 @@ import { Requests } from './requests.mjs';
 
 const WORKER_COUNT = 30;
 
-let requestCount = 0;
-
 /**
 	@param {number[]} initialSizes
 	@param {number[]} sizes
 */
 function assertSizes(initialSizes, sizes) {
-	for (let i = 0; i < sizes.length; i++) {
-		if (sizes[i] !== initialSizes[i]) {
+	for (let i = 0; i < sizes.length; i++)
+		if (sizes[i] !== initialSizes[i])
 			throw new Error(
 				`Size mismatch at index ${i}: expected ${initialSizes[i]}, got ${sizes[i]}`
 			);
-		}
-	}
 }
+
+let requestCount = 0;
+let totalRequestCount = 0;
 
 /**
 	@param {Requests} requests
@@ -28,6 +27,7 @@ async function worker(requests, initialSizes) {
 		const sizes = await requests.all();
 		assertSizes(sizes, initialSizes);
 		requestCount++;
+		totalRequestCount++;
 	}
 }
 
@@ -36,8 +36,13 @@ async function main() {
 	const initialSizes = await requests.all();
 	console.log('Initial sizes:', initialSizes);
 
+	const startTime = Date.now();
 	setInterval(() => {
-		console.log(`Throughput: ${requestCount} requests.all() per second`);
+		const elapsed = (Date.now() - startTime) / 1000;
+		const avgThroughput = (totalRequestCount / elapsed).toFixed(1);
+		console.log(
+			`Throughput: ${requestCount} requests.all() per second (avg: ${avgThroughput})`
+		);
 		requestCount = 0;
 	}, 2000);
 
