@@ -65,7 +65,8 @@ export class Requests {
 			method: 'GET'
 		});
 		const buffer = await response.arrayBuffer();
-		if (response.status !== 200) throw new Error(`javaScript returned status ${response.status}`);
+		if (response.status !== 200)
+			throw new Error(`javaScript returned status ${response.status}`);
 		return buffer.byteLength;
 	}
 
