@@ -1,5 +1,5 @@
 //@ts-check
-const BASE_URL = 'http://192.168.0.23:30001/hinst-website';
+const BASE_URL = 'http://192.168.0.23/hinst-website';
 const GOAL_ID = 247488;
 
 /** @type {Record<string, string>} */
@@ -81,7 +81,8 @@ export class Requests {
 
 	async getGoalPosts() {
 		const data = await this.fetchJSON(`/api/goalPosts?id=${GOAL_ID}`, '*/*', 'getGoalPosts');
-		if (!Array.isArray(data)) throw new Error(`getGoalPosts: expected array, got ${typeof data}`);
+		if (!Array.isArray(data))
+			throw new Error(`getGoalPosts: expected array, got ${typeof data}`);
 		this.dateTimes = data.map((item) => item.dateTime);
 		return new TextEncoder().encode(JSON.stringify(data)).byteLength;
 	}
