@@ -1,1 +1,1 @@
-docker build -t 192.168.0.23:5000/hinst/hinst-website --progress=plain --platform=linux/arm64 .
+docker build --network=host -t 192.168.0.23:5000/hinst/hinst-website --progress=plain --platform=linux/arm64 .
