@@ -3,7 +3,7 @@
 }
 :8081 {
 	handle {
-		root * ./static
+		root * ./saved-goals/static
 		file_server
 		try_files {path}
 	}
