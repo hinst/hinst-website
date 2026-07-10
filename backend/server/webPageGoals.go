@@ -181,6 +181,7 @@ func (me *webPageGoals) getBaseTemplate(request *http.Request) page_data.Base {
 		HtmlExtension: request.URL.Query().Get("htmlExtension"),
 		SettingsSvg:   template.HTML(gophers.ReadTextFile("pages/static/images/settings.svg")),
 		MenuSvg:       template.HTML(gophers.ReadTextFile("pages/static/images/menu.svg")),
+		InfoSvg:       template.HTML(gophers.ReadTextFile("pages/static/images/info.svg")),
 	}
 }
 
