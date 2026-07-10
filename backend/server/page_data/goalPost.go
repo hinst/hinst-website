@@ -4,8 +4,11 @@ import "html/template"
 
 type GoalPost struct {
 	Base
-	GoalId   int64
-	DateTime int64
-	Text     template.HTML
-	Images   []int
+	GoalId               int64
+	DateTime             int64
+	Text                 template.HTML
+	Images               []int
+	IsAutoTranslated     bool
+	IsTranslationPending bool
+	LanguageName         string
 }

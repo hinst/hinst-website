@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/hinst/go-gophers"
+	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/page_data"
 )
 
@@ -115,6 +116,14 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 		GoalId:   goalId,
 		DateTime: dateTime.Unix(),
 		Text:     template.HTML(convertMarkdownToHtml(text)),
+	}
+	if requestedLanguage != base.SupportedLanguages[0] {
+		data.LanguageName = base.GetLanguageName(requestedLanguage)
+		if text != "" {
+			data.IsAutoTranslated = true
+		} else {
+			data.IsTranslationPending = true
+		}
 	}
 
 	var imageCount = me.db.getGoalPostImageCount(goalId, dateTime)
