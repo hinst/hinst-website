@@ -5,11 +5,11 @@
 1. `long-term` Reverse blog import direction
 	1. Before: using Smart Progress as primary source and hinst-website as secondary storage
 	1. After: use hinst-website as primary source and Smart Progress for publishing
-1. Improvements for Kubernetes
-	1. Better namespace structure
-		1. Merge namespaces `uptime-kuma` and `postgre-sql` into `default`, because those namespaces contain only one pod
-	1. Better passwords
-		1. Have one password for accessing all services through basic auth
+1. ~~Improvements for Kubernetes~~
+	1. ~~Better namespace structure~~
+		1. ~~Merge namespaces `uptime-kuma` and `postgre-sql` into `default`, because those namespaces contain only one pod~~
+	1. ~~Better passwords~~
+		1. ~~Have one password for accessing all services through basic auth~~
 1. Automate dynamic website deployment
 1. Show comments
 1. Allow creating new comments
