@@ -112,17 +112,18 @@ func (me *webPageGoals) getGoalPostPage(response http.ResponseWriter, request *h
 	}
 	var text = goalPostRecord.GetTranslatedText(requestedLanguage)
 	var data = page_data.GoalPost{
-		Base:     me.getBaseTemplate(request),
-		GoalId:   goalId,
-		DateTime: dateTime.Unix(),
-		Text:     template.HTML(convertMarkdownToHtml(text)),
+		Base:         me.getBaseTemplate(request),
+		GoalId:       goalId,
+		DateTime:     dateTime.Unix(),
+		Text:         template.HTML(convertMarkdownToHtml(text)),
+		LanguageName: base.GetLanguageName(requestedLanguage),
 	}
 	if requestedLanguage != base.SupportedLanguages[0] {
-		data.LanguageName = base.GetLanguageName(requestedLanguage)
-		if text != "" {
-			data.IsAutoTranslated = true
-		} else {
+		if text == "" {
 			data.IsTranslationPending = true
+			data.Text = template.HTML(convertMarkdownToHtml(goalPostRecord.Text))
+		} else {
+			data.IsAutoTranslated = true
 		}
 	}
 
