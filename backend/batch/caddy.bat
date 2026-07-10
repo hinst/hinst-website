@@ -1,0 +1,1 @@
+C:\App\Caddy\caddy_windows_amd64.exe run --config caddyfile
