@@ -43,7 +43,7 @@ func (me *GoogleIndexingClient) updateUrl(url string) bool {
 		return false
 	}
 	var responseBody = gophers.AssertResultError(io.ReadAll(response.Body))
-	log.Println(responseBody)
+	log.Println(string(responseBody))
 	assertResponse(response)
 	return true
 }
