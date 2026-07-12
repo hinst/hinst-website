@@ -39,8 +39,6 @@ func (me *staticFilesUpdate) run() {
 	} else {
 		log.Println("Nothing to commit")
 	}
-
-	me.submitSiteMap()
 }
 
 // Copy old files from Git repository
@@ -75,14 +73,6 @@ func (me *staticFilesUpdate) buildSiteMap() {
 	}
 	builder.run()
 	gophers.CopyFile(me.savedGoalsPath+"/static-git/sitemap.xml", me.savedGoalsPath+"/static/sitemap.xml")
-}
-
-func (me *staticFilesUpdate) submitSiteMap() {
-	var submitter = siteMapSubmitter{
-		db:          me.db,
-		siteMapPath: me.savedGoalsPath + "/static/sitemap.xml",
-	}
-	submitter.run()
 }
 
 func (staticFilesUpdate) getStaticWebsiteGitUrl() string {
