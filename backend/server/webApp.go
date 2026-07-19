@@ -29,9 +29,6 @@ func (me *webApp) init(db *database) {
 	var appGoals = new(webAppGoals)
 	me.addFunctions(me.webPath, appGoals.init(me.db))
 
-	var pageGoals = new(webPageGoals)
-	me.addFunctions(me.webPath+pagesWebPath, pageGoals.init(me.db, me.webPath+pagesWebPath))
-
 	var appAdmin = new(webAppAdmin)
 	me.addFunctions(me.webPath, appAdmin.init(me.db))
 }
