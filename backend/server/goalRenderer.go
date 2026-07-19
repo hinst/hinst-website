@@ -13,7 +13,7 @@ import (
 type goalRenderer struct {
 	db             *database
 	defaultWebPath string
-	elementId      int64
+	elementId      atomic.Int64
 }
 
 func newGoalRenderer(db *database, defaultWebPath string) *goalRenderer {
@@ -144,7 +144,7 @@ func (me *goalRenderer) getBaseTemplate(req WebRequest) page_data.Base {
 	}
 
 	return page_data.Base{
-		Id:            me.advanceElementId(),
+		Id:            me.elementId.Add(1),
 		WebPath:       webPath,
 		StaticPath:    staticPath,
 		JpegExtension: req.JpegExtension,
@@ -153,8 +153,4 @@ func (me *goalRenderer) getBaseTemplate(req WebRequest) page_data.Base {
 		MenuSvg:       template.HTML(gophers.ReadTextFile("pages/static/images/menu.svg")),
 		InfoSvg:       template.HTML(gophers.ReadTextFile("pages/static/images/info.svg")),
 	}
-}
-
-func (me *goalRenderer) advanceElementId() int64 {
-	return atomic.AddInt64(&me.elementId, 1)
 }
