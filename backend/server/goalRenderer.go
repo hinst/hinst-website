@@ -133,13 +133,11 @@ func (me *goalRenderer) getBaseTemplate(req WebRequest) page_data.Base {
 	}
 
 	return page_data.Base{
-		Id:            me.elementId.Add(1),
-		WebPath:       webPath,
-		StaticPath:    staticPath,
-		JpegExtension: req.JpegExtension,
-		HtmlExtension: req.HtmlExtension,
-		SettingsSvg:   template.HTML(gophers.ReadTextFile("pages/static/images/settings.svg")),
-		MenuSvg:       template.HTML(gophers.ReadTextFile("pages/static/images/menu.svg")),
-		InfoSvg:       template.HTML(gophers.ReadTextFile("pages/static/images/info.svg")),
+		Id:          me.elementId.Add(1),
+		WebPath:     webPath,
+		StaticPath:  staticPath,
+		SettingsSvg: template.HTML(gophers.ReadTextFile("pages/static/images/settings.svg")),
+		MenuSvg:     template.HTML(gophers.ReadTextFile("pages/static/images/menu.svg")),
+		InfoSvg:     template.HTML(gophers.ReadTextFile("pages/static/images/info.svg")),
 	}
 }

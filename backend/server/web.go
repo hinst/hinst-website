@@ -21,11 +21,9 @@ type namedWebFunction struct {
 }
 
 type WebRequest struct {
-	Language      language.Tag
-	WebPath       string
-	StaticPath    string
-	JpegExtension string
-	HtmlExtension string
+	Language   language.Tag
+	WebPath    string
+	StaticPath string
 }
 
 func getWebLanguage(request *http.Request) language.Tag {

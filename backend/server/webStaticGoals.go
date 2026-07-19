@@ -50,11 +50,9 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 	gophers.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
 
 	var req = WebRequest{
-		Language:      lang,
-		WebPath:       me.getWebPath(lang),
-		StaticPath:    "",
-		JpegExtension: ".jpg",
-		HtmlExtension: ".html",
+		Language:   lang,
+		WebPath:    me.getWebPath(lang),
+		StaticPath: "",
 	}
 	var homePageText = me.renderer.renderHomePage(req)
 	gophers.WriteTextFile(path+"/index.html", gophers.AssertResultError(formatHtml(homePageText)))
@@ -71,11 +69,9 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 	var goalId = goal.Id
 
 	var req = WebRequest{
-		Language:      lang,
-		WebPath:       me.getWebPath(lang),
-		StaticPath:    "",
-		JpegExtension: ".jpg",
-		HtmlExtension: ".html",
+		Language:   lang,
+		WebPath:    me.getWebPath(lang),
+		StaticPath: "",
 	}
 	var goalPageText = me.renderer.renderGoalPage(req, goalId)
 	gophers.WriteTextFile(
@@ -92,11 +88,9 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 
 func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, goalId int64, postDateTime int64) {
 	var req = WebRequest{
-		Language:      lang,
-		WebPath:       me.getWebPath(lang),
-		StaticPath:    "",
-		JpegExtension: ".jpg",
-		HtmlExtension: ".html",
+		Language:   lang,
+		WebPath:    me.getWebPath(lang),
+		StaticPath: "",
 	}
 	var postPageText = me.renderer.renderGoalPostPage(req, goalId, time.Unix(postDateTime, 0))
 	var postFilePath = goalsPath + "/" + gophers.GetStringFromInt64(goalId) + "/"
