@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/hinst/go-gophers"
 )
@@ -102,13 +101,6 @@ func (me *program) migrate() {
 
 func (me *program) generateStatic(folder string) {
 	me.database.init()
-	var webApp = &webApp{webPath: "/"}
-	webApp.init(me.database)
-	go func() {
-		gophers.AssertError(http.ListenAndServe(me.netAddress, nil))
-	}()
-	time.Sleep(1000 * time.Millisecond)
-
 	var webStatic = new(webStaticGoals)
 	webStatic.init("http://localhost:8080", me.database, folder)
 	webStatic.run()
