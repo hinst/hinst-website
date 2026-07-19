@@ -22,7 +22,7 @@ func (me *webStaticGoals) init(url string, db *database, folder string) {
 	me.url = url
 	me.db = db
 	me.folder = folder
-	me.renderer = newGoalRenderer(db, pagesWebPath)
+	me.renderer = newGoalRenderer(db, "/pages")
 }
 
 func (me *webStaticGoals) run() {
@@ -111,7 +111,7 @@ func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, 
 
 func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64, imageIndex int) {
 	var image = me.db.getGoalPostImage(goalId, time.Unix(postDateTime, 0), imageIndex)
-	
+
 	if image == nil {
 		return // should not happen based on imageCount
 	}
