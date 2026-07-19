@@ -1,5 +1,6 @@
 {
 	"cSpell.words": [
+		"bluemonday",
 		"github",
 		"godotenv",
 		"gohtml",
@@ -7,11 +8,11 @@
 		"hinst",
 		"jackc",
 		"mattn",
+		"ollama",
 		"pgxpool",
 		"postgre",
 		"Postgre",
-		"sqlite",
-		"ollama"
+		"sqlite"
 	],
 	"[html]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
