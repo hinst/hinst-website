@@ -2,7 +2,7 @@ package server
 
 import (
 	"html/template"
-	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/hinst/go-gophers"
@@ -13,8 +13,7 @@ import (
 type goalRenderer struct {
 	db             *database
 	defaultWebPath string
-	elementIdLocker sync.Mutex
-	elementId       int64
+	elementId      int64
 }
 
 func newGoalRenderer(db *database, defaultWebPath string) *goalRenderer {
@@ -157,8 +156,5 @@ func (me *goalRenderer) getBaseTemplate(req WebRequest) page_data.Base {
 }
 
 func (me *goalRenderer) advanceElementId() int64 {
-	me.elementIdLocker.Lock()
-	defer me.elementIdLocker.Unlock()
-	me.elementId++
-	return me.elementId
+	return atomic.AddInt64(&me.elementId, 1)
 }
