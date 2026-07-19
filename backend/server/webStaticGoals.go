@@ -22,7 +22,8 @@ func (me *webStaticGoals) init(url string, db *database, folder string) {
 	me.url = url
 	me.db = db
 	me.folder = folder
-	me.renderer = newGoalRenderer(db, "/pages")
+	me.renderer = new(goalRenderer)
+	me.renderer.db = db
 }
 
 func (me *webStaticGoals) run() {
@@ -132,13 +133,6 @@ func (me *webStaticGoals) getLanguagePath(tag language.Tag) string {
 	return "/" + tag.String()
 }
 
-func (me *webStaticGoals) slashEmpty(text string) string {
-	if text == "" {
-		text = "/"
-	}
-	return text
-}
-
 func (me *webStaticGoals) getWebPath(tag language.Tag) string {
-	return me.slashEmpty(me.getLanguagePath(tag))
+	return me.getLanguagePath(tag)
 }

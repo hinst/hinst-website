@@ -11,16 +11,8 @@ import (
 )
 
 type goalRenderer struct {
-	db             *database
-	defaultWebPath string
-	elementId      atomic.Int64
-}
-
-func newGoalRenderer(db *database, defaultWebPath string) *goalRenderer {
-	return &goalRenderer{
-		db:             db,
-		defaultWebPath: defaultWebPath,
-	}
+	db        *database
+	elementId atomic.Int64
 }
 
 func (me *goalRenderer) renderHomePage(req WebRequest) string {
@@ -135,9 +127,6 @@ func (me *goalRenderer) wrapTemplatePage(req WebRequest, content page_data.Conte
 
 func (me *goalRenderer) getBaseTemplate(req WebRequest) page_data.Base {
 	var webPath = req.WebPath
-	if webPath == "" {
-		webPath = me.defaultWebPath
-	}
 	var staticPath = req.StaticPath
 	if staticPath == "" {
 		staticPath = ""
