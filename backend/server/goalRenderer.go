@@ -141,7 +141,7 @@ func (me *goalRenderer) getBaseTemplate(req WebRequest) page_data.Base {
 	}
 	var staticPath = req.StaticPath
 	if staticPath == "" {
-		staticPath = me.defaultWebPath
+		staticPath = ""
 	}
 
 	return page_data.Base{

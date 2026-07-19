@@ -51,7 +51,7 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 	var req = WebRequest{
 		Language:      lang,
 		WebPath:       me.getWebPath(lang),
-		StaticPath:    "/",
+		StaticPath:    "",
 		JpegExtension: ".jpg",
 		HtmlExtension: ".html",
 	}
@@ -72,7 +72,7 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 	var req = WebRequest{
 		Language:      lang,
 		WebPath:       me.getWebPath(lang),
-		StaticPath:    "/",
+		StaticPath:    "",
 		JpegExtension: ".jpg",
 		HtmlExtension: ".html",
 	}
@@ -93,7 +93,7 @@ func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, 
 	var req = WebRequest{
 		Language:      lang,
 		WebPath:       me.getWebPath(lang),
-		StaticPath:    "/",
+		StaticPath:    "",
 		JpegExtension: ".jpg",
 		HtmlExtension: ".html",
 	}
@@ -111,6 +111,7 @@ func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, 
 
 func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64, imageIndex int) {
 	var image = me.db.getGoalPostImage(goalId, time.Unix(postDateTime, 0), imageIndex)
+	
 	if image == nil {
 		return // should not happen based on imageCount
 	}
