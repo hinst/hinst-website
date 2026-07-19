@@ -56,7 +56,7 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 		HtmlExtension: ".html",
 	}
 	var homePageText = me.renderer.renderHomePage(req)
-	gophers.WriteTextFile(path+"/index.html", formatHtml(homePageText))
+	gophers.WriteTextFile(path+"/index.html", gophers.AssertResultError(formatHtml(homePageText)))
 
 	var goals = me.db.getGoals()
 	var goalsPath = path + "/personal-goals"
@@ -77,7 +77,9 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 		HtmlExtension: ".html",
 	}
 	var goalPageText = me.renderer.renderGoalPage(req, goalId)
-	gophers.WriteTextFile(goalsPath+"/"+gophers.GetStringFromInt64(goalId)+".html", formatHtml(goalPageText))
+	gophers.WriteTextFile(
+		goalsPath+"/"+gophers.GetStringFromInt64(goalId)+".html",
+		gophers.AssertResultError(formatHtml(goalPageText)))
 
 	var path = goalsPath + "/" + gophers.GetStringFromInt64(goalId)
 	gophers.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
@@ -96,8 +98,10 @@ func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, 
 		HtmlExtension: ".html",
 	}
 	var postPageText = me.renderer.renderGoalPostPage(req, goalId, time.Unix(postDateTime, 0))
-	var path = goalsPath + "/" + gophers.GetStringFromInt64(goalId)
-	gophers.WriteTextFile(path+"/"+gophers.GetStringFromInt64(postDateTime)+".html", formatHtml(postPageText))
+	var postFilePath = goalsPath + "/" + gophers.GetStringFromInt64(goalId) + "/"
+	gophers.WriteTextFile(
+		postFilePath+gophers.GetStringFromInt64(postDateTime)+".html",
+		gophers.AssertResultError(formatHtml(postPageText)))
 
 	var imageCount = me.db.getGoalPostImageCount(goalId, time.Unix(postDateTime, 0))
 	for imageIndex := range imageCount {
@@ -136,14 +140,4 @@ func (me *webStaticGoals) slashEmpty(text string) string {
 
 func (me *webStaticGoals) getWebPath(tag language.Tag) string {
 	return me.slashEmpty(me.getLanguagePath(tag))
-}
-
-func (me *webStaticGoals) getPathQuery(tag language.Tag) map[string]string {
-	return map[string]string{
-		"webPath":       me.getWebPath(tag),
-		"staticPath":    "/",
-		"jpegExtension": ".jpg",
-		"htmlExtension": ".html",
-		"lang":          tag.String(),
-	}
 }

@@ -72,7 +72,7 @@ func writeJsonResponse(response http.ResponseWriter, value any) {
 }
 
 func writeHtmlResponse(response http.ResponseWriter, text string) {
-	text = formatHtml(text)
+	text = gophers.AssertResultError(formatHtml(text))
 	response.Header().Set(gophers.ContentTypeHeader, "text/html; charset=utf-8")
 	var _, _ = response.Write([]byte(text))
 }
@@ -98,15 +98,10 @@ func assertResponse(response *http.Response) {
 	}
 }
 
-func formatHtml(text string) string {
-	var result, err = formatHtmlInternal(text)
-	if err != nil {
-		return text
-	}
-	return result
-}
-
-func formatHtmlInternal(text string) (string, error) {
+// Format HTML using Prettier server.
+// Returns error if supplied HTML is invalid.
+// Panics if unable to connect to Prettier server.
+func formatHtml(text string) (string, error) {
 	var client = &http.Client{Timeout: 10 * time.Minute}
 	var url = gophers.RequireEnvVar("PRETTIER_SERVER_URL") +
 		gophers.BuildUrlQueryParams(map[string]string{"filename": "index.html"})

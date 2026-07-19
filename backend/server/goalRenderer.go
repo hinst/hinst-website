@@ -30,7 +30,6 @@ func (me *goalRenderer) renderHomePage(req WebRequest) string {
 	for _, goalRecord := range goalRecords {
 		var item page_data.GoalCard
 		item.Id = goalRecord.Id
-		item.Title = goalRecord.Title
 		var imageDataUrl = getUrlBase64(goalRecord.ImageContentType, goalRecord.ImageData)
 		item.Image = template.URL(imageDataUrl)
 		item.Title = goalRecord.GetTranslatedTitle(req.Language)
@@ -46,9 +45,8 @@ func (me *goalRenderer) renderHomePage(req WebRequest) string {
 
 func (me *goalRenderer) renderGoalPage(req WebRequest, goalId int64) string {
 	var goalRecord = me.db.getGoal(goalId)
-	if goalRecord == nil {
-		return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId)
-	}
+	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
+
 	var goalPostRecords = me.db.getGoalPosts(goalId, false, req.Language)
 
 	var goalPosts []page_data.GoalPostItem
@@ -77,15 +75,14 @@ func (me *goalRenderer) renderGoalPage(req WebRequest, goalId int64) string {
 
 func (me *goalRenderer) renderGoalPostPage(req WebRequest, goalId int64, dateTime time.Time) string {
 	var goalRecord = me.db.getGoal(goalId)
-	if goalRecord == nil {
-		return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId)
-	}
+	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
 
 	var goalPostRecord = me.db.getGoalPost(goalId, dateTime)
-	if goalPostRecord == nil {
+	gophers.AssertCondition(goalPostRecord != nil, func() string {
 		return "Cannot find goal post with id=" + gophers.GetStringFromInt64(goalId) +
 			" and dateTime=" + dateTime.UTC().Format(time.DateTime)
-	}
+	})
+
 	var text = goalPostRecord.GetTranslatedText(req.Language)
 	var data = page_data.GoalPost{
 		Base:         me.getBaseTemplate(req),
@@ -127,11 +124,13 @@ func (me *goalRenderer) wrapTemplatePage(req WebRequest, content page_data.Conte
 	if content.Description == "" {
 		content.Description = content.Title
 	}
-	var headerContent = content
+	headerContent := content
 	headerContent.Base = me.getBaseTemplate(req)
-	var pageContent = content
+	htmlHeader := executeTemplateFile("pages/html/templates/header.html", headerContent)
+
+	pageContent := content
 	pageContent.Base = me.getBaseTemplate(req)
-	pageContent.Header = template.HTML(executeTemplateFile("pages/html/templates/header.html", headerContent))
+	pageContent.Header = template.HTML(htmlHeader)
 	return executeTemplateFile("pages/html/templates/template.html", pageContent)
 }
 
