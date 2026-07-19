@@ -20,6 +20,14 @@ type namedWebFunction struct {
 	Function gophers.WebFunction
 }
 
+type WebRequest struct {
+	Language      language.Tag
+	WebPath       string
+	StaticPath    string
+	JpegExtension string
+	HtmlExtension string
+}
+
 func getWebLanguage(request *http.Request) language.Tag {
 	var queryLanguage = request.URL.Query().Get("lang")
 	if len(queryLanguage) > 0 {
@@ -64,7 +72,7 @@ func writeJsonResponse(response http.ResponseWriter, value any) {
 }
 
 func writeHtmlResponse(response http.ResponseWriter, text string) {
-	text = gophers.AssertResultError(formatHtml(text))
+	text = formatHtml(text)
 	response.Header().Set(gophers.ContentTypeHeader, "text/html; charset=utf-8")
 	var _, _ = response.Write([]byte(text))
 }
@@ -90,7 +98,15 @@ func assertResponse(response *http.Response) {
 	}
 }
 
-func formatHtml(text string) (string, error) {
+func formatHtml(text string) string {
+	var result, err = formatHtmlInternal(text)
+	if err != nil {
+		return text
+	}
+	return result
+}
+
+func formatHtmlInternal(text string) (string, error) {
 	var client = &http.Client{Timeout: 10 * time.Minute}
 	var url = gophers.RequireEnvVar("PRETTIER_SERVER_URL") +
 		gophers.BuildUrlQueryParams(map[string]string{"filename": "index.html"})
