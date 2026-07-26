@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
@@ -67,7 +68,10 @@ func (me *titleGenerator) summarizeText(text string, theLanguage language.Tag) s
 		},
 		Stream: false,
 	})
-	var response = gophers.AssertResultError(http.Post(me.apiUrl, gophers.ContentTypeJson, bytes.NewBuffer(request)))
+	var req = gophers.AssertResultError(http.NewRequest("POST", me.apiUrl, bytes.NewBuffer(request)))
+	req.Header.Set(gophers.ContentTypeHeader, gophers.ContentTypeJson)
+	var response, err = doWithRetry(&http.Client{Timeout: 1 * time.Hour}, req)
+	gophers.AssertError(err)
 	defer gophers.IoCloseSilently(response.Body)
 	gophers.AssertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot summarize text. Status: " + response.Status)

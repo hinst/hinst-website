@@ -64,7 +64,8 @@ func (me *translator) translateText(text string, tag language.Tag) string {
 	var client = &http.Client{Timeout: 1 * time.Hour}
 	var req = gophers.AssertResultError(http.NewRequest("POST", me.apiUrl, bytes.NewBuffer(request)))
 	req.Header.Set(gophers.ContentTypeHeader, gophers.ContentTypeJson)
-	var response = gophers.AssertResultError(client.Do(req))
+	var response, err = doWithRetry(client, req)
+	gophers.AssertError(err)
 	defer gophers.IoCloseSilently(response.Body)
 	gophers.AssertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot translate text. Status: " + response.Status)

@@ -1,0 +1,25 @@
+panic: Post "http://192.168.0.30:11434/v1/chat/completions": dial tcp 192.168.0.30:11434: connect: no route to host
+
+goroutine 1 [running]:
+github.com/hinst/go-gophers.AssertError(...)
+	/go/pkg/mod/github.com/hinst/go-gophers@v0.1.22/assert.go:6
+github.com/hinst/go-gophers.AssertResultError[...](...)
+	/go/pkg/mod/github.com/hinst/go-gophers@v0.1.22/assert.go:11
+github.com/hinst/hinst-website/server.(*translator).translateText(0x5a19852d3d20, {0x5a1985554000, 0x11ae}, {0x2880?, 0x6808?, {0x0?, 0x0?}})
+	/app/server/translator.go:67 +0x4e0
+github.com/hinst/hinst-website/server.(*translator).translate(0x5a19852d3d20, 0x5a19853201e0, {0x5b01?, 0x8546?, {0x0?, 0x0?}})
+	/app/server/translator.go:49 +0x68
+github.com/hinst/hinst-website/server.(*translator).run.func1(0x5a19853201e0)
+	/app/server/translator.go:32 +0x64
+github.com/hinst/hinst-website/server.(*database).forEachGoalPost(0x5a1985492280, 0x5a19852d3ca8, {0x8b90d8?, 0x2d?}, 0x0)
+	/app/server/database.goals.go:48 +0x16c
+github.com/hinst/hinst-website/server.(*translator).run(0xf289c0?)
+	/app/server/translator.go:29 +0x58
+github.com/hinst/hinst-website/server.(*program).updateTranslations(0x5a1985465eb0?)
+	/app/server/program.go:77 +0x58
+github.com/hinst/hinst-website/server.(*program).update(0x5a19852d3eb0)
+	/app/server/program.go:65 +0x2c
+github.com/hinst/hinst-website/server.Main()
+	/app/server/main.go:30 +0x308
+main.main()
+	/app/main.go:8 +0x1c
