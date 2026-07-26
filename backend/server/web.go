@@ -20,12 +20,6 @@ type namedWebFunction struct {
 	Function gophers.WebFunction
 }
 
-type WebRequest struct {
-	Language   language.Tag
-	WebPath    string
-	StaticPath string
-}
-
 func getWebLanguage(request *http.Request) language.Tag {
 	var queryLanguage = request.URL.Query().Get("lang")
 	if len(queryLanguage) > 0 {

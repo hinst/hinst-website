@@ -8,6 +8,7 @@ import (
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/page_data"
+	"golang.org/x/text/language"
 )
 
 type goalRenderer struct {
@@ -15,30 +16,30 @@ type goalRenderer struct {
 	elementId atomic.Int64
 }
 
-func (me *goalRenderer) renderHomePage(req WebRequest) string {
+func (me *goalRenderer) renderHomePage(lang language.Tag, webPath string, staticPath string) string {
 	var goalRecords = me.db.getGoals()
-	var data = page_data.GoalList{Base: me.getBaseTemplate(req)}
+	var data = page_data.GoalList{Base: me.getBaseTemplate(webPath, staticPath)}
 	for _, goalRecord := range goalRecords {
 		var item page_data.GoalCard
 		item.Id = goalRecord.Id
 		var imageDataUrl = getUrlBase64(goalRecord.ImageContentType, goalRecord.ImageData)
 		item.Image = template.URL(imageDataUrl)
-		item.Title = goalRecord.GetTranslatedTitle(req.Language)
+		item.Title = goalRecord.GetTranslatedTitle(lang)
 		data.Goals = append(data.Goals, item)
 	}
 	var content = executeTemplateFile("pages/html/templates/goalList.html", data)
-	return me.wrapTemplatePage(req, page_data.Content{
-		LanguageTag: req.Language.String(),
+	return me.wrapTemplatePage(webPath, staticPath, page_data.Content{
+		LanguageTag: lang.String(),
 		Title:       "My Personal Goals",
 		Content:     template.HTML(content),
 	})
 }
 
-func (me *goalRenderer) renderGoalPage(req WebRequest, goalId int64) string {
+func (me *goalRenderer) renderGoalPage(lang language.Tag, webPath string, staticPath string, goalId int64) string {
 	var goalRecord = me.db.getGoal(goalId)
 	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
 
-	var goalPostRecords = me.db.getGoalPosts(goalId, false, req.Language)
+	var goalPostRecords = me.db.getGoalPosts(goalId, false, lang)
 
 	var goalPosts []page_data.GoalPostItem
 	for _, post := range goalPostRecords {
@@ -52,19 +53,19 @@ func (me *goalRenderer) renderGoalPage(req WebRequest, goalId int64) string {
 		goalPosts = append(goalPosts, item)
 	}
 
-	var data = page_data.GoalPosts{Base: me.getBaseTemplate(req)}
+	var data = page_data.GoalPosts{Base: me.getBaseTemplate(webPath, staticPath)}
 	data.GoalId = goalId
 	data.Load(goalPosts)
 
 	var content = executeTemplateFile("pages/html/templates/goalPosts.html", data)
-	return me.wrapTemplatePage(req, page_data.Content{
-		LanguageTag: req.Language.String(),
-		Title:       "Goal diary: " + goalRecord.GetTranslatedTitle(req.Language),
+	return me.wrapTemplatePage(webPath, staticPath, page_data.Content{
+		LanguageTag: lang.String(),
+		Title:       "Goal diary: " + goalRecord.GetTranslatedTitle(lang),
 		Content:     template.HTML(content),
 	})
 }
 
-func (me *goalRenderer) renderGoalPostPage(req WebRequest, goalId int64, dateTime time.Time) string {
+func (me *goalRenderer) renderGoalPostPage(lang language.Tag, webPath string, staticPath string, goalId int64, dateTime time.Time) string {
 	var goalRecord = me.db.getGoal(goalId)
 	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
 
@@ -74,15 +75,15 @@ func (me *goalRenderer) renderGoalPostPage(req WebRequest, goalId int64, dateTim
 			" and dateTime=" + dateTime.UTC().Format(time.DateTime)
 	})
 
-	var text = goalPostRecord.GetTranslatedText(req.Language)
+	var text = goalPostRecord.GetTranslatedText(lang)
 	var data = page_data.GoalPost{
-		Base:         me.getBaseTemplate(req),
+		Base:         me.getBaseTemplate(webPath, staticPath),
 		GoalId:       goalId,
 		DateTime:     dateTime.Unix(),
 		Text:         template.HTML(convertMarkdownToHtml(text)),
-		LanguageName: base.GetLanguageName(req.Language),
+		LanguageName: base.GetLanguageName(lang),
 	}
-	if req.Language != base.SupportedLanguages[0] {
+	if lang != base.SupportedLanguages[0] {
 		if text == "" {
 			data.IsTranslationPending = true
 			data.Text = template.HTML(convertMarkdownToHtml(goalPostRecord.Text))
@@ -96,42 +97,36 @@ func (me *goalRenderer) renderGoalPostPage(req WebRequest, goalId int64, dateTim
 		data.Images = append(data.Images, i)
 	}
 
-	var goalTitle = goalRecord.GetTranslatedTitle(req.Language)
+	var goalTitle = goalRecord.GetTranslatedTitle(lang)
 	var pageTitle = goalTitle + " • " +
 		dateTime.UTC().Format("2006-01-02")
 	var pageDescription = goalTitle + " - " +
 		dateTime.UTC().Format("2006-01-02") + " - " +
-		goalPostRecord.GetTranslatedTitle(req.Language)
+		goalPostRecord.GetTranslatedTitle(lang)
 	var content = executeTemplateFile("pages/html/templates/goalPost.html", data)
-	return me.wrapTemplatePage(req, page_data.Content{
-		LanguageTag: req.Language.String(),
+	return me.wrapTemplatePage(webPath, staticPath, page_data.Content{
+		LanguageTag: lang.String(),
 		Title:       pageTitle,
 		Description: pageDescription,
 		Content:     template.HTML(content),
 	})
 }
 
-func (me *goalRenderer) wrapTemplatePage(req WebRequest, content page_data.Content) string {
+func (me *goalRenderer) wrapTemplatePage(webPath string, staticPath string, content page_data.Content) string {
 	if content.Description == "" {
 		content.Description = content.Title
 	}
 	headerContent := content
-	headerContent.Base = me.getBaseTemplate(req)
+	headerContent.Base = me.getBaseTemplate(webPath, staticPath)
 	htmlHeader := executeTemplateFile("pages/html/templates/header.html", headerContent)
 
 	pageContent := content
-	pageContent.Base = me.getBaseTemplate(req)
+	pageContent.Base = me.getBaseTemplate(webPath, staticPath)
 	pageContent.Header = template.HTML(htmlHeader)
 	return executeTemplateFile("pages/html/templates/template.html", pageContent)
 }
 
-func (me *goalRenderer) getBaseTemplate(req WebRequest) page_data.Base {
-	var webPath = req.WebPath
-	var staticPath = req.StaticPath
-	if staticPath == "" {
-		staticPath = ""
-	}
-
+func (me *goalRenderer) getBaseTemplate(webPath string, staticPath string) page_data.Base {
 	return page_data.Base{
 		Id:          me.elementId.Add(1),
 		WebPath:     webPath,
