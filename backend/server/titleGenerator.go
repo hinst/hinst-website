@@ -60,7 +60,7 @@ func (me *titleGenerator) run() {
 func (me *titleGenerator) summarizeText(text string, theLanguage language.Tag) string {
 	var prompt = strings.ReplaceAll(prompt_generate_title,
 		"{LANGUAGE}", base.GetLanguageName(theLanguage))
-	var request = gophers.EncodeJson(openAiRequest{
+	var requestObject = gophers.EncodeJson(openAiRequest{
 		Model: ollama_model_id,
 		Messages: []openAiMessage{
 			{Role: AI_ROLE_SYSTEM, Content: prompt},
@@ -68,10 +68,11 @@ func (me *titleGenerator) summarizeText(text string, theLanguage language.Tag) s
 		},
 		Stream: false,
 	})
-	var req = gophers.AssertResultError(http.NewRequest("POST", me.apiUrl, bytes.NewBuffer(request)))
-	req.Header.Set(gophers.ContentTypeHeader, gophers.ContentTypeJson)
-	var response, err = doWithRetry(&http.Client{Timeout: 1 * time.Hour}, req)
-	gophers.AssertError(err)
+	var requestHttp = gophers.AssertResultError(
+		http.NewRequest(http.MethodPost, me.apiUrl, bytes.NewBuffer(requestObject)))
+	requestHttp.Header.Set(gophers.ContentTypeHeader, gophers.ContentTypeJson)
+	var response = gophers.AssertResultError(
+		doWithRetry(&http.Client{Timeout: 1 * time.Hour}, requestHttp))
 	defer gophers.IoCloseSilently(response.Body)
 	gophers.AssertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot summarize text. Status: " + response.Status)

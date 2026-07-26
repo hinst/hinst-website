@@ -53,7 +53,7 @@ func (me *translator) translate(row *db_objects.GoalPostRow, tag language.Tag) {
 func (me *translator) translateText(text string, tag language.Tag) string {
 	var prompt = PROMPT_TRANSLATE_INTO_LANGUAGE
 	prompt = strings.ReplaceAll(prompt, "{LANGUAGE}", base.GetLanguageName(tag))
-	var request = gophers.EncodeJson(openAiRequest{
+	var requestObject = gophers.EncodeJson(openAiRequest{
 		Model: ollama_model_id,
 		Messages: []openAiMessage{
 			{Role: AI_ROLE_SYSTEM, Content: prompt},
@@ -61,11 +61,11 @@ func (me *translator) translateText(text string, tag language.Tag) string {
 		},
 		Stream: false,
 	})
-	var client = &http.Client{Timeout: 1 * time.Hour}
-	var req = gophers.AssertResultError(http.NewRequest("POST", me.apiUrl, bytes.NewBuffer(request)))
-	req.Header.Set(gophers.ContentTypeHeader, gophers.ContentTypeJson)
-	var response, err = doWithRetry(client, req)
-	gophers.AssertError(err)
+	var requestHttp = gophers.AssertResultError(
+		http.NewRequest(http.MethodPost, me.apiUrl, bytes.NewBuffer(requestObject)))
+	requestHttp.Header.Set(gophers.ContentTypeHeader, gophers.ContentTypeJson)
+	var response = gophers.AssertResultError(
+		doWithRetry(&http.Client{Timeout: 1 * time.Hour}, requestHttp))
 	defer gophers.IoCloseSilently(response.Body)
 	gophers.AssertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot translate text. Status: " + response.Status)
