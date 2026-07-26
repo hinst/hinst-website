@@ -16,8 +16,9 @@ type webHtmlGoals struct {
 	elementId atomic.Int64
 }
 
-func (me *webHtmlGoals) renderHomePage(lang language.Tag, webPath string, langPath string) string {
+func (me *webHtmlGoals) renderHomePage(lang language.Tag, webPath string) string {
 	var goalRecords = me.db.getGoals()
+	var langPath = webStaticGoals{}.getLanguagePath(lang)
 	var data = page_data.GoalList{Base: me.getBaseTemplate(webPath, langPath)}
 	for _, goalRecord := range goalRecords {
 		var item page_data.GoalCard
@@ -35,11 +36,11 @@ func (me *webHtmlGoals) renderHomePage(lang language.Tag, webPath string, langPa
 	})
 }
 
-func (me *webHtmlGoals) renderGoalPage(lang language.Tag, webPath string, langPath string, goalId int64) string {
+func (me *webHtmlGoals) renderGoalPage(lang language.Tag, webPath string, goalId int64) string {
 	var goalRecord = me.db.getGoal(goalId)
 	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
-
 	var goalPostRecords = me.db.getGoalPosts(goalId, false, lang)
+	var langPath = webStaticGoals{}.getLanguagePath(lang)
 
 	var goalPosts []page_data.GoalPostItem
 	for _, post := range goalPostRecords {
@@ -65,9 +66,10 @@ func (me *webHtmlGoals) renderGoalPage(lang language.Tag, webPath string, langPa
 	})
 }
 
-func (me *webHtmlGoals) renderGoalPostPage(lang language.Tag, webPath string, langPath string, goalId int64, dateTime time.Time) string {
+func (me *webHtmlGoals) renderGoalPostPage(lang language.Tag, webPath string, goalId int64, dateTime time.Time) string {
 	var goalRecord = me.db.getGoal(goalId)
 	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
+	var langPath = webStaticGoals{}.getLanguagePath(lang)
 
 	var goalPostRecord = me.db.getGoalPost(goalId, dateTime)
 	gophers.AssertCondition(goalPostRecord != nil, func() string {
