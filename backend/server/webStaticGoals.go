@@ -49,7 +49,8 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 	var path = me.folder + me.getLanguagePath(lang)
 	gophers.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
 
-	var homePageText = me.renderer.renderHomePage(lang, "")
+	var langPath = me.getLanguagePath(lang)
+	var homePageText = me.renderer.renderHomePage(lang, "", langPath)
 	gophers.WriteTextFile(path+"/index.html", gophers.AssertResultError(formatHtml(homePageText)))
 
 	var goals = me.db.getGoals()
@@ -63,7 +64,8 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal db_objects.GoalRow) {
 	var goalId = goal.Id
 
-	var goalPageText = me.renderer.renderGoalPage(lang, "", goalId)
+	var langPath = me.getLanguagePath(lang)
+	var goalPageText = me.renderer.renderGoalPage(lang, "", langPath, goalId)
 	gophers.WriteTextFile(
 		goalsPath+"/"+gophers.GetStringFromInt64(goalId)+".html",
 		gophers.AssertResultError(formatHtml(goalPageText)))
@@ -78,7 +80,8 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 
 func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, goalId int64, postDateTime int64) {
 	var dateTime = time.Unix(postDateTime, 0)
-	var postPageText = me.renderer.renderGoalPostPage(lang, "", goalId, dateTime)
+	var langPath = me.getLanguagePath(lang)
+	var postPageText = me.renderer.renderGoalPostPage(lang, "", langPath, goalId, dateTime)
 	var postFilePath = goalsPath + "/" + gophers.GetStringFromInt64(goalId) + "/"
 	gophers.WriteTextFile(
 		postFilePath+gophers.GetStringFromInt64(postDateTime)+".html",

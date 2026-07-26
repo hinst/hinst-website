@@ -16,10 +16,9 @@ type goalRenderer struct {
 	elementId atomic.Int64
 }
 
-func (me *goalRenderer) renderHomePage(lang language.Tag, staticPath string) string {
-	var webPath = me.webPath(lang)
+func (me *goalRenderer) renderHomePage(lang language.Tag, webPath string, langPath string) string {
 	var goalRecords = me.db.getGoals()
-	var data = page_data.GoalList{Base: me.getBaseTemplate(webPath, staticPath)}
+	var data = page_data.GoalList{Base: me.getBaseTemplate(webPath, langPath)}
 	for _, goalRecord := range goalRecords {
 		var item page_data.GoalCard
 		item.Id = goalRecord.Id
@@ -29,15 +28,14 @@ func (me *goalRenderer) renderHomePage(lang language.Tag, staticPath string) str
 		data.Goals = append(data.Goals, item)
 	}
 	var content = executeTemplateFile("pages/html/templates/goalList.html", data)
-	return me.wrapTemplatePage(webPath, staticPath, page_data.Content{
+	return me.wrapTemplatePage(webPath, langPath, page_data.Content{
 		LanguageTag: lang.String(),
 		Title:       "My Personal Goals",
 		Content:     template.HTML(content),
 	})
 }
 
-func (me *goalRenderer) renderGoalPage(lang language.Tag, staticPath string, goalId int64) string {
-	var webPath = me.webPath(lang)
+func (me *goalRenderer) renderGoalPage(lang language.Tag, webPath string, langPath string, goalId int64) string {
 	var goalRecord = me.db.getGoal(goalId)
 	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
 
@@ -55,20 +53,19 @@ func (me *goalRenderer) renderGoalPage(lang language.Tag, staticPath string, goa
 		goalPosts = append(goalPosts, item)
 	}
 
-	var data = page_data.GoalPosts{Base: me.getBaseTemplate(webPath, staticPath)}
+	var data = page_data.GoalPosts{Base: me.getBaseTemplate(webPath, langPath)}
 	data.GoalId = goalId
 	data.Load(goalPosts)
 
 	var content = executeTemplateFile("pages/html/templates/goalPosts.html", data)
-	return me.wrapTemplatePage(webPath, staticPath, page_data.Content{
+	return me.wrapTemplatePage(webPath, langPath, page_data.Content{
 		LanguageTag: lang.String(),
 		Title:       "Goal diary: " + goalRecord.GetTranslatedTitle(lang),
 		Content:     template.HTML(content),
 	})
 }
 
-func (me *goalRenderer) renderGoalPostPage(lang language.Tag, staticPath string, goalId int64, dateTime time.Time) string {
-	var webPath = me.webPath(lang)
+func (me *goalRenderer) renderGoalPostPage(lang language.Tag, webPath string, langPath string, goalId int64, dateTime time.Time) string {
 	var goalRecord = me.db.getGoal(goalId)
 	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
 
@@ -80,7 +77,7 @@ func (me *goalRenderer) renderGoalPostPage(lang language.Tag, staticPath string,
 
 	var text = goalPostRecord.GetTranslatedText(lang)
 	var data = page_data.GoalPost{
-		Base:         me.getBaseTemplate(webPath, staticPath),
+		Base:         me.getBaseTemplate(webPath, langPath),
 		GoalId:       goalId,
 		DateTime:     dateTime.Unix(),
 		Text:         template.HTML(convertMarkdownToHtml(text)),
@@ -107,7 +104,7 @@ func (me *goalRenderer) renderGoalPostPage(lang language.Tag, staticPath string,
 		dateTime.UTC().Format("2006-01-02") + " - " +
 		goalPostRecord.GetTranslatedTitle(lang)
 	var content = executeTemplateFile("pages/html/templates/goalPost.html", data)
-	return me.wrapTemplatePage(webPath, staticPath, page_data.Content{
+	return me.wrapTemplatePage(webPath, langPath, page_data.Content{
 		LanguageTag: lang.String(),
 		Title:       pageTitle,
 		Description: pageDescription,
@@ -115,32 +112,25 @@ func (me *goalRenderer) renderGoalPostPage(lang language.Tag, staticPath string,
 	})
 }
 
-func (me *goalRenderer) wrapTemplatePage(webPath string, staticPath string, content page_data.Content) string {
+func (me *goalRenderer) wrapTemplatePage(webPath string, langPath string, content page_data.Content) string {
 	if content.Description == "" {
 		content.Description = content.Title
 	}
 	headerContent := content
-	headerContent.Base = me.getBaseTemplate(webPath, staticPath)
+	headerContent.Base = me.getBaseTemplate(webPath, langPath)
 	htmlHeader := executeTemplateFile("pages/html/templates/header.html", headerContent)
 
 	pageContent := content
-	pageContent.Base = me.getBaseTemplate(webPath, staticPath)
+	pageContent.Base = me.getBaseTemplate(webPath, langPath)
 	pageContent.Header = template.HTML(htmlHeader)
 	return executeTemplateFile("pages/html/templates/template.html", pageContent)
 }
 
-func (me *goalRenderer) webPath(tag language.Tag) string {
-	if tag == language.English {
-		return ""
-	}
-	return "/" + tag.String()
-}
-
-func (me *goalRenderer) getBaseTemplate(webPath string, staticPath string) page_data.Base {
+func (me *goalRenderer) getBaseTemplate(webPath string, langPath string) page_data.Base {
 	return page_data.Base{
 		Id:          me.elementId.Add(1),
 		WebPath:     webPath,
-		StaticPath:  staticPath,
+		LangPath:    langPath,
 		SettingsSvg: template.HTML(gophers.ReadTextFile("pages/static/images/settings.svg")),
 		MenuSvg:     template.HTML(gophers.ReadTextFile("pages/static/images/menu.svg")),
 		InfoSvg:     template.HTML(gophers.ReadTextFile("pages/static/images/info.svg")),
