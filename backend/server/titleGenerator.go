@@ -72,7 +72,7 @@ func (me *titleGenerator) summarizeText(text string, theLanguage language.Tag) s
 		http.NewRequest(http.MethodPost, me.apiUrl, bytes.NewBuffer(requestObject)))
 	requestHttp.Header.Set(gophers.ContentTypeHeader, gophers.ContentTypeJson)
 	var response = gophers.AssertResultError(
-		doWithRetry(&http.Client{Timeout: 1 * time.Hour}, requestHttp))
+		gophers.WebRetry{}.Run(&http.Client{Timeout: 1 * time.Hour}, requestHttp))
 	defer gophers.IoCloseSilently(response.Body)
 	gophers.AssertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot summarize text. Status: " + response.Status)
