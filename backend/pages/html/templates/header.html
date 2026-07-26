@@ -15,7 +15,7 @@
 {{end}}
 <!---->
 {{define "favicon-link"}}
-<a href="{{.WebPath}}{{.LangPath}}">
+<a href="{{if or .WebPath .LangPath}}{{.WebPath}}{{.LangPath}}{{else}}/{{end}}">
 	<img
 		src="{{.WebPath}}/static/images/favicon.png"
 		width="42"
