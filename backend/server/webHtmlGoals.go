@@ -11,12 +11,12 @@ import (
 	"golang.org/x/text/language"
 )
 
-type goalRenderer struct {
+type webHtmlGoals struct {
 	db        *database
 	elementId atomic.Int64
 }
 
-func (me *goalRenderer) renderHomePage(lang language.Tag, webPath string, langPath string) string {
+func (me *webHtmlGoals) renderHomePage(lang language.Tag, webPath string, langPath string) string {
 	var goalRecords = me.db.getGoals()
 	var data = page_data.GoalList{Base: me.getBaseTemplate(webPath, langPath)}
 	for _, goalRecord := range goalRecords {
@@ -35,7 +35,7 @@ func (me *goalRenderer) renderHomePage(lang language.Tag, webPath string, langPa
 	})
 }
 
-func (me *goalRenderer) renderGoalPage(lang language.Tag, webPath string, langPath string, goalId int64) string {
+func (me *webHtmlGoals) renderGoalPage(lang language.Tag, webPath string, langPath string, goalId int64) string {
 	var goalRecord = me.db.getGoal(goalId)
 	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
 
@@ -65,7 +65,7 @@ func (me *goalRenderer) renderGoalPage(lang language.Tag, webPath string, langPa
 	})
 }
 
-func (me *goalRenderer) renderGoalPostPage(lang language.Tag, webPath string, langPath string, goalId int64, dateTime time.Time) string {
+func (me *webHtmlGoals) renderGoalPostPage(lang language.Tag, webPath string, langPath string, goalId int64, dateTime time.Time) string {
 	var goalRecord = me.db.getGoal(goalId)
 	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
 
@@ -112,7 +112,7 @@ func (me *goalRenderer) renderGoalPostPage(lang language.Tag, webPath string, la
 	})
 }
 
-func (me *goalRenderer) wrapTemplatePage(webPath string, langPath string, content page_data.Content) string {
+func (me *webHtmlGoals) wrapTemplatePage(webPath string, langPath string, content page_data.Content) string {
 	if content.Description == "" {
 		content.Description = content.Title
 	}
@@ -126,7 +126,7 @@ func (me *goalRenderer) wrapTemplatePage(webPath string, langPath string, conten
 	return executeTemplateFile("pages/html/templates/template.html", pageContent)
 }
 
-func (me *goalRenderer) getBaseTemplate(webPath string, langPath string) page_data.Base {
+func (me *webHtmlGoals) getBaseTemplate(webPath string, langPath string) page_data.Base {
 	return page_data.Base{
 		Id:          me.elementId.Add(1),
 		WebPath:     webPath,

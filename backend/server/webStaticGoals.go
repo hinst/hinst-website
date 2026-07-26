@@ -15,14 +15,14 @@ type webStaticGoals struct {
 	folder   string
 	url      string
 	db       *database
-	renderer *goalRenderer
+	renderer *webHtmlGoals
 }
 
 func (me *webStaticGoals) init(url string, db *database, folder string) {
 	me.url = url
 	me.db = db
 	me.folder = folder
-	me.renderer = new(goalRenderer)
+	me.renderer = new(webHtmlGoals)
 	me.renderer.db = db
 }
 
