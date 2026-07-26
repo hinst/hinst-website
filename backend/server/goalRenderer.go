@@ -16,7 +16,8 @@ type goalRenderer struct {
 	elementId atomic.Int64
 }
 
-func (me *goalRenderer) renderHomePage(lang language.Tag, webPath string, staticPath string) string {
+func (me *goalRenderer) renderHomePage(lang language.Tag, staticPath string) string {
+	var webPath = me.webPath(lang)
 	var goalRecords = me.db.getGoals()
 	var data = page_data.GoalList{Base: me.getBaseTemplate(webPath, staticPath)}
 	for _, goalRecord := range goalRecords {
@@ -35,7 +36,8 @@ func (me *goalRenderer) renderHomePage(lang language.Tag, webPath string, static
 	})
 }
 
-func (me *goalRenderer) renderGoalPage(lang language.Tag, webPath string, staticPath string, goalId int64) string {
+func (me *goalRenderer) renderGoalPage(lang language.Tag, staticPath string, goalId int64) string {
+	var webPath = me.webPath(lang)
 	var goalRecord = me.db.getGoal(goalId)
 	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
 
@@ -65,7 +67,8 @@ func (me *goalRenderer) renderGoalPage(lang language.Tag, webPath string, static
 	})
 }
 
-func (me *goalRenderer) renderGoalPostPage(lang language.Tag, webPath string, staticPath string, goalId int64, dateTime time.Time) string {
+func (me *goalRenderer) renderGoalPostPage(lang language.Tag, staticPath string, goalId int64, dateTime time.Time) string {
+	var webPath = me.webPath(lang)
 	var goalRecord = me.db.getGoal(goalId)
 	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
 
@@ -124,6 +127,13 @@ func (me *goalRenderer) wrapTemplatePage(webPath string, staticPath string, cont
 	pageContent.Base = me.getBaseTemplate(webPath, staticPath)
 	pageContent.Header = template.HTML(htmlHeader)
 	return executeTemplateFile("pages/html/templates/template.html", pageContent)
+}
+
+func (me *goalRenderer) webPath(tag language.Tag) string {
+	if tag == language.English {
+		return ""
+	}
+	return "/" + tag.String()
 }
 
 func (me *goalRenderer) getBaseTemplate(webPath string, staticPath string) page_data.Base {
