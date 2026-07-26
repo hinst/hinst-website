@@ -15,7 +15,7 @@
 {{end}}
 <!---->
 {{define "favicon-link"}}
-<a href="{{if .WebPath}}{{.WebPath}}{{else}}/{{end}}">
+<a href="{{.WebPath}}{{.LangPath}}">
 	<img
 		src="{{.WebPath}}/static/images/favicon.png"
 		width="42"
@@ -67,14 +67,11 @@
 					width: 160px;
 				"
 			>
-				<a
-					class="ms-btn ms-outline"
-					href="{{if .WebPath}}{{.WebPath}}{{else}}/{{end}}"
-				>
+				<a class="ms-btn ms-outline" href="{{if .WebPath}}{{.WebPath}}{{else}}/{{end}}">
 					English
 				</a>
-				<a class="ms-btn ms-outline" href="{{.WebPath}}{{.LangPath}}/de"> German </a>
-				<a class="ms-btn ms-outline" href="{{.WebPath}}{{.LangPath}}/ru"> Russian </a>
+				<a class="ms-btn ms-outline" href="{{.WebPath}}/de"> German </a>
+				<a class="ms-btn ms-outline" href="{{.WebPath}}/ru"> Russian </a>
 			</div>
 		</div>
 	</div>
