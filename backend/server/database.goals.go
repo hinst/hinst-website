@@ -18,7 +18,7 @@ func (me *database) setGoalPostPublic(row db_objects.GoalPostRow) int64 {
 	return result.RowsAffected()
 }
 
-func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text *string) int64 {
+func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) int64 {
 	var textField = "text" + db_objects.GetLanguagePostfix(supportedLanguage)
 	var queryText = "UPDATE goalPosts SET " + textField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()
@@ -156,9 +156,5 @@ func (me *database) searchGoalPosts(
 }
 
 func (me *database) migrate() {
-	var query = `
-		UPDATE goalPosts SET textEnglish = NULL, titleEnglish = NULL WHERE textEnglish = '';
-		UPDATE goalPosts SET textGerman = NULL, titleGerman = NULL WHERE textGerman = '';
-	`
-	gophers.AssertResultError(me.pool.Exec(context.Background(), query))
+	// No-op: previously migrated empty strings to NULL; now columns use NOT NULL DEFAULT ''. Nothing left to do.
 }

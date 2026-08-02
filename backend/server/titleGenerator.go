@@ -34,18 +34,18 @@ func (me *titleGenerator) run() {
 	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
 		totalCount++
 		var isUpdated = false
-		if row.Title == nil {
+		if row.Title == "" {
 			var title = me.summarizeText(row.Text, base.SupportedLanguages[0])
 			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.Russian, title)
 			isUpdated = true
 		}
-		if row.TitleEnglish == nil && row.TextEnglish != nil {
-			var title = me.summarizeText(*row.TextEnglish, language.English)
+		if row.TitleEnglish == "" && row.TextEnglish != "" {
+			var title = me.summarizeText(row.TextEnglish, language.English)
 			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.English, title)
 			isUpdated = true
 		}
-		if row.TitleGerman == nil && row.TextGerman != nil {
-			var title = me.summarizeText(*row.TextGerman, language.German)
+		if row.TitleGerman == "" && row.TextGerman != "" {
+			var title = me.summarizeText(row.TextGerman, language.German)
 			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.German, title)
 			isUpdated = true
 		}

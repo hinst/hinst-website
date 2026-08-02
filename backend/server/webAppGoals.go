@@ -121,7 +121,7 @@ func (me *webAppGoals) setGoalPostText(response http.ResponseWriter, request *ht
 	var languageTagText = request.URL.Query().Get("languageTag")
 	var languageTag = gophers.AssertResultError(language.Parse(languageTagText))
 	var text = string(gophers.AssertResultError(io.ReadAll(request.Body)))
-	me.db.setGoalPostText(goalId, postDateTime, languageTag, &text)
+	me.db.setGoalPostText(goalId, postDateTime, languageTag, text)
 }
 
 func (me *webAppGoals) setGoalTitleText(response http.ResponseWriter, request *http.Request) {
@@ -145,8 +145,7 @@ func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *ht
 		record.GoalId = row.GoalId
 		record.DateTime = row.GetDateTime().UTC().Unix()
 		record.Type = row.TypeString
-		var title = row.GetTranslatedTitle(requestedLanguage)
-		record.Title = &title
+		record.Title = row.GetTranslatedTitle(requestedLanguage)
 		records = append(records, record)
 	}
 	writeJsonResponse(response, records)

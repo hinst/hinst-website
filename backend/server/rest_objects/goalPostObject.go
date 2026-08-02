@@ -21,5 +21,5 @@ type GoalPostHeader struct {
 	IsPublic bool  `json:"isPublic"`
 	// "post" or "comment"
 	Type  string  `json:"type"`
-	Title *string `json:"title"`
+	Title string `json:"title"`
 }

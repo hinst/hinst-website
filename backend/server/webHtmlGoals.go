@@ -45,11 +45,11 @@ func (me *webHtmlGoals) renderGoalPage(lang language.Tag, goalId int64) string {
 
 	var goalPosts []page_data.GoalPostItem
 	for _, post := range goalPostRecords {
-		if post.Title == nil {
+		if post.Title == "" {
 			continue
 		}
 		var item page_data.GoalPostItem
-		item.Title = *post.Title
+		item.Title = post.Title
 		item.DateTime = post.DateTime
 		item.Day = time.Unix(post.DateTime, 0).UTC().Day()
 		goalPosts = append(goalPosts, item)

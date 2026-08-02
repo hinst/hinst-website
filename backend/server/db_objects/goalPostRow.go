@@ -18,14 +18,14 @@ type GoalPostRow struct {
 	IsPublic bool
 
 	Text        string
-	TextEnglish *string
-	TextGerman  *string
+	TextEnglish string
+	TextGerman  string
 
 	TypeString string
 
-	Title        *string
-	TitleEnglish *string
-	TitleGerman  *string
+	Title        string
+	TitleEnglish string
+	TitleGerman  string
 }
 
 func (me *GoalPostRow) Scan(rows pgx.Rows) {
@@ -108,14 +108,14 @@ func (me *GoalPostRow) String() string {
 func (me *GoalPostRow) GetTranslatedText(languageTag language.Tag) string {
 	switch languageTag {
 	case language.English:
-		if me.TextEnglish != nil {
-			return *me.TextEnglish
+		if me.TextEnglish != "" {
+			return me.TextEnglish
 		} else {
 			return ""
 		}
 	case language.German:
-		if me.TextGerman != nil {
-			return *me.TextGerman
+		if me.TextGerman != "" {
+			return me.TextGerman
 		} else {
 			return ""
 		}
@@ -127,20 +127,20 @@ func (me *GoalPostRow) GetTranslatedText(languageTag language.Tag) string {
 func (me *GoalPostRow) GetTranslatedTitle(languageTag language.Tag) string {
 	switch languageTag {
 	case language.English:
-		if me.TitleEnglish != nil {
-			return *me.TitleEnglish
+		if me.TitleEnglish != "" {
+			return me.TitleEnglish
 		} else {
 			return ""
 		}
 	case language.German:
-		if me.TitleGerman != nil {
-			return *me.TitleGerman
+		if me.TitleGerman != "" {
+			return me.TitleGerman
 		} else {
 			return ""
 		}
 	default:
-		if me.Title != nil {
-			return *me.Title
+		if me.Title != "" {
+			return me.Title
 		} else {
 			return ""
 		}

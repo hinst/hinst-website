@@ -15,12 +15,12 @@ CREATE TABLE IF NOT EXISTS goalPosts (
 	dateTime BIGINT NOT NULL, /* Unix seconds UTC */
 	isPublic BOOLEAN NOT NULL DEFAULT FALSE,
 	text TEXT NOT NULL,  /* HTML */
-	textEnglish TEXT,  /* HTML */
-	textGerman TEXT,  /* HTML */
+	textEnglish TEXT NOT NULL DEFAULT '',  /* HTML */
+	textGerman TEXT NOT NULL DEFAULT '',  /* HTML */
 	type TEXT NOT NULL,
-	title TEXT,
-	titleEnglish TEXT,
-	titleGerman TEXT,
+	title TEXT NOT NULL DEFAULT '',
+	titleEnglish TEXT NOT NULL DEFAULT '',
+	titleGerman TEXT NOT NULL DEFAULT '',
 	PRIMARY KEY (goalId, dateTime)
 );
 
