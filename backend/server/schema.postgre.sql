@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS goalPosts (
 	goalId BIGINT NOT NULL,
 	dateTime BIGINT NOT NULL, /* Unix seconds UTC */
 	isPublic BOOLEAN NOT NULL DEFAULT FALSE,
+	searchIndexingEnabled BOOLEAN NOT NULL DEFAULT FALSE,
 	text TEXT NOT NULL,  /* HTML */
 	textEnglish TEXT NOT NULL DEFAULT '',  /* HTML */
 	textGerman TEXT NOT NULL DEFAULT '',  /* HTML */

@@ -14,12 +14,12 @@ import (
 type GoalPostRow struct {
 	GoalId int64
 	/* Unix seconds UTC */
-	DateTime int64
-	IsPublic bool
-
-	Text        string
-	TextEnglish string
-	TextGerman  string
+	DateTime              int64
+	IsPublic              bool
+	SearchIndexingEnabled bool
+	Text                  string
+	TextEnglish           string
+	TextGerman            string
 
 	TypeString string
 
@@ -33,6 +33,7 @@ func (me *GoalPostRow) Scan(rows pgx.Rows) {
 		&me.GoalId,
 		&me.DateTime,
 		&me.IsPublic,
+		&me.SearchIndexingEnabled,
 		&me.Text,
 		&me.TextEnglish,
 		&me.TextGerman,
@@ -48,6 +49,7 @@ func (GoalPostRow) getAllFields() []string {
 		"goalId",
 		"dateTime",
 		"isPublic",
+		"searchIndexingEnabled",
 		"text",
 		"textEnglish",
 		"textGerman",
