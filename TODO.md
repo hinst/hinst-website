@@ -1,7 +1,7 @@
 1. Use Search Engine Indexing only for certain pages, instead of all pages
 	1. Administrator should be able to mark pages as enabled for search indexing in the admin UI
-1. Complete null migration for columns: textEnglish, textGerman, title, titleEnglish, titleGerman
-	1. Should be NOT NULL
+1. ~~Complete null migration for columns: textEnglish, textGerman, title, titleEnglish, titleGerman~~
+	1. ~~Should be NOT NULL~~
 1. Infrastructure
 	1. Versioned incremental backups: store backups in Git repository and see what has changed
 1. Move Smart Progress importer into backend using Go programming language
