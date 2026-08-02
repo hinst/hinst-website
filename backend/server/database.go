@@ -19,6 +19,7 @@ type database struct {
 }
 
 func (me *database) init() {
+	// POSTGRES_URL should have ?sslmode=disable
 	var config = gophers.AssertResultError(pgxpool.ParseConfig(gophers.RequireEnvVar("POSTGRES_URL")))
 	config.MaxConns = gophers.GetInt32FromString(gophers.ReadEnvVar("POSTGRES_MAX_CONNS", "2"))
 	me.tracer = (&ConnectionPoolTracer{timeout: 1 * time.Minute}).init()
