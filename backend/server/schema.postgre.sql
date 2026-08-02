@@ -50,3 +50,14 @@ CREATE TABLE IF NOT EXISTS urlPings (
 	googlePingedManuallyAt BIGINT, /* Unix seconds UTC */
 	PRIMARY KEY (url)
 );
+
+-- Migration: add searchIndexingEnabled column to goalPosts if missing
+DO $$ BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'goalPosts'
+          AND column_name = 'searchIndexingEnabled'
+    ) THEN
+        ALTER TABLE goalPosts ADD COLUMN searchIndexingEnabled BOOLEAN NOT NULL DEFAULT FALSE;
+    END IF;
+END $$;
