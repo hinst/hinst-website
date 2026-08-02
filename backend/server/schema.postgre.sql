@@ -49,19 +49,3 @@ CREATE TABLE IF NOT EXISTS urlPings (
 	googlePingedManuallyAt BIGINT, /* Unix seconds UTC */
 	PRIMARY KEY (url)
 );
-
--- Migrate goalPosts: empty strings replace NULL for translated fields.
-UPDATE goalPosts SET textEnglish = '' WHERE textEnglish IS NULL;
-ALTER TABLE goalPosts ALTER COLUMN textEnglish SET NOT NULL, ALTER COLUMN textEnglish SET DEFAULT '';
-
-UPDATE goalPosts SET textGerman = '' WHERE textGerman IS NULL;
-ALTER TABLE goalPosts ALTER COLUMN textGerman SET NOT NULL, ALTER COLUMN textGerman SET DEFAULT '';
-
-UPDATE goalPosts SET title = '' WHERE title IS NULL;
-ALTER TABLE goalPosts ALTER COLUMN title SET NOT NULL, ALTER COLUMN title SET DEFAULT '';
-
-UPDATE goalPosts SET titleEnglish = '' WHERE titleEnglish IS NULL;
-ALTER TABLE goalPosts ALTER COLUMN titleEnglish SET NOT NULL, ALTER COLUMN titleEnglish SET DEFAULT '';
-
-UPDATE goalPosts SET titleGerman = '' WHERE titleGerman IS NULL;
-ALTER TABLE goalPosts ALTER COLUMN titleGerman SET NOT NULL, ALTER COLUMN titleGerman SET DEFAULT '';
