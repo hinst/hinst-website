@@ -1,3 +1,10 @@
+1. Use Search Engine Indexing only for certain pages, instead of all pages
+	1. Administrator should be able to mark pages as enabled for search indexing in the admin UI
+1. Complete null migration for columns: textEnglish, textGerman, title, titleEnglish, titleGerman
+	1. Should be NOT NULL
+1. Infrastructure
+	1. Versioned incremental backups: store backups in Git repository and see what has changed
+1. Enable simple authentication for Docker registry
 1. Move Smart Progress importer into backend using Go programming language
 	1. Afterwards, deprecate Smart Progress importer: keep as archived repository, no longer used
 	1. This change should reduce maintenance effort because maintaining one repository should be easier than maintaining two separate programs
