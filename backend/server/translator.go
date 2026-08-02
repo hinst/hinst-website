@@ -28,11 +28,11 @@ func (me *translator) run() {
 	var translatedCount = 0
 	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
 		var isDone = false
-		if row.TextEnglish == "" {
+		if row.TextEnglish == "" && row.Text != "" {
 			me.translate(row, language.English)
 			isDone = true
 		}
-		if row.TextGerman == "" {
+		if row.TextGerman == "" && row.Text != "" {
 			me.translate(row, language.German)
 			isDone = true
 		}
