@@ -29,5 +29,6 @@ export interface GoalPostObject {
 	languageName?: string;
 	languageTag: string;
 	isPublic: boolean;
+	searchIndexingEnabled: boolean;
 	imageCount: number;
 }

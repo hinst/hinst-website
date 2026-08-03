@@ -49,6 +49,22 @@ class ApiClient {
 		return await this.fetch(url);
 	}
 
+	async goalPostSetSearchIndexingEnabled(
+		goalId: number,
+		postDateTime: number,
+		enabled: boolean
+	): Promise<Response> {
+		const url =
+			'/goalPost/setSearchIndexingEnabled' +
+			'?goalId=' +
+			encodeURIComponent(goalId) +
+			'&postDateTime=' +
+			encodeURIComponent(postDateTime) +
+			'&enabled=' +
+			encodeURIComponent('' + enabled);
+		return await this.fetch(url);
+	}
+
 	async getGoalPost(goalId: number, postDateTime: number): Promise<GoalPostObject> {
 		const url =
 			'/goalPost' +

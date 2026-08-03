@@ -28,6 +28,24 @@ export default function GoalPostManagementPanel(props: {
 		}
 	}
 
+	async function setSearchIndexingEnabled(enabled: boolean) {
+		if (isLoading) return;
+		setIsLoading(true);
+		try {
+			const response = await apiClient.goalPostSetSearchIndexingEnabled(
+				props.postData.goalId,
+				props.postData.dateTime,
+				enabled
+			);
+			if (!response.ok)
+				throw new Error('Cannot update search indexing. Status: ' + response.statusText);
+			props.setPostData({ ...props.postData, searchIndexingEnabled: enabled });
+			props.onChange();
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
 	const [content, setContent] = useState<GoalPostObject | undefined>(undefined);
 
 	async function loadContent() {
@@ -67,13 +85,14 @@ export default function GoalPostManagementPanel(props: {
 			style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
 			className='ms-alert ms-light'
 		>
-			<div
-				style={{
-					display: 'flex',
-					gap: 10,
-					alignItems: 'center'
-				}}
-			>
+			<input
+				disabled={isLoading}
+				type='checkbox'
+				checked={props.postData?.searchIndexingEnabled}
+				onChange={() => setSearchIndexingEnabled(!props.postData?.searchIndexingEnabled)}
+			/>
+			search indexing
+			<div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
 				<Tool />
 				<input
 					disabled={isLoading}
