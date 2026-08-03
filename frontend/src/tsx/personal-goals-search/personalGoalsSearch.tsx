@@ -44,7 +44,7 @@ export function PersonalGoalsSearch() {
 			</div>
 			<div>
 				Results: {items.length}
-				{items.length === SERVER_SIDE_LIMIT ? '...' : ''}
+				{items.length === SERVER_SIDE_LIMIT ? '+' : ''}
 			</div>
 			<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
 				{items.map((item, index) => (
