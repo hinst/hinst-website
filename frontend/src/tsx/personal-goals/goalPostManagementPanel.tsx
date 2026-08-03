@@ -82,16 +82,9 @@ export default function GoalPostManagementPanel(props: {
 
 	return (
 		<div
-			style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
+			style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: 10 }}
 			className='ms-alert ms-light'
 		>
-			<input
-				disabled={isLoading}
-				type='checkbox'
-				checked={props.postData?.searchIndexingEnabled}
-				onChange={() => setSearchIndexingEnabled(!props.postData?.searchIndexingEnabled)}
-			/>
-			search indexing
 			<div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
 				<Tool />
 				<input
@@ -101,6 +94,16 @@ export default function GoalPostManagementPanel(props: {
 					onChange={() => setPublic(!props.postData?.isPublic)}
 				/>
 				public
+				<span>|</span>
+				<input
+					disabled={isLoading}
+					type='checkbox'
+					checked={props.postData?.searchIndexingEnabled}
+					onChange={() =>
+						setSearchIndexingEnabled(!props.postData?.searchIndexingEnabled)
+					}
+				/>
+				search indexing
 			</div>
 			<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
 				<div style={{ display: 'flex', gap: 10 }}>
