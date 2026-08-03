@@ -80,25 +80,17 @@ func (GoalPostRow) getFieldsForLanguage(desiredLanguage language.Tag) (fields []
 	return fields
 }
 
-// GetAllFieldSelector returns all field names joined with commas for use in SELECT queries.
-// This avoids column-order mismatches between the Go struct and the actual database schema.
 func (GoalPostRow) GetAllFieldSelector() string {
 	return strings.Join(GoalPostRow{}.getAllFields(), ",")
 }
 
-// GetSelectorForLanguage returns a comma-separated list of fields for SELECT,
-// replacing non-matching language-specific columns with '' or NULL.
 func (GoalPostRow) GetSelectorForLanguage(supportedLanguage language.Tag) string {
 	var requiredFields = GoalPostRow{}.getFieldsForLanguage(supportedLanguage)
 	var fields = GoalPostRow{}.getAllFields()
 	for index, field := range fields {
 		var isIncluded = slices.Contains(requiredFields, field)
 		if !isIncluded {
-			if field == "text" || field == "title" {
-				fields[index] = "''"
-			} else {
-				fields[index] = "NULL"
-			}
+			fields[index] = "''"
 		}
 	}
 	return strings.Join(fields, ",")
