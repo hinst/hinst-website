@@ -5,21 +5,23 @@ type GoalPostObject struct {
 	// Unix epoch seconds
 	DateTime int64 `json:"dateTime"`
 	// HTML
-	Text                 string `json:"text"`
-	IsAutoTranslated     bool   `json:"isAutoTranslated"`
-	IsTranslationPending bool   `json:"isTranslationPending"`
-	LanguageName         string `json:"languageName"`
-	LanguageTag          string `json:"languageTag"`
-	IsPublic             bool   `json:"isPublic"`
-	ImageCount           int    `json:"imageCount"`
+	Text                  string `json:"text"`
+	IsAutoTranslated      bool   `json:"isAutoTranslated"`
+	IsTranslationPending  bool   `json:"isTranslationPending"`
+	LanguageName          string `json:"languageName"`
+	LanguageTag           string `json:"languageTag"`
+	IsPublic              bool   `json:"isPublic"`
+	SearchIndexingEnabled bool   `json:"searchIndexingEnabled"`
+	ImageCount            int    `json:"imageCount"`
 }
 
 type GoalPostHeader struct {
 	GoalId int64 `json:"goalId"`
 	// Unix epoch time seconds
-	DateTime int64 `json:"dateTime"`
-	IsPublic bool  `json:"isPublic"`
+	DateTime              int64 `json:"dateTime"`
+	IsPublic              bool  `json:"isPublic"`
+	SearchIndexingEnabled bool  `json:"searchIndexingEnabled"`
 	// "post" or "comment"
-	Type  string  `json:"type"`
+	Type  string `json:"type"`
 	Title string `json:"title"`
 }

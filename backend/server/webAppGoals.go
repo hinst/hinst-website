@@ -26,6 +26,7 @@ func (me *webAppGoals) init(db *database) []namedWebFunction {
 		{"/api/goalPost", me.getGoalPost},
 		{"/api/goalPost/image", me.getGoalPostImage},
 		{"/api/goalPost/setPublic", me.guardAdminFunction(me.setGoalPostPublic)},
+		{"/api/goalPost/setSearchIndexingEnabled", me.guardAdminFunction(me.setGoalPostSearchIndexingEnabled)},
 		{"/api/goalPost/setText", me.guardAdminFunction(me.setGoalPostText)},
 		{"/api/goalPost/setTitle", me.guardAdminFunction(me.setGoalTitleText)},
 		{"/api/goalPosts/search", me.searchGoalPosts},
@@ -90,6 +91,7 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 		}
 	}
 	goalPostObject.IsPublic = goalPostRow.IsPublic
+	goalPostObject.SearchIndexingEnabled = goalPostRow.SearchIndexingEnabled
 	goalPostObject.ImageCount = me.db.getGoalPostImageCount(goalId, postDateTime)
 	writeJsonResponse(response, goalPostObject)
 }
@@ -113,6 +115,14 @@ func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *
 	var isPublic = request.URL.Query().Get("isPublic") == "true"
 	var row = db_objects.GoalPostRow{GoalId: goalId, DateTime: postDateTime.UTC().Unix(), IsPublic: isPublic}
 	me.db.setGoalPostPublic(row)
+}
+
+func (me *webAppGoals) setGoalPostSearchIndexingEnabled(response http.ResponseWriter, request *http.Request) {
+	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
+	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
+	var enabled = request.URL.Query().Get("enabled") == "true"
+	var row = db_objects.GoalPostRow{GoalId: goalId, DateTime: postDateTime.UTC().Unix(), SearchIndexingEnabled: enabled}
+	me.db.setGoalPostSearchIndexingEnabled(row)
 }
 
 func (me *webAppGoals) setGoalPostText(response http.ResponseWriter, request *http.Request) {
@@ -144,6 +154,8 @@ func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *ht
 		var record rest_objects.GoalPostHeader
 		record.GoalId = row.GoalId
 		record.DateTime = row.GetDateTime().UTC().Unix()
+		record.IsPublic = row.IsPublic
+		record.SearchIndexingEnabled = row.SearchIndexingEnabled
 		record.Type = row.TypeString
 		record.Title = row.GetTranslatedTitle(requestedLanguage)
 		records = append(records, record)

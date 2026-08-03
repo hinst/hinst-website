@@ -18,6 +18,13 @@ func (me *database) setGoalPostPublic(row db_objects.GoalPostRow) int64 {
 	return result.RowsAffected()
 }
 
+func (me *database) setGoalPostSearchIndexingEnabled(row db_objects.GoalPostRow) int64 {
+	var query = "UPDATE goalPosts SET searchIndexingEnabled = $1 WHERE goalId = $2 AND dateTime = $3"
+	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query,
+		row.SearchIndexingEnabled, row.GoalId, row.GetDateTime().UTC().Unix()))
+	return result.RowsAffected()
+}
+
 func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) int64 {
 	var textField = "text" + db_objects.GetLanguagePostfix(supportedLanguage)
 	var queryText = "UPDATE goalPosts SET " + textField + " = $1 WHERE goalId = $2 AND dateTime = $3"
@@ -117,7 +124,7 @@ func (me *database) getGoalPostImageCount(goalId int64, dateTime time.Time) (cou
 
 func (me *database) getGoalPosts(goalId int64, includePrivate bool, language language.Tag) (results []rest_objects.GoalPostHeader) {
 	var titleField = "title" + db_objects.GetLanguagePostfix(language)
-	var queryText = "SELECT goalId, dateTime, isPublic, type, " + titleField + " FROM goalPosts WHERE goalId = $1"
+	var queryText = "SELECT goalId, dateTime, isPublic, searchIndexingEnabled, type, " + titleField + " FROM goalPosts WHERE goalId = $1"
 	if !includePrivate {
 		queryText += " AND isPublic = TRUE"
 	}
@@ -126,7 +133,7 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 	defer rows.Close()
 	for rows.Next() {
 		var record rest_objects.GoalPostHeader
-		gophers.AssertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.Type, &record.Title))
+		gophers.AssertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.SearchIndexingEnabled, &record.Type, &record.Title))
 		results = append(results, record)
 	}
 	return
