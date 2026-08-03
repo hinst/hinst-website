@@ -93,7 +93,8 @@ func (me *database) getGoalImage(goalId int64) (imageData []byte, imageContentTy
 }
 
 func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_objects.GoalPostRow) {
-	var queryText = "SELECT * FROM goalPosts WHERE goalId = $1 AND dateTime = $2"
+	var fields = db_objects.GoalPostRow{}.GetAllFieldSelector()
+	var queryText = "SELECT " + fields + " FROM goalPosts WHERE goalId = $1 AND dateTime = $2"
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix()))
 	defer rows.Close()
 	if rows.Next() {
