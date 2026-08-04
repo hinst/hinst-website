@@ -1,30 +1,17 @@
-2026/08/03 18:05:56 Error in web function: can't scan into dest[5]: cannot scan NULL into *string
-goroutine 87 [running]:
-runtime/debug.Stack()
-        C:/Program Files/Go/src/runtime/debug/stack.go:26 +0x5e
-github.com/hinst/hinst-website/server.(*webApp).addFunctions.(*webApp).wrap.func2.1()
-        C:/Dev/hinst-website/backend/server/webApp.go:56 +0xcc
-panic({0x7ff7342e8460?, 0x30e70cca6750?})
-        C:/Program Files/Go/src/runtime/panic.go:860 +0x13a
+goroutine 1 [running]:
 github.com/hinst/go-gophers.AssertError(...)
-        C:/Users/hinst/go/pkg/mod/github.com/hinst/go-gophers@v0.1.23/assert.go:6
-github.com/hinst/hinst-website/server/db_objects.(*GoalPostRow).Scan(0x30e70d0162d0, {0x7ff734531620, 0x30e70cf70fd8})
-        C:/Dev/hinst-website/backend/server/db_objects/goalPostRow.go:32 +0x15d
-github.com/hinst/hinst-website/server.(*database).forEachGoalPost(0x30e70cec3a70, 0x30e70d01d8c8, {0x30e70d224d80?, 0x0?}, 0xffffffffffffffff)
-        C:/Dev/hinst-website/backend/server/database.goals.go:53 +0x159
-github.com/hinst/hinst-website/server.(*database).searchGoalPosts(0x30e70cec3a70, {0x30e70ce66e2e?, 0x30e70d01d958?}, {0x74c5?, 0x33bc?, {0x0?, 0x0?}}, 0x1, 0x64)
-        C:/Dev/hinst-website/backend/server/database.goals.go:148 +0x1da
-github.com/hinst/hinst-website/server.(*webAppGoals).searchGoalPosts(0x30e70cd831f8, {0x7ff734527880, 0x30e70d1121e0}, 0x30e70ce6a280)
-        C:/Dev/hinst-website/backend/server/webAppGoals.go:151 +0xe8
-github.com/hinst/hinst-website/server.(*webApp).addFunctions.(*webApp).wrap.func2({0x7ff734527880, 0x30e70d1121e0}, 0x30e70ce6a280)
-        C:/Dev/hinst-website/backend/server/webApp.go:60 +0xad
-net/http.HandlerFunc.ServeHTTP(0x7ff734b92f40?, {0x7ff734527880?, 0x30e70d1121e0?}, 0x7ff73409dfd6?)
-        C:/Program Files/Go/src/net/http/server.go:2286 +0x29
-net/http.(*ServeMux).ServeHTTP(0x7ff733c41339?, {0x7ff734527880, 0x30e70d1121e0}, 0x30e70ce6a280)
-        C:/Program Files/Go/src/net/http/server.go:2828 +0x1c7
-net/http.serverHandler.ServeHTTP({0x30e70d088600?}, {0x7ff734527880?, 0x30e70d1121e0?}, 0x6?)
-        C:/Program Files/Go/src/net/http/server.go:3311 +0x8e
-net/http.(*conn).serve(0x30e70d016360, {0x7ff734528db0, 0x30e70cfc72c0})
-        C:/Program Files/Go/src/net/http/server.go:2073 +0x650
-created by net/http.(*Server).Serve in goroutine 30
-        C:/Program Files/Go/src/net/http/server.go:3464 +0x485
+	/go/pkg/mod/github.com/hinst/go-gophers@v0.1.23/assert.go:6
+github.com/hinst/hinst-website/server/db_objects.(*GoalPostRow).Scan(0x3094052f8000, {0x8ccd80, 0x3094053bf460})
+	/app/server/db_objects/goalPostRow.go:32 +0x108
+github.com/hinst/hinst-website/server.(*database).forEachGoalPost(0x30940518d770, 0x309405345d08, {0x8b9298?, 0x2d?}, 0x0)
+	/app/server/database.goals.go:53 +0x148
+github.com/hinst/hinst-website/server.(*translator).run(0xf28980?)
+	/app/server/translator.go:29 +0x58
+github.com/hinst/hinst-website/server.(*program).updateTranslations(0x309405345eb0?)
+	/app/server/program.go:77 +0x58
+github.com/hinst/hinst-website/server.(*program).update(0x309405345eb0)
+	/app/server/program.go:65 +0x2c
+github.com/hinst/hinst-website/server.Main()
+	/app/server/main.go:30 +0x308
+main.main()
+	/app/main.go:8 +0x1c
