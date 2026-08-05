@@ -8,3 +8,5 @@ type GoalPostImageRow struct {
 	ContentType string
 	File        []byte
 }
+
+var _ = registerDbObject(GoalPostImageRow{})

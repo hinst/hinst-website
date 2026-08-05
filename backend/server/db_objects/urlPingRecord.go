@@ -11,6 +11,8 @@ type UrlPingRecord struct {
 	GooglePingedManuallyAt *int64 `json:"googlePingedManuallyAt"` // Unix seconds UTC
 }
 
+var _ = registerDbObject(UrlPingRecord{})
+
 func (UrlPingRecord) GetTableName() string {
 	return "urlPings"
 }

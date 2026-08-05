@@ -15,6 +15,8 @@ type GoalRow struct {
 	ImageContentType string
 }
 
+var _ = registerDbObject(GoalRow{})
+
 func (GoalRow) GetTableName() string {
 	return "goals"
 }
