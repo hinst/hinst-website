@@ -21,6 +21,10 @@ func (GoalRow) GetTableName() string {
 	return "goals"
 }
 
+func (GoalRow) SaveToDirectory(directory string) {
+	//TODO
+}
+
 func (me *GoalRow) Scan(rows pgx.Rows) {
 	gophers.AssertError(rows.Scan(&me.Id, &me.Title, &me.TitleEnglish, &me.TitleGerman,
 		&me.ImageData, &me.ImageContentType))

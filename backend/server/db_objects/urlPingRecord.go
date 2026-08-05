@@ -17,6 +17,10 @@ func (UrlPingRecord) GetTableName() string {
 	return "urlPings"
 }
 
+func (UrlPingRecord) SaveToDirectory(directory string) {
+	//TODO
+}
+
 func (me *UrlPingRecord) Scan(rows pgx.Rows) {
 	gophers.AssertError(rows.Scan(
 		&me.Url,
