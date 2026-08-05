@@ -2,10 +2,12 @@ package server
 
 import (
 	"context"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/hinst/go-gophers"
+	"github.com/hinst/go-gophers/file_mode"
 	"github.com/hinst/hinst-website/server/db_objects"
 	"github.com/hinst/hinst-website/server/rest_objects"
 	"golang.org/x/text/language"
@@ -167,4 +169,5 @@ func (me *database) migrate() {
 }
 
 func (me *database) backup(directory string) {
+	gophers.AssertError(os.MkdirAll(directory, file_mode.OS_USER_RWX))
 }
