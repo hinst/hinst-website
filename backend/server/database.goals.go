@@ -191,6 +191,7 @@ func (me *database) backup(directory string) {
 		defer rows.Close()
 		for rows.Next() {
 			dbObject.Scan(rows)
+			dbObject.SaveToDirectory(tableDirectory)
 		}
 	}
 }
