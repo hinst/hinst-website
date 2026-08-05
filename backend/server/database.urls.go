@@ -8,22 +8,22 @@ import (
 	"github.com/hinst/hinst-website/server/db_objects"
 )
 
-func (me *database) getUrlPings() (results []db_objects.UrlPingRecord) {
+func (me *database) getUrlPings() (results []db_objects.UrlPingRow) {
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), "SELECT * FROM urlPings"))
 	defer rows.Close()
 	for rows.Next() {
-		var record db_objects.UrlPingRecord
+		var record db_objects.UrlPingRow
 		record.Scan(rows)
 		results = append(results, record)
 	}
 	return
 }
 
-func (me *database) getUrlPing(url string) *db_objects.UrlPingRecord {
+func (me *database) getUrlPing(url string) *db_objects.UrlPingRow {
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), "SELECT * FROM urlPings WHERE url = $1", url))
 	defer rows.Close()
 	if rows.Next() {
-		var record db_objects.UrlPingRecord
+		var record db_objects.UrlPingRow
 		record.Scan(rows)
 		return &record
 	}
