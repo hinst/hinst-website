@@ -182,6 +182,13 @@ func (me *database) backup(directory string) {
 	gophers.AssertError(os.MkdirAll(directory, file_mode.USER_RWX))
 	for _, dbObject := range db_objects.RegisteredDbObjects {
 		var tableName = dbObject.GetTableName()
-		_ = tableName
+		var selector = strings.Join(dbObject.GetAllColumns(), ",")
+		var queryText = "SELECT " + selector + " FROM " + tableName
+		var tableDirectory = directory + "/" + tableName
+		gophers.AssertError(os.MkdirAll(tableDirectory, file_mode.USER_RWX))
+		var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText))
+		defer rows.Close()
+		for rows.Next() {
+		}
 	}
 }
