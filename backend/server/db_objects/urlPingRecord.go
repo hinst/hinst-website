@@ -11,7 +11,7 @@ type UrlPingRecord struct {
 	GooglePingedManuallyAt *int64 `json:"googlePingedManuallyAt"` // Unix seconds UTC
 }
 
-var _ = registerDbObject(UrlPingRecord{})
+var _ = registerDbObject(new(UrlPingRecord))
 
 func (UrlPingRecord) GetAllColumns() []string {
 	return gophers.GetFieldNames[UrlPingRecord]()

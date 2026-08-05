@@ -2,6 +2,7 @@ package db_objects
 
 import (
 	"github.com/hinst/go-gophers"
+	"github.com/jackc/pgx/v5"
 )
 
 type GoalPostImageRow struct {
@@ -9,7 +10,11 @@ type GoalPostImageRow struct {
 	File        []byte
 }
 
-var _ = registerDbObject(GoalPostImageRow{})
+func (me *GoalPostImageRow) Scan(rows pgx.Rows) {
+	gophers.AssertError(rows.Scan(&me.ContentType, &me.File))
+}
+
+var _ = registerDbObject(new(GoalPostImageRow))
 
 func (GoalPostImageRow) GetTableName() string {
 	return "goalPostImages"

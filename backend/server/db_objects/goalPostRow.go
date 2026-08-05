@@ -28,7 +28,7 @@ type GoalPostRow struct {
 	TitleGerman  string
 }
 
-var _ = registerDbObject(&GoalPostRow{})
+var _ = registerDbObject(new(GoalPostRow))
 
 func (GoalPostRow) GetTableName() string {
 	return "goalPosts"
