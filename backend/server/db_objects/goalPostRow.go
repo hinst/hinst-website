@@ -63,7 +63,7 @@ func (GoalPostRow) getFieldsForLanguage(desiredLanguage language.Tag) (fields []
 				continue
 			}
 			var postfix = GetLanguagePostfix(supportedLanguage)
-			if field == "text"+postfix || field == "title"+postfix {
+			if field == "Text"+postfix || field == "Title"+postfix {
 				includeField = false
 			}
 		}
