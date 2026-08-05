@@ -99,6 +99,11 @@ func (me *program) migrate() {
 	me.database.migrate()
 }
 
+func (me *program) backup(directory string) {
+	me.database.init()
+	me.database.backup(directory)
+}
+
 func (me *program) generateStatic(folder string) {
 	me.database.init()
 	var webStatic = new(webStaticGoals)
