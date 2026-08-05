@@ -9,9 +9,9 @@ type DbObject interface {
 	Scan(rows pgx.Rows)
 }
 
-var RegisteredDbObjects []DbObject
+var DbObjects []DbObject
 
 func registerDbObject(object DbObject) int {
-	RegisteredDbObjects = append(RegisteredDbObjects, object)
-	return len(RegisteredDbObjects)
+	DbObjects = append(DbObjects, object)
+	return len(DbObjects)
 }
