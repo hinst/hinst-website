@@ -21,8 +21,9 @@ func (GoalRow) GetTableName() string {
 	return "goals"
 }
 
-func (GoalRow) SaveToDirectory(directory string) {
-	//TODO
+func (me GoalRow) SaveToDirectory(directory string) {
+	me.ImageData = nil
+	gophers.WriteJsonFile(directory+"/"+gophers.GetStringFromInt64(me.Id), me)
 }
 
 func (me *GoalRow) Scan(rows pgx.Rows) {
