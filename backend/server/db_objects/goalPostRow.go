@@ -34,8 +34,10 @@ func (GoalPostRow) GetTableName() string {
 	return "goalPosts"
 }
 
-func (GoalPostRow) SaveToDirectory(directory string) {
-	//TODO
+func (me GoalPostRow) SaveToDirectory(directory string) {
+	var dateTimeString = me.GetDateTime().UTC().Format("2006-01-02_15-04-05.000")
+	var filePath = directory + "/" + gophers.GetStringFromInt64(me.GoalId) + "_" + dateTimeString + ".json"
+	gophers.WriteJsonFile(filePath, me)
 }
 
 func (me *GoalPostRow) Scan(rows pgx.Rows) {
