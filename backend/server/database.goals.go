@@ -14,16 +14,14 @@ import (
 )
 
 func (me *database) setGoalPostPublic(row db_objects.GoalPostRow) int64 {
-	var tableName = (db_objects.GoalPostRow{}).GetTableName()
-	var query = "UPDATE " + tableName + " SET isPublic = $1 WHERE goalId = $2 AND dateTime = $3"
+	var query = "UPDATE " + row.GetTableName() + " SET isPublic = $1 WHERE goalId = $2 AND dateTime = $3"
 	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query,
 		row.IsPublic, row.GoalId, row.GetDateTime().UTC().Unix()))
 	return result.RowsAffected()
 }
 
 func (me *database) setGoalPostSearchIndexingEnabled(row db_objects.GoalPostRow) int64 {
-	var tableName = (db_objects.GoalPostRow{}).GetTableName()
-	var query = "UPDATE " + tableName + " SET searchIndexingEnabled = $1 WHERE goalId = $2 AND dateTime = $3"
+	var query = "UPDATE " + row.GetTableName() + " SET searchIndexingEnabled = $1 WHERE goalId = $2 AND dateTime = $3"
 	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query,
 		row.SearchIndexingEnabled, row.GoalId, row.GetDateTime().UTC().Unix()))
 	return result.RowsAffected()
