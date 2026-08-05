@@ -2,6 +2,7 @@ package db_objects
 
 type DbObject interface {
 	GetTableName() string
+	SaveToDirectory(directory string)
 }
 
 var RegisteredDbObjects []DbObject
