@@ -7,12 +7,12 @@ import (
 )
 
 type GoalRow struct {
-	Id               int64  `json:"id"`
-	Title            string `json:"title"`
-	TitleEnglish     string `json:"titleEnglish"`
-	TitleGerman      string `json:"titleGerman"`
+	Id               int64
+	Title            string
+	TitleEnglish     string
+	TitleGerman      string
 	ImageData        []byte
-	ImageContentType string `json:"imageContentType"`
+	ImageContentType string
 }
 
 var _ = registerDbObject(func() DbObject { return new(GoalRow) })

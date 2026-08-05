@@ -34,14 +34,21 @@ func (me *webAppGoals) init(db *database) []namedWebFunction {
 }
 
 func (me *webAppGoals) getGoals(response http.ResponseWriter, request *http.Request) {
-	var records = me.db.getGoals()
+	var rows = me.db.getGoals()
+	var records = []rest_objects.GoalObject{}
+	for _, row := range rows {
+		records = append(records, rest_objects.GoalObject{}.Read(row))
+	}
 	writeJsonResponse(response, records)
 }
 
 func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Request) {
 	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
-	var goal = me.db.getGoal(goalId)
-	writeJsonResponse(response, goal)
+	var row = me.db.getGoal(goalId)
+	if row == nil {
+		panic(webError{"Goal not found", http.StatusNotFound})
+	}
+	writeJsonResponse(response, rest_objects.GoalObject{}.Read(*row))
 }
 
 func (me *webAppGoals) getGoalImage(response http.ResponseWriter, request *http.Request) {
