@@ -14,7 +14,7 @@ type GoalRow struct {
 	TitleEnglish     string `json:"titleEnglish"`
 	TitleGerman      string `json:"titleGerman"`
 	ImageData        []byte
-	ImageContentType string
+	ImageContentType string `json:"imageContentType"`
 }
 
 var _ = registerDbObject(GoalRow{})
