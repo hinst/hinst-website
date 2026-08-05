@@ -1,11 +1,13 @@
 package db_objects
 
 import (
+	"os"
 	"slices"
 	"strings"
 	"time"
 
 	"github.com/hinst/go-gophers"
+	"github.com/hinst/go-gophers/file_mode"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/text/language"
@@ -35,9 +37,20 @@ func (GoalPostRow) GetTableName() string {
 }
 
 func (me GoalPostRow) SaveToDirectory(directory string) {
-	var dateTimeString = me.GetDateTime().UTC().Format("2006-01-02_15-04-05.000")
-	var filePath = directory + "/" + gophers.GetStringFromInt64(me.GoalId) + "_" + dateTimeString + ".json"
-	gophers.WriteJsonFile(filePath, me)
+	var dateTimeString = me.GetDateTime().UTC().Format("2006-01-02_15-04-05")
+	directory += "/" + gophers.GetStringFromInt64(me.GoalId) + "_" + dateTimeString
+	gophers.AssertError(os.MkdirAll(directory, file_mode.USER_RWX))
+
+	gophers.WriteTextFile(directory+"/Text.md", me.Text)
+	me.Text = "Text.md"
+
+	gophers.WriteTextFile(directory+"/TextEnglish.md", me.TextEnglish)
+	me.TextEnglish = "TextEnglish.md"
+
+	gophers.WriteTextFile(directory+"/TextGerman.md", me.TextGerman)
+	me.TextGerman = "TextGerman.md"
+
+	gophers.WriteJsonFile(directory+"/row.json", me)
 }
 
 func (me *GoalPostRow) Scan(rows pgx.Rows) {
