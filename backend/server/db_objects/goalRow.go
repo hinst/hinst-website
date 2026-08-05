@@ -17,7 +17,7 @@ type GoalRow struct {
 	ImageContentType string `json:"imageContentType"`
 }
 
-var _ = registerDbObject(new(GoalRow))
+var _ = registerDbObject(func() DbObject { return new(GoalRow) })
 
 func (GoalRow) GetAllColumns() []string {
 	return gophers.GetFieldNames[GoalRow]()

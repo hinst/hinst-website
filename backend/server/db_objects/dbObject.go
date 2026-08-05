@@ -9,9 +9,11 @@ type DbObject interface {
 	Scan(rows pgx.Rows)
 }
 
-var DbObjects []DbObject
+type DbObjectConstructor = func() DbObject
 
-func registerDbObject(object DbObject) int {
-	DbObjects = append(DbObjects, object)
+var DbObjects []DbObjectConstructor
+
+func registerDbObject(constructor DbObjectConstructor) int {
+	DbObjects = append(DbObjects, constructor)
 	return len(DbObjects)
 }

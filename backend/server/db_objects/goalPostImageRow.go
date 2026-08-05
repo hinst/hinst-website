@@ -14,7 +14,7 @@ func (me *GoalPostImageRow) Scan(rows pgx.Rows) {
 	gophers.AssertError(rows.Scan(&me.ContentType, &me.File))
 }
 
-var _ = registerDbObject(new(GoalPostImageRow))
+var _ = registerDbObject(func() DbObject { return new(GoalPostImageRow) })
 
 func (GoalPostImageRow) GetTableName() string {
 	return "goalPostImages"
