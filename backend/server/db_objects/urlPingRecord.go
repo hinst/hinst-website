@@ -1,6 +1,9 @@
 package db_objects
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+
 	"github.com/hinst/go-gophers"
 	"github.com/jackc/pgx/v5"
 )
@@ -21,8 +24,11 @@ func (UrlPingRecord) GetTableName() string {
 	return "urlPings"
 }
 
-func (UrlPingRecord) SaveToDirectory(directory string) {
-	//TODO
+func (me UrlPingRecord) SaveToDirectory(directory string) {
+	var hash = sha256.Sum256([]byte(me.Url))
+	var urlHash = hex.EncodeToString(hash[:])
+	var filePath = directory + "/" + urlHash + ".json"
+	gophers.WriteJsonFile(filePath, me)
 }
 
 func (me *UrlPingRecord) Scan(rows pgx.Rows) {
