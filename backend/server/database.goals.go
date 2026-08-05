@@ -180,4 +180,8 @@ func (me *database) migrate() {
 
 func (me *database) backup(directory string) {
 	gophers.AssertError(os.MkdirAll(directory, file_mode.USER_RWX))
+	for _, dbObject := range db_objects.RegisteredDbObjects {
+		var tableName = dbObject.GetTableName()
+		_ = tableName
+	}
 }
