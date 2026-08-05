@@ -6,12 +6,15 @@ import (
 )
 
 type GoalPostImageRow struct {
-	ContentType string
-	File        []byte
+	GoalId         int64
+	ParentDateTime int64
+	SequenceIndex  int64
+	ContentType    string
+	File           []byte
 }
 
 func (me *GoalPostImageRow) Scan(rows pgx.Rows) {
-	gophers.AssertError(rows.Scan(&me.ContentType, &me.File))
+	gophers.AssertError(rows.Scan(&me.GoalId, &me.ParentDateTime, &me.SequenceIndex, &me.ContentType, &me.File))
 }
 
 var _ = registerDbObject(func() DbObject { return new(GoalPostImageRow) })
