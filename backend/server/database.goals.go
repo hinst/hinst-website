@@ -165,3 +165,6 @@ func (me *database) searchGoalPosts(
 
 func (me *database) migrate() {
 }
+
+func (me *database) backup(directory string) {
+}
