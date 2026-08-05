@@ -16,7 +16,7 @@ func Main() {
 	var wwwPtr = flag.String("www", programTemplate.webFilesPath, "")
 	var allowOriginPtr = flag.String("allowOrigin", programTemplate.allowOrigin, "")
 	var translatorApiPtr = flag.String("translatorApi", programTemplate.translatorApiUrl, "")
-	var backupDirectoryPtr = flag.String("backup-directory", programTemplate.savedGoalsPath+"/backups/database-backup", "")
+	var backupDirectoryPtr = flag.String("backup-directory", programTemplate.savedGoalsPath+"/backup", "")
 	flag.Parse()
 
 	switch *modePtr {
