@@ -1,8 +1,6 @@
 package db_objects
 
 import (
-	"mime"
-
 	"github.com/hinst/go-gophers"
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/text/language"
@@ -29,7 +27,9 @@ func (GoalRow) GetTableName() string {
 
 func (me GoalRow) SaveToDirectory(directory string) {
 	var basePath = directory + "/" + gophers.GetStringFromInt64(me.Id)
-	var imagePath = basePath + gophers.AssertResultError(mime.ExtensionsByType(me.ImageContentType))[0]
+	var fileExtension = gophers.AssertResultError(
+		gophers.MimeContentType{}.GetFileExtension(me.ImageContentType))
+	var imagePath = basePath + fileExtension
 	gophers.WriteBytesFile(imagePath, me.ImageData)
 	me.ImageData = nil
 	gophers.WriteJsonFile(basePath+".json", me)

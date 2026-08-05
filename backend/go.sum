@@ -7,8 +7,8 @@ github.com/gomarkdown/markdown v0.0.0-20260614204949-e08cff860f76 h1:Ltt9ldIaSYE
 github.com/gomarkdown/markdown v0.0.0-20260614204949-e08cff860f76/go.mod h1:JDGcbDT52eL4fju3sZ4TeHGsQwhG9nbDV21aMyhwPoA=
 github.com/gorilla/css v1.0.1 h1:ntNaBIghp6JmvWnxbZKANoLyuXTPZ4cAMlo6RyhlbO8=
 github.com/gorilla/css v1.0.1/go.mod h1:BvnYkspnSzMmwRK+b8/xgNPLiIuNZr6vbZBTPQ2A3b0=
-github.com/hinst/go-gophers v0.1.24 h1:Ns9z2FVzbxpStuofrqUBDhI5j6feHjTuo0WLxd8UDxE=
-github.com/hinst/go-gophers v0.1.24/go.mod h1:+ghebKpCeLzjuAueEDwtyASZYYaH2emaY90D5Mrpp0Q=
+github.com/hinst/go-gophers v0.1.26 h1:uQbGlPxg/M4+fhzUxfGJoApoDwP/QcY09tX/3Ce4uSA=
+github.com/hinst/go-gophers v0.1.26/go.mod h1:+ghebKpCeLzjuAueEDwtyASZYYaH2emaY90D5Mrpp0Q=
 github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=
 github.com/jackc/pgpassfile v1.0.0/go.mod h1:CEx0iS5ambNFdcRtxPj5JhEz+xB6uRky5eyVu/W2HEg=
 github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 h1:iCEnooe7UlwOQYpKFhBabPMi4aNAfoODPEFNiAnClxo=
