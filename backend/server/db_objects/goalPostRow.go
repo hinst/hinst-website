@@ -54,7 +54,7 @@ func (me *GoalPostRow) Scan(rows pgx.Rows) {
 	))
 }
 
-func (GoalPostRow) getAllFields() (fields []string) {
+func (GoalPostRow) GetAllColumns() (fields []string) {
 	fields = gophers.GetFieldNames[GoalPostRow]()
 	for i := range fields {
 		if fields[i] == "TypeString" {
@@ -65,7 +65,7 @@ func (GoalPostRow) getAllFields() (fields []string) {
 }
 
 func (GoalPostRow) getFieldsForLanguage(desiredLanguage language.Tag) (fields []string) {
-	var allFields = GoalPostRow{}.getAllFields()
+	var allFields = GoalPostRow{}.GetAllColumns()
 	for _, field := range allFields {
 		var includeField = true
 		for _, supportedLanguage := range base.SupportedLanguages {
@@ -85,12 +85,12 @@ func (GoalPostRow) getFieldsForLanguage(desiredLanguage language.Tag) (fields []
 }
 
 func (GoalPostRow) GetAllFieldSelector() string {
-	return strings.Join(GoalPostRow{}.getAllFields(), ",")
+	return strings.Join(GoalPostRow{}.GetAllColumns(), ",")
 }
 
 func (GoalPostRow) GetSelectorForLanguage(supportedLanguage language.Tag) string {
 	var requiredFields = GoalPostRow{}.getFieldsForLanguage(supportedLanguage)
-	var fields = GoalPostRow{}.getAllFields()
+	var fields = GoalPostRow{}.GetAllColumns()
 	for index, field := range fields {
 		var isIncluded = slices.Contains(requiredFields, field)
 		if !isIncluded {
