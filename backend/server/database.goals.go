@@ -180,7 +180,8 @@ func (me *database) migrate() {
 
 func (me *database) backup(directory string) {
 	gophers.AssertError(os.MkdirAll(directory, file_mode.USER_RWX))
-	for _, dbObject := range db_objects.DbObjects {
+	for _, dbObjectConstructor := range db_objects.DbObjects {
+		var dbObject = dbObjectConstructor()
 		var tableName = dbObject.GetTableName()
 		var selector = strings.Join(dbObject.GetAllColumns(), ",")
 		var queryText = "SELECT " + selector + " FROM " + tableName
@@ -189,6 +190,7 @@ func (me *database) backup(directory string) {
 		var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText))
 		defer rows.Close()
 		for rows.Next() {
+			dbObject.Scan(rows)
 		}
 	}
 }
