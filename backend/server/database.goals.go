@@ -164,5 +164,4 @@ func (me *database) searchGoalPosts(
 }
 
 func (me *database) migrate() {
-	// No-op: previously migrated empty strings to NULL; now columns use NOT NULL DEFAULT ''. Nothing left to do.
 }
