@@ -179,5 +179,5 @@ func (me *database) migrate() {
 }
 
 func (me *database) backup(directory string) {
-	gophers.AssertError(os.MkdirAll(directory, file_mode.OS_USER_RWX))
+	gophers.AssertError(os.MkdirAll(directory, file_mode.USER_RWX))
 }

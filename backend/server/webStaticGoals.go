@@ -27,7 +27,7 @@ func (me *webStaticGoals) init(url string, db *database, folder string) {
 }
 
 func (me *webStaticGoals) run() {
-	gophers.AssertError(os.MkdirAll(me.folder, file_mode.OS_USER_RWX))
+	gophers.AssertError(os.MkdirAll(me.folder, file_mode.USER_RWX))
 	me.deleteOldFiles()
 	gophers.AssertError(os.CopyFS(me.folder+"/static", os.DirFS("pages/static")))
 	for _, lang := range base.SupportedLanguages {
@@ -47,14 +47,14 @@ func (me *webStaticGoals) deleteOldFiles() {
 
 func (me *webStaticGoals) generate(lang language.Tag) {
 	var path = me.folder + me.getLanguagePath(lang)
-	gophers.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
+	gophers.AssertError(os.MkdirAll(path, file_mode.USER_RWX))
 
 	var homePageText = me.renderer.renderHomePage(lang)
 	gophers.WriteTextFile(path+"/index.html", gophers.AssertResultError(formatHtml(homePageText)))
 
 	var goals = me.db.getGoals()
 	var goalsPath = path + "/personal-goals"
-	gophers.AssertError(os.MkdirAll(goalsPath, file_mode.OS_USER_RWX))
+	gophers.AssertError(os.MkdirAll(goalsPath, file_mode.USER_RWX))
 	for _, goal := range goals {
 		me.generateGoal(lang, goalsPath, goal)
 	}
@@ -69,7 +69,7 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 		gophers.AssertResultError(formatHtml(goalPageText)))
 
 	var path = goalsPath + "/" + gophers.GetStringFromInt64(goalId)
-	gophers.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
+	gophers.AssertError(os.MkdirAll(path, file_mode.USER_RWX))
 	var posts = me.db.getGoalPosts(goalId, false, lang)
 	for _, post := range posts {
 		me.generateGoalPost(lang, goalsPath, goalId, post.DateTime)
@@ -98,7 +98,7 @@ func (me *webStaticGoals) generateGoalPostImage(goalId int64, postDateTime int64
 	}
 	var path = me.folder + "/personal-goals/image/" + gophers.GetStringFromInt64(goalId) + "/" +
 		gophers.GetStringFromInt64(postDateTime)
-	gophers.AssertError(os.MkdirAll(path, file_mode.OS_USER_RWX))
+	gophers.AssertError(os.MkdirAll(path, file_mode.USER_RWX))
 	path += "/" + gophers.GetStringFromInt(imageIndex) + ".jpg"
 	if gophers.CheckFileExists(path) {
 		return // already saved
