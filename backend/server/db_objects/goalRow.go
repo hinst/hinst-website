@@ -15,6 +15,10 @@ type GoalRow struct {
 	ImageContentType string
 }
 
+func (GoalRow) getTableName() string {
+	return "goals"
+}
+
 func (me *GoalRow) Scan(rows pgx.Rows) {
 	gophers.AssertError(rows.Scan(&me.Id, &me.Title, &me.TitleEnglish, &me.TitleGerman,
 		&me.ImageData, &me.ImageContentType))

@@ -28,6 +28,10 @@ type GoalPostRow struct {
 	TitleGerman  string
 }
 
+func (GoalPostRow) getTableName() string {
+	return "goalPosts"
+}
+
 func (me *GoalPostRow) Scan(rows pgx.Rows) {
 	gophers.AssertError(rows.Scan(
 		&me.GoalId,

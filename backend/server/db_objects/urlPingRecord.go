@@ -11,6 +11,10 @@ type UrlPingRecord struct {
 	GooglePingedManuallyAt *int64 `json:"googlePingedManuallyAt"` // Unix seconds UTC
 }
 
+func (UrlPingRecord) getTableName() string {
+	return "urlPings"
+}
+
 func (me *UrlPingRecord) Scan(rows pgx.Rows) {
 	gophers.AssertError(rows.Scan(
 		&me.Url,
