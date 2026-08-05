@@ -13,6 +13,10 @@ type UrlPingRecord struct {
 
 var _ = registerDbObject(UrlPingRecord{})
 
+func (UrlPingRecord) GetAllColumns() []string {
+	return gophers.GetFieldNames[UrlPingRecord]()
+}
+
 func (UrlPingRecord) GetTableName() string {
 	return "urlPings"
 }

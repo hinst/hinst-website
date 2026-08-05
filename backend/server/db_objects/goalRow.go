@@ -19,6 +19,10 @@ type GoalRow struct {
 
 var _ = registerDbObject(GoalRow{})
 
+func (GoalRow) GetAllColumns() []string {
+	return gophers.GetFieldNames[GoalRow]()
+}
+
 func (GoalRow) GetTableName() string {
 	return "goals"
 }
