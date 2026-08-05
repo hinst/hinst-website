@@ -63,33 +63,6 @@ func writeJsonResponse(response http.ResponseWriter, value any) {
 	var _, _ = response.Write(gophers.EncodeJson(value))
 }
 
-func writeHtmlResponse(response http.ResponseWriter, text string) {
-	text = gophers.AssertResultError(formatHtml(text))
-	response.Header().Set(gophers.ContentTypeHeader, "text/html; charset=utf-8")
-	var _, _ = response.Write([]byte(text))
-}
-
-func readTextFromUrl(url string) string {
-	return string(readBytesFromUrl(url))
-}
-
-func readBytesFromUrl(url string) []byte {
-	var response = gophers.AssertResultError(http.Get(url))
-	defer gophers.IoCloseSilently(response.Body)
-	assertResponse(response)
-	var data = gophers.AssertResultError(io.ReadAll(response.Body))
-	return data
-}
-
-func assertResponse(response *http.Response) {
-	if response.StatusCode != http.StatusOK {
-		var text, _ = io.ReadAll(response.Body)
-		panic("Bad status=" + response.Status +
-			" returned from url=" + response.Request.URL.String() +
-			"\n" + string(text))
-	}
-}
-
 // Format HTML using Prettier server.
 // Returns error if supplied HTML is invalid.
 // Panics if unable to connect to Prettier server.
