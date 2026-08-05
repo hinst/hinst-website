@@ -14,14 +14,16 @@ import (
 )
 
 func (me *database) setGoalPostPublic(row db_objects.GoalPostRow) int64 {
-	var query = "UPDATE goalPosts SET isPublic = $1 WHERE goalId = $2 AND dateTime = $3"
+	var tableName = (db_objects.GoalPostRow{}).GetTableName()
+	var query = "UPDATE " + tableName + " SET isPublic = $1 WHERE goalId = $2 AND dateTime = $3"
 	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query,
 		row.IsPublic, row.GoalId, row.GetDateTime().UTC().Unix()))
 	return result.RowsAffected()
 }
 
 func (me *database) setGoalPostSearchIndexingEnabled(row db_objects.GoalPostRow) int64 {
-	var query = "UPDATE goalPosts SET searchIndexingEnabled = $1 WHERE goalId = $2 AND dateTime = $3"
+	var tableName = (db_objects.GoalPostRow{}).GetTableName()
+	var query = "UPDATE " + tableName + " SET searchIndexingEnabled = $1 WHERE goalId = $2 AND dateTime = $3"
 	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query,
 		row.SearchIndexingEnabled, row.GoalId, row.GetDateTime().UTC().Unix()))
 	return result.RowsAffected()
@@ -29,22 +31,25 @@ func (me *database) setGoalPostSearchIndexingEnabled(row db_objects.GoalPostRow)
 
 func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) int64 {
 	var textField = "text" + db_objects.GetLanguagePostfix(supportedLanguage)
-	var queryText = "UPDATE goalPosts SET " + textField + " = $1 WHERE goalId = $2 AND dateTime = $3"
+	var tableName = (db_objects.GoalPostRow{}).GetTableName()
+	var queryText = "UPDATE " + tableName + " SET " + textField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()
 	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
 	return result.RowsAffected()
 }
 
 func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) int64 {
+	var tableName = (db_objects.GoalPostRow{}).GetTableName()
 	var titleField = "title" + db_objects.GetLanguagePostfix(supportedLanguage)
-	var queryText = "UPDATE goalPosts SET " + titleField + " = $1 WHERE goalId = $2 AND dateTime = $3"
+	var queryText = "UPDATE " + tableName + " SET " + titleField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()
 	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
 	return result.RowsAffected()
 }
 
 func (me *database) forEachGoalPost(callback func(row *db_objects.GoalPostRow) bool, selector string, sortByDate int) {
-	var querySql = "SELECT " + selector + " FROM goalPosts"
+	var tableName = (db_objects.GoalPostRow{}).GetTableName()
+	var querySql = "SELECT " + selector + " FROM " + tableName
 	if sortByDate != 0 {
 		querySql += " ORDER BY dateTime " + gophers.IfElse(sortByDate > 0, "ASC", "DESC")
 	}
@@ -61,8 +66,9 @@ func (me *database) forEachGoalPost(callback func(row *db_objects.GoalPostRow) b
 }
 
 func (me *database) getGoals() (results []db_objects.GoalRow) {
+	var tableName = (db_objects.GoalRow{}).GetTableName()
 	var fields = strings.Join(gophers.GetFieldNames[db_objects.GoalRow](), ",")
-	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), "SELECT "+fields+" FROM goals ORDER BY id"))
+	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), "SELECT "+fields+" FROM "+tableName+" ORDER BY id"))
 	defer rows.Close()
 	for rows.Next() {
 		var record db_objects.GoalRow
@@ -73,8 +79,9 @@ func (me *database) getGoals() (results []db_objects.GoalRow) {
 }
 
 func (me *database) getGoal(goalId int64) (result *db_objects.GoalRow) {
+	var tableName = (db_objects.GoalRow{}).GetTableName()
 	var fields = strings.Join(gophers.GetFieldNames[db_objects.GoalRow](), ",")
-	var queryText = "SELECT " + fields + " FROM goals WHERE id = $1"
+	var queryText = "SELECT " + fields + " FROM " + tableName + " WHERE id = $1"
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	if rows.Next() {
@@ -85,7 +92,8 @@ func (me *database) getGoal(goalId int64) (result *db_objects.GoalRow) {
 }
 
 func (me *database) getGoalImage(goalId int64) (imageData []byte, imageContentType string) {
-	var queryText = "SELECT imageData, imageContentType FROM goals WHERE id = $1"
+	var tableName = (db_objects.GoalRow{}).GetTableName()
+	var queryText = "SELECT imageData, imageContentType FROM " + tableName + " WHERE id = $1"
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	if rows.Next() {
@@ -95,8 +103,9 @@ func (me *database) getGoalImage(goalId int64) (imageData []byte, imageContentTy
 }
 
 func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_objects.GoalPostRow) {
+	var tableName = (db_objects.GoalPostRow{}).GetTableName()
 	var fields = db_objects.GoalPostRow{}.GetAllFieldSelector()
-	var queryText = "SELECT " + fields + " FROM goalPosts WHERE goalId = $1 AND dateTime = $2"
+	var queryText = "SELECT " + fields + " FROM " + tableName + " WHERE goalId = $1 AND dateTime = $2"
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix()))
 	defer rows.Close()
 	if rows.Next() {
@@ -107,7 +116,8 @@ func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_ob
 }
 
 func (me *database) getGoalPostImage(goalId int64, dateTime time.Time, index int) (result *db_objects.GoalPostImageRow) {
-	var queryText = "SELECT contentType, file FROM goalPostImages" +
+	var tableName = (db_objects.GoalPostImageRow{}).GetTableName()
+	var queryText = "SELECT contentType, file FROM " + tableName +
 		" WHERE goalId = $1 AND parentDateTime = $2 AND sequenceIndex = $3"
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix(), index))
 	defer rows.Close()
@@ -119,15 +129,17 @@ func (me *database) getGoalPostImage(goalId int64, dateTime time.Time, index int
 }
 
 func (me *database) getGoalPostImageCount(goalId int64, dateTime time.Time) (count int) {
-	var queryText = "SELECT COUNT(*) FROM goalPostImages WHERE goalId = $1 AND parentDateTime = $2"
+	var tableName = (db_objects.GoalPostImageRow{}).GetTableName()
+	var queryText = "SELECT COUNT(*) FROM " + tableName + " WHERE goalId = $1 AND parentDateTime = $2"
 	var row = me.pool.QueryRow(context.Background(), queryText, goalId, dateTime.UTC().Unix())
 	gophers.AssertError(row.Scan(&count))
 	return
 }
 
 func (me *database) getGoalPosts(goalId int64, includePrivate bool, language language.Tag) (results []rest_objects.GoalPostHeader) {
+	var tableName = (db_objects.GoalPostRow{}).GetTableName()
 	var titleField = "title" + db_objects.GetLanguagePostfix(language)
-	var queryText = "SELECT goalId, dateTime, isPublic, searchIndexingEnabled, type, " + titleField + " FROM goalPosts WHERE goalId = $1"
+	var queryText = "SELECT goalId, dateTime, isPublic, searchIndexingEnabled, type, " + titleField + " FROM " + tableName + " WHERE goalId = $1"
 	if !includePrivate {
 		queryText += " AND isPublic = TRUE"
 	}

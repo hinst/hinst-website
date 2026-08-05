@@ -11,7 +11,7 @@ type UrlPingRecord struct {
 	GooglePingedManuallyAt *int64 `json:"googlePingedManuallyAt"` // Unix seconds UTC
 }
 
-func (UrlPingRecord) getTableName() string {
+func (UrlPingRecord) GetTableName() string {
 	return "urlPings"
 }
 

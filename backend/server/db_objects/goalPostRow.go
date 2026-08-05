@@ -28,7 +28,7 @@ type GoalPostRow struct {
 	TitleGerman  string
 }
 
-func (GoalPostRow) getTableName() string {
+func (GoalPostRow) GetTableName() string {
 	return "goalPosts"
 }
 

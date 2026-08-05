@@ -1,6 +1,6 @@
 package db_objects
 
-func (GoalPostImageRow) getTableName() string {
+func (GoalPostImageRow) GetTableName() string {
 	return "goalPostImages"
 }
 

@@ -15,7 +15,7 @@ type GoalRow struct {
 	ImageContentType string
 }
 
-func (GoalRow) getTableName() string {
+func (GoalRow) GetTableName() string {
 	return "goals"
 }
 
