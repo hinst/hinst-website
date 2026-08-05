@@ -1,7 +1,10 @@
 package db_objects
 
 import (
+	"os"
+
 	"github.com/hinst/go-gophers"
+	"github.com/hinst/go-gophers/file_mode"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -27,6 +30,12 @@ func (GoalPostImageRow) GetAllColumns() []string {
 	return gophers.GetFieldNames[GoalPostImageRow]()
 }
 
-func (GoalPostImageRow) SaveToDirectory(directory string) {
-	//TODO
+func (me GoalPostImageRow) SaveToDirectory(directory string) {
+	directory += "/" + gophers.GetStringFromInt64(me.GoalId) + "/" +
+		gophers.GetStringFromInt64(me.ParentDateTime)
+	gophers.AssertError(os.MkdirAll(directory, file_mode.USER_RWX))
+	var extension = gophers.AssertResultError(
+		gophers.MimeContentType{}.GetFileExtension(me.ContentType))
+	var filePath = directory + "/" + gophers.GetStringFromInt64(me.SequenceIndex) + extension
+	gophers.WriteBytesFile(filePath, me.File)
 }
