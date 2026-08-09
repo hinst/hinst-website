@@ -15,6 +15,8 @@ import (
 	"golang.org/x/text/language"
 )
 
+const default_public_url = "https://hinst.github.io"
+
 type namedWebFunction struct {
 	Name     string
 	Function gophers.WebFunction

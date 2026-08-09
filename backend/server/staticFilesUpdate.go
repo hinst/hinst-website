@@ -80,7 +80,7 @@ func (staticFilesUpdate) getStaticWebsiteGitUrl() string {
 }
 
 func (staticFilesUpdate) getPublicUrl() string {
-	return "https://hinst.github.io"
+	return gophers.ReadEnvVar("PUBLIC_URL", default_public_url)
 }
 
 func (me *staticFilesUpdate) getBotName() string {
