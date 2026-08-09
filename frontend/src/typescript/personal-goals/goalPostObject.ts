@@ -8,7 +8,7 @@ export class GoalPostHeader {
 		public isPublic: boolean = false,
 		public type: string = '',
 		public title: string = '',
-		public googlePingedAt: number | undefined,
+		public googlePingedAt: number | undefined = undefined,
 	) {}
 
 	get yearAndMonthText(): string {
