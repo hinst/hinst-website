@@ -44,9 +44,4 @@ CREATE TABLE IF NOT EXISTS goalPostComments (
 	PRIMARY KEY (goalId, parentDateTime, dateTime, smartProgressUserId)
 );
 
-CREATE TABLE IF NOT EXISTS urlPings (
-	url TEXT NOT NULL,
-	googlePingedAt BIGINT, /* Unix seconds UTC */
-	googlePingedManuallyAt BIGINT, /* Unix seconds UTC */
-	PRIMARY KEY (url)
-);
+DROP TABLE IF EXISTS urlPings;
