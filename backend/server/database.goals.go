@@ -45,6 +45,7 @@ func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supported
 	return result.RowsAffected()
 }
 
+// Callback should return true to continue the loop, return false to break the loop early.
 func (me *database) forEachGoalPost(callback func(row *db_objects.GoalPostRow) bool, selector string, sortByDate int) {
 	var tableName = (db_objects.GoalPostRow{}).GetTableName()
 	var querySql = "SELECT " + selector + " FROM " + tableName
