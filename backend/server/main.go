@@ -24,6 +24,7 @@ func Main() {
 		theProgram.webFilesPath = *wwwPtr
 		theProgram.runWeb()
 	case "update":
+		// All-in-one update: Update translations, generate titles, generate static files, upload static files.
 		var theProgram = new(program).create()
 		theProgram.translatorApiUrl = *translatorApiPtr
 		theProgram.update()
@@ -31,6 +32,7 @@ func Main() {
 		var theProgram = new(program).create()
 		theProgram.migrate()
 	case "generateStatic":
+		// Generate static files, to be used for local testing
 		var theProgram = new(program).create()
 		theProgram.generateStatic("static")
 	case "backup":
