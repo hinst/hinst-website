@@ -2,26 +2,31 @@ import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { Check, CheckCircle, Copy } from 'react-feather';
 import { apiClient } from 'src/typescript/apiClient';
-import { UrlPingRecord } from 'src/typescript/urlPing';
+import { GoalPostHeader } from 'src/typescript/personal-goals/goalPostObject';
 
-export function Row(props: { record: UrlPingRecord }) {
+export function Row(props: { record: GoalPostHeader }) {
 	const [isCopied, setIsCopied] = useState(false);
 	const [isPinged, setIsPinged] = useState(false);
 	return (
 		<tr>
-			<td>{props.record.url}</td>
-			<td>{formatDate(props.record.googlePingedAt)}</td>
+			<td>{props.record.publicUrl}</td>
 			<td style={{ height: 62 }}>
 				{isPinged ? (
 					<div style={{ display: 'flex', alignItems: 'center' }}>
 						<CheckCircle /> &nbsp; Done
 					</div>
 				) : isCopied ? (
-					<PingUrlButton onDone={() => setIsPinged(true)} url={props.record.url} />
-				) : props.record.googlePingedManuallyAt != null ? (
-					formatDate(props.record.googlePingedManuallyAt)
+					<PingUrlButton
+						onDone={() => setIsPinged(true)}
+						url={'' + props.record.publicUrl}
+					/>
+				) : props.record.googlePingedAt ? (
+					formatDate(props.record.googlePingedAt)
 				) : (
-					<CopyUrlButton onDone={() => setIsCopied(true)} url={props.record.url} />
+					<CopyUrlButton
+						onDone={() => setIsCopied(true)}
+						url={'' + props.record.publicUrl}
+					/>
 				)}
 			</td>
 		</tr>
