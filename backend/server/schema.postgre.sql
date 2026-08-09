@@ -27,8 +27,6 @@ CREATE TABLE IF NOT EXISTS goalPosts (
 	googlePingedAt BIGINT NOT NULL DEFAULT 0 /* Unix seconds UTC, 0 means never pinged */
 );
 
-ALTER TABLE goalPosts ADD COLUMN IF NOT EXISTS googlePingedAt BIGINT NOT NULL DEFAULT 0;
-
 CREATE TABLE IF NOT EXISTS goalPostImages (
 	goalId BIGINT NOT NULL,
 	parentDateTime BIGINT NOT NULL, /* Unix seconds UTC */
@@ -47,5 +45,3 @@ CREATE TABLE IF NOT EXISTS goalPostComments (
 	text TEXT NOT NULL,
 	PRIMARY KEY (goalId, parentDateTime, dateTime, smartProgressUserId)
 );
-
-DROP TABLE IF EXISTS urlPings;
