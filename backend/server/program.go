@@ -14,7 +14,6 @@ import (
 type program struct {
 	webFilesPath     string
 	savedGoalsPath   string
-	allowOrigin      string
 	translatorApiUrl string
 
 	database *database
@@ -23,7 +22,6 @@ type program struct {
 var programTemplate = program{
 	webFilesPath:     "./www",
 	savedGoalsPath:   "./saved-goals",
-	allowOrigin:      "http://localhost:1234",
 	translatorApiUrl: "http://localhost:11434",
 }
 
@@ -36,9 +34,7 @@ func (me *program) create() *program {
 func (me *program) runWeb() {
 	me.database.init()
 
-	var webApp = &webApp{
-		allowOrigin: me.allowOrigin,
-	}
+	var webApp = new(webApp)
 	webApp.init(me.database)
 
 	var fileServer = http.FileServer(http.Dir(me.webFilesPath))

@@ -3,7 +3,6 @@ package server
 import (
 	"flag"
 	"log"
-	"os"
 
 	"github.com/hinst/go-gophers"
 	"github.com/joho/godotenv"
@@ -23,9 +22,6 @@ func Main() {
 	case "web":
 		var theProgram = new(program).create()
 		theProgram.webFilesPath = *wwwPtr
-		if envVal := os.Getenv("ALLOW_ORIGIN"); envVal != "" {
-			theProgram.allowOrigin = envVal
-		}
 		theProgram.runWeb()
 	case "update":
 		var theProgram = new(program).create()

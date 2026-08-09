@@ -9,9 +9,8 @@ import (
 )
 
 type webApp struct {
-	db          *database
-	allowOrigin string
-	webPath     string
+	db      *database
+	webPath string
 }
 
 func (webApp) getDefaultWebPath() string {
@@ -43,7 +42,7 @@ func (me *webApp) addFunctions(path string, functions []namedWebFunction) {
 
 func (me *webApp) wrap(function gophers.WebFunction) gophers.WebFunction {
 	return func(response http.ResponseWriter, request *http.Request) {
-		response.Header().Set("Access-Control-Allow-Origin", me.allowOrigin)
+		response.Header().Set("Access-Control-Allow-Origin", me.allowOrigin())
 		defer func() {
 			var exception = recover()
 			if exception != nil {
@@ -59,4 +58,8 @@ func (me *webApp) wrap(function gophers.WebFunction) gophers.WebFunction {
 		}()
 		function(response, request)
 	}
+}
+
+func (webApp) allowOrigin() string {
+	return gophers.ReadEnvVar("ALLOW_ORIGIN", "")
 }
