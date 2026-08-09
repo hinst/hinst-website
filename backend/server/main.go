@@ -3,6 +3,7 @@ package server
 import (
 	"flag"
 	"log"
+	"os"
 
 	"github.com/hinst/go-gophers"
 	"github.com/joho/godotenv"
@@ -14,7 +15,6 @@ func Main() {
 	}
 	var modePtr = flag.String("mode", "web", "")
 	var wwwPtr = flag.String("www", programTemplate.webFilesPath, "")
-	var allowOriginPtr = flag.String("allowOrigin", programTemplate.allowOrigin, "")
 	var translatorApiPtr = flag.String("translatorApi", programTemplate.translatorApiUrl, "")
 	var backupDirectoryPtr = flag.String("backup-directory", programTemplate.savedGoalsPath+"/backup", "")
 	flag.Parse()
@@ -23,7 +23,9 @@ func Main() {
 	case "web":
 		var theProgram = new(program).create()
 		theProgram.webFilesPath = *wwwPtr
-		theProgram.allowOrigin = *allowOriginPtr
+		if envVal := os.Getenv("ALLOW_ORIGIN"); envVal != "" {
+			theProgram.allowOrigin = envVal
+		}
 		theProgram.runWeb()
 	case "update":
 		var theProgram = new(program).create()
