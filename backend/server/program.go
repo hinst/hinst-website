@@ -12,7 +12,6 @@ import (
 )
 
 type program struct {
-	netAddress       string
 	webFilesPath     string
 	savedGoalsPath   string
 	allowOrigin      string
@@ -22,7 +21,6 @@ type program struct {
 }
 
 var programTemplate = program{
-	netAddress:       ":8080",
 	webFilesPath:     "./www",
 	savedGoalsPath:   "./saved-goals",
 	allowOrigin:      "http://localhost:1234",
@@ -47,13 +45,14 @@ func (me *program) runWeb() {
 	var filesPrefix = webApp.webPath + "/"
 	http.Handle(filesPrefix, http.StripPrefix(filesPrefix, fileServer))
 
+	var netAddress = ":8080"
 	log.Printf("Starting: netAddress=%v, webPath=%v, webFilesPath=%v",
-		me.netAddress, webApp.webPath, me.webFilesPath)
+		netAddress, webApp.webPath, me.webFilesPath)
 
 	var terminatingContext, _ = signal.NotifyContext(context.Background(), os.Interrupt,
 		syscall.SIGTERM, syscall.SIGINT)
 	go func() {
-		gophers.AssertError(http.ListenAndServe(me.netAddress, nil))
+		gophers.AssertError(http.ListenAndServe(netAddress, nil))
 	}()
 	<-terminatingContext.Done()
 
