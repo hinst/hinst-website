@@ -45,14 +45,13 @@ func (me *program) runWeb() {
 	var filesPrefix = webApp.webPath + "/"
 	http.Handle(filesPrefix, http.StripPrefix(filesPrefix, fileServer))
 
-	var netAddress = ":8080"
 	log.Printf("Starting: netAddress=%v, webPath=%v, webFilesPath=%v",
-		netAddress, webApp.webPath, me.webFilesPath)
+		me.netAddress(), webApp.webPath, me.webFilesPath)
 
 	var terminatingContext, _ = signal.NotifyContext(context.Background(), os.Interrupt,
 		syscall.SIGTERM, syscall.SIGINT)
 	go func() {
-		gophers.AssertError(http.ListenAndServe(netAddress, nil))
+		gophers.AssertError(http.ListenAndServe(me.netAddress(), nil))
 	}()
 	<-terminatingContext.Done()
 
@@ -108,4 +107,8 @@ func (me *program) generateStatic(folder string) {
 	var webStatic = new(webStaticGoals)
 	webStatic.init(me.database, folder)
 	webStatic.run()
+}
+
+func (program) netAddress() string {
+	return ":8080"
 }
