@@ -1,6 +1,6 @@
 import { useParams, useSearchParams } from 'react-router';
 import GoalCalendarPanel from './goalCalendarPanel';
-import { GoalPostHeader } from 'src/typescript/personal-goals/goalPostHeader';
+import { GoalPostHeader } from 'src/typescript/personal-goals/goalPostObject';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'src/tsx/context';
 import { Calendar } from 'react-feather';

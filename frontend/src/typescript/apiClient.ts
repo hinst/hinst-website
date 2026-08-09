@@ -1,5 +1,5 @@
 import { GoalHeader } from 'src/typescript/personal-goals/goalRecord';
-import { GoalPostHeader } from './personal-goals/goalPostHeader';
+import { GoalPostHeader } from './personal-goals/goalPostObject';
 import { GoalPostObject } from './personal-goals/smartPost';
 import { RiddleItem } from './riddle';
 import { settingsStorage } from './settings';
