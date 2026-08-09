@@ -24,4 +24,5 @@ type GoalPostHeader struct {
 	Type           string `json:"type"`
 	Title          string `json:"title"`
 	GooglePingedAt int64  `json:"googlePingedAt,omitempty"`
+	PublicUrl      string `json:"publicUrl,omitempty"`
 }

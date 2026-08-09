@@ -24,6 +24,9 @@ func (me *webAppAdmin) init(db *database) []namedWebFunction {
 
 func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.Request) {
 	var records = make([]rest_objects.GoalPostHeader, 0)
+	var webLanguage = getWebLanguage(request)
+	var publicBaseUrl = gophers.ReadEnvVar("PUBLIC_URL", default_public_url)
+	var languagePath = webStaticGoals{}.getLanguagePath(webLanguage)
 	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
 		if !row.SearchIndexingEnabled {
 			return true
@@ -32,9 +35,12 @@ func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.R
 		record.DateTime = row.DateTime
 		record.IsPublic = row.IsPublic
 		record.Type = row.TypeString
-		record.Title = row.GetTranslatedTitle(getWebLanguage(request))
+		record.Title = row.GetTranslatedTitle(webLanguage)
 		record.Title = gophers.IfElse(record.Title != "", record.Title, row.TitleEnglish)
 		record.GooglePingedAt = row.GooglePingedAt
+		record.PublicUrl = publicBaseUrl + languagePath + "/personal-goals/" +
+			gophers.GetStringFromInt64(row.GoalId) + "/" +
+			gophers.GetStringFromInt64(row.DateTime) + ".html"
 		records = append(records, record)
 		return true
 	}, (db_objects.GoalPostRow{}).GetAllFieldSelector(), -1)
