@@ -138,7 +138,7 @@ func (me *database) getGoalPostImageCount(goalId int64, dateTime time.Time) (cou
 func (me *database) getGoalPosts(goalId int64, includePrivate bool, language language.Tag) (results []rest_objects.GoalPostHeader) {
 	var tableName = (db_objects.GoalPostRow{}).GetTableName()
 	var titleField = "title" + db_objects.GetLanguagePostfix(language)
-	var queryText = "SELECT goalId, dateTime, isPublic, searchIndexingEnabled, type, " + titleField + " FROM " + tableName + " WHERE goalId = $1"
+	var queryText = "SELECT goalId, dateTime, isPublic, type, " + titleField + " FROM " + tableName + " WHERE goalId = $1"
 	if !includePrivate {
 		queryText += " AND isPublic = TRUE"
 	}
@@ -147,7 +147,7 @@ func (me *database) getGoalPosts(goalId int64, includePrivate bool, language lan
 	defer rows.Close()
 	for rows.Next() {
 		var record rest_objects.GoalPostHeader
-		gophers.AssertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.SearchIndexingEnabled, &record.Type, &record.Title))
+		gophers.AssertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.Type, &record.Title))
 		results = append(results, record)
 	}
 	return

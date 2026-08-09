@@ -164,9 +164,6 @@ func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *ht
 		record.GoalId = row.GoalId
 		record.DateTime = row.GetDateTime().UTC().Unix()
 		record.IsPublic = row.IsPublic
-		if me.inputCheckGoalManagerMode(request) {
-			record.SearchIndexingEnabled = row.SearchIndexingEnabled
-		}
 		record.Type = row.TypeString
 		record.Title = row.GetTranslatedTitle(requestedLanguage)
 		records = append(records, record)

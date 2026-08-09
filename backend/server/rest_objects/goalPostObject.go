@@ -18,9 +18,8 @@ type GoalPostObject struct {
 type GoalPostHeader struct {
 	GoalId int64 `json:"goalId"`
 	// Unix epoch time seconds
-	DateTime              int64 `json:"dateTime"`
-	IsPublic              bool  `json:"isPublic"`
-	SearchIndexingEnabled bool  `json:"searchIndexingEnabled"`
+	DateTime int64 `json:"dateTime"`
+	IsPublic bool  `json:"isPublic"`
 	// "post" or "comment"
 	Type  string `json:"type"`
 	Title string `json:"title"`
