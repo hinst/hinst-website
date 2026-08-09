@@ -24,8 +24,10 @@ CREATE TABLE IF NOT EXISTS goalPosts (
 	title TEXT NOT NULL DEFAULT '',
 	titleEnglish TEXT NOT NULL DEFAULT '',
 	titleGerman TEXT NOT NULL DEFAULT '',
-	PRIMARY KEY (goalId, dateTime)
+	googlePingedAt BIGINT NOT NULL DEFAULT 0 /* Unix seconds UTC, 0 means never pinged */
 );
+
+ALTER TABLE goalPosts ADD COLUMN IF NOT EXISTS googlePingedAt BIGINT NOT NULL DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS goalPostImages (
 	goalId BIGINT NOT NULL,

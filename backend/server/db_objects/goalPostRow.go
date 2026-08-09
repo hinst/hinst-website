@@ -29,6 +29,8 @@ type GoalPostRow struct {
 	Title        string
 	TitleEnglish string
 	TitleGerman  string
+	/* Unix seconds UTC, 0 means never pinged */
+	GooglePingedAt int64
 }
 
 var _ = registerDbObject(func() DbObject { return new(GoalPostRow) })
@@ -60,6 +62,7 @@ func (me *GoalPostRow) Scan(rows pgx.Rows) {
 		&me.Title,
 		&me.TitleEnglish,
 		&me.TitleGerman,
+		&me.GooglePingedAt,
 	))
 }
 
