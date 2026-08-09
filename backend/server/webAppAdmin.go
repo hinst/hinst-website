@@ -23,7 +23,7 @@ func (me *webAppAdmin) init(db *database) []namedWebFunction {
 }
 
 func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.Request) {
-	var records = make([]rest_objects.GoalPostHeader, 0)
+	var records = []rest_objects.GoalPostHeader{}
 	var webLanguage = getWebLanguage(request)
 	var publicBaseUrl = gophers.ReadEnvVar("PUBLIC_URL", default_public_url)
 	var languagePath = webStaticGoals{}.getLanguagePath(webLanguage)
