@@ -21,8 +21,9 @@ type GoalPostHeader struct {
 	DateTime int64 `json:"dateTime"`
 	IsPublic bool  `json:"isPublic"`
 	// "post" or "comment"
-	Type           string `json:"type"`
-	Title          string `json:"title"`
-	GooglePingedAt int64  `json:"googlePingedAt,omitempty"`
-	PublicUrl      string `json:"publicUrl,omitempty"`
+	Type                       string `json:"type"`
+	Title                      string `json:"title"`
+	GooglePingedAt             int64  `json:"googlePingedAt,omitempty"`
+	PublicUrl                  string `json:"publicUrl,omitempty"`
+	GoogleSearchIndexingStatus *bool  `json:"googleSearchIndexingStatus,omitempty"`
 }
