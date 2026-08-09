@@ -144,22 +144,10 @@ func (me *GoalPostRow) GetTranslatedText(languageTag language.Tag) string {
 func (me *GoalPostRow) GetTranslatedTitle(languageTag language.Tag) string {
 	switch languageTag {
 	case language.English:
-		if me.TitleEnglish != "" {
-			return me.TitleEnglish
-		} else {
-			return ""
-		}
+		return me.TitleEnglish
 	case language.German:
-		if me.TitleGerman != "" {
-			return me.TitleGerman
-		} else {
-			return ""
-		}
+		return me.TitleGerman
 	default:
-		if me.Title != "" {
-			return me.Title
-		} else {
-			return ""
-		}
+		return me.Title
 	}
 }
