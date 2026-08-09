@@ -125,10 +125,11 @@ class ApiClient {
 		return this.url + '/goal/image?id=' + goalId;
 	}
 
-	async getUrlPings(): Promise<UrlPingRecord[]> {
+	async getUrlPings(): Promise<GoalPostHeader[]> {
 		const url = '/urlPings';
 		const response = await this.fetch(url);
-		return (await response.json()) as UrlPingRecord[];
+		const items = ((await response.json()) as unknown[]) || [];
+		return items.map((item) => Object.assign(new GoalPostHeader(), item));
 	}
 
 	async pingUrlManually(url: string) {
