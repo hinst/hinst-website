@@ -11,7 +11,7 @@ type GoalPostObject struct {
 	LanguageName          string `json:"languageName"`
 	LanguageTag           string `json:"languageTag"`
 	IsPublic              bool   `json:"isPublic"`
-	SearchIndexingEnabled bool   `json:"searchIndexingEnabled"`
+	SearchIndexingEnabled bool   `json:"searchIndexingEnabled,omitempty"`
 	ImageCount            int    `json:"imageCount"`
 }
 
