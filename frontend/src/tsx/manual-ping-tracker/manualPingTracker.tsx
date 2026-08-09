@@ -1,19 +1,17 @@
 import { useEffect, useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
-import { UrlPingRecord } from 'src/typescript/urlPing';
 import { Row } from './row';
+import { GoalPostHeader } from 'src/typescript/personal-goals/goalPostObject';
 
 export default function ManualPingTracker(props: { setPageTitle: (title: string) => void }) {
-	const [urlPings, setUrlPings] = useState<Array<UrlPingRecord>>([]);
+	const [urlPings, setUrlPings] = useState<Array<GoalPostHeader>>([]);
 	const [manuallyPingedVisible, setManuallyPingedVisible] = useState(true);
 	async function loadUrlPings() {
 		const urlPings = await apiClient.getUrlPings();
-		validatePings(urlPings);
 		setUrlPings(urlPings);
 	}
 	function getVisibleUrlPings() {
-		if (manuallyPingedVisible) return urlPings;
-		return urlPings.filter((ping) => ping.googlePingedManuallyAt == null);
+		return urlPings;
 	}
 	useEffect(() => {
 		props.setPageTitle('Manual URL ping tracker');
@@ -52,10 +50,4 @@ export default function ManualPingTracker(props: { setPageTitle: (title: string)
 			</table>
 		</div>
 	);
-}
-
-function validatePings(urlPings: UrlPingRecord[]) {
-	const urls = new Set<string>();
-	for (const ping of urlPings)
-		if (urls.has(ping.url)) console.warn('Duplicate URL ping record for URL: ' + ping.url);
 }
