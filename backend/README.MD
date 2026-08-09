@@ -9,3 +9,23 @@ There are two versions of website:
 
 ## Config
 
+### Command Line Flags
+- `-mode`: Execution mode. Options:
+    - `web` (default): Runs the web server.
+    - `update`: Updates static files.
+    - `migrate`: Runs database migrations.
+    - `generateStatic`: Generates static files.
+    - `backup`: Creates a backup.
+- `-www`: Path to web files. (Used in `web` mode).
+- `-translatorApi`: Translator API URL. (Used in `update` mode).
+- `-backup-directory`: Directory to store backups. (Used in `backup` mode).
+
+### Environment Variables
+- `POSTGRES_URL` (Required): Database connection URL.
+- `POSTGRES_MAX_CONNS` (Optional, default: `2`): Maximum number of database connections.
+- `PRETTIER_SERVER_URL` (Required): URL of the Prettier server. (Required for `web` mode).
+- `ALLOW_ORIGIN` (Optional): Allowed origin for CORS. (Used in `web` mode).
+- `ADMIN_PASSWORD` (Optional): Password for admin access. (Used in `web` mode).
+- `GIT_TOKEN` (Required): GitHub token for static files update. (Required for `update` and `generateStatic` modes).
+- `GIT_BOT_NAME` (Required): Bot name for GitHub commits. (Required for `update` and `generateStatic` modes).
+- `GIT_EMAIL` (Required): Email for GitHub commits. (Required for `update` and `generateStatic` modes).
