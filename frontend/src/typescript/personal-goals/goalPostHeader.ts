@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-export class GoalPostRecord {
+export class GoalPostHeader {
 	constructor(
 		public goalId: number = 0,
 		/** Unix timestamp seconds */

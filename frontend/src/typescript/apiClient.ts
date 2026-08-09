@@ -1,5 +1,5 @@
 import { GoalHeader } from 'src/typescript/personal-goals/goalRecord';
-import { GoalPostRecord } from './personal-goals/goalPostRecord';
+import { GoalPostHeader } from './personal-goals/goalPostHeader';
 import { GoalPostObject } from './personal-goals/smartPost';
 import { RiddleItem } from './riddle';
 import { settingsStorage } from './settings';
@@ -136,11 +136,11 @@ class ApiClient {
 		return await this.fetch(apiUrl, { method: 'PUT' });
 	}
 
-	async searchGoalPosts(query: string): Promise<GoalPostRecord[]> {
+	async searchGoalPosts(query: string): Promise<GoalPostHeader[]> {
 		const url = '/goalPosts/search?query=' + encodeURIComponent(query);
 		const response = await this.fetch(url);
 		const items = ((await response.json()) as unknown[]) || [];
-		return items.map((item) => Object.assign(new GoalPostRecord(), item));
+		return items.map((item) => Object.assign(new GoalPostHeader(), item));
 	}
 }
 

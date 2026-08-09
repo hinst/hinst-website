@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { GoalPostRecord } from 'src/typescript/personal-goals/goalPostRecord';
+import { GoalPostHeader } from 'src/typescript/personal-goals/goalPostHeader';
 import { SearchBar } from './searchBar';
 import { ItemRow } from './itemRow';
 import { apiClient } from 'src/typescript/apiClient';
@@ -8,7 +8,7 @@ import { useSearchParams } from 'react-router';
 const SERVER_SIDE_LIMIT = 100;
 
 export function PersonalGoalsSearch() {
-	const [items, setItems] = useState<Array<GoalPostRecord>>([]);
+	const [items, setItems] = useState<Array<GoalPostHeader>>([]);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [isLoading, setIsLoading] = useState(false);
 

@@ -1,6 +1,6 @@
 import lodash from 'lodash';
 import { NavLink } from 'react-router';
-import { GoalPostRecord } from 'src/typescript/personal-goals/goalPostRecord';
+import { GoalPostHeader } from 'src/typescript/personal-goals/goalPostHeader';
 import { compareStrings } from 'src/typescript/string';
 import { getMonthName, parseMonthlyDate } from 'src/typescript/date';
 import { getPaddedChunks } from 'src/typescript/array';
@@ -13,7 +13,7 @@ const ROWS_PER_MONTH = 3;
 class MonthlyPosts {
 	constructor(
 		public readonly monthDate: string,
-		public readonly posts: GoalPostRecord[]
+		public readonly posts: GoalPostHeader[]
 	) {}
 }
 
@@ -24,7 +24,7 @@ class YearlyPosts {
 	) {}
 }
 
-export default function GoalCalendar(props: { posts: GoalPostRecord[]; activePostDate: number }) {
+export default function GoalCalendar(props: { posts: GoalPostHeader[]; activePostDate: number }) {
 	function getSortedPosts() {
 		return [...props.posts].sort((a, b) => a.dateTime - b.dateTime);
 	}
@@ -84,7 +84,7 @@ export default function GoalCalendar(props: { posts: GoalPostRecord[]; activePos
 	);
 }
 
-function DaysOfMonth(props: { posts: GoalPostRecord[]; activePostDate: number }) {
+function DaysOfMonth(props: { posts: GoalPostHeader[]; activePostDate: number }) {
 	return (
 		<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
 			{getPaddedChunks(props.posts, ROWS_PER_MONTH).map((posts) => (
@@ -99,7 +99,7 @@ function DaysOfMonth(props: { posts: GoalPostRecord[]; activePostDate: number })
 	);
 }
 
-function DaysOfMonthRow(props: { posts: (GoalPostRecord | undefined)[]; activePostDate: number }) {
+function DaysOfMonthRow(props: { posts: (GoalPostHeader | undefined)[]; activePostDate: number }) {
 	return props.posts.map((post) => (
 		<div key={post?.dateTime || createRandomId()}>
 			{post ? (
