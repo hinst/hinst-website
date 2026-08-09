@@ -1,3 +1,5 @@
+/* This SQL file is executed every time when the program starts */
+
 CREATE TABLE IF NOT EXISTS goals (
 	id BIGINT NOT NULL PRIMARY KEY,
 	title TEXT NOT NULL,
