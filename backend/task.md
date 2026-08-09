@@ -1,6 +1,8 @@
 # Task
 
-Ongoing task: delete entity UrlPingRow and all related code.
-Source code file: `.\server\db_objects\urlPingRow.go`
-Also add database migration to drop the table: `.\server\schema.postgre.sql`
-Schema runs on every app start. Delete table if exists.
+Into goalPostRow, we shall add a new column named `googlePingedAt`.
+Type: Unix seconds UTC, not null.
+`0` means never pinged.
+Source code file: `server\db_objects\goalPostRow.go`
+Also add database migration to  the table: `.\server\schema.postgre.sql`
+Add the column if not exists.
