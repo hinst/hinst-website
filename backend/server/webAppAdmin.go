@@ -31,10 +31,10 @@ func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.R
 		var record rest_objects.GoalPostHeader
 		record.DateTime = row.DateTime
 		record.IsPublic = row.IsPublic
-		record.GooglePingedAt = row.GooglePingedAt
+		record.Type = row.TypeString
 		record.Title = row.GetTranslatedTitle(getWebLanguage(request))
 		record.Title = gophers.IfElse(record.Title != "", record.Title, row.TitleEnglish)
-		record.Type = row.TypeString
+		record.GooglePingedAt = row.GooglePingedAt
 		records = append(records, record)
 		return true
 	}, (db_objects.GoalPostRow{}).GetAllFieldSelector(), -1)
