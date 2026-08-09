@@ -13,13 +13,11 @@ import (
 
 type webStaticGoals struct {
 	folder   string
-	url      string
 	db       *database
 	renderer *webHtmlGoals
 }
 
-func (me *webStaticGoals) init(url string, db *database, folder string) {
-	me.url = url
+func (me *webStaticGoals) init(db *database, folder string) {
 	me.db = db
 	me.folder = folder
 	me.renderer = new(webHtmlGoals)

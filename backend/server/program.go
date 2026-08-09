@@ -106,6 +106,6 @@ func (me *program) backup(directory string) {
 func (me *program) generateStatic(folder string) {
 	me.database.init()
 	var webStatic = new(webStaticGoals)
-	webStatic.init("http://localhost:8080", me.database, folder)
+	webStatic.init(me.database, folder)
 	webStatic.run()
 }
