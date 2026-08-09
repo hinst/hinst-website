@@ -98,7 +98,9 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 		}
 	}
 	goalPostObject.IsPublic = goalPostRow.IsPublic
-	goalPostObject.SearchIndexingEnabled = goalPostRow.SearchIndexingEnabled
+	if me.inputCheckGoalManagerMode(request) {
+		goalPostObject.SearchIndexingEnabled = goalPostRow.SearchIndexingEnabled
+	}
 	goalPostObject.ImageCount = me.db.getGoalPostImageCount(goalId, postDateTime)
 	writeJsonResponse(response, goalPostObject)
 }
@@ -162,7 +164,9 @@ func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *ht
 		record.GoalId = row.GoalId
 		record.DateTime = row.GetDateTime().UTC().Unix()
 		record.IsPublic = row.IsPublic
-		record.SearchIndexingEnabled = row.SearchIndexingEnabled
+		if me.inputCheckGoalManagerMode(request) {
+			record.SearchIndexingEnabled = row.SearchIndexingEnabled
+		}
 		record.Type = row.TypeString
 		record.Title = row.GetTranslatedTitle(requestedLanguage)
 		records = append(records, record)
