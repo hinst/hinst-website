@@ -2,7 +2,6 @@ package server
 
 import (
 	"net/http"
-	"os"
 
 	"github.com/hinst/go-gophers"
 )
@@ -35,7 +34,7 @@ func (me *webAppBase) inputCheckGoalManagerMode(request *http.Request) bool {
 }
 
 func (me *webAppBase) getAdminPassword() string {
-	return os.Getenv("ADMIN_PASSWORD")
+	return gophers.ReadEnvVar("ADMIN_PASSWORD", "")
 }
 
 func (me *webAppBase) guardAdminFunction(function gophers.WebFunction) gophers.WebFunction {
