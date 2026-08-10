@@ -6,6 +6,7 @@ import (
 
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/go-gophers/file_mode"
+	"github.com/hinst/hinst-website/server/base"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -40,6 +41,8 @@ func (me GoalPostImageRow) SaveToDirectory(directory string) {
 		gophers.MimeContentType{}.GetFileExtension(me.ContentType))
 	var filePath = directory + "/" + gophers.GetStringFromInt64(me.SequenceIndex) + extension
 	gophers.WriteBytesFile(filePath, me.File)
+	me.File = nil
+	gophers.WriteBytesFile(directory+"/row.yml", base.EncodeYaml(me))
 }
 
 func (me *GoalPostImageRow) GetParentDateTime() time.Time {

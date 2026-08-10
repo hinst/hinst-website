@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/goccy/go-yaml"
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/go-gophers/file_mode"
 	"github.com/hinst/hinst-website/server/base"
@@ -44,9 +43,7 @@ func (me GoalPostRow) SaveToDirectory(directory string) {
 	directory += "/" + gophers.GetStringFromInt64(me.GoalId)
 	var filePath = directory + "/" + dateTimeString + ".yaml"
 	gophers.AssertError(os.MkdirAll(directory, file_mode.USER_RWX))
-	var data = gophers.AssertResultError(
-		yaml.MarshalWithOptions(me, yaml.UseLiteralStyleIfMultiline(true)))
-	gophers.WriteBytesFile(filePath, data)
+	gophers.WriteBytesFile(filePath, base.EncodeYaml(me))
 }
 
 func (me *GoalPostRow) Scan(rows pgx.Rows) {

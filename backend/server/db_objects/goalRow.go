@@ -2,6 +2,7 @@ package db_objects
 
 import (
 	"github.com/hinst/go-gophers"
+	"github.com/hinst/hinst-website/server/base"
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/text/language"
 )
@@ -32,12 +33,18 @@ func (me GoalRow) SaveToDirectory(directory string) {
 	var imagePath = basePath + fileExtension
 	gophers.WriteBytesFile(imagePath, me.ImageData)
 	me.ImageData = nil
-	gophers.WriteJsonFile(basePath+".json", me)
+	gophers.WriteBytesFile(basePath+".yml", base.EncodeYaml(me))
 }
 
 func (me *GoalRow) Scan(rows pgx.Rows) {
-	gophers.AssertError(rows.Scan(&me.Id, &me.Title, &me.TitleEnglish, &me.TitleGerman,
-		&me.ImageData, &me.ImageContentType))
+	gophers.AssertError(rows.Scan(
+		&me.Id,
+		&me.Title,
+		&me.TitleEnglish,
+		&me.TitleGerman,
+		&me.ImageData,
+		&me.ImageContentType,
+	))
 }
 
 func (me GoalRow) GetTranslatedTitle(languageTag language.Tag) string {
