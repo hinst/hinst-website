@@ -2,6 +2,7 @@ package db_objects
 
 import (
 	"os"
+	"time"
 
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/go-gophers/file_mode"
@@ -9,7 +10,8 @@ import (
 )
 
 type GoalPostImageRow struct {
-	GoalId         int64
+	GoalId int64
+	/* Unix seconds UTC */
 	ParentDateTime int64
 	SequenceIndex  int64
 	ContentType    string
@@ -32,10 +34,14 @@ func (GoalPostImageRow) GetAllColumns() []string {
 
 func (me GoalPostImageRow) SaveToDirectory(directory string) {
 	directory += "/" + gophers.GetStringFromInt64(me.GoalId) + "/" +
-		gophers.GetStringFromInt64(me.ParentDateTime)
+		me.GetParentDateTime().UTC().Format("2006-01-02_15-04-05")
 	gophers.AssertError(os.MkdirAll(directory, file_mode.USER_RWX))
 	var extension = gophers.AssertResultError(
 		gophers.MimeContentType{}.GetFileExtension(me.ContentType))
 	var filePath = directory + "/" + gophers.GetStringFromInt64(me.SequenceIndex) + extension
 	gophers.WriteBytesFile(filePath, me.File)
+}
+
+func (me *GoalPostImageRow) GetParentDateTime() time.Time {
+	return time.Unix(me.ParentDateTime, 0)
 }
