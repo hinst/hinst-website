@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -32,9 +33,9 @@ func (me *webAppAdmin) init(db *database) []namedWebFunction {
 // checkGoogleSearchIndexingStatus checks if a URL is indexed in Google Search using the Search Console API.
 // Returns true if indexed (verdict = "COVERED"), false otherwise.
 func checkGoogleSearchIndexingStatus(ctx context.Context, url string) (*bool, error) {
-	var credentialsPath = os.Getenv("GOOGLE_SEARCH_CONSOLE_CREDENTIALS")
+	var credentialsPath = os.Getenv("GOOGLE_ACCOUNT_JSON")
 	if credentialsPath == "" || !fileExists(credentialsPath) {
-		return nil, fmt.Errorf("Google Search Console credentials not configured (GOOGLE_SEARCH_CONSOLE_CREDENTIALS env var must point to service account JSON)")
+		return nil, fmt.Errorf("Google Search Console credentials not configured (GOOGLE_ACCOUNT_JSON env var must point to service account JSON)")
 	}
 
 	scope := "https://www.googleapis.com/auth/webmasters.readonly"
@@ -59,8 +60,8 @@ func checkGoogleSearchIndexingStatus(ctx context.Context, url string) (*bool, er
 	}
 
 	var verdict = result.InspectionResult.IndexStatusResult.Verdict
-	// COVERED means indexed; other values (NEUTRAL, NOT_ALLOWED, etc.) mean not indexed.
-	var isIndexed = strings.EqualFold(verdict, "COVERED")
+	log.Println("verdict", verdict)
+	var isIndexed = verdict == "PASS"
 	return &isIndexed, nil
 }
 
@@ -90,11 +91,11 @@ func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.R
 			gophers.GetStringFromInt64(row.DateTime) + ".html"
 
 		// Check Google Search indexing status if credentials are available
-		if os.Getenv("GOOGLE_SEARCH_CONSOLE_CREDENTIALS") != "" {
+		if os.Getenv("GOOGLE_ACCOUNT_JSON") != "" {
 			isIndexed, err := checkGoogleSearchIndexingStatus(context.Background(), record.PublicUrl)
 			if err != nil {
 				// Log warning but continue processing other posts
-				fmt.Printf("Warning: Failed to check indexing status for %s: %v\n", record.PublicUrl, err)
+				log.Printf("Warning: Failed to check indexing status for %s: %v\n", record.PublicUrl, err)
 			} else if isIndexed != nil && *isIndexed {
 				record.GoogleSearchIndexingStatus = isIndexed
 			}
