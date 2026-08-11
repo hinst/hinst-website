@@ -1,40 +1,56 @@
-Looking at commit ee5afcf519af910a616ed593296d87e4c991e83a, earlier I used Google API to ping my URLs through search indexing.
-Now we want to use Google API again in a similar way, but this time instead of pinging URL, we only check if it is currently indexed.
+Looking at this example:
 
-Code example:
-```python
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
+```go
+package server
 
-# Load credentials from the JSON file downloaded from Google Cloud
-crendentials_path = 'path/to/your/service-account-key.json'
-scopes = ['https://googleapis.com']
-creds = service_account.Credentials.from_service_account_file(crendentials_path, scopes=scopes)
+import (
+	"bytes"
+	"context"
+	"io"
+	"log"
+	"net/http"
 
-# Build the Search Console service object
-service = build('searchconsole', 'v1', credentials=creds)
+	"github.com/hinst/go-gophers"
+	"golang.org/x/oauth2/google"
+)
 
-# Define request parameters
-request_body = {
-    "inspectionUrl": "https://example.com",
-    "siteUrl": "https://example.com"
+type GoogleIndexingClient struct {
+	client *http.Client
 }
 
-# Execute the inspection request
-try:
-    response = service.urlInspection().index().inspect(body=request_body).execute()
+type GoogleUrlNotification struct {
+	Url  string `json:"url"`
+	Type string `json:"type"`
+}
 
-    # Parse the indexing status
-    inspection_result = response.get('inspectionResult', {})
-    index_status_result = inspection_result.get('indexStatusResult', {})
-    verdict = index_status_result.get('verdict')
+func (GoogleIndexingClient) getScope() string {
+	return "https://www.googleapis.com/auth/indexing"
+}
 
-    print(f"Indexing Status: {verdict}")
-    # Outputs: "COVERED" (Indexed), "NEUTRAL" (Not Indexed / Excluded), etc.
+func (me *GoogleIndexingClient) connect() {
+	var jsonText = gophers.ReadBytesFile(gophers.RequireEnvVar("GOOGLE_ACCOUNT_JSON"))
+	var conf = gophers.AssertResultError(google.JWTConfigFromJSON(jsonText, me.getScope()))
+	me.client = conf.Client(context.Background())
+}
 
-except Exception as e:
-    print(f"An error occurred: {e}")
+func (me *GoogleIndexingClient) updateUrl(url string) bool {
+	var data = GoogleUrlNotification{
+		Url:  url,
+		Type: "URL_UPDATED",
+	}
+	var apiUrl = "https://indexing.googleapis.com/v3/urlNotifications:publish"
+	var response = gophers.AssertResultError(me.client.Post(apiUrl,
+		gophers.ContentTypeJson, bytes.NewReader(gophers.EncodeJson(data))))
+	defer gophers.IoCloseSilently(response.Body)
+	if response.StatusCode == http.StatusTooManyRequests {
+		return false
+	}
+	var responseBody = gophers.AssertResultError(io.ReadAll(response.Body))
+	log.Println(string(responseBody))
+	assertResponse(response)
+	return true
+}
 
 ```
 
-But we use go, so we should add URL checker call into `server\webAppAdmin.go` and return it as field record.GoogleSearchIndexingStatus = true or false.
+You gotta fix authentication in `webAppAdmin.go`. See that GOOGLE_ACCOUNT_JSON is available in .env file, but GOOGLE_SEARCH_CONSOLE_CREDENTIALS is not there.
