@@ -42,7 +42,7 @@ func (me *webAppAdmin) checkSearchIndexing(ctx context.Context, url string) (str
 	}
 	var request = &searchconsole.InspectUrlIndexRequest{
 		InspectionUrl: url,
-		SiteUrl:       strings.TrimRight(url, "/"),
+		SiteUrl:       me.siteUrl(),
 	}
 	result, searchConsoleError := searchService.UrlInspection.Index.Inspect(request).Context(ctx).Do()
 	if searchConsoleError != nil {
@@ -54,7 +54,6 @@ func (me *webAppAdmin) checkSearchIndexing(ctx context.Context, url string) (str
 func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.Request) {
 	var records = []rest_objects.GoalPostHeader{}
 	var webLanguage = base.SupportedLanguages[0] // Only blog posts in main language currently participate in search indexing
-	var publicBaseUrl = gophers.ReadEnvVar("PUBLIC_URL", default_public_url)
 	var languagePath = webStaticGoals{}.getLanguagePath(webLanguage)
 	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
 		if !row.SearchIndexingEnabled {
@@ -67,7 +66,7 @@ func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.R
 		record.Title = row.GetTranslatedTitle(webLanguage)
 		record.Title = gophers.IfElse(record.Title != "", record.Title, row.TitleEnglish)
 		record.GooglePingedAt = row.GooglePingedAt
-		record.PublicUrl = publicBaseUrl + languagePath + "/personal-goals/" +
+		record.PublicUrl = me.publicUrl() + languagePath + "/personal-goals/" +
 			gophers.GetStringFromInt64(row.GoalId) + "/" +
 			gophers.GetStringFromInt64(row.DateTime) + ".html"
 
@@ -89,4 +88,16 @@ func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.R
 // Path to JSON file containing authentication data for service account
 func (webAppAdmin) googleAccountJson() string {
 	return gophers.ReadEnvVar("GOOGLE_ACCOUNT_JSON", "")
+}
+
+func (webAppAdmin) publicUrl() string {
+	return gophers.ReadEnvVar("PUBLIC_URL", default_public_url)
+}
+
+func (webAppAdmin) siteUrl() (siteUrl string) {
+	siteUrl = webAppAdmin{}.publicUrl()
+	if !strings.HasSuffix(siteUrl, "/") {
+		siteUrl += "/"
+	}
+	return siteUrl
 }
