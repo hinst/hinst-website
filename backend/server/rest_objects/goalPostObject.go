@@ -25,5 +25,5 @@ type GoalPostHeader struct {
 	Title                      string `json:"title"`
 	GooglePingedAt             int64  `json:"googlePingedAt,omitempty"`
 	PublicUrl                  string `json:"publicUrl,omitempty"`
-	GoogleSearchIndexingStatus *bool  `json:"googleSearchIndexingStatus,omitempty"`
+	GoogleSearchIndexingStatus string `json:"googleSearchIndexingStatus,omitempty"`
 }

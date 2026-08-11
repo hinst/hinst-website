@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/hinst/go-gophers"
@@ -30,44 +29,28 @@ func (me *webAppAdmin) init(db *database) []namedWebFunction {
 	return functions
 }
 
-// checkGoogleSearchIndexingStatus checks if a URL is indexed in Google Search using the Search Console API.
-// Returns true if indexed (verdict = "COVERED"), false otherwise.
-func checkGoogleSearchIndexingStatus(ctx context.Context, url string) (*bool, error) {
-	var credentialsPath = os.Getenv("GOOGLE_ACCOUNT_JSON")
-	if credentialsPath == "" || !fileExists(credentialsPath) {
-		return nil, fmt.Errorf("Google Search Console credentials not configured (GOOGLE_ACCOUNT_JSON env var must point to service account JSON)")
+func (me *webAppAdmin) checkSearchIndexing(ctx context.Context, url string) (string, error) {
+	var credentialsPath = gophers.ReadEnvVar("GOOGLE_ACCOUNT_JSON", "")
+	if credentialsPath == "" || !gophers.CheckFileExists(credentialsPath) {
+		return "", fmt.Errorf("Need GOOGLE_ACCOUNT_JSON file: '%v'", credentialsPath)
 	}
-
-	scope := "https://www.googleapis.com/auth/webmasters.readonly"
 
 	// Use google.golang.org/api with a service account JWT token source.
-	var searchService *searchconsole.Service
-	var err error
-	searchService, err = searchconsole.NewService(ctx,
+	searchService, searchConsoleError := searchconsole.NewService(ctx,
 		option.WithCredentialsFile(credentialsPath),
-		option.WithScopes(scope))
-	if err != nil {
-		return nil, fmt.Errorf("failed to create Search Console service: %w", err)
+		option.WithScopes("https://www.googleapis.com/auth/webmasters.readonly"))
+	if searchConsoleError != nil {
+		return "", searchConsoleError
 	}
-
 	var request = &searchconsole.InspectUrlIndexRequest{
 		InspectionUrl: url,
 		SiteUrl:       strings.TrimRight(url, "/"),
 	}
-	result, httpErr := searchService.UrlInspection.Index.Inspect(request).Context(ctx).Do()
-	if httpErr != nil {
-		return nil, fmt.Errorf("Search Console API error for %s: %w", url, httpErr)
+	result, searchConsoleError := searchService.UrlInspection.Index.Inspect(request).Context(ctx).Do()
+	if searchConsoleError != nil {
+		return "", searchConsoleError
 	}
-
-	var verdict = result.InspectionResult.IndexStatusResult.Verdict
-	log.Println("verdict", verdict)
-	var isIndexed = verdict == "PASS"
-	return &isIndexed, nil
-}
-
-func fileExists(path string) bool {
-	_, err := os.Stat(path)
-	return err == nil
+	return result.InspectionResult.IndexStatusResult.Verdict, nil
 }
 
 func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.Request) {
@@ -90,14 +73,12 @@ func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.R
 			gophers.GetStringFromInt64(row.GoalId) + "/" +
 			gophers.GetStringFromInt64(row.DateTime) + ".html"
 
-		// Check Google Search indexing status if credentials are available
-		if os.Getenv("GOOGLE_ACCOUNT_JSON") != "" {
-			isIndexed, err := checkGoogleSearchIndexingStatus(context.Background(), record.PublicUrl)
+		if me.googleAccountJson() != "" {
+			googleSearchIndexingStatus, err := me.checkSearchIndexing(context.Background(), record.PublicUrl)
 			if err != nil {
-				// Log warning but continue processing other posts
-				log.Printf("Warning: Failed to check indexing status for %s: %v\n", record.PublicUrl, err)
-			} else if isIndexed != nil && *isIndexed {
-				record.GoogleSearchIndexingStatus = isIndexed
+				log.Printf("Warning: Failed to check indexing status for %v: %v\n", record.PublicUrl, err)
+			} else {
+				record.GoogleSearchIndexingStatus = googleSearchIndexingStatus
 			}
 		}
 
@@ -105,4 +86,8 @@ func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.R
 		return true
 	}, (db_objects.GoalPostRow{}).GetAllFieldSelector(), -1)
 	writeJsonResponse(response, records)
+}
+
+func (webAppAdmin) googleAccountJson() string {
+	return gophers.ReadEnvVar("GOOGLE_ACCOUNT_JSON", "")
 }
