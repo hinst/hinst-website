@@ -30,14 +30,12 @@ func (me *webAppAdmin) init(db *database) []namedWebFunction {
 }
 
 func (me *webAppAdmin) checkSearchIndexing(ctx context.Context, url string) (string, error) {
-	var credentialsPath = gophers.ReadEnvVar("GOOGLE_ACCOUNT_JSON", "")
-	if credentialsPath == "" || !gophers.CheckFileExists(credentialsPath) {
-		return "", fmt.Errorf("Need GOOGLE_ACCOUNT_JSON file: '%v'", credentialsPath)
+	if me.googleAccountJson() == "" || !gophers.CheckFileExists(me.googleAccountJson()) {
+		return "", fmt.Errorf("Need GOOGLE_ACCOUNT_JSON file: '%v'", me.googleAccountJson())
 	}
 
-	// Use google.golang.org/api with a service account JWT token source.
 	searchService, searchConsoleError := searchconsole.NewService(ctx,
-		option.WithCredentialsFile(credentialsPath),
+		option.WithAuthCredentialsFile(option.ServiceAccount, me.googleAccountJson()),
 		option.WithScopes("https://www.googleapis.com/auth/webmasters.readonly"))
 	if searchConsoleError != nil {
 		return "", searchConsoleError
@@ -88,6 +86,7 @@ func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.R
 	writeJsonResponse(response, records)
 }
 
+// Path to JSON file containing authentication data for service account
 func (webAppAdmin) googleAccountJson() string {
 	return gophers.ReadEnvVar("GOOGLE_ACCOUNT_JSON", "")
 }
