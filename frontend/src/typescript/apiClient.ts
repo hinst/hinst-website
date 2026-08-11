@@ -3,7 +3,6 @@ import { GoalPostHeader } from './personal-goals/goalPostObject';
 import { GoalPostObject } from './personal-goals/smartPost';
 import { RiddleItem } from './riddle';
 import { settingsStorage } from './settings';
-import { UrlPingRecord } from './urlPing';
 
 class ApiClient {
 	readonly url: string = process.env.API_URL || '/hinst-website/api';
