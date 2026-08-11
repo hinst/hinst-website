@@ -12,6 +12,7 @@
 		"pgxpool",
 		"postgre",
 		"Postgre",
+		"searchconsole",
 		"sqlite"
 	],
 	"[html]": {
