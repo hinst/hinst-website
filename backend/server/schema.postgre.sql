@@ -24,8 +24,13 @@ CREATE TABLE IF NOT EXISTS goalPosts (
 	title TEXT NOT NULL DEFAULT '',
 	titleEnglish TEXT NOT NULL DEFAULT '',
 	titleGerman TEXT NOT NULL DEFAULT '',
-	googlePingedAt BIGINT NOT NULL DEFAULT 0 /* Unix seconds UTC, 0 means never pinged */
+	googlePingedAt BIGINT NOT NULL DEFAULT 0, /* Unix seconds UTC, 0 means never pinged */
+	googleSearchIndexingStatus TEXT NOT NULL DEFAULT '',
+	googleSearchIndexingStatusCheckedAt BIGINT NOT NULL DEFAULT 0 /* Unix seconds UTC */
 );
+
+ALTER TABLE goalPosts ADD COLUMN IF NOT EXISTS googleSearchIndexingStatus TEXT NOT NULL DEFAULT '';
+ALTER TABLE goalPosts ADD COLUMN IF NOT EXISTS googleSearchIndexingStatusCheckedAt BIGINT NOT NULL DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS goalPostImages (
 	goalId BIGINT NOT NULL,
