@@ -62,7 +62,7 @@ func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.R
 		var record rest_objects.GoalPostHeader
 		record.DateTime = row.DateTime
 		record.IsPublic = row.IsPublic
-		record.Type = row.TypeString
+		record.Type = row.Type
 		record.Title = row.GetTranslatedTitle(webLanguage)
 		record.Title = gophers.IfElse(record.Title != "", record.Title, row.TitleEnglish)
 		record.GooglePingedAt = row.GooglePingedAt

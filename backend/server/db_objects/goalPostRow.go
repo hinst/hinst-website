@@ -23,7 +23,7 @@ type GoalPostRow struct {
 	TextEnglish           string
 	TextGerman            string
 
-	TypeString string
+	Type string
 
 	Title        string
 	TitleEnglish string
@@ -55,7 +55,7 @@ func (me *GoalPostRow) Scan(rows pgx.Rows) {
 		&me.Text,
 		&me.TextEnglish,
 		&me.TextGerman,
-		&me.TypeString,
+		&me.Type,
 		&me.Title,
 		&me.TitleEnglish,
 		&me.TitleGerman,
@@ -64,13 +64,7 @@ func (me *GoalPostRow) Scan(rows pgx.Rows) {
 }
 
 func (GoalPostRow) GetAllColumns() (fields []string) {
-	fields = gophers.GetFieldNames[GoalPostRow]()
-	for i := range fields {
-		if fields[i] == "TypeString" {
-			fields[i] = "Type"
-		}
-	}
-	return
+	return gophers.GetFieldNames[GoalPostRow]()
 }
 
 func (GoalPostRow) getFieldsForLanguage(desiredLanguage language.Tag) (fields []string) {
