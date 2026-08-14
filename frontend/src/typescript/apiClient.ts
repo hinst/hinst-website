@@ -1,5 +1,5 @@
 import { GoalHeader } from 'src/typescript/personal-goals/goalRecord';
-import { GoalPostHeader } from './personal-goals/goalPostObject';
+import { GoalPostHeader, GoalPostSearchIndexingHeader } from './personal-goals/goalPostObject';
 import { GoalPostObject } from './personal-goals/smartPost';
 import { RiddleItem } from './riddle';
 import { settingsStorage } from './settings';
@@ -124,11 +124,11 @@ class ApiClient {
 		return this.url + '/goal/image?id=' + goalId;
 	}
 
-	async getUrlPings(): Promise<GoalPostHeader[]> {
+	async getUrlPings(): Promise<GoalPostSearchIndexingHeader[]> {
 		const url = '/urlPings';
 		const response = await this.fetch(url);
 		const items = ((await response.json()) as unknown[]) || [];
-		return items.map((item) => Object.assign(new GoalPostHeader(), item));
+		return items.map((item) => Object.assign(new GoalPostSearchIndexingHeader(), item));
 	}
 
 	async pingUrlManually(url: string) {

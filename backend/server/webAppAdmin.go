@@ -52,37 +52,31 @@ func (me *webAppAdmin) checkSearchIndexing(ctx context.Context, url string) (str
 }
 
 func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.Request) {
-	var records = []rest_objects.GoalPostHeader{}
+	var objects = []rest_objects.GoalPostSearchIndexingHeader{}
 	var webLanguage = base.SupportedLanguages[0] // Only blog posts in main language currently participate in search indexing
 	var languagePath = webStaticGoals{}.getLanguagePath(webLanguage)
 	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
 		if !row.SearchIndexingEnabled {
 			return true
 		}
-		var record rest_objects.GoalPostHeader
-		record.DateTime = row.DateTime
-		record.IsPublic = row.IsPublic
-		record.Type = row.Type
-		record.Title = row.GetTranslatedTitle(webLanguage)
-		record.Title = gophers.IfElse(record.Title != "", record.Title, row.TitleEnglish)
-		record.GooglePingedAt = row.GooglePingedAt
-		record.PublicUrl = me.publicUrl() + languagePath + "/personal-goals/" +
+		var header rest_objects.GoalPostSearchIndexingHeader
+		header.Read(row, webLanguage)
+		header.PublicUrl = me.publicUrl() + languagePath + "/personal-goals/" +
 			gophers.GetStringFromInt64(row.GoalId) + "/" +
 			gophers.GetStringFromInt64(row.DateTime) + ".html"
 
 		if me.googleAccountJson() != "" {
-			googleSearchIndexingStatus, err := me.checkSearchIndexing(context.Background(), record.PublicUrl)
+			googleSearchIndexingStatus, err := me.checkSearchIndexing(context.Background(), header.PublicUrl)
 			if err != nil {
-				log.Printf("Warning: Failed to check indexing status for %v: %v\n", record.PublicUrl, err)
+				log.Printf("Warning: Failed to check indexing status for %v: %v\n", header.PublicUrl, err)
 			} else {
-				record.GoogleSearchIndexingStatus = googleSearchIndexingStatus
+				header.GoogleSearchIndexingStatus = googleSearchIndexingStatus
 			}
 		}
-
-		records = append(records, record)
+		objects = append(objects, header)
 		return true
 	}, (db_objects.GoalPostRow{}).GetAllFieldSelector(), -1)
-	writeJsonResponse(response, records)
+	writeJsonResponse(response, objects)
 }
 
 // Path to JSON file containing authentication data for service account

@@ -2,9 +2,9 @@ import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { Check, CheckCircle, Copy } from 'react-feather';
 import { apiClient } from 'src/typescript/apiClient';
-import { GoalPostHeader } from 'src/typescript/personal-goals/goalPostObject';
+import { GoalPostSearchIndexingHeader } from 'src/typescript/personal-goals/goalPostObject';
 
-export function Row(props: { record: GoalPostHeader }) {
+export function Row(props: { record: GoalPostSearchIndexingHeader }) {
 	const [isCopied, setIsCopied] = useState(false);
 	const [isPinged, setIsPinged] = useState(false);
 	return (
@@ -29,6 +29,7 @@ export function Row(props: { record: GoalPostHeader }) {
 					/>
 				)}
 			</td>
+			<td>{props.record.googleSearchIndexingStatus}</td>
 		</tr>
 	);
 }

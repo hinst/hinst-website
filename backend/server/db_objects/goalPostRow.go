@@ -29,7 +29,7 @@ type GoalPostRow struct {
 	TitleEnglish string
 	TitleGerman  string
 	/* Unix seconds UTC, 0 means never pinged */
-	GooglePingedAt int64
+	GooglePingedAt             int64
 	GoogleSearchIndexingStatus string
 	/* Unix seconds UTC */
 	GoogleSearchIndexingStatusCheckedAt int64

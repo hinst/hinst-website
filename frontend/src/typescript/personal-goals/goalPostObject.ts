@@ -25,9 +25,7 @@ export class GoalPostHeader {
 		public isPublic: boolean = false,
 		/** "post" or "comment" */
 		public type: string = '',
-		public title: string = '',
-		public googlePingedAt?: number,
-		public publicUrl?: string,
+		public title: string = ''
 	) {}
 
 	get yearAndMonthText(): string {
@@ -37,4 +35,11 @@ export class GoalPostHeader {
 	get dateText(): string {
 		return DateTime.fromMillis(this.dateTime * 1000).toFormat('yyyy-MM-dd');
 	}
+}
+
+export class GoalPostSearchIndexingHeader extends GoalPostHeader {
+	googlePingedAt: number = 0;
+	publicUrl: string = '';
+	googleSearchIndexingStatus: string = '';
+	googleSearchIndexingStatusCheckedAt: number = 0;
 }

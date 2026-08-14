@@ -55,10 +55,10 @@ func (me *database) forEachGoalPost(callback func(row *db_objects.GoalPostRow) b
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), querySql))
 	defer rows.Close()
 	for rows.Next() {
-		var row db_objects.GoalPostRow
+		var row = new(db_objects.GoalPostRow)
 		row.Scan(rows)
 		gophers.AssertError(rows.Err())
-		if !callback(&row) {
+		if !callback(row) {
 			break
 		}
 	}
