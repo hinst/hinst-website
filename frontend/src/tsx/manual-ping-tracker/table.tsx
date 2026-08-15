@@ -4,6 +4,16 @@ import { Check, CheckCircle, Copy } from 'react-feather';
 import { apiClient } from 'src/typescript/apiClient';
 import { GoalPostSearchIndexingHeader } from 'src/typescript/generated/rest_objects';
 
+export function HeaderRow() {
+	return (
+		<tr>
+			<th>URL</th>
+			<th>Google Ping</th>
+			<th>Google Search Indexing Status</th>
+		</tr>
+	);
+}
+
 export function Row(props: { record: GoalPostSearchIndexingHeader }) {
 	const [isCopied, setIsCopied] = useState(false);
 	const [isPinged, setIsPinged] = useState(false);
