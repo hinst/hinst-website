@@ -4,7 +4,7 @@
 	"scripts": {
 		"start": "parcel --public-url=/hinst-website index.html",
 		"build": "tsc && parcel build index.html",
-		"test": "tsc --module CommonJS --moduleResolution node10 && node compiled/typescript/runTests.js",
+		"test": "tsc --module nodenext --moduleResolution nodenext && node --enable-source-maps --test \"compiled/src/**/*.test.js\"",
 		"update-packages": "npx npm-check-updates"
 	},
 	"keywords": [],
