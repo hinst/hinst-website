@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
-import { Row } from './row';
+import { HeaderRow, Row } from './table';
 import { GoalPostSearchIndexingHeader } from 'src/typescript/generated/rest_objects';
 
 export default function ManualPingTracker(props: { setPageTitle: (title: string) => void }) {
@@ -36,11 +36,7 @@ export default function ManualPingTracker(props: { setPageTitle: (title: string)
 			</div>
 			<table className='ms-table ms-striped'>
 				<thead>
-					<tr>
-						<th>URL</th>
-						<th>Google Ping</th>
-						<th>Google Search Indexing Status</th>
-					</tr>
+					<HeaderRow />
 				</thead>
 				<tbody>
 					{getVisibleUrlPings().map((item) => (
