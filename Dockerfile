@@ -4,6 +4,8 @@ WORKDIR /app
 ENV CGO_ENABLED=1
 RUN go mod download -x
 ENV GOCACHE=/root/.cache/go-build
+RUN --mount=type=cache,target="/root/.cache/go-build" go install github.com/gzuidhof/tygo@latest
+RUN PATH="${PATH}:$(go env GOPATH)/bin" go generate ./...
 RUN --mount=type=cache,target="/root/.cache/go-build" go build
 
 FROM node:26 AS frontend
