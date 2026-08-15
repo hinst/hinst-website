@@ -25,7 +25,7 @@ class ApiClient {
 	}
 
 	async getGoal(id: number): Promise<GoalObjectEx> {
-		const url = '/goal?id=' + encodeURIComponent(id);
+		const url = '/goal?' + new URLSearchParams({ id: '' + id });
 		const response = await this.fetch(url);
 		const data = (await response.json()) as GoalObject;
 		return goalObjectWithMethods(data);
@@ -43,13 +43,12 @@ class ApiClient {
 		isPublic: boolean
 	): Promise<Response> {
 		const url =
-			'/goalPost/setPublic' +
-			'?goalId=' +
-			encodeURIComponent(goalId) +
-			'&postDateTime=' +
-			encodeURIComponent(postDateTime) +
-			'&isPublic=' +
-			encodeURIComponent('' + isPublic);
+			'/goalPost/setPublic?' +
+			new URLSearchParams({
+				goalId: '' + goalId,
+				postDateTime: '' + postDateTime,
+				isPublic: '' + isPublic
+			});
 		return await this.fetch(url);
 	}
 
@@ -59,23 +58,22 @@ class ApiClient {
 		enabled: boolean
 	): Promise<Response> {
 		const url =
-			'/goalPost/setSearchIndexingEnabled' +
-			'?goalId=' +
-			encodeURIComponent(goalId) +
-			'&postDateTime=' +
-			encodeURIComponent(postDateTime) +
-			'&enabled=' +
-			encodeURIComponent('' + enabled);
+			'/goalPost/setSearchIndexingEnabled?' +
+			new URLSearchParams({
+				goalId: '' + goalId,
+				postDateTime: '' + postDateTime,
+				enabled: '' + enabled
+			});
 		return await this.fetch(url);
 	}
 
 	async getGoalPost(goalId: number, postDateTime: number): Promise<GoalPostObject> {
 		const url =
-			'/goalPost' +
-			'?goalId=' +
-			encodeURIComponent(goalId) +
-			'&postDateTime=' +
-			encodeURIComponent(postDateTime);
+			'/goalPost?' +
+			new URLSearchParams({
+				goalId: '' + goalId,
+				postDateTime: '' + postDateTime
+			});
 		const response = await this.fetch(url);
 		return (await response.json()) as GoalPostObject;
 	}
@@ -87,13 +85,12 @@ class ApiClient {
 		text: string
 	): Promise<Response> {
 		const url =
-			'/goalPost/setText' +
-			'?goalId=' +
-			encodeURIComponent(goalId) +
-			'&postDateTime=' +
-			encodeURIComponent(postDateTime) +
-			'&languageTag=' +
-			encodeURIComponent(languageTag);
+			'/goalPost/setText?' +
+			new URLSearchParams({
+				goalId: '' + goalId,
+				postDateTime: '' + postDateTime,
+				languageTag
+			});
 		return this.fetch(url, { method: 'POST', body: text });
 	}
 
@@ -111,22 +108,19 @@ class ApiClient {
 	}
 
 	getImageUrl(goalId: number, postDateTime: number, index: number): string {
-		const goalIdParameter = encodeURIComponent('' + goalId);
-		const postDateTimeParameter = encodeURIComponent('' + postDateTime);
-		const indexParameter = encodeURIComponent('' + index);
 		return (
 			this.url +
-			'/goalPost/image?goalId=' +
-			goalIdParameter +
-			'&postDateTime=' +
-			postDateTimeParameter +
-			'&index=' +
-			indexParameter
+			'/goalPost/image?' +
+			new URLSearchParams({
+				goalId: '' + goalId,
+				postDateTime: '' + postDateTime,
+				index: '' + index
+			})
 		);
 	}
 
 	getGoalImageUrl(goalId: number): string {
-		return this.url + '/goal/image?id=' + goalId;
+		return this.url + '/goal/image?' + new URLSearchParams({ id: '' + goalId });
 	}
 
 	async getUrlPings(): Promise<GoalPostSearchIndexingHeader[]> {
@@ -136,12 +130,12 @@ class ApiClient {
 	}
 
 	async pingUrlManually(url: string) {
-		const apiUrl = '/pingUrlManually' + '?url=' + encodeURIComponent(url);
+		const apiUrl = '/pingUrlManually?' + new URLSearchParams({ url });
 		return await this.fetch(apiUrl, { method: 'PUT' });
 	}
 
 	async getGoalPosts(goalId: number): Promise<GoalPostHeaderEx[]> {
-		const url = '/goalPosts?id=' + encodeURIComponent(goalId);
+		const url = '/goalPosts?' + new URLSearchParams({ id: '' + goalId });
 		const response = await this.fetch(url);
 		const items = ((await response.json()) as GoalPostHeader[]) || [];
 		return items
@@ -150,7 +144,7 @@ class ApiClient {
 	}
 
 	async searchGoalPosts(query: string): Promise<GoalPostHeaderEx[]> {
-		const url = '/goalPosts/search?query=' + encodeURIComponent(query);
+		const url = '/goalPosts/search?' + new URLSearchParams({ query });
 		const response = await this.fetch(url);
 		const items = ((await response.json()) as GoalPostHeader[]) || [];
 		return items.map((item) => goalPostHeaderWithMethods(item));
