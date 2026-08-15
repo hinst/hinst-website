@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { GoalHeader } from 'src/typescript/personal-goals/goalRecord';
+import { GoalObject } from 'src/typescript/generated/rest_objects';
+import 'src/typescript/personal-goals/restObjectExtensions';
 import { API_URL } from 'src/typescript/global';
 import GoalList from './goalList';
 import { apiClient } from 'src/typescript/apiClient';
 
 export default function GoalListPanel() {
 	const [isLoading, setIsLoading] = useState(false);
-	const [goals, setGoals] = useState(new Array<GoalHeader>());
+	const [goals, setGoals] = useState(new Array<GoalObject>());
 	async function loadGoals() {
 		setIsLoading(true);
 		try {

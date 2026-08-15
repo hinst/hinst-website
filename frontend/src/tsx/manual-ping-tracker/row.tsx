@@ -2,7 +2,8 @@ import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { Check, CheckCircle, Copy } from 'react-feather';
 import { apiClient } from 'src/typescript/apiClient';
-import { GoalPostSearchIndexingHeader } from 'src/typescript/personal-goals/goalPostObject';
+import { GoalPostSearchIndexingHeader } from 'src/typescript/generated/rest_objects';
+import 'src/typescript/personal-goals/restObjectExtensions';
 
 export function Row(props: { record: GoalPostSearchIndexingHeader }) {
 	const [isCopied, setIsCopied] = useState(false);

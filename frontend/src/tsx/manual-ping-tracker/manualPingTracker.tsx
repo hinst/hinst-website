@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
 import { Row } from './row';
-import { GoalPostSearchIndexingHeader } from 'src/typescript/personal-goals/goalPostObject';
+import { GoalPostSearchIndexingHeader } from 'src/typescript/generated/rest_objects';
+import 'src/typescript/personal-goals/restObjectExtensions';
 
 export default function ManualPingTracker(props: { setPageTitle: (title: string) => void }) {
 	const [urlPings, setUrlPings] = useState<Array<GoalPostSearchIndexingHeader>>([]);

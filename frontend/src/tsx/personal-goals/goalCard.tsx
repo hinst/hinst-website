@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router';
-import { GoalHeader } from 'src/typescript/personal-goals/goalRecord';
+import { GoalObject } from 'src/typescript/generated/rest_objects';
+import 'src/typescript/personal-goals/restObjectExtensions';
 import { AppContext } from '../context';
 import { useContext } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
 
-export function GoalCard(props: { goal: GoalHeader }) {
+export function GoalCard(props: { goal: GoalObject }) {
 	const context = useContext(AppContext);
 	return (
 		<div
@@ -25,7 +26,7 @@ export function GoalCard(props: { goal: GoalHeader }) {
 					<img
 						width={200}
 						height={100}
-						src={apiClient.getGoalImageUrl(parseInt(props.goal.id, 10))}
+						src={apiClient.getGoalImageUrl(props.goal.id)}
 						alt={props.goal.title}
 					/>
 					<div

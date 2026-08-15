@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { API_URL } from 'src/typescript/global';
-import { GoalPostHeader } from 'src/typescript/personal-goals/goalPostObject';
+import { GoalPostHeader } from 'src/typescript/generated/rest_objects';
+import { goalPostHeaderWithMethods } from 'src/typescript/personal-goals/restObjectExtensions';
 import GoalCalendar from './goalCalendar';
 
 export default function GoalCalendarPanel(props: {
@@ -22,7 +23,7 @@ export default function GoalCalendarPanel(props: {
 			if (!response.ok) throw new Error(response.statusText);
 			let posts: GoalPostHeader[] = await response.json();
 			posts = posts.filter((post) => post.type === 'post');
-			posts = posts.map((post) => Object.assign(new GoalPostHeader(), post));
+			posts = posts.map((post) => goalPostHeaderWithMethods(post));
 			setPosts(posts);
 			if (props.receivePosts) props.receivePosts(posts);
 		} finally {

@@ -1,6 +1,13 @@
-import { GoalHeader } from 'src/typescript/personal-goals/goalRecord';
-import { GoalPostHeader, GoalPostSearchIndexingHeader } from './personal-goals/goalPostObject';
-import { GoalPostObject } from './personal-goals/smartPost';
+import {
+	GoalObject,
+	GoalPostHeader,
+	GoalPostObject,
+	GoalPostSearchIndexingHeader
+} from 'src/typescript/generated/rest_objects';
+import {
+	goalObjectWithMethods,
+	goalPostHeaderWithMethods
+} from './personal-goals/restObjectExtensions';
 import { RiddleItem } from './riddle';
 import { settingsStorage } from './settings';
 
@@ -19,17 +26,17 @@ class ApiClient {
 		return response;
 	}
 
-	async getGoal(id: number): Promise<GoalHeader> {
+	async getGoal(id: number): Promise<GoalObject> {
 		const url = '/goal?id=' + encodeURIComponent(id);
 		const response = await this.fetch(url);
-		const data = await response.json();
-		return Object.assign(new GoalHeader('', '', '', ''), data);
+		const data = (await response.json()) as GoalObject;
+		return goalObjectWithMethods(data);
 	}
 
-	async getGoals() {
+	async getGoals(): Promise<GoalObject[]> {
 		const response = await this.fetch('/goals');
-		const data = (await response.json()) as unknown[];
-		return data.map((item) => Object.assign(new GoalHeader('', '', '', ''), item));
+		const data = ((await response.json()) as GoalObject[]) || [];
+		return data.map((item) => goalObjectWithMethods(item));
 	}
 
 	async goalPostSetPublic(
@@ -127,8 +134,8 @@ class ApiClient {
 	async getUrlPings(): Promise<GoalPostSearchIndexingHeader[]> {
 		const url = '/urlPings';
 		const response = await this.fetch(url);
-		const items = ((await response.json()) as unknown[]) || [];
-		return items.map((item) => Object.assign(new GoalPostSearchIndexingHeader(), item));
+		const items = ((await response.json()) as GoalPostSearchIndexingHeader[]) || [];
+		return items.map((item) => goalPostHeaderWithMethods(item));
 	}
 
 	async pingUrlManually(url: string) {
@@ -139,8 +146,8 @@ class ApiClient {
 	async searchGoalPosts(query: string): Promise<GoalPostHeader[]> {
 		const url = '/goalPosts/search?query=' + encodeURIComponent(query);
 		const response = await this.fetch(url);
-		const items = ((await response.json()) as unknown[]) || [];
-		return items.map((item) => Object.assign(new GoalPostHeader(), item));
+		const items = ((await response.json()) as GoalPostHeader[]) || [];
+		return items.map((item) => goalPostHeaderWithMethods(item));
 	}
 }
 

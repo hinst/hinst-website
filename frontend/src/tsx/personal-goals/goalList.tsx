@@ -1,7 +1,8 @@
-import { GoalHeader } from 'src/typescript/personal-goals/goalRecord';
+import { GoalObject } from 'src/typescript/generated/rest_objects';
+import 'src/typescript/personal-goals/restObjectExtensions';
 import { GoalCard } from './goalCard';
 
-export default function GoalList(props: { goals: GoalHeader[] }) {
+export default function GoalList(props: { goals: GoalObject[] }) {
 	return (
 		<div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, flexDirection: 'row' }}>
 			{props.goals.map((goal) => (

@@ -1,5 +1,5 @@
 import { Edit, Save, Tool } from 'react-feather';
-import { GoalPostObject } from 'src/typescript/personal-goals/smartPost';
+import { GoalPostObject } from 'src/typescript/generated/rest_objects';
 import { useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
 
