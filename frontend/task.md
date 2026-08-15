@@ -1,9 +1,6 @@
-# Looking to avoid field duplication
+# Refactoring
 
-See files:
-* src\typescript\generated\rest_objects.ts
-* src\typescript\restObjectExtensions.ts
-
-Notice that fields such as `id`, `title`, `goalId` are defined both in base interface and in the extending object.
-What can we do to avoid field duplication? Research.
-No, you do not have to read ALL files in the codebase. The task is isolated to only a few files and their usages.
+Looking at `src\typescript\rest_objects\restObjectExtensions.ts`
+Move class GoalObjectEx into separated file named `src\typescript\rest_objects\goalObjectEx.ts`
+Move class GoalPostHeaderEx into separated file `src\typescript\rest_objects\goalPostHeaderEx.ts`
+Update all usages
