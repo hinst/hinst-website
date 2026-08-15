@@ -4,49 +4,49 @@
 // source: goalObject.go
 
 export interface GoalObject {
-  id: number /* int64 */;
-  title: string;
-  titleEnglish: string;
-  titleGerman: string;
+	id: number /* int64 */;
+	title: string;
+	titleEnglish: string;
+	titleGerman: string;
 }
 
 //////////
 // source: goalPostObject.go
 
 export interface GoalPostObject {
-  goalId: number /* int64 */;
-  /**
-   * Unix epoch seconds
-   */
-  dateTime: number /* int64 */;
-  /**
-   * HTML
-   */
-  text: string;
-  isAutoTranslated: boolean;
-  isTranslationPending: boolean;
-  languageName: string;
-  languageTag: string;
-  isPublic: boolean;
-  searchIndexingEnabled?: boolean;
-  imageCount: number /* int */;
+	goalId: number /* int64 */;
+	/**
+	 * Unix epoch seconds
+	 */
+	dateTime: number /* int64 */;
+	/**
+	 * HTML
+	 */
+	text: string;
+	isAutoTranslated: boolean;
+	isTranslationPending: boolean;
+	languageName: string;
+	languageTag: string;
+	isPublic: boolean;
+	searchIndexingEnabled?: boolean;
+	imageCount: number /* int */;
 }
 export interface GoalPostHeader {
-  goalId: number /* int64 */;
-  /**
-   * Unix epoch time seconds
-   */
-  dateTime: number /* int64 */;
-  isPublic: boolean;
-  /**
-   * "post" or "comment"
-   */
-  type: string;
-  title: string;
+	goalId: number /* int64 */;
+	/**
+	 * Unix epoch time seconds
+	 */
+	dateTime: number /* int64 */;
+	isPublic: boolean;
+	/**
+	 * "post" or "comment"
+	 */
+	type: string;
+	title: string;
 }
 export interface GoalPostSearchIndexingHeader extends GoalPostHeader {
-  googlePingedAt: number /* int64 */;
-  publicUrl: string;
-  googleSearchIndexingStatus: string;
-  googleSearchIndexingStatusCheckedAt: number /* int64 */;
+	googlePingedAt: number /* int64 */;
+	publicUrl: string;
+	googleSearchIndexingStatus: string;
+	googleSearchIndexingStatusCheckedAt: number /* int64 */;
 }
