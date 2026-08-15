@@ -35,9 +35,9 @@ func (me *searchIndexingUpdater) run() {
 		var postPublicUrl = publicUrl + languagePath + "/personal-goals/" +
 			gophers.GetStringFromInt64(row.GoalId) + "/" +
 			gophers.GetStringFromInt64(row.DateTime) + ".html"
-		var searchIndexingStatus, err = me.checkSearchIndexing(context.Background(), postPublicUrl)
-		if err != nil {
-			log.Printf("Warning: Failed to check indexing status for %v: %v\n", postPublicUrl, err)
+		var searchIndexingStatus, searchIndexingError = me.checkSearchIndexing(context.Background(), postPublicUrl)
+		if searchIndexingError != nil {
+			log.Printf("Warning: Failed to check indexing status for %v: %v\n", postPublicUrl, searchIndexingError)
 			return true
 		}
 		me.db.setGoalPostSearchIndexingStatus(
@@ -64,7 +64,8 @@ func (me *searchIndexingUpdater) checkSearchIndexing(ctx context.Context, url st
 	return result.InspectionResult.IndexStatusResult.Verdict, nil
 }
 
-// Path to JSON file containing authentication data for service account
+// Path to JSON file containing authentication data for Google service account
+// The e-mail of the account should be added to Google Search Console -> Settings -> Users and permissions
 func (searchIndexingUpdater) googleAccountJson() string {
 	return gophers.ReadEnvVar("GOOGLE_ACCOUNT_JSON", "")
 }
