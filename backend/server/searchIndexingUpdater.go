@@ -30,6 +30,10 @@ func (me *searchIndexingUpdater) run() {
 		if !row.SearchIndexingEnabled {
 			return true
 		}
+		if row.GoogleSearchIndexingStatusCheckedAt > 0 &&
+			time.Since(row.GetGoogleSearchIndexingStatusCheckedAt()) < me.refreshInterval() {
+			return true
+		}
 		var postPublicUrl = webStaticGoals{}.getPublicUrl(row, webLanguage)
 		var searchIndexingStatus, searchIndexingError = me.checkSearchIndexing(context.Background(), postPublicUrl)
 		if searchIndexingError != nil {
@@ -79,4 +83,8 @@ func (searchIndexingUpdater) siteUrl() (siteUrl string) {
 		siteUrl += "/"
 	}
 	return siteUrl
+}
+
+func (searchIndexingUpdater) refreshInterval() time.Duration {
+	return 24 * time.Hour
 }

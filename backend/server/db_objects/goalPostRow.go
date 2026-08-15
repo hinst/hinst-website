@@ -112,6 +112,10 @@ func (me *GoalPostRow) GetDateTime() time.Time {
 	return time.Unix(me.DateTime, 0)
 }
 
+func (me *GoalPostRow) GetGoogleSearchIndexingStatusCheckedAt() time.Time {
+	return time.Unix(me.GoogleSearchIndexingStatusCheckedAt, 0)
+}
+
 func (me *GoalPostRow) String() string {
 	return "{goalId:" + gophers.GetStringFromInt64(me.GoalId) +
 		", dateTime:" + me.GetDateTime().String() +
