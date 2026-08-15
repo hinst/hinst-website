@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { API_URL } from 'src/typescript/global';
-import { GoalPostHeader } from 'src/typescript/generated/rest_objects';
+import { apiClient } from 'src/typescript/apiClient';
 import { GoalPostHeaderWithMethods } from 'src/typescript/restObjectExtensions';
 import GoalCalendar from './goalCalendar';
 
@@ -19,11 +18,7 @@ export default function GoalCalendarPanel(props: {
 	async function loadPosts() {
 		setIsLoading(isLoadingRef.current + 1);
 		try {
-			const response = await fetch(API_URL + '/goalPosts?id=' + encodeURIComponent(props.id));
-			if (!response.ok) throw new Error(response.statusText);
-			let data = (await response.json()) as GoalPostHeader[];
-			data = data.filter((post) => post.type === 'post');
-			const posts = data.map((post) => new GoalPostHeaderWithMethods(post));
+			const posts = await apiClient.getGoalPosts(parseInt(props.id) || 0);
 			setPosts(posts);
 			if (props.receivePosts) props.receivePosts(posts);
 		} finally {

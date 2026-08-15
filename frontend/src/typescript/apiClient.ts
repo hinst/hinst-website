@@ -142,6 +142,15 @@ class ApiClient {
 		return await this.fetch(apiUrl, { method: 'PUT' });
 	}
 
+	async getGoalPosts(goalId: number): Promise<GoalPostHeaderWithMethods[]> {
+		const url = '/goalPosts?id=' + encodeURIComponent(goalId);
+		const response = await this.fetch(url);
+		const items = ((await response.json()) as GoalPostHeader[]) || [];
+		return items
+			.filter((item) => item.type === 'post')
+			.map((item) => new GoalPostHeaderWithMethods(item));
+	}
+
 	async searchGoalPosts(query: string): Promise<GoalPostHeaderWithMethods[]> {
 		const url = '/goalPosts/search?query=' + encodeURIComponent(query);
 		const response = await this.fetch(url);
