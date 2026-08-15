@@ -1,4 +1,8 @@
-# Rest object update
+# Looking to avoid field duplication
 
-In file `src\tsx\personal-goals\goalCalendarPanel.tsx` instead of using `fetch` from JS standard library,
-use ApiClient defined in `src\typescript\apiClient.ts`. ApiClient should return `GoalPostHeaderWithMethods` directly, without the need to convert objects in goalCalendarPanel.
+See files:
+* src\typescript\generated\rest_objects.ts
+* src\typescript\restObjectExtensions.ts
+
+Notice that fields such as `id`, `title`, `goalId` are defined both in base interface and in the extending object.
+What can we do to avoid field duplication? Research.
