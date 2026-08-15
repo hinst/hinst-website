@@ -39,7 +39,7 @@ export default function ManualPingTracker(props: { setPageTitle: (title: string)
 					<tr>
 						<th>URL</th>
 						<th>Google Ping</th>
-						<th>Manual Ping</th>
+						<th>Google Search Indexing Status</th>
 					</tr>
 				</thead>
 				<tbody>
