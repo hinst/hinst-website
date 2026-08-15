@@ -1,11 +1,10 @@
 import { NavLink } from 'react-router';
-import { GoalObject } from 'src/typescript/generated/rest_objects';
-import 'src/typescript/restObjectExtensions';
+import { GoalObjectWithMethods } from 'src/typescript/restObjectExtensions';
 import { AppContext } from '../context';
 import { useContext } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
 
-export function GoalCard(props: { goal: GoalObject }) {
+export function GoalCard(props: { goal: GoalObjectWithMethods }) {
 	const context = useContext(AppContext);
 	return (
 		<div

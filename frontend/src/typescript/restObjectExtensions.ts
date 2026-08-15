@@ -2,44 +2,43 @@ import { DateTime } from 'luxon';
 import { GoalObject, GoalPostHeader } from 'src/typescript/generated/rest_objects';
 import { SupportedLanguage } from 'src/typescript/language';
 
-/**
- * Attaches frontend-only methods to the generated REST objects.
- *
- * The generated interfaces are extended via TypeScript module augmentation
- * (interface merging), so the generated file itself stays untouched.
- * The methods are plain interface members without runtime code, so instances
- * deserialized from JSON must be hydrated with the `...WithMethods` helpers
- * below (done in `apiClient` and in components that fetch directly).
- */
-declare module 'src/typescript/generated/rest_objects' {
-	interface GoalObject {
-		/** Returns the title in the given language. */
-		getTitle(language: SupportedLanguage): string;
-	}
-	interface GoalPostHeader {
-		/** "yyyy-MM" */
-		yearAndMonthText: string;
-		/** "yyyy-MM-dd" */
-		dateText: string;
-	}
-}
+export class GoalObjectWithMethods implements GoalObject {
+	id!: number;
+	title!: string;
+	titleEnglish!: string;
+	titleGerman!: string;
 
-export function goalObjectWithMethods(object: GoalObject): GoalObject {
-	object.getTitle = (language: SupportedLanguage) => {
+	constructor(data: GoalObject) {
+		Object.assign(this, data);
+	}
+
+	/** Returns the title in the given language. */
+	getTitle(language: SupportedLanguage): string {
 		switch (language) {
 			case SupportedLanguage.RUSSIAN:
-				return object.title;
+				return this.title;
 			case SupportedLanguage.GERMAN:
-				return object.titleGerman;
+				return this.titleGerman;
 			case SupportedLanguage.ENGLISH:
-				return object.titleEnglish;
+				return this.titleEnglish;
 		}
-	};
-	return object;
+	}
 }
 
-export function goalPostHeaderWithMethods<T extends GoalPostHeader>(object: T): T {
-	object.yearAndMonthText = DateTime.fromMillis(object.dateTime * 1000).toFormat('yyyy-MM');
-	object.dateText = DateTime.fromMillis(object.dateTime * 1000).toFormat('yyyy-MM-dd');
-	return object;
+export class GoalPostHeaderWithMethods implements GoalPostHeader {
+	goalId!: number;
+	dateTime!: number;
+	isPublic!: boolean;
+	type!: string;
+	title!: string;
+	/** "yyyy-MM" */
+	yearAndMonthText: string;
+	/** "yyyy-MM-dd" */
+	dateText: string;
+
+	constructor(data: GoalPostHeader) {
+		Object.assign(this, data);
+		this.yearAndMonthText = DateTime.fromMillis(data.dateTime * 1000).toFormat('yyyy-MM');
+		this.dateText = DateTime.fromMillis(data.dateTime * 1000).toFormat('yyyy-MM-dd');
+	}
 }

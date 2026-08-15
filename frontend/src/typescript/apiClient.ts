@@ -5,8 +5,8 @@ import {
 	GoalPostSearchIndexingHeader
 } from 'src/typescript/generated/rest_objects';
 import {
-	goalObjectWithMethods,
-	goalPostHeaderWithMethods
+	GoalObjectWithMethods,
+	GoalPostHeaderWithMethods
 } from './restObjectExtensions';
 import { RiddleItem } from './riddle';
 import { settingsStorage } from './settings';
@@ -26,17 +26,17 @@ class ApiClient {
 		return response;
 	}
 
-	async getGoal(id: number): Promise<GoalObject> {
+	async getGoal(id: number): Promise<GoalObjectWithMethods> {
 		const url = '/goal?id=' + encodeURIComponent(id);
 		const response = await this.fetch(url);
 		const data = (await response.json()) as GoalObject;
-		return goalObjectWithMethods(data);
+		return new GoalObjectWithMethods(data);
 	}
 
-	async getGoals(): Promise<GoalObject[]> {
+	async getGoals(): Promise<GoalObjectWithMethods[]> {
 		const response = await this.fetch('/goals');
 		const data = ((await response.json()) as GoalObject[]) || [];
-		return data.map((item) => goalObjectWithMethods(item));
+		return data.map((item) => new GoalObjectWithMethods(item));
 	}
 
 	async goalPostSetPublic(
@@ -134,8 +134,7 @@ class ApiClient {
 	async getUrlPings(): Promise<GoalPostSearchIndexingHeader[]> {
 		const url = '/urlPings';
 		const response = await this.fetch(url);
-		const items = ((await response.json()) as GoalPostSearchIndexingHeader[]) || [];
-		return items.map((item) => goalPostHeaderWithMethods(item));
+		return ((await response.json()) as GoalPostSearchIndexingHeader[]) || [];
 	}
 
 	async pingUrlManually(url: string) {
@@ -143,11 +142,11 @@ class ApiClient {
 		return await this.fetch(apiUrl, { method: 'PUT' });
 	}
 
-	async searchGoalPosts(query: string): Promise<GoalPostHeader[]> {
+	async searchGoalPosts(query: string): Promise<GoalPostHeaderWithMethods[]> {
 		const url = '/goalPosts/search?query=' + encodeURIComponent(query);
 		const response = await this.fetch(url);
 		const items = ((await response.json()) as GoalPostHeader[]) || [];
-		return items.map((item) => goalPostHeaderWithMethods(item));
+		return items.map((item) => new GoalPostHeaderWithMethods(item));
 	}
 }
 

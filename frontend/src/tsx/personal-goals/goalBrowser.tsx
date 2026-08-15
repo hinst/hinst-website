@@ -1,7 +1,6 @@
 import { useParams, useSearchParams } from 'react-router';
 import GoalCalendarPanel from './goalCalendarPanel';
-import { GoalPostHeader } from 'src/typescript/generated/rest_objects';
-import 'src/typescript/restObjectExtensions';
+import { GoalPostHeaderWithMethods } from 'src/typescript/restObjectExtensions';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'src/tsx/context';
 import { Calendar } from 'react-feather';
@@ -44,7 +43,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 	const [calendarVisible, setCalendarVisible] = useState(isFullMode());
 	const [calendarTransition, setCalendarTransition] = useState('');
 
-	function receivePosts(posts: GoalPostHeader[]) {
+	function receivePosts(posts: GoalPostHeaderWithMethods[]) {
 		if (posts.length && !activePostDate) {
 			const newActivePostDate = posts[0].dateTime;
 			setSearchParams({ activePostDate: '' + newActivePostDate }, { replace: true });
