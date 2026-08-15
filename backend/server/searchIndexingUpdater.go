@@ -57,7 +57,14 @@ func (me *searchIndexingUpdater) checkSearchIndexing(ctx context.Context, url st
 	if searchConsoleError != nil {
 		return "", searchConsoleError
 	}
-	return result.InspectionResult.IndexStatusResult.Verdict, nil
+	return me.getVerdict(result), nil
+}
+
+func (searchIndexingUpdater) getVerdict(result *searchconsole.InspectUrlIndexResponse) string {
+	if result == nil || result.InspectionResult == nil || result.InspectionResult.IndexStatusResult == nil {
+		return ""
+	}
+	return result.InspectionResult.IndexStatusResult.Verdict
 }
 
 // Path to JSON file containing authentication data for Google service account
