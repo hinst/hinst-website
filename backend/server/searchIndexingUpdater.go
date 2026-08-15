@@ -26,15 +26,11 @@ func (me *searchIndexingUpdater) run() {
 		return
 	}
 	var webLanguage = base.SupportedLanguages[0] // Only blog posts in main language currently participate in search indexing
-	var languagePath = webStaticGoals{}.getLanguagePath(webLanguage)
-	var publicUrl = me.publicUrl()
 	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
 		if !row.SearchIndexingEnabled {
 			return true
 		}
-		var postPublicUrl = publicUrl + languagePath + "/personal-goals/" +
-			gophers.GetStringFromInt64(row.GoalId) + "/" +
-			gophers.GetStringFromInt64(row.DateTime) + ".html"
+		var postPublicUrl = webStaticGoals{}.getPublicUrl(row, webLanguage)
 		var searchIndexingStatus, searchIndexingError = me.checkSearchIndexing(context.Background(), postPublicUrl)
 		if searchIndexingError != nil {
 			log.Printf("Warning: Failed to check indexing status for %v: %v\n", postPublicUrl, searchIndexingError)
