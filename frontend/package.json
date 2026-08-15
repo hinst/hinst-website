@@ -2,7 +2,7 @@
 	"name": "frontend",
 	"version": "1.0.0",
 	"scripts": {
-		"start": "parcel --public-url=/hinst-website index.html",
+		"start": "node -e \"require('fs').rmSync('.parcel-cache',{recursive:true,force:true})\" && parcel --public-url=/hinst-website index.html",
 		"build": "tsc && parcel build index.html",
 		"test": "tsc --module nodenext --moduleResolution nodenext && node --enable-source-maps --test \"compiled/src/**/*.test.js\"",
 		"update-packages": "npx npm-check-updates"
