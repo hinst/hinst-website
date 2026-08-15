@@ -66,12 +66,8 @@ func (searchIndexingUpdater) googleAccountJson() string {
 	return gophers.ReadEnvVar("GOOGLE_ACCOUNT_JSON", "")
 }
 
-func (searchIndexingUpdater) publicUrl() string {
-	return gophers.ReadEnvVar("PUBLIC_URL", default_public_url)
-}
-
-func (me searchIndexingUpdater) siteUrl() (siteUrl string) {
-	siteUrl = me.publicUrl()
+func (searchIndexingUpdater) siteUrl() (siteUrl string) {
+	siteUrl = webStaticGoals{}.getPublicBaseUrl()
 	if !strings.HasSuffix(siteUrl, "/") {
 		siteUrl += "/"
 	}

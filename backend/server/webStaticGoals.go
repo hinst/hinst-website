@@ -112,8 +112,11 @@ func (webStaticGoals) getLanguagePath(lang language.Tag) string {
 }
 
 func (webStaticGoals) getPublicUrl(row *db_objects.GoalPostRow, lang language.Tag) string {
-	var publicUrl = gophers.ReadEnvVar("PUBLIC_URL", default_public_url)
-	return publicUrl + webStaticGoals{}.getLanguagePath(lang) + "/personal-goals/" +
+	return webStaticGoals{}.getPublicBaseUrl() + webStaticGoals{}.getLanguagePath(lang) + "/personal-goals/" +
 		gophers.GetStringFromInt64(row.GoalId) + "/" +
 		gophers.GetStringFromInt64(row.DateTime) + ".html"
+}
+
+func (webStaticGoals) getPublicBaseUrl() string {
+	return gophers.ReadEnvVar("PUBLIC_URL", default_public_url)
 }

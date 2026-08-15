@@ -67,7 +67,7 @@ func (staticFilesUpdate) checkPreservedFile(fileName string) bool {
 
 func (me *staticFilesUpdate) buildSiteMap() {
 	var builder = siteMapBuilder{
-		webPath:      me.getPublicUrl(),
+		webPath:      webStaticGoals{}.getPublicBaseUrl(),
 		newFilesPath: me.savedGoalsPath + "/static",
 		oldFilesPath: me.savedGoalsPath + "/static-old",
 	}
@@ -77,10 +77,6 @@ func (me *staticFilesUpdate) buildSiteMap() {
 
 func (staticFilesUpdate) getStaticWebsiteGitUrl() string {
 	return fmt.Sprintf("https://%v@github.com/hinst/hinst.github.io.git", gophers.RequireEnvVar("GIT_TOKEN"))
-}
-
-func (staticFilesUpdate) getPublicUrl() string {
-	return gophers.ReadEnvVar("PUBLIC_URL", default_public_url)
 }
 
 func (me *staticFilesUpdate) getBotName() string {
