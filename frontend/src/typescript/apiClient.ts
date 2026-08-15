@@ -4,12 +4,8 @@ import {
 	GoalPostObject,
 	GoalPostSearchIndexingHeader
 } from 'src/typescript/generated/rest_objects';
-import {
-	goalObjectWithMethods,
-	goalPostHeaderWithMethods,
-	GoalObjectEx,
-	GoalPostHeaderEx
-} from './rest_objects/restObjectExtensions';
+import { goalObjectWithMethods, GoalObjectEx } from './rest_objects/goalObjectEx';
+import { goalPostHeaderWithMethods, GoalPostHeaderEx } from './rest_objects/goalPostHeaderEx';
 import { RiddleItem } from './riddle';
 import { settingsStorage } from './settings';
 

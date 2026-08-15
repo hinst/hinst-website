@@ -1,4 +1,4 @@
-import { GoalObjectEx } from 'src/typescript/rest_objects/restObjectExtensions';
+import { GoalObjectEx } from 'src/typescript/rest_objects/goalObjectEx';
 import { GoalCard } from './goalCard';
 
 export default function GoalList(props: { goals: GoalObjectEx[] }) {

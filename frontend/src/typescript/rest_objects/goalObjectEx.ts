@@ -1,5 +1,4 @@
-import { DateTime } from 'luxon';
-import { GoalObject, GoalPostHeader } from 'src/typescript/generated/rest_objects';
+import { GoalObject } from 'src/typescript/generated/rest_objects';
 import { SupportedLanguage } from 'src/typescript/language';
 
 export interface GoalObjectEx extends GoalObject {
@@ -20,20 +19,5 @@ export function goalObjectWithMethods(data: GoalObject): GoalObjectEx {
 					return data.titleEnglish;
 			}
 		}
-	};
-}
-
-export interface GoalPostHeaderEx extends GoalPostHeader {
-	/** "yyyy-MM" */
-	yearAndMonthText: string;
-	/** "yyyy-MM-dd" */
-	dateText: string;
-}
-
-export function goalPostHeaderWithMethods(data: GoalPostHeader): GoalPostHeaderEx {
-	return {
-		...data,
-		yearAndMonthText: DateTime.fromMillis(data.dateTime * 1000).toFormat('yyyy-MM'),
-		dateText: DateTime.fromMillis(data.dateTime * 1000).toFormat('yyyy-MM-dd')
 	};
 }

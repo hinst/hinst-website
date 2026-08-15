@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router';
-import { GoalObjectEx } from 'src/typescript/rest_objects/restObjectExtensions';
+import { GoalObjectEx } from 'src/typescript/rest_objects/goalObjectEx';
 import { AppContext } from '../context';
 import { useContext } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
