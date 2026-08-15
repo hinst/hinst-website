@@ -1,5 +1,5 @@
 @echo off
-rem Generates TypeScript types from the Golang db_objects package using tygo.
+rem Generates TypeScript types from the Golang rest_objects package using tygo.
 rem Requires Go. tygo is installed automatically if missing.
 setlocal
 cd /d "%~dp0backend"

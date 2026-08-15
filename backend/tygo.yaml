@@ -4,10 +4,6 @@
 # Install: go install github.com/gzuidhof/tygo@latest
 # Generate: tygo generate
 packages:
-  - path: "github.com/hinst/hinst-website/server/db_objects"
-    output_path: "../frontend/src/typescript/generated/db_objects.ts"
+  - path: "github.com/hinst/hinst-website/server/rest_objects"
+    output_path: "../frontend/src/typescript/generated/rest_objects.ts"
     indent: "  "
-    # dbObject.go only contains the internal DbObject interface (with pgx.Rows
-    # method signatures) which has no use on the client side.
-    exclude_files:
-      - "dbObject.go"
