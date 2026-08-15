@@ -1,9 +1,4 @@
 # Rest object update
 
-See files:
-* src\typescript\restObjectExtensions.ts
-* src\typescript\generated\rest_objects.ts
-	* Generated file, editing not possible.
-
-Change the approach used for REST object extension methods.
-Instead of `declare module` and `this.method=something`, define class that `implements` the interface, and define the extension methods in this class.
+In file `src\tsx\personal-goals\goalCalendarPanel.tsx` instead of using `fetch` from JS standard library,
+use ApiClient defined in `src\typescript\apiClient.ts`. ApiClient should return `GoalPostHeaderWithMethods` directly, without the need to convert objects in goalCalendarPanel.
