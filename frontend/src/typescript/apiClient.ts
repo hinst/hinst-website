@@ -9,7 +9,7 @@ import {
 	goalPostHeaderWithMethods,
 	GoalObjectWithMethods,
 	GoalPostHeaderWithMethods
-} from './restObjectExtensions';
+} from './rest_objects/restObjectExtensions';
 import { RiddleItem } from './riddle';
 import { settingsStorage } from './settings';
 

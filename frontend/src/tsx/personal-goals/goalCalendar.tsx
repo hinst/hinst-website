@@ -1,6 +1,6 @@
 import lodash from 'lodash';
 import { NavLink } from 'react-router';
-import { GoalPostHeaderWithMethods } from 'src/typescript/restObjectExtensions';
+import { GoalPostHeaderWithMethods } from 'src/typescript/rest_objects/restObjectExtensions';
 import { compareStrings } from 'src/typescript/string';
 import { getMonthName, parseMonthlyDate } from 'src/typescript/date';
 import { getPaddedChunks } from 'src/typescript/array';
@@ -24,7 +24,10 @@ class YearlyPosts {
 	) {}
 }
 
-export default function GoalCalendar(props: { posts: GoalPostHeaderWithMethods[]; activePostDate: number }) {
+export default function GoalCalendar(props: {
+	posts: GoalPostHeaderWithMethods[];
+	activePostDate: number;
+}) {
 	function getSortedPosts() {
 		return [...props.posts].sort((a, b) => a.dateTime - b.dateTime);
 	}
@@ -99,7 +102,10 @@ function DaysOfMonth(props: { posts: GoalPostHeaderWithMethods[]; activePostDate
 	);
 }
 
-function DaysOfMonthRow(props: { posts: (GoalPostHeaderWithMethods | undefined)[]; activePostDate: number }) {
+function DaysOfMonthRow(props: {
+	posts: (GoalPostHeaderWithMethods | undefined)[];
+	activePostDate: number;
+}) {
 	return props.posts.map((post) => (
 		<div key={post?.dateTime || createRandomId()}>
 			{post ? (

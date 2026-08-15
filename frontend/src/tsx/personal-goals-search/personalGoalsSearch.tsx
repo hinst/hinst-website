@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { GoalPostHeaderWithMethods } from 'src/typescript/restObjectExtensions';
+import { GoalPostHeaderWithMethods } from 'src/typescript/rest_objects/restObjectExtensions';
 import { SearchBar } from './searchBar';
 import { ItemRow } from './itemRow';
 import { apiClient } from 'src/typescript/apiClient';

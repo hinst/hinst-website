@@ -1,4 +1,4 @@
-import { GoalObjectWithMethods } from 'src/typescript/restObjectExtensions';
+import { GoalObjectWithMethods } from 'src/typescript/rest_objects/restObjectExtensions';
 import { GoalCard } from './goalCard';
 
 export default function GoalList(props: { goals: GoalObjectWithMethods[] }) {

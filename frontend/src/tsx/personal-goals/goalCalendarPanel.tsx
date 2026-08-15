@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
-import { GoalPostHeaderWithMethods } from 'src/typescript/restObjectExtensions';
+import { GoalPostHeaderWithMethods } from 'src/typescript/rest_objects/restObjectExtensions';
 import GoalCalendar from './goalCalendar';
 
 export default function GoalCalendarPanel(props: {

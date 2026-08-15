@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { GoalObjectWithMethods } from 'src/typescript/restObjectExtensions';
+import { GoalObjectWithMethods } from 'src/typescript/rest_objects/restObjectExtensions';
 import { API_URL } from 'src/typescript/global';
 import GoalList from './goalList';
 import { apiClient } from 'src/typescript/apiClient';
