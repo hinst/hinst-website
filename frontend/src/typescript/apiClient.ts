@@ -7,8 +7,8 @@ import {
 import {
 	goalObjectWithMethods,
 	goalPostHeaderWithMethods,
-	GoalObjectWithMethods,
-	GoalPostHeaderWithMethods
+	GoalObjectEx,
+	GoalPostHeaderEx
 } from './rest_objects/restObjectExtensions';
 import { RiddleItem } from './riddle';
 import { settingsStorage } from './settings';
@@ -28,14 +28,14 @@ class ApiClient {
 		return response;
 	}
 
-	async getGoal(id: number): Promise<GoalObjectWithMethods> {
+	async getGoal(id: number): Promise<GoalObjectEx> {
 		const url = '/goal?id=' + encodeURIComponent(id);
 		const response = await this.fetch(url);
 		const data = (await response.json()) as GoalObject;
 		return goalObjectWithMethods(data);
 	}
 
-	async getGoals(): Promise<GoalObjectWithMethods[]> {
+	async getGoals(): Promise<GoalObjectEx[]> {
 		const response = await this.fetch('/goals');
 		const data = ((await response.json()) as GoalObject[]) || [];
 		return data.map((item) => goalObjectWithMethods(item));
@@ -144,7 +144,7 @@ class ApiClient {
 		return await this.fetch(apiUrl, { method: 'PUT' });
 	}
 
-	async getGoalPosts(goalId: number): Promise<GoalPostHeaderWithMethods[]> {
+	async getGoalPosts(goalId: number): Promise<GoalPostHeaderEx[]> {
 		const url = '/goalPosts?id=' + encodeURIComponent(goalId);
 		const response = await this.fetch(url);
 		const items = ((await response.json()) as GoalPostHeader[]) || [];
@@ -153,7 +153,7 @@ class ApiClient {
 			.map((item) => goalPostHeaderWithMethods(item));
 	}
 
-	async searchGoalPosts(query: string): Promise<GoalPostHeaderWithMethods[]> {
+	async searchGoalPosts(query: string): Promise<GoalPostHeaderEx[]> {
 		const url = '/goalPosts/search?query=' + encodeURIComponent(query);
 		const response = await this.fetch(url);
 		const items = ((await response.json()) as GoalPostHeader[]) || [];

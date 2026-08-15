@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
-import { GoalPostHeaderWithMethods } from 'src/typescript/rest_objects/restObjectExtensions';
+import { GoalPostHeaderEx } from 'src/typescript/rest_objects/restObjectExtensions';
 import GoalCalendar from './goalCalendar';
 
 export default function GoalCalendarPanel(props: {
 	id: string;
 	activePostDate: number;
-	receivePosts?: (posts: GoalPostHeaderWithMethods[]) => void;
+	receivePosts?: (posts: GoalPostHeaderEx[]) => void;
 	reload: number;
 }) {
 	const [isLoading, setIsLoading] = useState(0);
 	const isLoadingRef = useRef(0);
 	isLoadingRef.current = isLoading;
 
-	const [posts, setPosts] = useState(new Array<GoalPostHeaderWithMethods>());
+	const [posts, setPosts] = useState(new Array<GoalPostHeaderEx>());
 
 	async function loadPosts() {
 		setIsLoading(isLoadingRef.current + 1);

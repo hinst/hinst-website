@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router';
-import { GoalPostHeaderWithMethods } from 'src/typescript/rest_objects/restObjectExtensions';
+import { GoalPostHeaderEx } from 'src/typescript/rest_objects/restObjectExtensions';
 
 interface ItemRowProps {
-	item: GoalPostHeaderWithMethods;
+	item: GoalPostHeaderEx;
 }
 
 export function ItemRow({ item }: ItemRowProps) {

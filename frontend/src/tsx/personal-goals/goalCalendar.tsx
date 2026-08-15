@@ -1,6 +1,6 @@
 import lodash from 'lodash';
 import { NavLink } from 'react-router';
-import { GoalPostHeaderWithMethods } from 'src/typescript/rest_objects/restObjectExtensions';
+import { GoalPostHeaderEx } from 'src/typescript/rest_objects/restObjectExtensions';
 import { compareStrings } from 'src/typescript/string';
 import { getMonthName, parseMonthlyDate } from 'src/typescript/date';
 import { getPaddedChunks } from 'src/typescript/array';
@@ -13,7 +13,7 @@ const ROWS_PER_MONTH = 3;
 class MonthlyPosts {
 	constructor(
 		public readonly monthDate: string,
-		public readonly posts: GoalPostHeaderWithMethods[]
+		public readonly posts: GoalPostHeaderEx[]
 	) {}
 }
 
@@ -24,10 +24,7 @@ class YearlyPosts {
 	) {}
 }
 
-export default function GoalCalendar(props: {
-	posts: GoalPostHeaderWithMethods[];
-	activePostDate: number;
-}) {
+export default function GoalCalendar(props: { posts: GoalPostHeaderEx[]; activePostDate: number }) {
 	function getSortedPosts() {
 		return [...props.posts].sort((a, b) => a.dateTime - b.dateTime);
 	}
@@ -87,7 +84,7 @@ export default function GoalCalendar(props: {
 	);
 }
 
-function DaysOfMonth(props: { posts: GoalPostHeaderWithMethods[]; activePostDate: number }) {
+function DaysOfMonth(props: { posts: GoalPostHeaderEx[]; activePostDate: number }) {
 	return (
 		<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
 			{getPaddedChunks(props.posts, ROWS_PER_MONTH).map((posts) => (
@@ -103,7 +100,7 @@ function DaysOfMonth(props: { posts: GoalPostHeaderWithMethods[]; activePostDate
 }
 
 function DaysOfMonthRow(props: {
-	posts: (GoalPostHeaderWithMethods | undefined)[];
+	posts: (GoalPostHeaderEx | undefined)[];
 	activePostDate: number;
 }) {
 	return props.posts.map((post) => (
