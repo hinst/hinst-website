@@ -1,5 +1,5 @@
 import { GoalObject } from 'src/typescript/generated/rest_objects';
-import 'src/typescript/personal-goals/restObjectExtensions';
+import 'src/typescript/restObjectExtensions';
 import { GoalCard } from './goalCard';
 
 export default function GoalList(props: { goals: GoalObject[] }) {

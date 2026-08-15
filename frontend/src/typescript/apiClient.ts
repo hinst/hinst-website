@@ -7,7 +7,7 @@ import {
 import {
 	goalObjectWithMethods,
 	goalPostHeaderWithMethods
-} from './personal-goals/restObjectExtensions';
+} from './restObjectExtensions';
 import { RiddleItem } from './riddle';
 import { settingsStorage } from './settings';
 
