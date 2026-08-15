@@ -60,6 +60,7 @@ func (me *program) update() {
 	me.updateTitles()
 	me.generateStatic(me.savedGoalsPath + "/static")
 	me.uploadStatic()
+	me.updateSearchIndexingStatus()
 }
 
 func (me *program) updateTranslations() {
@@ -86,6 +87,11 @@ func (me *program) uploadStatic() {
 		savedGoalsPath: me.savedGoalsPath,
 	}
 	staticFilesUpdate.run()
+}
+
+func (me *program) updateSearchIndexingStatus() {
+	var updater = &searchIndexingUpdater{db: me.database}
+	updater.run()
 }
 
 func (me *program) migrate() {

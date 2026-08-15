@@ -27,6 +27,18 @@ func (me *database) setGoalPostSearchIndexingEnabled(row db_objects.GoalPostRow)
 	return result.RowsAffected()
 }
 
+func (me *database) setGoalPostSearchIndexingStatus(
+	goalId int64, dateTime time.Time, status string, checkedAt time.Time,
+) int64 {
+	var tableName = (db_objects.GoalPostRow{}).GetTableName()
+	var queryText = "UPDATE " + tableName +
+		" SET googleSearchIndexingStatus = $1, googleSearchIndexingStatusCheckedAt = $2" +
+		" WHERE goalId = $3 AND dateTime = $4"
+	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), queryText,
+		status, checkedAt.UTC().Unix(), goalId, dateTime.UTC().Unix()))
+	return result.RowsAffected()
+}
+
 func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) int64 {
 	var textField = "text" + db_objects.GetLanguagePostfix(supportedLanguage)
 	var tableName = (db_objects.GoalPostRow{}).GetTableName()
