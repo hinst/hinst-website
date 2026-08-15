@@ -5,6 +5,8 @@ import {
 	GoalPostSearchIndexingHeader
 } from 'src/typescript/generated/rest_objects';
 import {
+	goalObjectWithMethods,
+	goalPostHeaderWithMethods,
 	GoalObjectWithMethods,
 	GoalPostHeaderWithMethods
 } from './restObjectExtensions';
@@ -30,13 +32,13 @@ class ApiClient {
 		const url = '/goal?id=' + encodeURIComponent(id);
 		const response = await this.fetch(url);
 		const data = (await response.json()) as GoalObject;
-		return new GoalObjectWithMethods(data);
+		return goalObjectWithMethods(data);
 	}
 
 	async getGoals(): Promise<GoalObjectWithMethods[]> {
 		const response = await this.fetch('/goals');
 		const data = ((await response.json()) as GoalObject[]) || [];
-		return data.map((item) => new GoalObjectWithMethods(item));
+		return data.map((item) => goalObjectWithMethods(item));
 	}
 
 	async goalPostSetPublic(
@@ -148,14 +150,14 @@ class ApiClient {
 		const items = ((await response.json()) as GoalPostHeader[]) || [];
 		return items
 			.filter((item) => item.type === 'post')
-			.map((item) => new GoalPostHeaderWithMethods(item));
+			.map((item) => goalPostHeaderWithMethods(item));
 	}
 
 	async searchGoalPosts(query: string): Promise<GoalPostHeaderWithMethods[]> {
 		const url = '/goalPosts/search?query=' + encodeURIComponent(query);
 		const response = await this.fetch(url);
 		const items = ((await response.json()) as GoalPostHeader[]) || [];
-		return items.map((item) => new GoalPostHeaderWithMethods(item));
+		return items.map((item) => goalPostHeaderWithMethods(item));
 	}
 }
 
