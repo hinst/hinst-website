@@ -74,10 +74,12 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 	}, [goalTitle, activePostDate]);
 
 	useEffect(() => {
-		const el = articleContainerRef.current;
-		if (!el) return;
-		const ro = new ResizeObserver(([e]) => setArticleContainerWidth(e.contentRect.width));
-		ro.observe(el);
+		const element = articleContainerRef.current;
+		if (!element) return;
+		const ro = new ResizeObserver(([entry]) =>
+			setArticleContainerWidth(entry.contentRect.width)
+		);
+		ro.observe(element);
 		return () => ro.disconnect();
 	}, [isFullMode()]);
 
