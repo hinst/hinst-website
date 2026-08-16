@@ -81,6 +81,28 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 		return () => clearInterval(timer);
 	}, []);
 
+	function getGoalCalendarPanel() {
+		return (
+			<GoalCalendarPanel
+				id={goalId}
+				receivePosts={receivePosts}
+				activePostDate={parseInt(activePostDate) || 0}
+				reload={reloadGoalCalendar}
+			/>
+		);
+	}
+
+	function getGoalPostPanel() {
+		return (
+			<GoalPostPanel
+				goalId={parseInt(goalId)}
+				postDate={parseInt(activePostDate)}
+				goalManagerMode={isGoalManagerMode()}
+				onChange={() => setReloadGoalCalendar(Math.random())}
+			/>
+		);
+	}
+
 	function getWideLayout() {
 		return (
 			<div
@@ -99,12 +121,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 						flexBasis: 'fit-content'
 					}}
 				>
-					<GoalCalendarPanel
-						id={goalId}
-						receivePosts={receivePosts}
-						activePostDate={parseInt(activePostDate) || 0}
-						reload={reloadGoalCalendar}
-					/>
+					{getGoalCalendarPanel()}
 				</div>
 				<div
 					id={articleContainerId}
@@ -132,14 +149,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 							overflowY: 'auto'
 						}}
 					>
-						{activePostDate ? (
-							<GoalPostPanel
-								goalId={parseInt(goalId)}
-								postDate={parseInt(activePostDate)}
-								goalManagerMode={isGoalManagerMode()}
-								onChange={() => setReloadGoalCalendar(Math.random())}
-							/>
-						) : undefined}
+						{activePostDate ? getGoalPostPanel() : undefined}
 					</div>
 				</div>
 			</div>
