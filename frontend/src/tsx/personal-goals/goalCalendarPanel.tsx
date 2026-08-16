@@ -27,7 +27,7 @@ export default function GoalCalendarPanel(props: {
 	}
 	useEffect(() => {
 		loadPosts();
-	}, [props.reload]);
+	}, [props.id, props.reload]);
 
 	return (
 		<div>
