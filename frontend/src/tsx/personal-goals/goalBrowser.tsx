@@ -3,9 +3,9 @@ import GoalCalendarPanel from './goalCalendarPanel';
 import { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from 'src/tsx/context';
-import { Calendar } from 'react-feather';
 import Cookie from 'js-cookie';
 import GoalPostPanel from './goalPostPanel';
+import GoalBrowserNarrow from './goalBrowser.narrow';
 import { DateTime } from 'luxon';
 import { apiClient } from 'src/typescript/apiClient';
 
@@ -156,94 +156,19 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 		);
 	}
 
-	function getFloatingCalendarButton() {
-		return (
-			<div
-				className='ms-bg-light ms-shape-circle'
-				style={{
-					position: 'absolute',
-					width: 40,
-					height: 40,
-					bottom: 0,
-					right: 0,
-					zIndex: 2
-				}}
-			>
-				<button
-					type='button'
-					className={
-						'ms-btn ms-primary ms-rounded ms-box-shadow' +
-						(calendarVisible ? ' ms-btn-active' : '')
-					}
-					onClick={() => setCalendarVisible(!calendarVisible)}
-					style={{
-						margin: 0,
-						width: 40,
-						height: 40
-					}}
-				>
-					<Calendar
-						style={{
-							position: 'absolute',
-							left: '50%',
-							top: '50%',
-							transform: 'translate(-50%, -50%)'
-						}}
-					/>
-				</button>
-			</div>
-		);
-	}
-
-	function getNarrowLayout() {
-		return (
-			<div
-				style={{
-					position: 'relative',
-					display: 'flex',
-					minHeight: 0,
-					height: '100%',
-					maxHeight: '100%',
-					width: '100%',
-					maxWidth: '100%',
-					overflowY: 'hidden'
-				}}
-			>
-				{getFloatingCalendarButton()}
-				<div
-					className={
-						'ms-bg-light ms-shape-round ms-border-main ' +
-						(calendarVisible ? 'ms-box-shadow' : '') // Hide shadow when calendar is hidden to avoid showing ghost shadow on the right
-					}
-					style={{
-						position: 'absolute',
-						zIndex: 1,
-						overflowY: 'auto',
-						maxHeight: '100%',
-						padding: 8,
-						borderWidth: 1,
-						borderStyle: 'solid',
-						transform: calendarVisible ? 'translate(0,0)' : 'translate(-100%, 0)',
-						transition: calendarTransition
-					}}
-				>
-					{getGoalCalendarPanel()}
-				</div>
-				<div
-					onClick={() => setCalendarVisible(false)}
-					style={{
-						display: 'flex',
-						overflowY: 'auto',
-						flexGrow: 1
-					}}
-				>
-					<div style={{ maxWidth: ARTICLE_WIDTH, width: '100%' }}>
-						{activePostDate ? getGoalPostPanel() : undefined}
-					</div>
-				</div>
-			</div>
-		);
-	}
-
-	return isFullMode() ? getWideLayout() : getNarrowLayout();
+	return isFullMode() ? (
+		getWideLayout()
+	) : (
+		<GoalBrowserNarrow
+			goalId={goalId}
+			activePostDate={activePostDate}
+			calendarVisible={calendarVisible}
+			setCalendarVisible={setCalendarVisible}
+			calendarTransition={calendarTransition}
+			goalManagerMode={isGoalManagerMode()}
+			receivePosts={receivePosts}
+			reloadGoalCalendar={reloadGoalCalendar}
+			onChangeGoalCalendar={() => setReloadGoalCalendar(Math.random())}
+		/>
+	);
 }
