@@ -160,15 +160,12 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 		getWideLayout()
 	) : (
 		<GoalBrowserNarrow
-			goalId={goalId}
 			activePostDate={activePostDate}
 			calendarVisible={calendarVisible}
 			setCalendarVisible={setCalendarVisible}
 			calendarTransition={calendarTransition}
-			goalManagerMode={isGoalManagerMode()}
-			receivePosts={receivePosts}
-			reloadGoalCalendar={reloadGoalCalendar}
-			onChangeGoalCalendar={() => setReloadGoalCalendar(Math.random())}
+			getGoalCalendarPanel={getGoalCalendarPanel}
+			getGoalPostPanel={getGoalPostPanel}
 		/>
 	);
 }

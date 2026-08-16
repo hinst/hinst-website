@@ -1,41 +1,14 @@
 import { Calendar } from 'react-feather';
-import GoalCalendarPanel from './goalCalendarPanel';
-import GoalPostPanel from './goalPostPanel';
-import { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
+import { ReactElement } from 'react';
 
 export default function GoalBrowserNarrow(props: {
-	goalId: string;
 	activePostDate: string;
 	calendarVisible: boolean;
 	setCalendarVisible: (visible: boolean) => void;
 	calendarTransition: string;
-	goalManagerMode: boolean;
-	receivePosts: (posts: GoalPostHeaderEx[]) => void;
-	reloadGoalCalendar: number;
-	onChangeGoalCalendar: () => void;
+	getGoalCalendarPanel: () => ReactElement;
+	getGoalPostPanel: () => ReactElement;
 }) {
-	function getGoalCalendarPanel() {
-		return (
-			<GoalCalendarPanel
-				id={props.goalId}
-				receivePosts={props.receivePosts}
-				activePostDate={parseInt(props.activePostDate) || 0}
-				reload={props.reloadGoalCalendar}
-			/>
-		);
-	}
-
-	function getGoalPostPanel() {
-		return (
-			<GoalPostPanel
-				goalId={parseInt(props.goalId)}
-				postDate={parseInt(props.activePostDate)}
-				goalManagerMode={props.goalManagerMode}
-				onChange={props.onChangeGoalCalendar}
-			/>
-		);
-	}
-
 	function getFloatingCalendarButton() {
 		return (
 			<div
@@ -106,7 +79,7 @@ export default function GoalBrowserNarrow(props: {
 					transition: props.calendarTransition
 				}}
 			>
-				{getGoalCalendarPanel()}
+				{props.getGoalCalendarPanel()}
 			</div>
 			<div
 				onClick={() => props.setCalendarVisible(false)}
@@ -117,7 +90,7 @@ export default function GoalBrowserNarrow(props: {
 				}}
 			>
 				<div style={{ width: '100%' }}>
-					{props.activePostDate ? getGoalPostPanel() : undefined}
+					{props.activePostDate ? props.getGoalPostPanel() : undefined}
 				</div>
 			</div>
 		</div>
