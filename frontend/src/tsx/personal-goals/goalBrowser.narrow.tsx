@@ -14,25 +14,13 @@ export default function GoalBrowserNarrow(props: {
 	reloadGoalCalendar: number;
 	onChangeGoalCalendar: () => void;
 }) {
-	const {
-		goalId,
-		activePostDate,
-		calendarVisible,
-		setCalendarVisible,
-		calendarTransition,
-		goalManagerMode,
-		receivePosts,
-		reloadGoalCalendar,
-		onChangeGoalCalendar
-	} = props;
-
 	function getGoalCalendarPanel() {
 		return (
 			<GoalCalendarPanel
-				id={goalId}
-				receivePosts={receivePosts}
-				activePostDate={parseInt(activePostDate) || 0}
-				reload={reloadGoalCalendar}
+				id={props.goalId}
+				receivePosts={props.receivePosts}
+				activePostDate={parseInt(props.activePostDate) || 0}
+				reload={props.reloadGoalCalendar}
 			/>
 		);
 	}
@@ -40,10 +28,10 @@ export default function GoalBrowserNarrow(props: {
 	function getGoalPostPanel() {
 		return (
 			<GoalPostPanel
-				goalId={parseInt(goalId)}
-				postDate={parseInt(activePostDate)}
-				goalManagerMode={goalManagerMode}
-				onChange={onChangeGoalCalendar}
+				goalId={parseInt(props.goalId)}
+				postDate={parseInt(props.activePostDate)}
+				goalManagerMode={props.goalManagerMode}
+				onChange={props.onChangeGoalCalendar}
 			/>
 		);
 	}
@@ -65,9 +53,9 @@ export default function GoalBrowserNarrow(props: {
 					type='button'
 					className={
 						'ms-btn ms-primary ms-rounded ms-box-shadow' +
-						(calendarVisible ? ' ms-btn-active' : '')
+						(props.calendarVisible ? ' ms-btn-active' : '')
 					}
-					onClick={() => setCalendarVisible(!calendarVisible)}
+					onClick={() => props.setCalendarVisible(!props.calendarVisible)}
 					style={{
 						margin: 0,
 						width: 40,
@@ -104,7 +92,7 @@ export default function GoalBrowserNarrow(props: {
 			<div
 				className={
 					'ms-bg-light ms-shape-round ms-border-main ' +
-					(calendarVisible ? 'ms-box-shadow' : '') // Hide shadow when calendar is hidden to avoid showing ghost shadow on the right
+					(props.calendarVisible ? 'ms-box-shadow' : '') // Hide shadow when calendar is hidden to avoid showing ghost shadow on the right
 				}
 				style={{
 					position: 'absolute',
@@ -114,14 +102,14 @@ export default function GoalBrowserNarrow(props: {
 					padding: 8,
 					borderWidth: 1,
 					borderStyle: 'solid',
-					transform: calendarVisible ? 'translate(0,0)' : 'translate(-100%, 0)',
-					transition: calendarTransition
+					transform: props.calendarVisible ? 'translate(0,0)' : 'translate(-100%, 0)',
+					transition: props.calendarTransition
 				}}
 			>
 				{getGoalCalendarPanel()}
 			</div>
 			<div
-				onClick={() => setCalendarVisible(false)}
+				onClick={() => props.setCalendarVisible(false)}
 				style={{
 					display: 'flex',
 					overflowY: 'auto',
@@ -129,7 +117,7 @@ export default function GoalBrowserNarrow(props: {
 				}}
 			>
 				<div style={{ width: '100%' }}>
-					{activePostDate ? getGoalPostPanel() : undefined}
+					{props.activePostDate ? getGoalPostPanel() : undefined}
 				</div>
 			</div>
 		</div>
