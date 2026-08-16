@@ -32,15 +32,13 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 	const [goalTitle, setGoalTitle] = useState('');
 	const [reloadGoalCalendar, setReloadGoalCalendar] = useState(0);
 
-	function isFullMode() {
-		return context.windowWidth >= 700;
-	}
+	const isFullMode = context.windowWidth >= 700;
 
 	function isGoalManagerMode() {
 		return Cookie.get('goalManagerMode') === '1';
 	}
 
-	const [calendarVisible, setCalendarVisible] = useState(isFullMode());
+	const [calendarVisible, setCalendarVisible] = useState(isFullMode);
 	const [calendarTransition, setCalendarTransition] = useState('');
 
 	function receivePosts(posts: GoalPostHeaderEx[]) {
@@ -81,7 +79,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 		);
 		ro.observe(element);
 		return () => ro.disconnect();
-	}, [isFullMode()]);
+	}, [isFullMode]);
 
 	function getGoalCalendarPanel() {
 		return (
@@ -158,7 +156,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 		);
 	}
 
-	return isFullMode() ? (
+	return isFullMode ? (
 		getWideLayout()
 	) : (
 		<GoalBrowserNarrow
