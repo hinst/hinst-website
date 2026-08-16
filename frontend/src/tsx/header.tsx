@@ -68,7 +68,7 @@ export default function Header(props: { title: string }) {
 						overflowY: 'clip'
 					}}
 				>
-					Showcase Website
+					Programmer's Diary
 				</b>
 				<span
 					style={{
