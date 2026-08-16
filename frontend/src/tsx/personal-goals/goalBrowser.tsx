@@ -1,7 +1,7 @@
 import { useParams, useSearchParams } from 'react-router';
 import GoalCalendarPanel from './goalCalendarPanel';
 import { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'src/tsx/context';
 import Cookie from 'js-cookie';
 import GoalPostPanel from './goalPostPanel';
@@ -26,7 +26,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 	const goalId: string = params.id!;
 	const [searchParams, setSearchParams] = useSearchParams();
 	const activePostDate = searchParams.get('activePostDate') || '';
-	const [articleContainerId] = useState('id-' + Math.random().toString(16));
+	const articleContainerRef = useRef<HTMLDivElement>(null);
 	const [articleContainerWidth, setArticleContainerWidth] = useState(0);
 
 	const [goalTitle, setGoalTitle] = useState('');
@@ -74,12 +74,12 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 	}, [goalTitle, activePostDate]);
 
 	useEffect(() => {
-		const timer = setInterval(() => {
-			const container = document.getElementById(articleContainerId);
-			setArticleContainerWidth(container?.clientWidth || 0);
-		});
-		return () => clearInterval(timer);
-	}, []);
+		const el = articleContainerRef.current;
+		if (!el) return;
+		const ro = new ResizeObserver(([e]) => setArticleContainerWidth(e.contentRect.width));
+		ro.observe(el);
+		return () => ro.disconnect();
+	}, [isFullMode()]);
 
 	function getGoalCalendarPanel() {
 		return (
@@ -124,7 +124,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 					{getGoalCalendarPanel()}
 				</div>
 				<div
-					id={articleContainerId}
+					ref={articleContainerRef}
 					style={{
 						flexGrow: 1,
 						justifyContent: 'center',
