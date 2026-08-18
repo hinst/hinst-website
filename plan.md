@@ -44,7 +44,9 @@ Alternative (more invasive): **orval** to also generate a typed API client, repl
 
 ### Open questions
 1. **Spec location**: `backend/docs/openapi.json` (swag default) — OK, or prefer committed `openapi.yaml`?
+	1. Answer: Use YAML format. Save into file backend/OpenAPI.yaml
 2. **TS generator**: go with `openapi-typescript` (recommended, minimal), or do you want orval/full client generation too?
+	1. Answer: use `openapi-typescript`
 3. The frontend `apiClient.ts` also references endpoints that **don't exist in this backend** (`/riddles/new`, `/riddles/primeNumbers`, `/pingUrlManually` — dead code, likely from a template). Leave them as-is, or clean up while we're at it?
-
-Want me to proceed with this plan (swag + openapi-typescript, default spec location, leave dead code untouched)?
+	1. Answer: riddles are already deleted.
+	1. pingUrlManually: delete it and replace old calls with //TODO
