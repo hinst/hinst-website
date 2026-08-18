@@ -6,7 +6,6 @@ import {
 } from 'src/typescript/generated/rest_objects';
 import { goalObjectWithMethods, GoalObjectEx } from './rest_objects/goalObjectEx';
 import { goalPostHeaderWithMethods, GoalPostHeaderEx } from './rest_objects/goalPostHeaderEx';
-import { RiddleItem } from './riddle';
 import { settingsStorage } from './settings';
 
 class ApiClient {
@@ -92,19 +91,6 @@ class ApiClient {
 				languageTag
 			});
 		return this.fetch(url, { method: 'POST', body: text });
-	}
-
-	async createRiddle(): Promise<RiddleItem> {
-		const url = '/riddles/new';
-		const response = await this.fetch(url);
-		const object = await response.json();
-		return Object.assign(new RiddleItem(), object);
-	}
-
-	async getPrimeNumbers(): Promise<number[]> {
-		const url = '/riddles/primeNumbers';
-		const response = await this.fetch(url);
-		return (await response.json()) as number[];
 	}
 
 	getImageUrl(goalId: number, postDateTime: number, index: number): string {

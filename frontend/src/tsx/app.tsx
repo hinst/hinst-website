@@ -9,7 +9,6 @@ import Cookies from 'js-cookie';
 import SettingsPage from './settings/settingsPage';
 import { APP_TITLE } from 'src/typescript/global';
 import { settingsStorage } from 'src/typescript/settings';
-import TestRiddlePage from './settings/testRiddlePage';
 import ManualPingTracker from './manual-ping-tracker/manualPingTracker';
 import { PersonalGoalsSearch } from './personal-goals-search/personalGoalsSearch';
 
@@ -67,10 +66,6 @@ export default function App() {
 						<Route
 							path='/settings'
 							element={<SettingsPage setPageTitle={setPageTitle} />}
-						/>
-						<Route
-							path='/test-riddle'
-							element={<TestRiddlePage setPageTitle={setPageTitle} />}
 						/>
 						<Route
 							path='/manual-ping-tracker'
