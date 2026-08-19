@@ -30,9 +30,11 @@ func webRouter() *http.ServeMux {
 
 var _webApi huma.API
 
-func webApi() huma.API {
+func webApi(path string) huma.API {
+	var config = huma.DefaultConfig("Hinst-website API", "0.1.0")
+	config.DocsPath = path + "/docs"
 	if _webApi == nil {
-		_webApi = humago.New(webRouter(), huma.DefaultConfig("Hinst-website API", "0.1.0"))
+		_webApi = humago.New(webRouter(), config)
 	}
 	return _webApi
 }
@@ -41,11 +43,11 @@ var _webApiGroups map[string]*huma.Group = make(map[string]*huma.Group)
 
 func webApiGrouped(path string) huma.API {
 	if path == "" {
-		return webApi()
+		return webApi(path)
 	}
 	var webApiGroup, contains = _webApiGroups[path]
 	if !contains {
-		webApiGroup = huma.NewGroup(webApi(), path)
+		webApiGroup = huma.NewGroup(webApi(path), path)
 		_webApiGroups[path] = webApiGroup
 	}
 	return webApiGroup
