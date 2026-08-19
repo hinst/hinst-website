@@ -1,7 +1,7 @@
 package rest_objects
 
 type ArrayBox[T any] struct {
-	Items []T
+	Items []T `json:"items"`
 }
 
 func NewArrayBox[T any](Items []T) ArrayBox[T] {

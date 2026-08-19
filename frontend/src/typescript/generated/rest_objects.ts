@@ -4,7 +4,7 @@
 // source: arrayBox.go
 
 export interface ArrayBox<T extends any> {
-	Items: T[];
+	items: T[];
 }
 
 //////////
