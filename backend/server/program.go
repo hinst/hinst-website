@@ -39,7 +39,7 @@ func (me *program) runWeb() {
 
 	var fileServer = http.FileServer(http.Dir(me.webFilesPath))
 	var filesPrefix = webApp.webPath + "/"
-	http.Handle(filesPrefix, http.StripPrefix(filesPrefix, fileServer))
+	webRouter().Handle(filesPrefix, http.StripPrefix(filesPrefix, fileServer))
 
 	log.Printf("Starting: netAddress=%v, webPath=%v, webFilesPath=%v",
 		me.netAddress(), webApp.webPath, me.webFilesPath)
