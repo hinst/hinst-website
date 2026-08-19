@@ -48,7 +48,7 @@ func webApiGrouped(path string) huma.API {
 		webApiGroup = huma.NewGroup(webApi(), path)
 		_webApiGroups[path] = webApiGroup
 	}
-	return webApiGroup.API
+	return webApiGroup
 }
 
 type namedWebFunction struct {
