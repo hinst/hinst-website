@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/hinst/go-gophers"
+	"github.com/rs/cors"
 )
 
 type program struct {
@@ -41,13 +42,18 @@ func (me *program) runWeb() {
 	var filesPrefix = webApp.webPath + "/"
 	webRouter().Handle(filesPrefix, http.StripPrefix(filesPrefix, fileServer))
 
+	var webHandler = cors.New(cors.Options{
+		AllowedOrigins: []string{gophers.ReadEnvVar("ALLOW_ORIGIN", "")},
+	}).Handler(webRouter())
+
 	log.Printf("Starting: netAddress=%v, webPath=%v, webFilesPath=%v",
 		me.netAddress(), webApp.webPath, me.webFilesPath)
 
 	var terminatingContext, _ = signal.NotifyContext(context.Background(), os.Interrupt,
 		syscall.SIGTERM, syscall.SIGINT)
+
 	go func() {
-		gophers.AssertError(http.ListenAndServe(me.netAddress(), webRouter()))
+		gophers.AssertError(http.ListenAndServe(me.netAddress(), webHandler))
 	}()
 	<-terminatingContext.Done()
 

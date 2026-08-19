@@ -60,27 +60,3 @@ func (me *webApp) init(db *database) {
 	var appAdmin = new(webAppAdmin)
 	appAdmin.init(me.db)
 }
-
-func (me *webApp) wrap(function gophers.WebFunction) gophers.WebFunction {
-	return func(response http.ResponseWriter, request *http.Request) {
-		response.Header().Set("Access-Control-Allow-Origin", me.allowOrigin())
-		defer func() {
-			var exception = recover()
-			if exception != nil {
-				var webError, isWebError = exception.(webError)
-				if isWebError {
-					response.WriteHeader(webError.Status)
-					var _, _ = response.Write(gophers.EncodeJson(webError))
-				} else {
-					response.WriteHeader(http.StatusInternalServerError)
-					log.Printf("Error in web function: %v\n%s", exception, debug.Stack())
-				}
-			}
-		}()
-		function(response, request)
-	}
-}
-
-func (webApp) allowOrigin() string {
-	return gophers.ReadEnvVar("ALLOW_ORIGIN", "")
-}

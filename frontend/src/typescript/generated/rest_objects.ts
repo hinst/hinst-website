@@ -16,9 +16,6 @@ export interface GoalObject {
 	titleEnglish: string;
 	titleGerman: string;
 }
-export interface GoalObjects {
-	items: GoalObject[];
-}
 
 //////////
 // source: goalPostObject.go
