@@ -9,6 +9,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/danielgtaylor/huma/v2/adapters/humachi"
+	"github.com/go-chi/chi/v5"
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/microcosm-cc/bluemonday"
@@ -16,6 +19,38 @@ import (
 )
 
 const default_public_url = "https://hinst.github.io"
+
+var _webRouter *chi.Mux
+
+func webRouter() *chi.Mux {
+	if _webRouter == nil {
+		_webRouter = chi.NewMux()
+	}
+	return _webRouter
+}
+
+var _webApi huma.API
+
+func webApi() huma.API {
+	if _webApi == nil {
+		_webApi = humachi.New(webRouter(), huma.DefaultConfig("Hinst-website API", "0.1.0"))
+	}
+	return _webApi
+}
+
+var _webApiGroups map[string]*huma.Group = make(map[string]*huma.Group)
+
+func webApiGrouped(path string) huma.API {
+	if path == "" {
+		return webApi()
+	}
+	var webApiGroup, contains = _webApiGroups[path]
+	if !contains {
+		webApiGroup = huma.NewGroup(webApi(), path)
+		_webApiGroups[path] = webApiGroup
+	}
+	return webApiGroup.API
+}
 
 type namedWebFunction struct {
 	Name     string

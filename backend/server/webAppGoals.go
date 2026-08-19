@@ -1,10 +1,12 @@
 package server
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"time"
 
+	"github.com/danielgtaylor/huma/v2"
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
@@ -16,8 +18,18 @@ type webAppGoals struct {
 	webAppGoalsBase
 }
 
-func (me *webAppGoals) init(db *database) []namedWebFunction {
+func (me *webAppGoals) init(webPath string, db *database) []namedWebFunction {
+	me.webPath = webPath
 	me.db = db
+	huma.Get(webApiGrouped(webPath), "/api/goals", func(ctx context.Context, input *struct{}) (*rest_objects.ArrayBox[rest_objects.GoalObject], error) {
+		var rows = me.db.getGoals()
+		var records = []rest_objects.GoalObject{}
+		for _, row := range rows {
+			records = append(records, rest_objects.GoalObject{}.Read(row))
+		}
+		return rest_objects.NewArrayBoxPtr(records), nil
+	})
+
 	return []namedWebFunction{
 		{"/api/goals", me.getGoals},
 		{"/api/goal/image", me.getGoalImage},

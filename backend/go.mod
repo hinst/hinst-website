@@ -3,6 +3,8 @@ module github.com/hinst/hinst-website
 go 1.26
 
 require (
+	github.com/danielgtaylor/huma/v2 v2.39.1
+	github.com/go-chi/chi/v5 v5.3.1
 	github.com/goccy/go-yaml v1.19.2
 	github.com/gomarkdown/markdown v0.0.0-20260614204949-e08cff860f76
 	github.com/hinst/go-gophers v0.1.26
@@ -11,6 +13,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/muir/gwrap v0.4.0
 	golang.org/x/text v0.40.0
+	google.golang.org/api v0.292.0
 )
 
 require (
@@ -41,7 +44,6 @@ require (
 	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
-	google.golang.org/api v0.292.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
 	google.golang.org/grpc v1.83.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect

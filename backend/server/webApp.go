@@ -26,7 +26,7 @@ func (me *webApp) init(db *database) {
 		me.webPath = ""
 	}
 	var appGoals = new(webAppGoals)
-	me.addFunctions(me.webPath, appGoals.init(me.db))
+	me.addFunctions(me.webPath, appGoals.init(me.webPath, me.db))
 
 	var appAdmin = new(webAppAdmin)
 	me.addFunctions(me.webPath, appAdmin.init(me.db))

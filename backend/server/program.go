@@ -47,7 +47,7 @@ func (me *program) runWeb() {
 	var terminatingContext, _ = signal.NotifyContext(context.Background(), os.Interrupt,
 		syscall.SIGTERM, syscall.SIGINT)
 	go func() {
-		gophers.AssertError(http.ListenAndServe(me.netAddress(), nil))
+		gophers.AssertError(http.ListenAndServe(me.netAddress(), webRouter()))
 	}()
 	<-terminatingContext.Done()
 

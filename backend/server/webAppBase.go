@@ -7,6 +7,8 @@ import (
 )
 
 type webAppBase struct {
+	// Base URL prefix to be used for all APIs of this web app
+	webPath string
 }
 
 func (me *webAppBase) inputCheckAdminPassword(request *http.Request) bool {
