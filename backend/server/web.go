@@ -9,8 +9,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/danielgtaylor/huma/v2"
-	"github.com/danielgtaylor/huma/v2/adapters/humago"
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/microcosm-cc/bluemonday"
@@ -26,31 +24,6 @@ func webRouter() *http.ServeMux {
 		_webRouter = http.NewServeMux()
 	}
 	return _webRouter
-}
-
-var _webApi huma.API
-
-func webApi(path string) huma.API {
-	var config = huma.DefaultConfig("Hinst-website API", "0.1.0")
-	config.DocsPath = path + "/docs"
-	if _webApi == nil {
-		_webApi = humago.New(webRouter(), config)
-	}
-	return _webApi
-}
-
-var _webApiGroups map[string]*huma.Group = make(map[string]*huma.Group)
-
-func webApiGrouped(path string) huma.API {
-	if path == "" {
-		return webApi(path)
-	}
-	var webApiGroup, contains = _webApiGroups[path]
-	if !contains {
-		webApiGroup = huma.NewGroup(webApi(path), path)
-		_webApiGroups[path] = webApiGroup
-	}
-	return webApiGroup
 }
 
 type namedWebFunction struct {

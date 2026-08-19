@@ -5,12 +5,16 @@ import (
 	"net/http"
 	"runtime/debug"
 
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/danielgtaylor/huma/v2/adapters/humago"
 	"github.com/hinst/go-gophers"
 )
 
 type webApp struct {
-	db      *database
-	webPath string
+	db          *database
+	webPath     string
+	webApi      huma.API
+	webApiGroup huma.API
 }
 
 func (webApp) getDefaultWebPath() string {
@@ -25,8 +29,14 @@ func (me *webApp) init(db *database) {
 	if me.webPath == "/" {
 		me.webPath = ""
 	}
+	var humaConfig = huma.DefaultConfig("Hinst-website API", "0.1.0")
+	humaConfig.DocsPath = me.webPath + "/docs"
+	me.webApi = humago.New(webRouter(), humaConfig)
+	if me.webPath != "" {
+		me.webApiGroup = huma.NewGroup(me.webApi, me.webPath)
+	}
 	var appGoals = new(webAppGoals)
-	me.addFunctions(me.webPath, appGoals.init(me.webPath, me.db))
+	me.addFunctions(me.webPath, appGoals.init(me.webApiGroup, me.db))
 
 	var appAdmin = new(webAppAdmin)
 	me.addFunctions(me.webPath, appAdmin.init(me.db))

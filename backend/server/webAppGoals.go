@@ -18,10 +18,9 @@ type webAppGoals struct {
 	webAppGoalsBase
 }
 
-func (me *webAppGoals) init(webPath string, db *database) []namedWebFunction {
-	me.webPath = webPath
+func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	me.db = db
-	huma.Get(webApiGrouped(webPath), "/api/goals", func(ctx context.Context, input *struct{}) (*rest_objects.ArrayBox[rest_objects.GoalObject], error) {
+	huma.Get(webApi, "/api/goals", func(ctx context.Context, input *struct{}) (*rest_objects.ArrayBox[rest_objects.GoalObject], error) {
 		var rows = me.db.getGoals()
 		var records = []rest_objects.GoalObject{}
 		for _, row := range rows {
