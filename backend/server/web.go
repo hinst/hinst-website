@@ -10,8 +10,7 @@ import (
 	"time"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/danielgtaylor/huma/v2/adapters/humachi"
-	"github.com/go-chi/chi/v5"
+	"github.com/danielgtaylor/huma/v2/adapters/humago"
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/microcosm-cc/bluemonday"
@@ -20,11 +19,11 @@ import (
 
 const default_public_url = "https://hinst.github.io"
 
-var _webRouter *chi.Mux
+var _webRouter *http.ServeMux
 
-func webRouter() *chi.Mux {
+func webRouter() *http.ServeMux {
 	if _webRouter == nil {
-		_webRouter = chi.NewMux()
+		_webRouter = http.NewServeMux()
 	}
 	return _webRouter
 }
@@ -33,7 +32,7 @@ var _webApi huma.API
 
 func webApi() huma.API {
 	if _webApi == nil {
-		_webApi = humachi.New(webRouter(), huma.DefaultConfig("Hinst-website API", "0.1.0"))
+		_webApi = humago.New(webRouter(), huma.DefaultConfig("Hinst-website API", "0.1.0"))
 	}
 	return _webApi
 }

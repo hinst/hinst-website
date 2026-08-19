@@ -4,7 +4,6 @@ go 1.26
 
 require (
 	github.com/danielgtaylor/huma/v2 v2.39.1
-	github.com/go-chi/chi/v5 v5.3.1
 	github.com/goccy/go-yaml v1.19.2
 	github.com/gomarkdown/markdown v0.0.0-20260614204949-e08cff860f76
 	github.com/hinst/go-gophers v0.1.26
