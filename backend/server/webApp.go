@@ -36,10 +36,10 @@ func (me *webApp) init(db *database) {
 		me.webApiGroup = huma.NewGroup(me.webApi, me.webPath)
 	}
 	var appGoals = new(webAppGoals)
-	me.addFunctions(me.webPath, appGoals.init(me.webApiGroup, me.db))
+	appGoals.init(me.webApiGroup, me.db)
 
 	var appAdmin = new(webAppAdmin)
-	me.addFunctions(me.webPath, appAdmin.init(me.db))
+	appAdmin.init(me.db)
 }
 
 func (me *webApp) addFunctions(path string, functions []namedWebFunction) {

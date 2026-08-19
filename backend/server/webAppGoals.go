@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"io"
+	"log"
 	"net/http"
 	"time"
 
@@ -20,13 +21,14 @@ type webAppGoals struct {
 
 func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	me.db = db
-	huma.Get(webApi, "/api/goals", func(ctx context.Context, input *struct{}) (*rest_objects.ArrayBox[rest_objects.GoalObject], error) {
+	huma.Get(webApi, "/api/goals", func(ctx context.Context, input *struct{}) (*rest_objects.GoalObjects, error) {
 		var rows = me.db.getGoals()
 		var records = []rest_objects.GoalObject{}
 		for _, row := range rows {
 			records = append(records, rest_objects.GoalObject{}.Read(row))
 		}
-		return rest_objects.NewArrayBoxPtr(records), nil
+		log.Println(2)
+		return &rest_objects.GoalObjects{Items: records}, nil
 	})
 
 	return []namedWebFunction{

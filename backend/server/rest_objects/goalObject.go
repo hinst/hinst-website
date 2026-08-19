@@ -9,6 +9,10 @@ type GoalObject struct {
 	TitleGerman  string `json:"titleGerman"`
 }
 
+type GoalObjects struct {
+	Items []GoalObject `json:"items"`
+}
+
 func (me GoalObject) Read(goalRow db_objects.GoalRow) GoalObject {
 	me.Id = goalRow.Id
 	me.Title = goalRow.Title
