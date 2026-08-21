@@ -26,9 +26,9 @@ func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	huma.Get(webApi, "/api/goal/image", me.getGoalImage)
 	huma.Get(webApi, "/api/goalPosts", me.getGoalPosts)
 	huma.Get(webApi, "/api/goalPost", me.getGoalPost)
+	huma.Get(webApi, "/api/goalPost/image", me.getGoalPostImage)
 
 	return []namedWebFunction{
-		{"/api/goalPost/image", me.getGoalPostImage},
 		{"/api/goalPost/setPublic", me.guardAdminFunction(me.setGoalPostPublic)},
 		{"/api/goalPost/setSearchIndexingEnabled", me.guardAdminFunction(me.setGoalPostSearchIndexingEnabled)},
 		{"/api/goalPost/setText", me.guardAdminFunction(me.setGoalPostText)},
@@ -113,17 +113,21 @@ func (me *webAppGoals) getGoalPost(ctx context.Context, input *struct {
 	return rest_objects.NewSimpleResponse(&goalPostObject), nil
 }
 
-func (me *webAppGoals) getGoalPostImage(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
-	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
-	var index = inputValidWebInteger(request.URL.Query().Get("index"))
-	var image = me.db.getGoalPostImage(goalId, postDateTime, index)
+func (me *webAppGoals) getGoalPostImage(ctx context.Context, input *struct {
+	GoalId       int64 `query:"goalId"`
+	PostDateTime int64 `query:"postDateTime"`
+	Index        int   `query:"index"`
+}) (*rest_objects.Response[[]byte], error) {
+	var postDateTime = time.Unix(input.PostDateTime, 0)
+	var image = me.db.getGoalPostImage(input.GoalId, postDateTime, input.Index)
 	if image == nil {
 		panic(webError{"Image not found", http.StatusNotFound})
 	}
-	gophers.SetCacheAge(response, time.Hour)
-	response.Header().Set(gophers.ContentTypeHeader, image.ContentType)
-	var _, _ = response.Write(image.File)
+	return &rest_objects.Response[[]byte]{
+		Body:         image.File,
+		ContentType:  image.ContentType,
+		CacheControl: "max-age=" + strconv.Itoa(int(time.Hour.Seconds())),
+	}, nil
 }
 
 func (me *webAppGoals) setGoalPostPublic(response http.ResponseWriter, request *http.Request) {
