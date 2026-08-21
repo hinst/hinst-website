@@ -25,9 +25,9 @@ func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	huma.Get(webApi, "/api/goal", me.getGoal)
 	huma.Get(webApi, "/api/goal/image", me.getGoalImage)
 	huma.Get(webApi, "/api/goalPosts", me.getGoalPosts)
+	huma.Get(webApi, "/api/goalPost", me.getGoalPost)
 
 	return []namedWebFunction{
-		{"/api/goalPost", me.getGoalPost},
 		{"/api/goalPost/image", me.getGoalPostImage},
 		{"/api/goalPost/setPublic", me.guardAdminFunction(me.setGoalPostPublic)},
 		{"/api/goalPost/setSearchIndexingEnabled", me.guardAdminFunction(me.setGoalPostSearchIndexingEnabled)},
@@ -75,25 +75,25 @@ func (me *webAppGoals) getGoalPosts(ctx context.Context, input *struct {
 	return rest_objects.NewSimpleResponse(posts), nil
 }
 
-func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
-	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
-	var goalManagerMode = me.inputCheckGoalManagerMode(request)
-
-	var goalPostRow = me.db.getGoalPost(goalId, postDateTime)
+func (me *webAppGoals) getGoalPost(ctx context.Context, input *struct {
+	GoalId       int64 `query:"goalId"`
+	PostDateTime int64 `query:"postDateTime"`
+}) (*rest_objects.Response[*rest_objects.GoalPostObject], error) {
+	var postDateTime = time.Unix(input.PostDateTime, 0)
+	var goalPostRow = me.db.getGoalPost(input.GoalId, postDateTime)
 	if goalPostRow == nil {
-		var errorMessage = "Cannot find goalId=" + gophers.GetStringFromInt64(goalId) +
+		var errorMessage = "Cannot find goalId=" + gophers.GetStringFromInt64(input.GoalId) +
 			" postDateTime=" + postDateTime.String()
 		panic(webError{errorMessage, http.StatusNotFound})
 	}
-	if !goalPostRow.IsPublic && !goalManagerMode {
-		panic(webError{"Need goal manager access level", http.StatusUnauthorized})
+	if !goalPostRow.IsPublic && !webContext.isAdminMode(ctx) {
+		panic(webError{"Need admin access to view private post", http.StatusUnauthorized})
 	}
+	var requestedLanguage = webContext.getLanguage(ctx)
 	var goalPostObject rest_objects.GoalPostObject
 	goalPostObject.GoalId = goalPostRow.GoalId
 	goalPostObject.DateTime = goalPostRow.GetDateTime().UTC().Unix()
 	goalPostObject.Text = goalPostRow.Text
-	var requestedLanguage = getWebLanguage(request)
 	goalPostObject.LanguageTag = requestedLanguage.String()
 	goalPostObject.LanguageName = base.GetLanguageName(requestedLanguage)
 	if requestedLanguage != base.SupportedLanguages[0] {
@@ -106,11 +106,11 @@ func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.R
 		}
 	}
 	goalPostObject.IsPublic = goalPostRow.IsPublic
-	if me.inputCheckGoalManagerMode(request) {
+	if webContext.isAdminMode(ctx) {
 		goalPostObject.SearchIndexingEnabled = goalPostRow.SearchIndexingEnabled
 	}
-	goalPostObject.ImageCount = me.db.getGoalPostImageCount(goalId, postDateTime)
-	writeJsonResponse(response, goalPostObject)
+	goalPostObject.ImageCount = me.db.getGoalPostImageCount(input.GoalId, postDateTime)
+	return rest_objects.NewSimpleResponse(&goalPostObject), nil
 }
 
 func (me *webAppGoals) getGoalPostImage(response http.ResponseWriter, request *http.Request) {
