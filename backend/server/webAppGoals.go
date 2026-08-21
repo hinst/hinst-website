@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -22,9 +23,9 @@ func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	me.db = db
 	huma.Get(webApi, "/api/goals", me.getGoals)
 	huma.Get(webApi, "/api/goal", me.getGoal)
+	huma.Get(webApi, "/api/goal/image", me.getGoalImage)
 
 	return []namedWebFunction{
-		{"/api/goal/image", me.getGoalImage},
 		{"/api/goalPosts", me.getGoalPosts},
 		{"/api/goalPost", me.getGoalPost},
 		{"/api/goalPost/image", me.getGoalPostImage},
@@ -55,12 +56,16 @@ func (me *webAppGoals) getGoal(ctx context.Context, input *struct{ id string }) 
 	return &goalObject, nil
 }
 
-func (me *webAppGoals) getGoalImage(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
+type goalImageOutput struct {
+	CacheControl string `header:"Cache-Control"`
+	ContentType  string `header:"Content-Type"`
+	Body         []byte
+}
+
+func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct{ id string }) (*goalImageOutput, error) {
+	var goalId = me.inputValidGoalId(input.id)
 	var imageData, imageContentType = me.db.getGoalImage(goalId)
-	gophers.SetCacheAge(response, time.Hour)
-	response.Header().Set(gophers.ContentTypeHeader, imageContentType)
-	var _, _ = response.Write(imageData)
+	return &goalImageOutput{CacheControl: "max-age=" + strconv.Itoa(int(time.Hour.Seconds())), ContentType: imageContentType, Body: imageData}, nil
 }
 
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {
