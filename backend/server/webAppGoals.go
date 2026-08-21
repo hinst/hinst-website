@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/danielgtaylor/huma/v2"
+	"github.com/danielgtaylor/huma/v2/adapters/humago"
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
@@ -25,9 +26,9 @@ func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	huma.Get(webApi, "/api/goals", me.getGoals)
 	huma.Get(webApi, "/api/goal", me.getGoal)
 	huma.Get(webApi, "/api/goal/image", me.getGoalImage)
+	huma.Get(webApi, "/api/goalPosts", me.getGoalPosts)
 
 	return []namedWebFunction{
-		{"/api/goalPosts", me.getGoalPosts},
 		{"/api/goalPost", me.getGoalPost},
 		{"/api/goalPost/image", me.getGoalPostImage},
 		{"/api/goalPost/setPublic", me.guardAdminFunction(me.setGoalPostPublic)},
@@ -70,12 +71,14 @@ func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct {
 	}, nil
 }
 
-func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
+func (me *webAppGoals) getGoalPosts(ctx context.Context, input *struct {
+	Id int64 `query:"id"`
+}) (*rest_objects.Response[[]rest_objects.GoalPostHeader], error) {
+	var request, _ = humago.Unwrap(ctx)
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
 	var requestedLanguage = getWebLanguage(request)
-	var posts = me.db.getGoalPosts(goalId, goalManagerMode, requestedLanguage)
-	writeJsonResponse(response, posts)
+	var posts = me.db.getGoalPosts(input.Id, goalManagerMode, requestedLanguage)
+	return rest_objects.NewSimpleResponse(posts), nil
 }
 
 func (me *webAppGoals) getGoalPost(response http.ResponseWriter, request *http.Request) {
