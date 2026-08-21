@@ -81,13 +81,12 @@ func (me *webAppGoals) getGoalPost(ctx context.Context, input *struct {
 }) (*rest_objects.Response[*rest_objects.GoalPostObject], error) {
 	var postDateTime = time.Unix(input.PostDateTime, 0)
 	var goalPostRow = me.db.getGoalPost(input.GoalId, postDateTime)
-	if goalPostRow == nil {
+	var isNotFound = goalPostRow == nil ||
+		!goalPostRow.IsPublic && !webContext.isAdminMode(ctx)
+	if isNotFound {
 		var errorMessage = "Cannot find goalId=" + gophers.GetStringFromInt64(input.GoalId) +
 			" postDateTime=" + postDateTime.String()
 		panic(webError{errorMessage, http.StatusNotFound})
-	}
-	if !goalPostRow.IsPublic && !webContext.isAdminMode(ctx) {
-		panic(webError{"Need admin access to view private post", http.StatusUnauthorized})
 	}
 	var requestedLanguage = webContext.getLanguage(ctx)
 	var goalPostObject rest_objects.GoalPostObject
