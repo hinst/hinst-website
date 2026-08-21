@@ -46,14 +46,14 @@ func (me *webAppGoals) getGoals(ctx context.Context, input *struct{}) (*rest_obj
 	return rest_objects.NewSimpleResponse(records), nil
 }
 
-func (me *webAppGoals) getGoal(ctx context.Context, input *struct{ id string }) (*rest_objects.GoalObject, error) {
+func (me *webAppGoals) getGoal(ctx context.Context, input *struct{ id string }) (*rest_objects.Response[*rest_objects.GoalObject], error) {
 	var goalId = me.inputValidGoalId(input.id)
 	var row = me.db.getGoal(goalId)
 	if row == nil {
 		panic(webError{"Goal not found", http.StatusNotFound})
 	}
 	var goalObject = rest_objects.GoalObject{}.Read(*row)
-	return &goalObject, nil
+	return rest_objects.NewSimpleResponse(&goalObject), nil
 }
 
 func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct{ id string }) (*rest_objects.Response[[]byte], error) {
