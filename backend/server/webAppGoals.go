@@ -20,19 +20,11 @@ type webAppGoals struct {
 
 func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	me.db = db
-	huma.Get(webApi, "/api/goals", func(ctx context.Context, input *struct{}) (*rest_objects.BodyBox[[]rest_objects.GoalObject], error) {
-		var rows = me.db.getGoals()
-		var records = []rest_objects.GoalObject{}
-		for _, row := range rows {
-			records = append(records, rest_objects.GoalObject{}.Read(row))
-		}
-		return rest_objects.NewBodyBox(records), nil
-	})
+	huma.Get(webApi, "/api/goals", me.getGoals)
+	huma.Get(webApi, "/api/goal", me.getGoal)
 
 	return []namedWebFunction{
-		{"/api/goals", me.getGoals},
 		{"/api/goal/image", me.getGoalImage},
-		{"/api/goal", me.getGoal},
 		{"/api/goalPosts", me.getGoalPosts},
 		{"/api/goalPost", me.getGoalPost},
 		{"/api/goalPost/image", me.getGoalPostImage},
@@ -44,22 +36,23 @@ func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	}
 }
 
-func (me *webAppGoals) getGoals(response http.ResponseWriter, request *http.Request) {
+func (me *webAppGoals) getGoals(ctx context.Context, input *struct{}) (*rest_objects.BodyBox[[]rest_objects.GoalObject], error) {
 	var rows = me.db.getGoals()
 	var records = []rest_objects.GoalObject{}
 	for _, row := range rows {
 		records = append(records, rest_objects.GoalObject{}.Read(row))
 	}
-	writeJsonResponse(response, records)
+	return rest_objects.NewBodyBox(records), nil
 }
 
-func (me *webAppGoals) getGoal(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalId(request.URL.Query().Get("id"))
+func (me *webAppGoals) getGoal(ctx context.Context, input *struct{ id string }) (*rest_objects.GoalObject, error) {
+	var goalId = me.inputValidGoalId(input.id)
 	var row = me.db.getGoal(goalId)
 	if row == nil {
 		panic(webError{"Goal not found", http.StatusNotFound})
 	}
-	writeJsonResponse(response, rest_objects.GoalObject{}.Read(*row))
+	var goalObject = rest_objects.GoalObject{}.Read(*row)
+	return &goalObject, nil
 }
 
 func (me *webAppGoals) getGoalImage(response http.ResponseWriter, request *http.Request) {
