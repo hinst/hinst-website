@@ -37,13 +37,13 @@ func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	}
 }
 
-func (me *webAppGoals) getGoals(ctx context.Context, input *struct{}) (*rest_objects.BodyBox[[]rest_objects.GoalObject], error) {
+func (me *webAppGoals) getGoals(ctx context.Context, input *struct{}) (*rest_objects.Response[[]rest_objects.GoalObject], error) {
 	var rows = me.db.getGoals()
 	var records = []rest_objects.GoalObject{}
 	for _, row := range rows {
 		records = append(records, rest_objects.GoalObject{}.Read(row))
 	}
-	return rest_objects.NewBodyBox(records), nil
+	return rest_objects.NewSimpleResponse(records), nil
 }
 
 func (me *webAppGoals) getGoal(ctx context.Context, input *struct{ id string }) (*rest_objects.GoalObject, error) {
@@ -56,16 +56,10 @@ func (me *webAppGoals) getGoal(ctx context.Context, input *struct{ id string }) 
 	return &goalObject, nil
 }
 
-type goalImageOutput struct {
-	CacheControl string `header:"Cache-Control"`
-	ContentType  string `header:"Content-Type"`
-	Body         []byte
-}
-
-func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct{ id string }) (*goalImageOutput, error) {
+func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct{ id string }) (*rest_objects.Response[[]byte], error) {
 	var goalId = me.inputValidGoalId(input.id)
 	var imageData, imageContentType = me.db.getGoalImage(goalId)
-	return &goalImageOutput{CacheControl: "max-age=" + strconv.Itoa(int(time.Hour.Seconds())), ContentType: imageContentType, Body: imageData}, nil
+	return &rest_objects.Response[[]byte]{CacheControl: "max-age=" + strconv.Itoa(int(time.Hour.Seconds())), ContentType: imageContentType, Body: imageData}, nil
 }
 
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {
