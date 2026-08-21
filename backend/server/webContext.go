@@ -6,14 +6,20 @@ import (
 	"golang.org/x/text/language"
 )
 
-const webContextKeyLanguage = "webContextKeyLanguage"
-
-func getWebLanguageFromContext(ctx context.Context) language.Tag {
-	return ctx.Value(webContextKeyLanguage).(language.Tag)
+type tWebContext struct {
+	keyLanguage string
+	keyIsAdmin  string
 }
 
-const webContextKeyIsAdmin = "webContextKeyIsAdmin"
+var webContext = tWebContext{
+	keyLanguage: "webContextKeyLanguage",
+	keyIsAdmin:  "webContextKeyIsAdmin",
+}
 
-func getWebAdminModeFromContext(ctx context.Context) bool {
-	return ctx.Value(webContextKeyIsAdmin).(bool)
+func (me tWebContext) getLanguage(ctx context.Context) language.Tag {
+	return ctx.Value(me.keyLanguage).(language.Tag)
+}
+
+func (me tWebContext) isAdminMode(ctx context.Context) bool {
+	return ctx.Value(me.keyIsAdmin).(bool)
 }

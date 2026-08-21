@@ -73,7 +73,7 @@ func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct {
 func (me *webAppGoals) getGoalPosts(ctx context.Context, input *struct {
 	Id int64 `query:"id"`
 }) (*rest_objects.Response[[]rest_objects.GoalPostHeader], error) {
-	var posts = me.db.getGoalPosts(input.Id, getWebAdminModeFromContext(ctx), getWebLanguageFromContext(ctx))
+	var posts = me.db.getGoalPosts(input.Id, webContext.isAdminMode(ctx), webContext.getLanguage(ctx))
 	return rest_objects.NewSimpleResponse(posts), nil
 }
 

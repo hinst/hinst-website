@@ -74,7 +74,7 @@ func (webApp) readLanguage(context huma.Context, next func(huma.Context)) {
 		}
 	})
 	var languageTag language.Tag = parseLanguageHeader(acceptLanguage)
-	context = huma.WithValue(context, webContextKeyLanguage, languageTag)
+	context = huma.WithValue(context, webContext.keyLanguage, languageTag)
 	next(context)
 }
 
@@ -84,6 +84,6 @@ func (webApp) checkAdminMode(context huma.Context, next func(huma.Context)) {
 	var isAdmin = len(adminPassword) > 0 &&
 		adminPasswordCookieError == nil &&
 		adminPasswordCookie.Value == adminPassword
-	context = huma.WithValue(context, webContextKeyIsAdmin, isAdmin)
+	context = huma.WithValue(context, webContext.keyIsAdmin, isAdmin)
 	next(context)
 }
