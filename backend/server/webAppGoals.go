@@ -48,9 +48,9 @@ func (me *webAppGoals) getGoals(ctx context.Context, input *struct{}) (*rest_obj
 }
 
 func (me *webAppGoals) getGoal(ctx context.Context, input *struct {
-	id int64 `query:"int64"`
+	Id int64 `query:"id"`
 }) (*rest_objects.Response[*rest_objects.GoalObject], error) {
-	var row = me.db.getGoal(input.id)
+	var row = me.db.getGoal(input.Id)
 	if row == nil {
 		panic(webError{"Goal not found", http.StatusNotFound})
 	}
@@ -59,10 +59,10 @@ func (me *webAppGoals) getGoal(ctx context.Context, input *struct {
 }
 
 func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct {
-	id int64 `query:"int64"`
+	Id int64 `query:"id"`
 }) (*rest_objects.Response[[]byte], error) {
-	log.Println(input.id)
-	var imageData, imageContentType = me.db.getGoalImage(input.id)
+	log.Println(input.Id)
+	var imageData, imageContentType = me.db.getGoalImage(input.Id)
 	return &rest_objects.Response[[]byte]{CacheControl: "max-age=" + strconv.Itoa(int(time.Hour.Seconds())), ContentType: imageContentType, Body: imageData}, nil
 }
 
