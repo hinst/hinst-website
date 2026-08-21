@@ -76,7 +76,7 @@ func (me *webAppGoals) getGoalPosts(ctx context.Context, input *struct {
 }) (*rest_objects.Response[[]rest_objects.GoalPostHeader], error) {
 	var request, _ = humago.Unwrap(ctx)
 	var goalManagerMode = me.inputCheckGoalManagerMode(request)
-	var requestedLanguage = getWebLanguage(request)
+	var requestedLanguage = ctx.Value(webContextKeyLanguage).(language.Tag)
 	var posts = me.db.getGoalPosts(input.Id, goalManagerMode, requestedLanguage)
 	return rest_objects.NewSimpleResponse(posts), nil
 }

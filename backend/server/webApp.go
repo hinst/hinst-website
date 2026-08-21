@@ -8,6 +8,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humago"
 	"github.com/hinst/go-gophers"
+	"golang.org/x/text/language"
 )
 
 type webApp struct {
@@ -36,6 +37,7 @@ func (me *webApp) init(db *database) {
 		me.webApiGroup = huma.NewGroup(me.webApi, me.webPath)
 	}
 	me.webApi.UseMiddleware(me.catchPanic)
+	me.webApi.UseMiddleware(me.readLanguage)
 	var appGoals = new(webAppGoals)
 	appGoals.init(me.webApiGroup, me.db)
 
@@ -43,7 +45,7 @@ func (me *webApp) init(db *database) {
 	appAdmin.init(me.db)
 }
 
-func (webApp) catchPanic(context huma.Context, next func(huma.Context)) {
+func (me *webApp) catchPanic(context huma.Context, next func(huma.Context)) {
 	defer func() {
 		var exception = recover()
 		if exception != nil {
@@ -60,5 +62,17 @@ func (webApp) catchPanic(context huma.Context, next func(huma.Context)) {
 			}
 		}
 	}()
+	next(context)
+}
+
+func (webApp) readLanguage(context huma.Context, next func(huma.Context)) {
+	var acceptLanguage = ""
+	context.EachHeader(func(name, value string) {
+		if http.CanonicalHeaderKey(name) == "Accept-Language" {
+			acceptLanguage = value
+		}
+	})
+	var languageTag language.Tag = parseLanguageHeader(acceptLanguage)
+	context = huma.WithValue(context, webContextKeyLanguage, languageTag)
 	next(context)
 }

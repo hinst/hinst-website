@@ -16,6 +16,7 @@ import (
 )
 
 const default_public_url = "https://hinst.github.io"
+const webContextKeyLanguage = "webContextKeyLanguage"
 
 var _webRouter *http.ServeMux
 
