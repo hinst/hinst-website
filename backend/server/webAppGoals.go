@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -61,7 +60,6 @@ func (me *webAppGoals) getGoal(ctx context.Context, input *struct {
 func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct {
 	Id int64 `query:"id"`
 }) (*rest_objects.Response[[]byte], error) {
-	log.Println(input.Id)
 	var imageData, imageContentType = me.db.getGoalImage(input.Id)
 	return &rest_objects.Response[[]byte]{
 		Body:         imageData,
