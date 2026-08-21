@@ -60,15 +60,6 @@ func parseLanguageHeader(text string) language.Tag {
 	return tag
 }
 
-func inputValidWebInteger(text string) int {
-	var result, parseError = strconv.Atoi(text)
-	var createWebError = func() webError {
-		return webError{"Need integer. Received: " + text, http.StatusBadRequest}
-	}
-	gophers.AssertCondition(parseError == nil, createWebError)
-	return result
-}
-
 func writeJsonResponse(response http.ResponseWriter, value any) {
 	response.Header().Set(gophers.ContentTypeHeader, gophers.ContentTypeJson)
 	var _, _ = response.Write(gophers.EncodeJson(value))
