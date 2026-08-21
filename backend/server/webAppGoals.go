@@ -57,9 +57,10 @@ func (me *webAppGoals) getGoal(ctx context.Context, input *struct {
 	return rest_objects.NewSimpleResponse(&goalObject), nil
 }
 
-func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct{ id string }) (*rest_objects.Response[[]byte], error) {
-	var goalId = me.inputValidGoalId(input.id)
-	var imageData, imageContentType = me.db.getGoalImage(goalId)
+func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct {
+	id int64 `query:"int64"`
+}) (*rest_objects.Response[[]byte], error) {
+	var imageData, imageContentType = me.db.getGoalImage(input.id)
 	return &rest_objects.Response[[]byte]{CacheControl: "max-age=" + strconv.Itoa(int(time.Hour.Seconds())), ContentType: imageContentType, Body: imageData}, nil
 }
 
