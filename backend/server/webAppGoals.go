@@ -47,7 +47,7 @@ func (me *webAppGoals) getGoals(ctx context.Context, input *struct{}) (*rest_obj
 }
 
 func (me *webAppGoals) getGoal(ctx context.Context, input *struct {
-	Id int64 `query:"id"`
+	Id int64 `query:"id" required:"true"`
 }) (*rest_objects.Response[*rest_objects.GoalObject], error) {
 	var row = me.db.getGoal(input.Id)
 	if row == nil {
@@ -58,7 +58,7 @@ func (me *webAppGoals) getGoal(ctx context.Context, input *struct {
 }
 
 func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct {
-	Id int64 `query:"id"`
+	Id int64 `query:"id" required:"true"`
 }) (*rest_objects.Response[[]byte], error) {
 	var imageData, imageContentType = me.db.getGoalImage(input.Id)
 	return &rest_objects.Response[[]byte]{
@@ -69,15 +69,15 @@ func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct {
 }
 
 func (me *webAppGoals) getGoalPosts(ctx context.Context, input *struct {
-	Id int64 `query:"id"`
+	Id int64 `query:"id" required:"true"`
 }) (*rest_objects.Response[[]rest_objects.GoalPostHeader], error) {
 	var posts = me.db.getGoalPosts(input.Id, webContext.isAdminMode(ctx), webContext.getLanguage(ctx))
 	return rest_objects.NewSimpleResponse(posts), nil
 }
 
 func (me *webAppGoals) getGoalPost(ctx context.Context, input *struct {
-	GoalId       int64 `query:"goalId"`
-	PostDateTime int64 `query:"postDateTime"`
+	GoalId       int64 `query:"goalId" required:"true"`
+	PostDateTime int64 `query:"postDateTime" required:"true"`
 }) (*rest_objects.Response[*rest_objects.GoalPostObject], error) {
 	var postDateTime = time.Unix(input.PostDateTime, 0)
 	var goalPostRow = me.db.getGoalPost(input.GoalId, postDateTime)
@@ -113,9 +113,9 @@ func (me *webAppGoals) getGoalPost(ctx context.Context, input *struct {
 }
 
 func (me *webAppGoals) getGoalPostImage(ctx context.Context, input *struct {
-	GoalId       int64 `query:"goalId"`
-	PostDateTime int64 `query:"postDateTime"`
-	Index        int   `query:"index"`
+	GoalId       int64 `query:"goalId" required:"true"`
+	PostDateTime int64 `query:"postDateTime" required:"true"`
+	Index        int   `query:"index" required:"true"`
 }) (*rest_objects.Response[[]byte], error) {
 	var postDateTime = time.Unix(input.PostDateTime, 0)
 	var image = me.db.getGoalPostImage(input.GoalId, postDateTime, input.Index)
