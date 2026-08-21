@@ -63,7 +63,11 @@ func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct {
 }) (*rest_objects.Response[[]byte], error) {
 	log.Println(input.Id)
 	var imageData, imageContentType = me.db.getGoalImage(input.Id)
-	return &rest_objects.Response[[]byte]{CacheControl: "max-age=" + strconv.Itoa(int(time.Hour.Seconds())), ContentType: imageContentType, Body: imageData}, nil
+	return &rest_objects.Response[[]byte]{
+		Body:         imageData,
+		ContentType:  imageContentType,
+		CacheControl: "max-age=" + strconv.Itoa(int(time.Hour.Seconds())),
+	}, nil
 }
 
 func (me *webAppGoals) getGoalPosts(response http.ResponseWriter, request *http.Request) {

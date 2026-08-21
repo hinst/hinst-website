@@ -59,6 +59,6 @@ export interface GoalPostSearchIndexingHeader extends GoalPostHeader {
  */
 export interface Response<T extends any> {
 	Body: T;
-	CacheControl: string;
 	ContentType: string;
+	CacheControl: string;
 }
