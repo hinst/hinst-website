@@ -48,7 +48,7 @@ class ApiClient {
 				postDateTime: '' + postDateTime,
 				isPublic: '' + isPublic
 			});
-		return await this.fetch(url);
+		return await this.fetch(url, { method: 'PUT' });
 	}
 
 	async goalPostSetSearchIndexingEnabled(
