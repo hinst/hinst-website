@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/danielgtaylor/huma/v2/adapters/humago"
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
@@ -74,10 +73,7 @@ func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct {
 func (me *webAppGoals) getGoalPosts(ctx context.Context, input *struct {
 	Id int64 `query:"id"`
 }) (*rest_objects.Response[[]rest_objects.GoalPostHeader], error) {
-	var request, _ = humago.Unwrap(ctx)
-	var goalManagerMode = me.inputCheckGoalManagerMode(request)
-	var requestedLanguage = getWebLanguageFromContext(ctx)
-	var posts = me.db.getGoalPosts(input.Id, goalManagerMode, requestedLanguage)
+	var posts = me.db.getGoalPosts(input.Id, getWebAdminModeFromContext(ctx), getWebLanguageFromContext(ctx))
 	return rest_objects.NewSimpleResponse(posts), nil
 }
 

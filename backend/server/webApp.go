@@ -79,9 +79,11 @@ func (webApp) readLanguage(context huma.Context, next func(huma.Context)) {
 }
 
 func (webApp) checkAdminMode(context huma.Context, next func(huma.Context)) {
-	var goalManagerModeCookie, goalManagerModeCookieError = huma.ReadCookie(context, "goalManagerMode")
 	var adminPasswordCookie, adminPasswordCookieError = huma.ReadCookie(context, "adminPassword")
 	var adminPassword = gophers.ReadEnvVar("ADMIN_PASSWORD", "")
-	if cookieError == nil && adminPassword
+	var isAdmin = len(adminPassword) > 0 &&
+		adminPasswordCookieError == nil &&
+		adminPasswordCookie.Value == adminPassword
+	context = huma.WithValue(context, webContextKeyIsAdmin, isAdmin)
 	next(context)
 }
