@@ -9,50 +9,63 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
-	"://github.com"
-	"://github.com/adapters/humago"
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/danielgtaylor/huma/v2/adapters/humachi"
+	"github.com/danielgtaylor/huma/v2/humacli"
+	"github.com/go-chi/chi/v5"
 )
 
-// 1. Define the output struct with a []byte body field.
+// Options for the CLI.
+type Options struct {
+	Port int `help:"Port to listen on" short:"p" default:"8888"`
+}
+
+// ImageOutput represents the image operation response.
 type ImageOutput struct {
-	Body []byte
+	ContentType string `header:"Content-Type"`
+	Body        []byte
 }
 
 func main() {
-	// Initialize standard library router (Go 1.22+)
-	mux := http.NewServeMux()
-	api := humago.New(mux, huma.DefaultConfig("Image API", "1.0.0"))
+	// Create a CLI app which takes a port option.
+	cli := humacli.New(func(hooks humacli.Hooks, options *Options) {
+		// Create a new router & API
+		router := chi.NewMux()
+		api := humachi.New(router, huma.DefaultConfig("My API", "1.0.0"))
 
-	// 2. Register the operation with custom Content-Type metadata
-	huma.Register(api, huma.Operation{
-		OperationID: "get-image",
-		Method:      http.MethodGet,
-		Path:        "/image",
-		Summary:     "Returns a sample binary PNG image",
-		Responses: map[string]*huma.Response{
-			"200": {
-				Description: "Image returned successfully",
-				Content: map[string]*huma.MediaType{
-					"image/png": {}, // Informs OpenAPI/Swagger of the correct format
+		// Register GET /image
+		huma.Register(api, huma.Operation{
+			OperationID: "get-image",
+			Summary:     "Get an image",
+			Method:      http.MethodGet,
+			Path:        "/image",
+			Responses: map[string]*huma.Response{
+				"200": {
+					Description: "Image response",
+					Content: map[string]*huma.MediaType{
+						"image/jpeg": {},
+					},
 				},
 			},
-		},
-	}, func(ctx context.Context, input *struct{}) (*ImageOutput, error) {
+		}, func(ctx context.Context, input *struct{}) (*ImageOutput, error) {
+			resp := &ImageOutput{}
+			resp.ContentType = "image/png"
+			resp.Body = []byte{ /* ... image bytes here ... */ }
+			return resp, nil
+		})
 
-		// 3. Replace this with your actual image reading or generation logic
-		// (e.g., using os.ReadFile("avatar.png") or image.Encode())
-		dummyPngBytes := []byte{
-			0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // Minimal PNG header
-			0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
-		}
-
-		// 4. Return the raw bytes wrapped in your output struct
-		return &ImageOutput{Body: dummyPngBytes}, nil
+		// Tell the CLI how to start your server.
+		hooks.OnStart(func() {
+			fmt.Printf("Starting server on port %d...\n", options.Port)
+			http.ListenAndServe(fmt.Sprintf(":%d", options.Port), router)
+		})
 	})
 
-	http.ListenAndServe(":8888", mux)
+	// Run the CLI. When passed no commands, it starts the server.
+	cli.Run()
 }
 
 ```
