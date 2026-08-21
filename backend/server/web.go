@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/hinst/go-gophers"
