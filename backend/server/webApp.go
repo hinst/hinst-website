@@ -38,6 +38,7 @@ func (me *webApp) init(db *database) {
 	}
 	me.webApi.UseMiddleware(me.catchPanic)
 	me.webApi.UseMiddleware(me.readLanguage)
+	me.webApi.UseMiddleware(me.checkAdminMode)
 	var appGoals = new(webAppGoals)
 	appGoals.init(me.webApiGroup, me.db)
 
@@ -74,5 +75,13 @@ func (webApp) readLanguage(context huma.Context, next func(huma.Context)) {
 	})
 	var languageTag language.Tag = parseLanguageHeader(acceptLanguage)
 	context = huma.WithValue(context, webContextKeyLanguage, languageTag)
+	next(context)
+}
+
+func (webApp) checkAdminMode(context huma.Context, next func(huma.Context)) {
+	var goalManagerModeCookie, goalManagerModeCookieError = huma.ReadCookie(context, "goalManagerMode")
+	var adminPasswordCookie, adminPasswordCookieError = huma.ReadCookie(context, "adminPassword")
+	var adminPassword = gophers.ReadEnvVar("ADMIN_PASSWORD", "")
+	if cookieError == nil && adminPassword
 	next(context)
 }
