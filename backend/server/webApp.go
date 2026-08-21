@@ -35,28 +35,30 @@ func (me *webApp) init(db *database) {
 	if me.webPath != "" {
 		me.webApiGroup = huma.NewGroup(me.webApi, me.webPath)
 	}
-	me.webApi.UseMiddleware(func(context huma.Context, next func(huma.Context)) {
-		defer func() {
-			var exception = recover()
-			if exception != nil {
-				var webError, isWebError = exception.(webError)
-				if isWebError {
-					gophers.AssertError(huma.WriteErr(
-						me.webApi, context, webError.Status, string(gophers.EncodeJson(webError)),
-					))
-				} else {
-					log.Printf("Error in web function: %v\n%s", exception, debug.Stack())
-					gophers.AssertError(huma.WriteErr(
-						me.webApi, context, http.StatusInternalServerError, "",
-					))
-				}
-			}
-		}()
-		next(context)
-	})
+	me.webApi.UseMiddleware(me.catchPanic)
 	var appGoals = new(webAppGoals)
 	appGoals.init(me.webApiGroup, me.db)
 
 	var appAdmin = new(webAppAdmin)
 	appAdmin.init(me.db)
+}
+
+func (webApp) catchPanic(context huma.Context, next func(huma.Context)) {
+	defer func() {
+		var exception = recover()
+		if exception != nil {
+			var webError, isWebError = exception.(webError)
+			if isWebError {
+				gophers.AssertError(huma.WriteErr(
+					me.webApi, context, webError.Status, string(gophers.EncodeJson(webError)),
+				))
+			} else {
+				log.Printf("Error in web function: %v\n%s", exception, debug.Stack())
+				gophers.AssertError(huma.WriteErr(
+					me.webApi, context, http.StatusInternalServerError, "",
+				))
+			}
+		}
+	}()
+	next(context)
 }
