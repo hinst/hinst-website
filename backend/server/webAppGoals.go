@@ -28,9 +28,9 @@ func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	huma.Get(webApi, "/api/goalPost", me.getGoalPost)
 	huma.Get(webApi, "/api/goalPost/image", me.getGoalPostImage)
 	huma.Put(webApi, "/api/goalPost/setPublic", me.setGoalPostPublic)
+	huma.Put(webApi, "/api/goalPost/setSearchIndexingEnabled", me.setGoalPostSearchIndexingEnabled)
 
 	return []namedWebFunction{
-		{"/api/goalPost/setSearchIndexingEnabled", me.guardAdminFunction(me.setGoalPostSearchIndexingEnabled)},
 		{"/api/goalPost/setText", me.guardAdminFunction(me.setGoalPostText)},
 		{"/api/goalPost/setTitle", me.guardAdminFunction(me.setGoalTitleText)},
 		{"/api/goalPosts/search", me.searchGoalPosts},
@@ -143,12 +143,18 @@ func (me *webAppGoals) setGoalPostPublic(ctx context.Context, input *struct {
 	return &struct{}{}, nil
 }
 
-func (me *webAppGoals) setGoalPostSearchIndexingEnabled(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
-	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
-	var enabled = request.URL.Query().Get("enabled") == "true"
-	var row = db_objects.GoalPostRow{GoalId: goalId, DateTime: postDateTime.UTC().Unix(), SearchIndexingEnabled: enabled}
+func (me *webAppGoals) setGoalPostSearchIndexingEnabled(ctx context.Context, input *struct {
+	GoalId       int64 `query:"goalId" required:"true"`
+	PostDateTime int64 `query:"postDateTime" required:"true"`
+	Enabled      bool  `query:"enabled" required:"true"`
+}) (*struct{}, error) {
+	if !webContext.isAdminMode(ctx) {
+		panic(webError{"Need admin password", http.StatusForbidden})
+	}
+	var postDateTime = time.Unix(input.PostDateTime, 0)
+	var row = db_objects.GoalPostRow{GoalId: input.GoalId, DateTime: postDateTime.UTC().Unix(), SearchIndexingEnabled: input.Enabled}
 	me.db.setGoalPostSearchIndexingEnabled(row)
+	return &struct{}{}, nil
 }
 
 func (me *webAppGoals) setGoalPostText(response http.ResponseWriter, request *http.Request) {

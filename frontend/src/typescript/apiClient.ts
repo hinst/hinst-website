@@ -63,7 +63,7 @@ class ApiClient {
 				postDateTime: '' + postDateTime,
 				enabled: '' + enabled
 			});
-		return await this.fetch(url);
+		return await this.fetch(url, { method: 'PUT' });
 	}
 
 	async getGoalPost(goalId: number, postDateTime: number): Promise<GoalPostObject> {
