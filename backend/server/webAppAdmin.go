@@ -1,8 +1,10 @@
 package server
 
 import (
+	"context"
 	"net/http"
 
+	"github.com/danielgtaylor/huma/v2"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
 	"github.com/hinst/hinst-website/server/rest_objects"
@@ -13,16 +15,15 @@ type webAppAdmin struct {
 	db *database
 }
 
-func (me *webAppAdmin) init(db *database) []namedWebFunction {
+func (me *webAppAdmin) init(webApi huma.API, db *database) {
 	me.db = db
-	var functions = []namedWebFunction{{"/api/urlPings", me.getUrlPings}}
-	for i := range functions {
-		functions[i].Function = me.guardAdminFunction(functions[i].Function)
-	}
-	return functions
+	huma.Get(webApi, "/api/urlPings", me.getUrlPings)
 }
 
-func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.Request) {
+func (me *webAppAdmin) getUrlPings(ctx context.Context, input *struct{}) (*rest_objects.Response[[]rest_objects.GoalPostSearchIndexingHeader], error) {
+	if !webContext.isAdminMode(ctx) {
+		panic(webError{"Need admin mode", http.StatusForbidden})
+	}
 	var objects = []rest_objects.GoalPostSearchIndexingHeader{}
 	var webLanguage = base.SupportedLanguages[0] // Only blog posts in main language currently participate in search indexing
 	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
@@ -35,5 +36,5 @@ func (me *webAppAdmin) getUrlPings(response http.ResponseWriter, request *http.R
 		objects = append(objects, header)
 		return true
 	}, (db_objects.GoalPostRow{}).GetAllFieldSelector(), -1)
-	writeJsonResponse(response, objects)
+	return rest_objects.NewSimpleResponse(objects), nil
 }

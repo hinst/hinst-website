@@ -25,11 +25,6 @@ func webRouter() *http.ServeMux {
 	return _webRouter
 }
 
-type namedWebFunction struct {
-	Name     string
-	Function gophers.WebFunction
-}
-
 func parseLanguageHeader(text string) language.Tag {
 	var tags, _, parsedError = language.ParseAcceptLanguage(text)
 	if parsedError != nil {
@@ -39,11 +34,6 @@ func parseLanguageHeader(text string) language.Tag {
 	var _, index, _ = base.SupportedLanguagesMatcher.Match(tags...)
 	var tag = base.SupportedLanguages[index]
 	return tag
-}
-
-func writeJsonResponse(response http.ResponseWriter, value any) {
-	response.Header().Set(gophers.ContentTypeHeader, gophers.ContentTypeJson)
-	var _, _ = response.Write(gophers.EncodeJson(value))
 }
 
 // Format HTML using Prettier server.

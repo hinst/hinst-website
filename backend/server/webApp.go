@@ -43,7 +43,7 @@ func (me *webApp) init(db *database) {
 	appGoals.init(me.webApiGroup, me.db)
 
 	var appAdmin = new(webAppAdmin)
-	appAdmin.init(me.db)
+	appAdmin.init(me.webApiGroup, me.db)
 }
 
 func (me *webApp) catchPanic(context huma.Context, next func(huma.Context)) {
