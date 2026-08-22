@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -30,9 +29,9 @@ func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	huma.Put(webApi, "/api/goalPost/setPublic", me.setGoalPostPublic)
 	huma.Put(webApi, "/api/goalPost/setSearchIndexingEnabled", me.setGoalPostSearchIndexingEnabled)
 	huma.Post(webApi, "/api/goalPost/setText", me.setGoalPostText)
+	huma.Post(webApi, "/api/goalPost/setTitle", me.setGoalTitleText)
 
 	return []namedWebFunction{
-		{"/api/goalPost/setTitle", me.guardAdminFunction(me.setGoalTitleText)},
 		{"/api/goalPosts/search", me.searchGoalPosts},
 	}
 }
@@ -175,13 +174,22 @@ func (me *webAppGoals) setGoalPostText(ctx context.Context, input *struct {
 	return &struct{}{}, nil
 }
 
-func (me *webAppGoals) setGoalTitleText(response http.ResponseWriter, request *http.Request) {
-	var goalId = me.inputValidGoalId(request.URL.Query().Get("goalId"))
-	var postDateTime = me.inputValidPostDateTime(request.URL.Query().Get("postDateTime"))
-	var languageTagText = request.URL.Query().Get("languageTag")
-	var languageTag = gophers.AssertResultError(language.Parse(languageTagText))
-	var text = string(gophers.AssertResultError(io.ReadAll(request.Body)))
-	me.db.setGoalPostTitle(goalId, postDateTime, languageTag, text)
+func (me *webAppGoals) setGoalTitleText(ctx context.Context, input *struct {
+	GoalId       int64  `query:"goalId" required:"true"`
+	PostDateTime int64  `query:"postDateTime" required:"true"`
+	LanguageTag  string `query:"languageTag" required:"true"`
+	RawBody      []byte `contentType:"text/plain;charset=UTF-8"`
+}) (*struct{}, error) {
+	if !webContext.isAdminMode(ctx) {
+		panic(webError{"Need admin mode", http.StatusForbidden})
+	}
+	var languageTag, parseError = language.Parse(input.LanguageTag)
+	gophers.AssertCondition(parseError == nil, func() webError {
+		return webError{"Need valid language tag. Received: " + input.LanguageTag, http.StatusBadRequest}
+	})
+	var text = string(input.RawBody)
+	me.db.setGoalPostTitle(input.GoalId, time.Unix(input.PostDateTime, 0), languageTag, text)
+	return &struct{}{}, nil
 }
 
 func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *http.Request) {
