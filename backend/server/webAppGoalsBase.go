@@ -9,7 +9,6 @@ import (
 )
 
 type webAppGoalsBase struct {
-	webAppBase
 	db *database
 }
 

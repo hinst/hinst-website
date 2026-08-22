@@ -10,7 +10,6 @@ import (
 )
 
 type webAppAdmin struct {
-	webAppBase
 	db *database
 }
 
