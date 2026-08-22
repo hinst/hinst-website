@@ -130,9 +130,7 @@ func (me *webAppGoals) setGoalPostPublic(ctx context.Context, input *struct {
 	PostDateTime int64 `query:"postDateTime" required:"true"`
 	IsPublic     bool  `query:"isPublic" required:"true"`
 }) (*struct{}, error) {
-	if !webContext.isAdminMode(ctx) {
-		panic(webError{"Need admin mode", http.StatusForbidden})
-	}
+	webContext.assertAdminMode(ctx)
 	var postDateTime = time.Unix(input.PostDateTime, 0)
 	var row = db_objects.GoalPostRow{GoalId: input.GoalId, DateTime: postDateTime.UTC().Unix(), IsPublic: input.IsPublic}
 	me.db.setGoalPostPublic(row)
@@ -144,9 +142,7 @@ func (me *webAppGoals) setGoalPostSearchIndexingEnabled(ctx context.Context, inp
 	PostDateTime int64 `query:"postDateTime" required:"true"`
 	Enabled      bool  `query:"enabled" required:"true"`
 }) (*struct{}, error) {
-	if !webContext.isAdminMode(ctx) {
-		panic(webError{"Need admin mode", http.StatusForbidden})
-	}
+	webContext.assertAdminMode(ctx)
 	var postDateTime = time.Unix(input.PostDateTime, 0)
 	var row = db_objects.GoalPostRow{GoalId: input.GoalId, DateTime: postDateTime.UTC().Unix(), SearchIndexingEnabled: input.Enabled}
 	me.db.setGoalPostSearchIndexingEnabled(row)
@@ -159,9 +155,7 @@ func (me *webAppGoals) setGoalPostText(ctx context.Context, input *struct {
 	LanguageTag  string `query:"languageTag" required:"true"`
 	RawBody      []byte `contentType:"text/plain;charset=UTF-8"` // The name of this parameter needs to be exactly RawBody
 }) (*struct{}, error) {
-	if !webContext.isAdminMode(ctx) {
-		panic(webError{"Need admin mode", http.StatusForbidden})
-	}
+	webContext.assertAdminMode(ctx)
 	var languageTag, parseError = language.Parse(input.LanguageTag)
 	gophers.AssertCondition(parseError == nil, func() webError {
 		return webError{"Need valid language tag. Received: " + input.LanguageTag, http.StatusBadRequest}
@@ -177,9 +171,7 @@ func (me *webAppGoals) setGoalTitleText(ctx context.Context, input *struct {
 	LanguageTag  string `query:"languageTag" required:"true"`
 	RawBody      []byte `contentType:"text/plain;charset=UTF-8"`
 }) (*struct{}, error) {
-	if !webContext.isAdminMode(ctx) {
-		panic(webError{"Need admin mode", http.StatusForbidden})
-	}
+	webContext.assertAdminMode(ctx)
 	var languageTag, parseError = language.Parse(input.LanguageTag)
 	gophers.AssertCondition(parseError == nil, func() webError {
 		return webError{"Need valid language tag. Received: " + input.LanguageTag, http.StatusBadRequest}

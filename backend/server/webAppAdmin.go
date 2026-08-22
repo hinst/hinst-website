@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/hinst/hinst-website/server/base"
@@ -21,9 +20,7 @@ func (me *webAppAdmin) init(webApi huma.API, db *database) {
 }
 
 func (me *webAppAdmin) getUrlPings(ctx context.Context, input *struct{}) (*rest_objects.Response[[]rest_objects.GoalPostSearchIndexingHeader], error) {
-	if !webContext.isAdminMode(ctx) {
-		panic(webError{"Need admin mode", http.StatusForbidden})
-	}
+	webContext.assertAdminMode(ctx)
 	var objects = []rest_objects.GoalPostSearchIndexingHeader{}
 	var webLanguage = base.SupportedLanguages[0] // Only blog posts in main language currently participate in search indexing
 	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
