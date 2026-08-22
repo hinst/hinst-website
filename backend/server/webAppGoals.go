@@ -30,10 +30,9 @@ func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	huma.Put(webApi, "/api/goalPost/setSearchIndexingEnabled", me.setGoalPostSearchIndexingEnabled)
 	huma.Post(webApi, "/api/goalPost/setText", me.setGoalPostText)
 	huma.Post(webApi, "/api/goalPost/setTitle", me.setGoalTitleText)
+	huma.Get(webApi, "/api/goalPosts/search", me.searchGoalPosts)
 
-	return []namedWebFunction{
-		{"/api/goalPosts/search", me.searchGoalPosts},
-	}
+	return nil
 }
 
 func (me *webAppGoals) getGoals(ctx context.Context, input *struct{}) (*rest_objects.Response[[]rest_objects.GoalObject], error) {
@@ -192,17 +191,18 @@ func (me *webAppGoals) setGoalTitleText(ctx context.Context, input *struct {
 	return &struct{}{}, nil
 }
 
-func (me *webAppGoals) searchGoalPosts(response http.ResponseWriter, request *http.Request) {
+func (me *webAppGoals) searchGoalPosts(ctx context.Context, input *struct {
+	Query string `query:"query"`
+}) (*rest_objects.Response[[]rest_objects.GoalPostHeader], error) {
 	const resultLimit = 100
-	var queryText = request.URL.Query().Get("query")
-	var requestedLanguage = getWebLanguage(request)
-	var goalManagerMode = me.inputCheckGoalManagerMode(request)
-	var rows = me.db.searchGoalPosts(queryText, requestedLanguage, goalManagerMode, resultLimit)
+	var requestedLanguage = webContext.getLanguage(ctx)
+	var goalManagerMode = webContext.isAdminMode(ctx)
+	var rows = me.db.searchGoalPosts(input.Query, requestedLanguage, goalManagerMode, resultLimit)
 	var records []rest_objects.GoalPostHeader
 	for _, row := range rows {
 		var record rest_objects.GoalPostHeader
 		record.Read(row, requestedLanguage)
 		records = append(records, record)
 	}
-	writeJsonResponse(response, records)
+	return rest_objects.NewSimpleResponse(records), nil
 }
