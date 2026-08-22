@@ -30,24 +30,6 @@ type namedWebFunction struct {
 	Function gophers.WebFunction
 }
 
-func getWebLanguage(request *http.Request) language.Tag {
-	var queryLanguage = request.URL.Query().Get("lang")
-	if len(queryLanguage) > 0 {
-		return parseLanguageTag(queryLanguage)
-	}
-	var acceptLanguage = request.Header.Get("Accept-Language")
-	return parseLanguageHeader(acceptLanguage)
-}
-
-func parseLanguageTag(text string) language.Tag {
-	var tag, parsedError = language.Parse(text)
-	if parsedError != nil {
-		panic(webError{"Invalid language tag: " + text, http.StatusBadRequest})
-	}
-	var _, index, _ = base.SupportedLanguagesMatcher.Match([]language.Tag{tag}...)
-	return base.SupportedLanguages[index]
-}
-
 func parseLanguageHeader(text string) language.Tag {
 	var tags, _, parsedError = language.ParseAcceptLanguage(text)
 	if parsedError != nil {

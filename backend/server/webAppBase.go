@@ -26,12 +26,6 @@ func (me *webAppBase) inputAssertAdminPassword(request *http.Request) {
 	}
 }
 
-func (me *webAppBase) inputCheckGoalManagerMode(request *http.Request) bool {
-	var goalManagerModeCookie, _ = request.Cookie("goalManagerMode")
-	return me.inputCheckAdminPassword(request) &&
-		goalManagerModeCookie != nil && goalManagerModeCookie.Value == "1"
-}
-
 func (me *webAppBase) getAdminPassword() string {
 	return gophers.ReadEnvVar("ADMIN_PASSWORD", "")
 }
