@@ -161,7 +161,7 @@ func (me *webAppGoals) setGoalPostText(ctx context.Context, input *struct {
 	GoalId       int64  `query:"goalId" required:"true"`
 	PostDateTime int64  `query:"postDateTime" required:"true"`
 	LanguageTag  string `query:"languageTag" required:"true"`
-	Text         []byte `contentType:"text/plain"`
+	RawBody      []byte `contentType:"text/plain;charset=UTF-8"` // The name of this parameter needs to be exactly RawBody
 }) (*struct{}, error) {
 	if !webContext.isAdminMode(ctx) {
 		panic(webError{"Need admin mode", http.StatusForbidden})
@@ -170,7 +170,7 @@ func (me *webAppGoals) setGoalPostText(ctx context.Context, input *struct {
 	gophers.AssertCondition(parseError == nil, func() webError {
 		return webError{"Need valid language tag. Received: " + input.LanguageTag, http.StatusBadRequest}
 	})
-	var text = string(input.Text)
+	var text = string(input.RawBody)
 	me.db.setGoalPostText(input.GoalId, time.Unix(input.PostDateTime, 0), languageTag, text)
 	return &struct{}{}, nil
 }
