@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/danielgtaylor/huma/v2/adapters/humago"
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
@@ -162,6 +161,7 @@ func (me *webAppGoals) setGoalPostText(ctx context.Context, input *struct {
 	GoalId       int64  `query:"goalId" required:"true"`
 	PostDateTime int64  `query:"postDateTime" required:"true"`
 	LanguageTag  string `query:"languageTag" required:"true"`
+	Text         []byte `contentType:"text/plain"`
 }) (*struct{}, error) {
 	if !webContext.isAdminMode(ctx) {
 		panic(webError{"Need admin mode", http.StatusForbidden})
@@ -170,8 +170,7 @@ func (me *webAppGoals) setGoalPostText(ctx context.Context, input *struct {
 	gophers.AssertCondition(parseError == nil, func() webError {
 		return webError{"Need valid language tag. Received: " + input.LanguageTag, http.StatusBadRequest}
 	})
-	var request, _ = humago.Unwrap(ctx.(huma.Context))
-	var text = string(gophers.AssertResultError(io.ReadAll(request.Body)))
+	var text = string(input.Text)
 	me.db.setGoalPostText(input.GoalId, time.Unix(input.PostDateTime, 0), languageTag, text)
 	return &struct{}{}, nil
 }
