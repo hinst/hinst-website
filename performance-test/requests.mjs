@@ -68,7 +68,7 @@ export class Requests {
 	}
 
 	async javaScript() {
-		return this.fetchResource('/app.804ab944.js', '*/*', 'javaScript');
+		return this.fetchResource('/app.a30c9f03.js', '*/*', 'javaScript');
 	}
 
 	async icon() {
