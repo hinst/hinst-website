@@ -18,7 +18,7 @@ type webAppGoals struct {
 	webAppGoalsBase
 }
 
-func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
+func (me *webAppGoals) init(webApi huma.API, db *database) {
 	me.db = db
 	huma.Get(webApi, "/api/goals", me.getGoals)
 	huma.Get(webApi, "/api/goal", me.getGoal)
@@ -31,8 +31,6 @@ func (me *webAppGoals) init(webApi huma.API, db *database) []namedWebFunction {
 	huma.Post(webApi, "/api/goalPost/setText", me.setGoalPostText)
 	huma.Post(webApi, "/api/goalPost/setTitle", me.setGoalTitleText)
 	huma.Get(webApi, "/api/goalPosts/search", me.searchGoalPosts)
-
-	return nil
 }
 
 func (me *webAppGoals) getGoals(ctx context.Context, input *struct{}) (*rest_objects.Response[[]rest_objects.GoalObject], error) {
