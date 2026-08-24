@@ -39,7 +39,7 @@ func Main() {
 		var theProgram = new(program).create()
 		theProgram.backup(*backupDirectoryPtr)
 	case "generateSchema":
-		// Save the OpenAPI schema to disk (no database connection needed)
+		// Save the OpenAPI schema to disk
 		var theProgram = new(program).create()
 		theProgram.generateSchema("schema.yaml")
 	default:

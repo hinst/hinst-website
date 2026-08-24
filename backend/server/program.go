@@ -105,16 +105,30 @@ func (me *program) migrate() {
 	me.database.migrate()
 }
 
-func (me *program) backup(directory string) {
-	me.database.init()
-	me.database.backup(directory)
-}
-
 func (me *program) generateStatic(folder string) {
 	me.database.init()
 	var webStatic = new(webStaticGoals)
 	webStatic.init(me.database, folder)
 	webStatic.run()
+}
+
+func (me *program) backup(directory string) {
+	me.database.init()
+	me.database.backup(directory)
+}
+
+// Register all API routes and write the OpenAPI schema to the specified file
+func (me *program) generateSchema(filename string) {
+	var webApp = new(webApp)
+	webApp.init(me.database)
+	var yaml, err = webApp.webApi.OpenAPI().YAML()
+	if err != nil {
+		log.Fatalf("Failed to marshal OpenAPI to YAML: %v", err)
+	}
+	if err = os.WriteFile(filename, yaml, 0644); err != nil {
+		log.Fatalf("Failed to write %v: %v", filename, err)
+	}
+	log.Printf("Successfully saved OpenAPI schema to %v", filename)
 }
 
 func (program) netAddress() string {
