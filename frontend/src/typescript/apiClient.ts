@@ -42,12 +42,12 @@ class ApiClient {
 		const { data } = await client.GET('/hinst-website/api/goal', {
 			params: { query: { id } }
 		});
-		return goalObjectWithMethods(data as GoalObject);
+		return goalObjectWithMethods(data!);
 	}
 
 	async getGoals(): Promise<GoalObjectEx[]> {
 		const { data } = await client.GET('/hinst-website/api/goals');
-		const goals = (data as GoalObject[] | null) || [];
+		const goals = data!;
 		return goals.map((goal) => goalObjectWithMethods(goal));
 	}
 
@@ -77,7 +77,7 @@ class ApiClient {
 		const { data } = await client.GET('/hinst-website/api/goalPost', {
 			params: { query: { goalId, postDateTime } }
 		});
-		return data as GoalPostObject;
+		return data!;
 	}
 
 	async setGoalPostText(
@@ -112,14 +112,14 @@ class ApiClient {
 
 	async getUrlPings(): Promise<GoalPostSearchIndexingHeader[]> {
 		const { data } = await client.GET('/hinst-website/api/urlPings');
-		return ((data as GoalPostSearchIndexingHeader[] | null) || []);
+		return data!;
 	}
 
 	async getGoalPosts(goalId: number): Promise<GoalPostHeaderEx[]> {
 		const { data } = await client.GET('/hinst-website/api/goalPosts', {
 			params: { query: { id: goalId } }
 		});
-		const posts = (data as GoalPostHeader[] | null) || [];
+		const posts = data!;
 		return posts
 			.filter((post) => post.type === 'post')
 			.map((post) => goalPostHeaderWithMethods(post));
@@ -129,7 +129,7 @@ class ApiClient {
 		const { data } = await client.GET('/hinst-website/api/goalPosts/search', {
 			params: { query: { query } }
 		});
-		const posts = (data as GoalPostHeader[] | null) || [];
+		const posts = data!;
 		return posts.map((post) => goalPostHeaderWithMethods(post));
 	}
 }
