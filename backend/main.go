@@ -1,5 +1,3 @@
-//go:generate tygo generate
-
 package main
 
 import (

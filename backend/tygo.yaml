@@ -1,9 +1,0 @@
-# tygo configuration - generates TypeScript types from Golang source.
-# Docs: https://github.com/gzuidhof/tygo
-#
-# Install: go install github.com/gzuidhof/tygo@latest
-# Generate: tygo generate
-packages:
-  - path: "github.com/hinst/hinst-website/server/rest_objects"
-    output_path: "../frontend/src/typescript/generated/rest_objects.ts"
-    indent: "\t"

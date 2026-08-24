@@ -42,9 +42,7 @@ func (me *GoalPostHeader) Read(row *db_objects.GoalPostRow, languageTag language
 }
 
 type GoalPostSearchIndexingHeader struct {
-	// `tstype:",extends"` makes tygo generate a TypeScript interface that
-	// extends `GoalPostHeader` instead of a nested field.
-	GoalPostHeader `tstype:",extends"`
+	GoalPostHeader
 	GooglePingedAt                      int64  `json:"googlePingedAt"`
 	PublicUrl                           string `json:"publicUrl"`
 	GoogleSearchIndexingStatus          string `json:"googleSearchIndexingStatus"`
