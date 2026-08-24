@@ -89,7 +89,7 @@ function PingUrlButton(props: { onDone: () => void; url: string }) {
 	const [isLoading, setIsLoading] = useState(false);
 	async function ping() {
 		setIsLoading(true);
-		await apiClient.pingUrlManually(props.url);
+		// TODO
 		setIsLoading(false);
 		props.onDone();
 	}

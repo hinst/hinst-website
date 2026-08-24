@@ -115,19 +115,6 @@ class ApiClient {
 		return ((data as GoalPostSearchIndexingHeader[] | null) || []);
 	}
 
-	// This endpoint is not part of the OpenAPI spec, so it is called with plain fetch
-	async pingUrlManually(url: string): Promise<Response> {
-		const headers: Record<string, string> = {};
-		const language = settingsStorage.language;
-		if (language) headers['Accept-Language'] = language;
-		const response = await fetch(
-			this.url + '/pingUrlManually?' + new URLSearchParams({ url }),
-			{ method: 'PUT', headers }
-		);
-		if (!response.ok) throw new Error(url + ' ' + response.statusText);
-		return response;
-	}
-
 	async getGoalPosts(goalId: number): Promise<GoalPostHeaderEx[]> {
 		const { data } = await client.GET('/hinst-website/api/goalPosts', {
 			params: { query: { id: goalId } }
