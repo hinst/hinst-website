@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { GoalPostObject } from 'src/typescript/generated/rest_objects';
+import type { GoalPostObject } from 'src/typescript/apiTypes';
 import GoalPostView from './goalPostView';
 import GoalPostManagementPanel from './goalPostManagementPanel';
 import { AppContext } from 'src/tsx/context';

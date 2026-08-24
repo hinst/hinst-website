@@ -1,4 +1,4 @@
-import { GoalObject } from 'src/typescript/generated/rest_objects';
+import type { GoalObject } from 'src/typescript/apiTypes';
 import { SupportedLanguage } from 'src/typescript/language';
 
 export interface GoalObjectEx extends GoalObject {

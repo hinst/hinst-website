@@ -1,39 +1,54 @@
-import {
+import createClient from 'openapi-fetch';
+import type { paths } from 'src/typescript/generated/openapi';
+import { goalObjectWithMethods, GoalObjectEx } from './rest_objects/goalObjectEx';
+import { goalPostHeaderWithMethods, GoalPostHeaderEx } from './rest_objects/goalPostHeaderEx';
+import type {
 	GoalObject,
 	GoalPostHeader,
 	GoalPostObject,
 	GoalPostSearchIndexingHeader
-} from 'src/typescript/generated/rest_objects';
-import { goalObjectWithMethods, GoalObjectEx } from './rest_objects/goalObjectEx';
-import { goalPostHeaderWithMethods, GoalPostHeaderEx } from './rest_objects/goalPostHeaderEx';
+} from './apiTypes';
 import { settingsStorage } from './settings';
 
-class ApiClient {
-	readonly url: string = process.env.API_URL || '/hinst-website/api';
+/** Base URL of the REST API, e.g. '/hinst-website/api' or 'https://host/hinst-website/api'. */
+const apiRoot = process.env.API_URL || '/hinst-website/api';
 
-	private async fetch(url: string, options?: RequestInit): Promise<Response> {
-		if (settingsStorage.language) {
-			options = options || {};
-			options.headers = {
-				...options.headers,
-				'Accept-Language': settingsStorage.language
-			};
-		}
-		const response = await fetchSafe(this.url + url, options);
-		return response;
+// The paths in the OpenAPI spec include the API root (e.g. '/hinst-website/api/goal'),
+// so the client base URL is the part of the API root before that.
+const client = createClient<paths>({
+	baseUrl: apiRoot.replace(/\/hinst-website\/api\/?$/, ''),
+	// Send string bodies as-is (e.g. goal post text), everything else as JSON
+	bodySerializer: (body) => (typeof body === 'string' ? body : JSON.stringify(body))
+});
+
+// Add the Accept-Language header to every request and throw on non-2xx responses
+client.use({
+	onRequest: (params) => {
+		const language = settingsStorage.language;
+		if (language) params.request.headers.set('Accept-Language', language);
+	},
+	onResponse: (params) => {
+		if (!params.response.ok)
+			throw new Error(
+				params.request.url + ' ' + params.response.status + ' ' + params.response.statusText
+			);
 	}
+});
+
+class ApiClient {
+	readonly url: string = apiRoot;
 
 	async getGoal(id: number): Promise<GoalObjectEx> {
-		const url = '/goal?' + new URLSearchParams({ id: '' + id });
-		const response = await this.fetch(url);
-		const data = (await response.json()) as GoalObject;
-		return goalObjectWithMethods(data);
+		const { data } = await client.GET('/hinst-website/api/goal', {
+			params: { query: { id } }
+		});
+		return goalObjectWithMethods(data as GoalObject);
 	}
 
 	async getGoals(): Promise<GoalObjectEx[]> {
-		const response = await this.fetch('/goals');
-		const data = ((await response.json()) as GoalObject[]) || [];
-		return data.map((item) => goalObjectWithMethods(item));
+		const { data } = await client.GET('/hinst-website/api/goals');
+		const goals = (data as GoalObject[] | null) || [];
+		return goals.map((goal) => goalObjectWithMethods(goal));
 	}
 
 	async goalPostSetPublic(
@@ -41,14 +56,10 @@ class ApiClient {
 		postDateTime: number,
 		isPublic: boolean
 	): Promise<Response> {
-		const url =
-			'/goalPost/setPublic?' +
-			new URLSearchParams({
-				goalId: '' + goalId,
-				postDateTime: '' + postDateTime,
-				isPublic: '' + isPublic
-			});
-		return await this.fetch(url, { method: 'PUT' });
+		const { response } = await client.PUT('/hinst-website/api/goalPost/setPublic', {
+			params: { query: { goalId, postDateTime, isPublic } }
+		});
+		return response;
 	}
 
 	async goalPostSetSearchIndexingEnabled(
@@ -56,25 +67,17 @@ class ApiClient {
 		postDateTime: number,
 		enabled: boolean
 	): Promise<Response> {
-		const url =
-			'/goalPost/setSearchIndexingEnabled?' +
-			new URLSearchParams({
-				goalId: '' + goalId,
-				postDateTime: '' + postDateTime,
-				enabled: '' + enabled
-			});
-		return await this.fetch(url, { method: 'PUT' });
+		const { response } = await client.PUT('/hinst-website/api/goalPost/setSearchIndexingEnabled', {
+			params: { query: { goalId, postDateTime, enabled } }
+		});
+		return response;
 	}
 
 	async getGoalPost(goalId: number, postDateTime: number): Promise<GoalPostObject> {
-		const url =
-			'/goalPost?' +
-			new URLSearchParams({
-				goalId: '' + goalId,
-				postDateTime: '' + postDateTime
-			});
-		const response = await this.fetch(url);
-		return (await response.json()) as GoalPostObject;
+		const { data } = await client.GET('/hinst-website/api/goalPost', {
+			params: { query: { goalId, postDateTime } }
+		});
+		return data as GoalPostObject;
 	}
 
 	async setGoalPostText(
@@ -83,14 +86,12 @@ class ApiClient {
 		languageTag: string,
 		text: string
 	): Promise<Response> {
-		const url =
-			'/goalPost/setText?' +
-			new URLSearchParams({
-				goalId: '' + goalId,
-				postDateTime: '' + postDateTime,
-				languageTag
-			});
-		return this.fetch(url, { method: 'POST', body: text });
+		const { response } = await client.POST('/hinst-website/api/goalPost/setText', {
+			params: { query: { goalId, postDateTime, languageTag } },
+			body: text,
+			headers: { 'Content-Type': 'text/plain;charset=UTF-8' }
+		});
+		return response;
 	}
 
 	getImageUrl(goalId: number, postDateTime: number, index: number): string {
@@ -110,37 +111,40 @@ class ApiClient {
 	}
 
 	async getUrlPings(): Promise<GoalPostSearchIndexingHeader[]> {
-		const url = '/urlPings';
-		const response = await this.fetch(url);
-		return ((await response.json()) as GoalPostSearchIndexingHeader[]) || [];
+		const { data } = await client.GET('/hinst-website/api/urlPings');
+		return ((data as GoalPostSearchIndexingHeader[] | null) || []);
 	}
 
-	async pingUrlManually(url: string) {
-		const apiUrl = '/pingUrlManually?' + new URLSearchParams({ url });
-		return await this.fetch(apiUrl, { method: 'PUT' });
+	// This endpoint is not part of the OpenAPI spec, so it is called with plain fetch
+	async pingUrlManually(url: string): Promise<Response> {
+		const headers: Record<string, string> = {};
+		const language = settingsStorage.language;
+		if (language) headers['Accept-Language'] = language;
+		const response = await fetch(
+			this.url + '/pingUrlManually?' + new URLSearchParams({ url }),
+			{ method: 'PUT', headers }
+		);
+		if (!response.ok) throw new Error(url + ' ' + response.statusText);
+		return response;
 	}
 
 	async getGoalPosts(goalId: number): Promise<GoalPostHeaderEx[]> {
-		const url = '/goalPosts?' + new URLSearchParams({ id: '' + goalId });
-		const response = await this.fetch(url);
-		const items = ((await response.json()) as GoalPostHeader[]) || [];
-		return items
-			.filter((item) => item.type === 'post')
-			.map((item) => goalPostHeaderWithMethods(item));
+		const { data } = await client.GET('/hinst-website/api/goalPosts', {
+			params: { query: { id: goalId } }
+		});
+		const posts = (data as GoalPostHeader[] | null) || [];
+		return posts
+			.filter((post) => post.type === 'post')
+			.map((post) => goalPostHeaderWithMethods(post));
 	}
 
 	async searchGoalPosts(query: string): Promise<GoalPostHeaderEx[]> {
-		const url = '/goalPosts/search?' + new URLSearchParams({ query });
-		const response = await this.fetch(url);
-		const items = ((await response.json()) as GoalPostHeader[]) || [];
-		return items.map((item) => goalPostHeaderWithMethods(item));
+		const { data } = await client.GET('/hinst-website/api/goalPosts/search', {
+			params: { query: { query } }
+		});
+		const posts = (data as GoalPostHeader[] | null) || [];
+		return posts.map((post) => goalPostHeaderWithMethods(post));
 	}
 }
 
 export const apiClient = new ApiClient();
-
-async function fetchSafe(url: string, requestInit: RequestInit = {}): Promise<Response> {
-	const response = await fetch(url, requestInit);
-	if (!response.ok) throw new Error(url + ' ' + response.statusText);
-	return response;
-}

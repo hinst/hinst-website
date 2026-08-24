@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { GoalPostHeader } from 'src/typescript/generated/rest_objects';
+import type { GoalPostHeader } from 'src/typescript/apiTypes';
 
 export interface GoalPostHeaderEx extends GoalPostHeader {
 	/** "yyyy-MM" */

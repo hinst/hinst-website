@@ -1,4 +1,4 @@
-import { GoalPostObject } from 'src/typescript/generated/rest_objects';
+import type { GoalPostObject } from 'src/typescript/apiTypes';
 import SafeHtmlView from '../safeHtmlView';
 import { apiClient } from 'src/typescript/apiClient';
 import { Info } from 'react-feather';

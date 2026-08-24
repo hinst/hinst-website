@@ -2,7 +2,7 @@ import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { Check, CheckCircle, Copy } from 'react-feather';
 import { apiClient } from 'src/typescript/apiClient';
-import { GoalPostSearchIndexingHeader } from 'src/typescript/generated/rest_objects';
+import type { GoalPostSearchIndexingHeader } from 'src/typescript/apiTypes';
 
 export function HeaderRow() {
 	return (
