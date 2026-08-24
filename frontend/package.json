@@ -3,7 +3,8 @@
 	"version": "1.0.0",
 	"scripts": {
 		"start": "node -e \"require('fs').rmSync('.parcel-cache',{recursive:true,force:true})\" && parcel --public-url=/hinst-website index.html",
-		"build": "tsc && parcel build index.html",
+		"generate-types": "npm --prefix tools/typegen run generate",
+		"build": "npm run generate-types && tsc && parcel build index.html",
 		"test": "tsc --module nodenext --moduleResolution nodenext && node --enable-source-maps --test \"compiled/src/**/*.test.js\"",
 		"update-packages": "npx npm-check-updates"
 	},
@@ -16,7 +17,7 @@
 		"@types/lodash": "^4.17.24",
 		"@types/luxon": "^3.7.1",
 		"@types/node": "^24",
-		"openapi-typescript": "^7.13.0",
+		"@types/react": "^19.2.17",
 		"prettier": "^3.8.1",
 		"process": "^0.11.10",
 		"typescript": "^7.0.2"

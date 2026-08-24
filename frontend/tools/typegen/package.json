@@ -1,0 +1,13 @@
+{
+	"name": "typegen",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Generates TypeScript types from the backend OpenAPI spec (openapi-typescript requires the TypeScript 5 JS compiler API, so it runs in its own node_modules)",
+	"scripts": {
+		"generate": "openapi-typescript ../../../backend/schema.yaml -o ../../src/typescript/generated/openapi.d.ts"
+	},
+	"devDependencies": {
+		"openapi-typescript": "^7.13.0",
+		"typescript": "^5.9.3"
+	}
+}
