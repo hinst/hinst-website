@@ -13,7 +13,11 @@ WORKDIR /app
 RUN rm -rf node_modules
 RUN rm -rf dist
 RUN rm -rf .parcel-cache
+# The typegen script resolves the spec as '../../../backend/schema.yaml' relative to
+# frontend/tools/typegen, so in this stage it must live at /backend/schema.yaml
+COPY --from=backend /app/schema.yaml /backend/schema.yaml
 RUN npm install
+RUN npm --prefix tools/typegen install
 RUN npm run build -- --public-url=/hinst-website
 
 FROM debian:trixie
