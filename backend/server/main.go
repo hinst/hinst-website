@@ -38,6 +38,10 @@ func Main() {
 	case "backup":
 		var theProgram = new(program).create()
 		theProgram.backup(*backupDirectoryPtr)
+	case "generateSchema":
+		// Save the OpenAPI schema to disk (no database connection needed)
+		var theProgram = new(program).create()
+		theProgram.generateSchema("schema.yaml")
 	default:
 		log.Fatalf("Unknown mode: %v", *modePtr)
 	}

@@ -1,0 +1,622 @@
+components:
+  schemas:
+    ErrorDetail:
+      additionalProperties: false
+      properties:
+        location:
+          description: Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id'
+          type: string
+        message:
+          description: Error message text
+          type: string
+        value:
+          description: The value at the given location
+      type: object
+    ErrorModel:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/ErrorModel.json
+          format: uri
+          readOnly: true
+          type: string
+        detail:
+          description: A human-readable explanation specific to this occurrence of the problem.
+          examples:
+            - Property foo is required but is missing.
+          type: string
+        errors:
+          description: Optional list of individual error details
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+          type:
+            - array
+            - "null"
+        instance:
+          description: A URI reference that identifies the specific occurrence of the problem.
+          examples:
+            - https://example.com/error-log/abc123
+          format: uri
+          type: string
+        status:
+          description: HTTP status code
+          examples:
+            - 400
+          format: int64
+          type: integer
+        title:
+          description: A short, human-readable summary of the problem type. This value should not change between occurrences of the error.
+          examples:
+            - Bad Request
+          type: string
+        type:
+          default: about:blank
+          description: A URI reference to human-readable documentation for the error.
+          examples:
+            - https://example.com/errors/example
+          format: uri
+          type: string
+      type: object
+    GoalObject:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/GoalObject.json
+          format: uri
+          readOnly: true
+          type: string
+        id:
+          format: int64
+          type: integer
+        title:
+          type: string
+        titleEnglish:
+          type: string
+        titleGerman:
+          type: string
+      required:
+        - id
+        - title
+        - titleEnglish
+        - titleGerman
+      type: object
+    GoalPostHeader:
+      additionalProperties: false
+      properties:
+        dateTime:
+          format: int64
+          type: integer
+        goalId:
+          format: int64
+          type: integer
+        isPublic:
+          type: boolean
+        title:
+          type: string
+        type:
+          type: string
+      required:
+        - goalId
+        - dateTime
+        - isPublic
+        - type
+        - title
+      type: object
+    GoalPostObject:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/GoalPostObject.json
+          format: uri
+          readOnly: true
+          type: string
+        dateTime:
+          format: int64
+          type: integer
+        goalId:
+          format: int64
+          type: integer
+        imageCount:
+          format: int64
+          type: integer
+        isAutoTranslated:
+          type: boolean
+        isPublic:
+          type: boolean
+        isTranslationPending:
+          type: boolean
+        languageName:
+          type: string
+        languageTag:
+          type: string
+        searchIndexingEnabled:
+          type: boolean
+        text:
+          type: string
+      required:
+        - goalId
+        - dateTime
+        - text
+        - isAutoTranslated
+        - isTranslationPending
+        - languageName
+        - languageTag
+        - isPublic
+        - imageCount
+      type: object
+    GoalPostSearchIndexingHeader:
+      additionalProperties: false
+      properties:
+        dateTime:
+          format: int64
+          type: integer
+        goalId:
+          format: int64
+          type: integer
+        googlePingedAt:
+          format: int64
+          type: integer
+        googleSearchIndexingStatus:
+          type: string
+        googleSearchIndexingStatusCheckedAt:
+          format: int64
+          type: integer
+        isPublic:
+          type: boolean
+        publicUrl:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+      required:
+        - googlePingedAt
+        - publicUrl
+        - googleSearchIndexingStatus
+        - googleSearchIndexingStatusCheckedAt
+        - goalId
+        - dateTime
+        - isPublic
+        - type
+        - title
+      type: object
+info:
+  title: Hinst-website API
+  version: 0.1.0
+openapi: 3.1.0
+paths:
+  /hinst-website/api/goal:
+    get:
+      operationId: get-hinst-website-api-goal
+      parameters:
+        - explode: false
+          in: query
+          name: id
+          required: true
+          schema:
+            format: int64
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GoalObject"
+          description: OK
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Get hinst website API goal
+  /hinst-website/api/goal/image:
+    get:
+      operationId: list-hinst-website-api-goal-image
+      parameters:
+        - explode: false
+          in: query
+          name: id
+          required: true
+          schema:
+            format: int64
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                contentEncoding: base64
+                type: string
+          description: OK
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: List hinst website API goal image
+  /hinst-website/api/goalPost:
+    get:
+      operationId: get-hinst-website-api-goal-post
+      parameters:
+        - explode: false
+          in: query
+          name: goalId
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: postDateTime
+          required: true
+          schema:
+            format: int64
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GoalPostObject"
+          description: OK
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Get hinst website API goal post
+  /hinst-website/api/goalPost/image:
+    get:
+      operationId: list-hinst-website-api-goal-post-image
+      parameters:
+        - explode: false
+          in: query
+          name: goalId
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: postDateTime
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: index
+          required: true
+          schema:
+            format: int64
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                contentEncoding: base64
+                type: string
+          description: OK
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: List hinst website API goal post image
+  /hinst-website/api/goalPost/setPublic:
+    put:
+      operationId: put-hinst-website-api-goal-post-set-public
+      parameters:
+        - explode: false
+          in: query
+          name: goalId
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: postDateTime
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: isPublic
+          required: true
+          schema:
+            type: boolean
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Put hinst website API goal post set public
+  /hinst-website/api/goalPost/setSearchIndexingEnabled:
+    put:
+      operationId: put-hinst-website-api-goal-post-set-search-indexing-enabled
+      parameters:
+        - explode: false
+          in: query
+          name: goalId
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: postDateTime
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: enabled
+          required: true
+          schema:
+            type: boolean
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Put hinst website API goal post set search indexing enabled
+  /hinst-website/api/goalPost/setText:
+    post:
+      operationId: post-hinst-website-api-goal-post-set-text
+      parameters:
+        - explode: false
+          in: query
+          name: goalId
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: postDateTime
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: languageTag
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          text/plain;charset=UTF-8:
+            schema:
+              contentMediaType: application/octet-stream
+              format: binary
+              type: string
+        required: true
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Post hinst website API goal post set text
+  /hinst-website/api/goalPost/setTitle:
+    post:
+      operationId: post-hinst-website-api-goal-post-set-title
+      parameters:
+        - explode: false
+          in: query
+          name: goalId
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: postDateTime
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: languageTag
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          text/plain;charset=UTF-8:
+            schema:
+              contentMediaType: application/octet-stream
+              format: binary
+              type: string
+        required: true
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Post hinst website API goal post set title
+  /hinst-website/api/goalPosts:
+    get:
+      operationId: list-hinst-website-api-goal-posts
+      parameters:
+        - explode: false
+          in: query
+          name: id
+          required: true
+          schema:
+            format: int64
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/GoalPostHeader"
+                type:
+                  - array
+                  - "null"
+          description: OK
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: List hinst website API goal posts
+  /hinst-website/api/goalPosts/search:
+    get:
+      operationId: list-hinst-website-api-goal-posts-search
+      parameters:
+        - explode: false
+          in: query
+          name: query
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/GoalPostHeader"
+                type:
+                  - array
+                  - "null"
+          description: OK
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: List hinst website API goal posts search
+  /hinst-website/api/goals:
+    get:
+      operationId: list-hinst-website-api-goals
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/GoalObject"
+                type:
+                  - array
+                  - "null"
+          description: OK
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: List hinst website API goals
+  /hinst-website/api/urlPings:
+    get:
+      operationId: list-hinst-website-api-url-pings
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/GoalPostSearchIndexingHeader"
+                type:
+                  - array
+                  - "null"
+          description: OK
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: List hinst website API URL pings
