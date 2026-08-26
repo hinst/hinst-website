@@ -185,13 +185,12 @@ func (me *webAppGoals) searchGoalPosts(ctx context.Context, input *struct {
 	Query string `query:"query"`
 }) (*rest_objects.Response[[]rest_objects.GoalPostHeader], error) {
 	const resultLimit = 100
-	var requestedLanguage = webContext.getLanguage(ctx)
-	var goalManagerMode = webContext.isAdminMode(ctx)
-	var rows = me.db.searchGoalPosts(input.Query, requestedLanguage, goalManagerMode, resultLimit)
+	var rows = me.db.searchGoalPosts(input.Query, webContext.getLanguage(ctx),
+		webContext.isAdminMode(ctx), resultLimit)
 	var records []rest_objects.GoalPostHeader
 	for _, row := range rows {
 		var record rest_objects.GoalPostHeader
-		record.Read(row, requestedLanguage)
+		record.Read(row, webContext.getLanguage(ctx))
 		records = append(records, record)
 	}
 	return rest_objects.NewSimpleResponse(records), nil
