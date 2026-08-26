@@ -3,8 +3,6 @@ import type { paths } from 'src/typescript/generated/openapi';
 import { goalObjectWithMethods, GoalObjectEx } from './rest_objects/goalObjectEx';
 import { goalPostHeaderWithMethods, GoalPostHeaderEx } from './rest_objects/goalPostHeaderEx';
 import type {
-	GoalObject,
-	GoalPostHeader,
 	GoalPostObject,
 	GoalPostSearchIndexingHeader
 } from './apiTypes';
