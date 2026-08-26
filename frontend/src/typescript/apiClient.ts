@@ -2,24 +2,20 @@ import createClient from 'openapi-fetch';
 import type { paths } from 'src/typescript/generated/openapi';
 import { goalObjectWithMethods, GoalObjectEx } from './rest_objects/goalObjectEx';
 import { goalPostHeaderWithMethods, GoalPostHeaderEx } from './rest_objects/goalPostHeaderEx';
-import type {
-	GoalPostObject,
-	GoalPostSearchIndexingHeader
-} from './apiTypes';
+import type { GoalPostObject, GoalPostSearchIndexingHeader } from './apiTypes';
 import { settingsStorage } from './settings';
 
-/** Base URL of the REST API, e.g. '/hinst-website/api' or 'https://host/hinst-website/api'. */
-const apiRoot = process.env.API_URL || '/hinst-website/api';
+const API_URL = '/hinst-website/api';
+const apiUrl = process.env.API_URL || API_URL;
+const baseApiUrl = apiUrl.endsWith(API_URL)
+	? apiUrl.substring(0, apiUrl.length - API_URL.length)
+	: apiUrl;
 
-// The paths in the OpenAPI spec include the API root (e.g. '/hinst-website/api/goal'),
-// so the client base URL is the part of the API root before that.
 const client = createClient<paths>({
-	baseUrl: apiRoot.replace(/\/hinst-website\/api\/?$/, ''),
-	// Send string bodies as-is (e.g. goal post text), everything else as JSON
+	baseUrl: baseApiUrl,
 	bodySerializer: (body) => (typeof body === 'string' ? body : JSON.stringify(body))
 });
 
-// Add the Accept-Language header to every request and throw on non-2xx responses
 client.use({
 	onRequest: (params) => {
 		const language = settingsStorage.language;
@@ -34,7 +30,7 @@ client.use({
 });
 
 class ApiClient {
-	readonly url: string = apiRoot;
+	readonly url: string = apiUrl;
 
 	async getGoal(id: number): Promise<GoalObjectEx> {
 		const { data } = await client.GET('/hinst-website/api/goal', {
@@ -45,8 +41,7 @@ class ApiClient {
 
 	async getGoals(): Promise<GoalObjectEx[]> {
 		const { data } = await client.GET('/hinst-website/api/goals');
-		const goals = data!;
-		return goals.map((goal) => goalObjectWithMethods(goal));
+		return data!.map((goal) => goalObjectWithMethods(goal));
 	}
 
 	async goalPostSetPublic(
@@ -65,9 +60,12 @@ class ApiClient {
 		postDateTime: number,
 		enabled: boolean
 	): Promise<Response> {
-		const { response } = await client.PUT('/hinst-website/api/goalPost/setSearchIndexingEnabled', {
-			params: { query: { goalId, postDateTime, enabled } }
-		});
+		const { response } = await client.PUT(
+			'/hinst-website/api/goalPost/setSearchIndexingEnabled',
+			{
+				params: { query: { goalId, postDateTime, enabled } }
+			}
+		);
 		return response;
 	}
 
@@ -117,8 +115,7 @@ class ApiClient {
 		const { data } = await client.GET('/hinst-website/api/goalPosts', {
 			params: { query: { id: goalId } }
 		});
-		const posts = data!;
-		return posts
+		return data!
 			.filter((post) => post.type === 'post')
 			.map((post) => goalPostHeaderWithMethods(post));
 	}
@@ -127,8 +124,7 @@ class ApiClient {
 		const { data } = await client.GET('/hinst-website/api/goalPosts/search', {
 			params: { query: { query } }
 		});
-		const posts = data!;
-		return posts.map((post) => goalPostHeaderWithMethods(post));
+		return data!.map((post) => goalPostHeaderWithMethods(post));
 	}
 }
 
