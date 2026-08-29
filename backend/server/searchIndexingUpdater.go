@@ -30,8 +30,9 @@ func (me *searchIndexingUpdater) run() {
 		if !row.SearchIndexingEnabled {
 			return true
 		}
-		if row.GoogleSearchIndexingStatusCheckedAt > 0 &&
-			time.Since(row.GetGoogleSearchIndexingStatusCheckedAt()) < me.refreshInterval() {
+		var needRefresh = row.GoogleSearchIndexingStatusCheckedAt == 0 ||
+			me.refreshInterval() < time.Since(row.GetGoogleSearchIndexingStatusCheckedAt())
+		if !needRefresh {
 			return true
 		}
 		var postPublicUrl = webStaticGoals{}.getPublicUrl(row, webLanguage)
