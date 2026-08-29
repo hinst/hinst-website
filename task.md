@@ -1,3 +1,14 @@
-# Check admin mode
+# Show link to manual ping tracker
 
-Into file backend\server\webAppAdmin.go, add new API definition: check if admin mode is enabled. Returns boolean
+## Task
+Show menu button: link to manual ping tracker, if admin mode is enabled
+
+## Context:
+
+Files:
+* homeMenu.tsx
+* apiClient.ts
+* manualPingTracker.tsx
+
+Functions:
+* isAdminModeEnabled
