@@ -1,3 +1,2 @@
-require('fs').rmSync('.parcel-cache', { recursive: true, force: true });
-require('fs').rmSync('compiled', { recursive: true, force: true });
-require('fs').rmSync('dist', { recursive: true, force: true });
+for (const directory in ['.parcel-cache', 'compiled', 'dist'])
+	require('fs').rmSync(directory, { recursive: true, force: true });
