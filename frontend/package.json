@@ -2,10 +2,10 @@
 	"name": "frontend",
 	"version": "1.0.0",
 	"scripts": {
-		"start": "node -e \"require('fs').rmSync('.parcel-cache',{recursive:true,force:true})\" && parcel --public-url=/hinst-website index.html",
+		"build": "node scripts/clean.js && npm run generate-types && tsc && parcel build index.html",
+		"start": "npm run build && parcel --public-url=/hinst-website index.html",
 		"generate-types": "npm --prefix tools/typegen run generate",
-		"build": "npm run generate-types && tsc && parcel build index.html",
-		"test": "tsc --module nodenext --moduleResolution nodenext && node --enable-source-maps --test \"compiled/src/**/*.test.js\"",
+		"test": "npm run build && tsc --module nodenext --moduleResolution nodenext && node --enable-source-maps --test \"compiled/src/**/*.test.js\"",
 		"update-packages": "npx npm-check-updates"
 	},
 	"keywords": [],
