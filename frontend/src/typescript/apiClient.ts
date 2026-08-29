@@ -126,6 +126,11 @@ class ApiClient {
 		});
 		return data!.map((post) => createGoalPostHeaderEx(post));
 	}
+
+	async isAdminModeEnabled(): Promise<boolean> {
+		const { data } = await client.GET('/hinst-website/api/isAdminModeEnabled');
+		return data!;
+	}
 }
 
 export const apiClient = new ApiClient();
