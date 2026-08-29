@@ -592,6 +592,30 @@ paths:
                 $ref: "#/components/schemas/ErrorModel"
           description: Error
       summary: List hinst website API goals
+  /hinst-website/api/isAdminModeEnabled:
+    get:
+      operationId: get-hinst-website-api-is-admin-mode-enabled
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: boolean
+          description: OK
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Get hinst website API is admin mode enabled
   /hinst-website/api/urlPings:
     get:
       operationId: list-hinst-website-api-url-pings

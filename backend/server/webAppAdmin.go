@@ -16,6 +16,11 @@ type webAppAdmin struct {
 func (me *webAppAdmin) init(webApi huma.API, db *database) {
 	me.db = db
 	huma.Get(webApi, "/api/urlPings", me.getUrlPings)
+	huma.Get(webApi, "/api/isAdminModeEnabled", me.getIsAdminModeEnabled)
+}
+
+func (me *webAppAdmin) getIsAdminModeEnabled(ctx context.Context, input *struct{}) (*rest_objects.Response[bool], error) {
+	return rest_objects.NewSimpleResponse(webContext.isAdminMode(ctx)), nil
 }
 
 func (me *webAppAdmin) getUrlPings(ctx context.Context, input *struct{}) (*rest_objects.Response[[]rest_objects.GoalPostSearchIndexingHeader], error) {
