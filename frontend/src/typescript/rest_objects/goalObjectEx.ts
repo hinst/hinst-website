@@ -6,7 +6,7 @@ export interface GoalObjectEx extends GoalObject {
 	getTitle(language: SupportedLanguage): string;
 }
 
-export function goalObjectWithMethods(data: GoalObject): GoalObjectEx {
+export function createGoalObjectEx(data: GoalObject): GoalObjectEx {
 	return {
 		...data,
 		getTitle(language: SupportedLanguage) {

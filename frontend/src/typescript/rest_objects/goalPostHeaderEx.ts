@@ -8,7 +8,7 @@ export interface GoalPostHeaderEx extends GoalPostHeader {
 	dateText: string;
 }
 
-export function goalPostHeaderWithMethods(data: GoalPostHeader): GoalPostHeaderEx {
+export function createGoalPostHeaderEx(data: GoalPostHeader): GoalPostHeaderEx {
 	return {
 		...data,
 		yearAndMonthText: DateTime.fromMillis(data.dateTime * 1000).toFormat('yyyy-MM'),

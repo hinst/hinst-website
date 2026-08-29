@@ -1,7 +1,7 @@
 import createClient from 'openapi-fetch';
 import type { paths } from 'src/typescript/generated/openapi';
-import { goalObjectWithMethods, GoalObjectEx } from './rest_objects/goalObjectEx';
-import { goalPostHeaderWithMethods, GoalPostHeaderEx } from './rest_objects/goalPostHeaderEx';
+import { createGoalObjectEx, GoalObjectEx } from './rest_objects/goalObjectEx';
+import { createGoalPostHeaderEx, GoalPostHeaderEx } from './rest_objects/goalPostHeaderEx';
 import type { GoalPostObject, GoalPostSearchIndexingHeader } from './apiTypes';
 import { settingsStorage } from './settings';
 
@@ -36,12 +36,12 @@ class ApiClient {
 		const { data } = await client.GET('/hinst-website/api/goal', {
 			params: { query: { id } }
 		});
-		return goalObjectWithMethods(data!);
+		return createGoalObjectEx(data!);
 	}
 
 	async getGoals(): Promise<GoalObjectEx[]> {
 		const { data } = await client.GET('/hinst-website/api/goals');
-		return data!.map((goal) => goalObjectWithMethods(goal));
+		return data!.map((goal) => createGoalObjectEx(goal));
 	}
 
 	async goalPostSetPublic(
@@ -117,14 +117,14 @@ class ApiClient {
 		});
 		return data!
 			.filter((post) => post.type === 'post')
-			.map((post) => goalPostHeaderWithMethods(post));
+			.map((post) => createGoalPostHeaderEx(post));
 	}
 
 	async searchGoalPosts(query: string): Promise<GoalPostHeaderEx[]> {
 		const { data } = await client.GET('/hinst-website/api/goalPosts/search', {
 			params: { query: { query } }
 		});
-		return data!.map((post) => goalPostHeaderWithMethods(post));
+		return data!.map((post) => createGoalPostHeaderEx(post));
 	}
 }
 
