@@ -1,15 +1,22 @@
 import { DateTime } from 'luxon';
-import { useState } from 'react';
+import { CSSProperties, useState } from 'react';
 import { Check, CheckCircle, Copy } from 'react-feather';
 import { apiClient } from 'src/typescript/apiClient';
 import type { GoalPostSearchIndexingHeader } from 'src/typescript/apiTypes';
+
+const BUTTON_STYLE: CSSProperties = {
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'center',
+	padding: '6px 12px',
+	width: 160
+};
 
 export function HeaderRow() {
 	return (
 		<tr>
 			<th>URL</th>
 			<th>Google Ping</th>
-			<th>Google Search Indexing Status</th>
 		</tr>
 	);
 }
@@ -20,27 +27,27 @@ export function Row(props: { record: GoalPostSearchIndexingHeader }) {
 	return (
 		<tr>
 			<td>{props.record.publicUrl}</td>
-			<td style={{ height: 62 }}>
+			<td style={{ display: 'flex', flexDirection: 'column' }}>
+				Pinged at:{' '}
+				{props.record.googlePingedAt ? formatDate(props.record.googlePingedAt) : 'never'}
 				{isPinged ? (
-					<div style={{ display: 'flex', alignItems: 'center' }}>
+					<button type='button' className='ms-btn ms-outline' style={BUTTON_STYLE}>
 						<CheckCircle /> &nbsp; Done
-					</div>
+					</button>
 				) : isCopied ? (
 					<PingUrlButton
 						onDone={() => setIsPinged(true)}
 						goalId={props.record.goalId}
 						postDateTime={props.record.dateTime}
 					/>
-				) : props.record.googlePingedAt ? (
-					formatDate(props.record.googlePingedAt)
 				) : (
 					<CopyUrlButton
 						onDone={() => setIsCopied(true)}
 						url={'' + props.record.publicUrl}
 					/>
 				)}
+				{props.record.googleSearchIndexingStatus || '?'}
 			</td>
-			<td>{props.record.googleSearchIndexingStatus || '?'}</td>
 		</tr>
 	);
 }
@@ -72,13 +79,7 @@ function CopyUrlButton(props: { onDone: () => void; url: string }) {
 			type='button'
 			className='ms-btn ms-action'
 			onClick={copyUrl}
-			style={{
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				padding: '6px 12px',
-				width: 160
-			}}
+			style={BUTTON_STYLE}
 		>
 			<Copy />
 			&nbsp; Copy URL
@@ -101,16 +102,10 @@ function PingUrlButton(props: { onDone: () => void; goalId: number; postDateTime
 			className='ms-btn ms-action2'
 			onClick={ping}
 			disabled={isLoading}
-			style={{
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				padding: '6px 12px',
-				width: 160
-			}}
+			style={BUTTON_STYLE}
 		>
 			<Check />
-			&nbsp; Confirm pinged
+			&nbsp; Mark pinged
 		</button>
 	);
 }
