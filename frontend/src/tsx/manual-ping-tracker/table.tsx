@@ -39,7 +39,7 @@ export function Row(props: { record: GoalPostSearchIndexingHeader }) {
 					/>
 				)}
 			</td>
-			<td>{props.record.googleSearchIndexingStatus}</td>
+			<td>{props.record.googleSearchIndexingStatus ?? '?'}</td>
 		</tr>
 	);
 }
