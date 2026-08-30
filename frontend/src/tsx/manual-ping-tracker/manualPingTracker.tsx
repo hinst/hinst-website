@@ -40,7 +40,7 @@ export default function ManualPingTracker(props: { setPageTitle: (title: string)
 				</thead>
 				<tbody>
 					{getVisibleUrlPings().map((item) => (
-						<Row key={item.publicUrl} record={item} />
+						<Row key={item.publicUrl} record={item} onPinged={loadUrlPings} />
 					))}
 				</tbody>
 			</table>

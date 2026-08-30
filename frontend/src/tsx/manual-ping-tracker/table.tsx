@@ -22,7 +22,7 @@ export function HeaderRow() {
 	);
 }
 
-export function Row(props: { record: GoalPostSearchIndexingHeader }) {
+export function Row(props: { record: GoalPostSearchIndexingHeader; onPinged: () => void }) {
 	const [isCopied, setIsCopied] = useState(false);
 	const [isPinged, setIsPinged] = useState(false);
 	return (
@@ -67,7 +67,10 @@ export function Row(props: { record: GoalPostSearchIndexingHeader }) {
 						</button>
 					) : isCopied ? (
 						<PingUrlButton
-							onDone={() => setIsPinged(true)}
+							onDone={() => {
+								setIsPinged(true);
+								props.onPinged();
+							}}
 							goalId={props.record.goalId}
 							postDateTime={props.record.dateTime}
 						/>
