@@ -11,6 +11,7 @@ import { APP_TITLE } from 'src/typescript/global';
 import { settingsStorage } from 'src/typescript/settings';
 import ManualPingTracker from './manual-ping-tracker/manualPingTracker';
 import { PersonalGoalsSearch } from './personal-goals-search/personalGoalsSearch';
+import { apiClient } from 'src/typescript/apiClient';
 
 export default function App() {
 	settingsStorage.initialize();
@@ -34,12 +35,21 @@ export default function App() {
 		document.title = pageTitle;
 	}, [pageTitle]);
 
+	const [isAdminMode, setAdminMode] = useState(false);
+	useEffect(() => {
+		loadAdminMode();
+	}, []);
+
+	async function loadAdminMode() {
+		setAdminMode(await apiClient.isAdminModeEnabled());
+	}
+
 	return (
 		<AppContext.Provider
 			value={{
 				currentLanguage,
 				windowWidth: windowWidth,
-				isAdminMode: Cookies.get('goalManagerMode') === '1'
+				isAdminMode: isAdminMode
 			}}
 		>
 			<div
