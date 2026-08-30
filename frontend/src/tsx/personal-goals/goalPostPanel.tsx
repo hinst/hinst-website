@@ -47,7 +47,7 @@ export default function GoalPostPanel(props: {
 			{isLoading ? <div className='ms-loading' /> : undefined}
 			{postData ? (
 				<>
-					{context.goalManagerMode ? (
+					{context.isAdminMode ? (
 						<GoalPostManagementPanel
 							postData={postData}
 							setPostData={setPostData}

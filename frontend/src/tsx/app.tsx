@@ -39,7 +39,7 @@ export default function App() {
 			value={{
 				currentLanguage,
 				windowWidth: windowWidth,
-				goalManagerMode: Cookies.get('goalManagerMode') === '1'
+				isAdminMode: Cookies.get('goalManagerMode') === '1'
 			}}
 		>
 			<div
