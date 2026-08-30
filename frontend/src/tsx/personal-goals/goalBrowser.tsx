@@ -3,7 +3,6 @@ import GoalCalendarPanel from './goalCalendarPanel';
 import { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { AppContext } from 'src/tsx/context';
-import Cookie from 'js-cookie';
 import GoalPostPanel from './goalPostPanel';
 import GoalBrowserNarrow from './goalBrowser.narrow';
 import { DateTime } from 'luxon';
@@ -34,10 +33,6 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 
 	const isFullMode = context.windowWidth >= 700;
 
-	function isGoalManagerMode() {
-		return Cookie.get('goalManagerMode') === '1';
-	}
-
 	const [calendarVisible, setCalendarVisible] = useState(isFullMode);
 	const [calendarTransition, setCalendarTransition] = useState('');
 
@@ -64,12 +59,12 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 
 	useEffect(() => {
 		const dateTime = DateTime.fromMillis(parseInt(activePostDate) * 1000);
-		const dateText = isGoalManagerMode()
+		const dateText = context.isAdminMode
 			? dateTime.toLocaleString({ dateStyle: 'short', timeStyle: 'short' })
 			: dateTime.toLocaleString({ dateStyle: 'short' });
 		const components = [goalTitle, dateText].filter((s) => s.length);
 		props.setPageTitle(components.join(' • '));
-	}, [goalTitle, activePostDate]);
+	}, [goalTitle, activePostDate, context.isAdminMode]);
 
 	useEffect(() => {
 		const element = articleContainerRef.current;
@@ -97,7 +92,6 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 			<GoalPostPanel
 				goalId={parseInt(goalId)}
 				postDate={parseInt(activePostDate)}
-				goalManagerMode={isGoalManagerMode()}
 				onChange={() => setReloadGoalCalendar(Math.random())}
 			/>
 		);

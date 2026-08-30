@@ -8,7 +8,6 @@ import { apiClient } from 'src/typescript/apiClient';
 export default function GoalPostPanel(props: {
 	goalId: number;
 	postDate: number;
-	goalManagerMode: boolean;
 	onChange: () => void;
 }) {
 	const [isLoading, setIsLoading] = useState(false);
