@@ -30,12 +30,19 @@ func (me *database) setGoalPostSearchIndexingEnabled(row db_objects.GoalPostRow)
 func (me *database) setGoalPostSearchIndexingStatus(
 	goalId int64, dateTime time.Time, status string, checkedAt time.Time,
 ) int64 {
-	var tableName = (db_objects.GoalPostRow{}).GetTableName()
-	var queryText = "UPDATE " + tableName +
+	var queryText = "UPDATE " + (db_objects.GoalPostRow{}).GetTableName() +
 		" SET googleSearchIndexingStatus = $1, googleSearchIndexingStatusCheckedAt = $2" +
 		" WHERE goalId = $3 AND dateTime = $4"
 	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), queryText,
 		status, checkedAt.UTC().Unix(), goalId, dateTime.UTC().Unix()))
+	return result.RowsAffected()
+}
+
+func (me *database) setGoalPostGooglePingedAt(goalId int64, dateTime time.Time, googlePingedAt time.Time) int64 {
+	var queryText = "UPDATE " + (db_objects.GoalPostRow{}).GetTableName() +
+		" SET googlePingedAt = $1 WHERE goalId = $2 AND dateTime = $3"
+	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), queryText,
+		googlePingedAt.UTC().Unix(), goalId, dateTime.UTC().Unix()))
 	return result.RowsAffected()
 }
 

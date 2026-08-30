@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"time"
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/hinst/hinst-website/server/base"
@@ -17,6 +18,7 @@ func (me *webAppAdmin) init(webApi huma.API, db *database) {
 	me.db = db
 	huma.Get(webApi, "/api/urlPings", me.getUrlPings)
 	huma.Get(webApi, "/api/isAdminModeEnabled", me.getIsAdminModeEnabled)
+	huma.Put(webApi, "/api/goalPosts/googlePingedAt", me.setGoalPostGooglePingedAt)
 }
 
 func (me *webAppAdmin) getIsAdminModeEnabled(ctx context.Context, input *struct{}) (*rest_objects.Response[bool], error) {
@@ -38,4 +40,14 @@ func (me *webAppAdmin) getUrlPings(ctx context.Context, input *struct{}) (*rest_
 		return true
 	}, (db_objects.GoalPostRow{}).GetAllFieldSelector(), -1)
 	return rest_objects.NewSimpleResponse(objects), nil
+}
+
+func (me *webAppAdmin) setGoalPostGooglePingedAt(ctx context.Context, input *struct {
+	GoalId       int64 `query:"goalId" required:"true"`
+	PostDateTime int64 `query:"postDateTime" required:"true"`
+}) (*rest_objects.Response[bool], error) {
+	webContext.assertAdminMode(ctx)
+	var postDateTime = time.Unix(input.PostDateTime, 0)
+	var affectedRowCount = me.db.setGoalPostGooglePingedAt(input.GoalId, postDateTime, time.Now())
+	return rest_objects.NewSimpleResponse(affectedRowCount > 0), nil
 }
