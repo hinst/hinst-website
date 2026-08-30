@@ -157,6 +157,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/hinst-website/api/goalPosts/googlePingedAt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Put hinst website API goal posts google pinged at */
+        put: operations["put-hinst-website-api-goal-posts-google-pinged-at"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/hinst-website/api/goalPosts/search": {
         parameters: {
             query?: never;
@@ -630,6 +647,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GoalPostHeader"][] | null;
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorModel"];
+                };
+            };
+        };
+    };
+    "put-hinst-website-api-goal-posts-google-pinged-at": {
+        parameters: {
+            query: {
+                goalId: number;
+                postDateTime: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    "Cache-Control"?: string;
+                    "Content-Type"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": boolean;
                 };
             };
             /** @description Error */

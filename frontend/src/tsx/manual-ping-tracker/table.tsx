@@ -28,7 +28,8 @@ export function Row(props: { record: GoalPostSearchIndexingHeader }) {
 				) : isCopied ? (
 					<PingUrlButton
 						onDone={() => setIsPinged(true)}
-						url={'' + props.record.publicUrl}
+						goalId={props.record.goalId}
+						postDateTime={props.record.dateTime}
 					/>
 				) : props.record.googlePingedAt ? (
 					formatDate(props.record.googlePingedAt)
@@ -85,11 +86,11 @@ function CopyUrlButton(props: { onDone: () => void; url: string }) {
 	);
 }
 
-function PingUrlButton(props: { onDone: () => void; url: string }) {
+function PingUrlButton(props: { onDone: () => void; goalId: number; postDateTime: number }) {
 	const [isLoading, setIsLoading] = useState(false);
 	async function ping() {
 		setIsLoading(true);
-		// TODO
+		await apiClient.setGoalPostGooglePingedAt(props.goalId, props.postDateTime);
 		setIsLoading(false);
 		props.onDone();
 	}

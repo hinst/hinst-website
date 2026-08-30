@@ -131,6 +131,13 @@ class ApiClient {
 		const { data } = await client.GET('/hinst-website/api/isAdminModeEnabled');
 		return data!;
 	}
+
+	async setGoalPostGooglePingedAt(goalId: number, postDateTime: number): Promise<boolean> {
+		const { data } = await client.PUT('/hinst-website/api/goalPosts/googlePingedAt', {
+			params: { query: { goalId, postDateTime } }
+		});
+		return data!;
+	}
 }
 
 export const apiClient = new ApiClient();

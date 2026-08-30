@@ -530,6 +530,45 @@ paths:
                 $ref: "#/components/schemas/ErrorModel"
           description: Error
       summary: List hinst website API goal posts
+  /hinst-website/api/goalPosts/googlePingedAt:
+    put:
+      operationId: put-hinst-website-api-goal-posts-google-pinged-at
+      parameters:
+        - explode: false
+          in: query
+          name: goalId
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: postDateTime
+          required: true
+          schema:
+            format: int64
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: boolean
+          description: OK
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            Content-Type:
+              schema:
+                type: string
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Put hinst website API goal posts google pinged at
   /hinst-website/api/goalPosts/search:
     get:
       operationId: list-hinst-website-api-goal-posts-search
