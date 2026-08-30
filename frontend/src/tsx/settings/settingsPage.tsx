@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useReducer } from 'react';
 import { Info } from 'react-feather';
-import { APP_TITLE, AUTHOR_NAME, COPYRIGHT_YEAR } from 'src/typescript/global';
+import { APP_TITLE, AUTHOR_NAME, COPYRIGHT_YEARS } from 'src/typescript/global';
 import { SupportedLanguage, supportedLanguageNames } from 'src/typescript/language';
 import { settingsStorage, Theme } from 'src/typescript/settings';
 
@@ -81,7 +81,7 @@ export default function SettingsPage(props: { setPageTitle: (title: string) => v
 				</div>
 			</div>
 			<div>
-				{APP_TITLE} &copy; {COPYRIGHT_YEAR} {AUTHOR_NAME}
+				{APP_TITLE} &copy; {COPYRIGHT_YEARS} {AUTHOR_NAME}
 			</div>
 		</div>
 	);

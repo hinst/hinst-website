@@ -1,3 +1,3 @@
-export const APP_TITLE = 'Showcase Website';
-export const COPYRIGHT_YEAR = 2025;
+export const APP_TITLE = "Programmer's Diary";
+export const COPYRIGHT_YEARS = '2025-2026';
 export const AUTHOR_NAME = 'Alexander Savinykh';

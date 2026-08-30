@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MenuButton } from './header/menuButton';
 import { HomeButton } from './header/homeButton';
 import { HomeMenu } from './header/homeMenu';
+import { APP_TITLE } from 'src/typescript/global';
 
 export default function Header(props: { title: string }) {
 	const [menuVisible, setMenuVisible] = useState(false);
@@ -68,7 +69,7 @@ export default function Header(props: { title: string }) {
 						overflowY: 'clip'
 					}}
 				>
-					Programmer's Diary
+					{APP_TITLE}
 				</b>
 				<span
 					style={{
