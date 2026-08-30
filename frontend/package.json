@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"scripts": {
 		"build": "node scripts/clean.js && npm run generate-types && tsc && parcel build index.html",
-		"start": "npm run build && parcel --public-url=/hinst-website index.html",
+		"start": "node scripts/clean.js && npm run generate-types && tsc && parcel --public-url=/hinst-website index.html",
 		"generate-types": "npm --prefix tools/typegen run generate",
 		"test": "npm run build && tsc --module nodenext --moduleResolution nodenext && node --enable-source-maps --test \"compiled/src/**/*.test.js\"",
 		"update-packages": "npx npm-check-updates"
