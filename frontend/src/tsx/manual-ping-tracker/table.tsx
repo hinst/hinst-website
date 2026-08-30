@@ -9,6 +9,7 @@ const BUTTON_STYLE: CSSProperties = {
 	alignItems: 'center',
 	justifyContent: 'center',
 	padding: '6px 12px',
+	height: 38,
 	width: 160
 };
 
@@ -26,27 +27,57 @@ export function Row(props: { record: GoalPostSearchIndexingHeader }) {
 	const [isPinged, setIsPinged] = useState(false);
 	return (
 		<tr>
-			<td>{props.record.publicUrl}</td>
-			<td style={{ display: 'flex', flexDirection: 'column' }}>
-				Pinged at:{' '}
-				{props.record.googlePingedAt ? formatDate(props.record.googlePingedAt) : 'never'}
-				{isPinged ? (
-					<button type='button' className='ms-btn ms-outline' style={BUTTON_STYLE}>
-						<CheckCircle /> &nbsp; Done
-					</button>
-				) : isCopied ? (
-					<PingUrlButton
-						onDone={() => setIsPinged(true)}
-						goalId={props.record.goalId}
-						postDateTime={props.record.dateTime}
-					/>
-				) : (
-					<CopyUrlButton
-						onDone={() => setIsCopied(true)}
-						url={'' + props.record.publicUrl}
-					/>
-				)}
-				{props.record.googleSearchIndexingStatus || '?'}
+			<td>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						gap: 8,
+						alignItems: 'flex-start',
+						width: 'fit-content'
+					}}
+				>
+					<span>{props.record.title}</span>
+					<a href={props.record.publicUrl}>{props.record.publicUrl}</a>
+				</div>
+			</td>
+			<td>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+					<div>
+						Pinged at{' '}
+						<code>
+							{' '}
+							{props.record.googlePingedAt
+								? formatDate(props.record.googlePingedAt)
+								: 'never'}
+						</code>
+					</div>
+					<div>
+						Indexing status:{' '}
+						<code>{props.record.googleSearchIndexingStatus || '?'}</code>
+					</div>
+					{isPinged ? (
+						<button
+							type='button'
+							className='ms-btn ms-outline'
+							style={BUTTON_STYLE}
+							disabled={true}
+						>
+							<CheckCircle /> &nbsp; Done
+						</button>
+					) : isCopied ? (
+						<PingUrlButton
+							onDone={() => setIsPinged(true)}
+							goalId={props.record.goalId}
+							postDateTime={props.record.dateTime}
+						/>
+					) : (
+						<CopyUrlButton
+							onDone={() => setIsCopied(true)}
+							url={'' + props.record.publicUrl}
+						/>
+					)}
+				</div>
 			</td>
 		</tr>
 	);
