@@ -23,7 +23,9 @@ export default function ManualPingTracker(props: { setPageTitle: (title: string)
 				className='ms-alert ms-light'
 				style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 8 }}
 			>
-				<div>Showing URLs: {getVisibleUrlPings().length}</div>
+				<div>
+					Showing URLs: {getVisibleUrlPings().length} of {urlPings.length}
+				</div>
 				<b>|</b>
 				<div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
 					<input
