@@ -102,10 +102,9 @@ func (me *webHtmlGoals) renderGoalPostPage(lang language.Tag, goalId int64, date
 
 	var goalTitle = goalRecord.GetTranslatedTitle(lang)
 	var pageTitle = goalTitle + " • " +
-		dateTime.UTC().Format("2006-01-02")
-	var pageDescription = goalTitle + " - " +
-		dateTime.UTC().Format("2006-01-02") + " - " +
+		dateTime.UTC().Format("2006-01-02") + " " +
 		goalPostRecord.GetTranslatedTitle(lang)
+	var pageDescription = goalPostRecord.GetTranslatedTitle(lang)
 	var content = executeTemplateFile("pages/html/templates/goalPost.html", data)
 	return me.wrapTemplatePage(langPath, page_data.Content{
 		LanguageTag: lang.String(),
