@@ -48,7 +48,7 @@ func (me *webStaticGoals) generate(lang language.Tag) {
 	gophers.AssertError(os.MkdirAll(path, file_mode.USER_RWX))
 
 	var homePageText = me.renderer.renderHomePage(lang)
-	gophers.WriteTextFile(path+"/index.html", gophers.AssertResultError(formatHtml(homePageText)))
+	gophers.WriteTextFile(path+"/index.html", me.formatHtml(homePageText))
 
 	var goals = me.db.getGoals()
 	var goalsPath = path + "/personal-goals"
@@ -64,7 +64,7 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 	var goalPageText = me.renderer.renderGoalPage(lang, goalId)
 	gophers.WriteTextFile(
 		goalsPath+"/"+gophers.GetStringFromInt64(goalId)+".html",
-		gophers.AssertResultError(formatHtml(goalPageText)))
+		me.formatHtml(goalPageText))
 
 	var path = goalsPath + "/" + gophers.GetStringFromInt64(goalId)
 	gophers.AssertError(os.MkdirAll(path, file_mode.USER_RWX))
@@ -80,7 +80,7 @@ func (me *webStaticGoals) generateGoalPost(lang language.Tag, goalsPath string, 
 	var postFilePath = goalsPath + "/" + gophers.GetStringFromInt64(goalId) + "/"
 	gophers.WriteTextFile(
 		postFilePath+gophers.GetStringFromInt64(postDateTime)+".html",
-		gophers.AssertResultError(formatHtml(postPageText)))
+		me.formatHtml(postPageText))
 
 	var imageCount = me.db.getGoalPostImageCount(goalId, time.Unix(postDateTime, 0))
 	for imageIndex := range imageCount {
@@ -119,4 +119,8 @@ func (webStaticGoals) getPublicUrl(row *db_objects.GoalPostRow, lang language.Ta
 
 func (webStaticGoals) getPublicBaseUrl() string {
 	return gophers.ReadEnvVar("PUBLIC_URL", default_public_url)
+}
+
+func (me *webStaticGoals) formatHtml(text string) string {
+	return gophers.AssertResultError(formatHtml(text))
 }
