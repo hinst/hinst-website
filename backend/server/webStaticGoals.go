@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"os"
 	"time"
 
@@ -12,9 +13,10 @@ import (
 )
 
 type webStaticGoals struct {
-	folder   string
-	db       *database
-	renderer *webHtmlGoals
+	folder      string
+	db          *database
+	renderer    *webHtmlGoals
+	formatTotal time.Duration
 }
 
 func (me *webStaticGoals) init(db *database, folder string) {
@@ -31,6 +33,7 @@ func (me *webStaticGoals) run() {
 	for _, lang := range base.SupportedLanguages {
 		me.generate(lang)
 	}
+	log.Printf("Total duration of formatHtml() calls: %v", me.formatTotal)
 }
 
 func (me *webStaticGoals) deleteOldFiles() {
@@ -122,5 +125,8 @@ func (webStaticGoals) getPublicBaseUrl() string {
 }
 
 func (me *webStaticGoals) formatHtml(text string) string {
-	return gophers.AssertResultError(formatHtml(text))
+	var start = time.Now()
+	var result = gophers.AssertResultError(formatHtml(text))
+	me.formatTotal += time.Since(start)
+	return result
 }
