@@ -13,10 +13,10 @@ import (
 )
 
 type webStaticGoals struct {
-	folder      string
-	db          *database
-	renderer    *webHtmlGoals
-	formatTotal time.Duration
+	folder             string
+	db                 *database
+	renderer           *webHtmlGoals
+	formatHtmlDuration time.Duration
 }
 
 func (me *webStaticGoals) init(db *database, folder string) {
@@ -33,7 +33,7 @@ func (me *webStaticGoals) run() {
 	for _, lang := range base.SupportedLanguages {
 		me.generate(lang)
 	}
-	log.Printf("Total duration of formatHtml() calls: %v", me.formatTotal)
+	log.Printf("Total duration of formatHtml() calls: %v", me.formatHtmlDuration)
 }
 
 func (me *webStaticGoals) deleteOldFiles() {
@@ -127,6 +127,6 @@ func (webStaticGoals) getPublicBaseUrl() string {
 func (me *webStaticGoals) formatHtml(text string) string {
 	var start = time.Now()
 	var result = gophers.AssertResultError(formatHtml(text))
-	me.formatTotal += time.Since(start)
+	me.formatHtmlDuration += time.Since(start)
 	return result
 }
