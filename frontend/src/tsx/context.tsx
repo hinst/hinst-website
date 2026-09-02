@@ -4,5 +4,6 @@ import { settingsStorage } from 'src/typescript/settings';
 export const AppContext = createContext({
 	currentLanguage: settingsStorage.resolvedLanguage,
 	windowWidth: window.innerWidth,
-	isAdminMode: false
+	isAdminMode: false,
+	setPageTitle: function (title: string) {}
 });

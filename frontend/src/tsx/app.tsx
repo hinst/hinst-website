@@ -48,7 +48,8 @@ export default function App() {
 			value={{
 				currentLanguage,
 				windowWidth: windowWidth,
-				isAdminMode: isAdminMode
+				isAdminMode: isAdminMode,
+				setPageTitle: setPageTitle
 			}}
 		>
 			<div
@@ -67,7 +68,7 @@ export default function App() {
 						<Header title={pageTitle} />
 					</div>
 					<Routes>
-						<Route path='/' element={<HomePage setPageTitle={setPageTitle} />} />
+						<Route path='/' element={<HomePage />} />
 						<Route
 							path='/personal-goals/:id'
 							element={<GoalBrowser setPageTitle={setPageTitle} />}
