@@ -5,7 +5,6 @@ import HomePage from './homePage';
 import GoalBrowser from './personal-goals/goalBrowser';
 import { SupportedLanguage } from 'src/typescript/language';
 import { AppContext } from './context';
-import Cookies from 'js-cookie';
 import SettingsPage from './settings/settingsPage';
 import { APP_TITLE } from 'src/typescript/global';
 import { settingsStorage } from 'src/typescript/settings';
