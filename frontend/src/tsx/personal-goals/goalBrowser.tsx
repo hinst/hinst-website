@@ -19,7 +19,7 @@ const STRIPES_BACKGROUND = `repeating-linear-gradient(
 )`;
 const STRIPES_MIN_WIDTH = 100;
 
-export default function GoalBrowser(props: { setPageTitle: (title: string) => void }) {
+export default function GoalBrowser() {
 	const context = useContext(AppContext);
 	const params = useParams();
 	const goalId: string = params.id!;
@@ -63,7 +63,7 @@ export default function GoalBrowser(props: { setPageTitle: (title: string) => vo
 			? dateTime.toLocaleString({ dateStyle: 'short', timeStyle: 'short' })
 			: dateTime.toLocaleString({ dateStyle: 'short' });
 		const components = [goalTitle, dateText].filter((s) => s.length);
-		props.setPageTitle(components.join(' • '));
+		context.setPageTitle(components.join(' • '));
 	}, [goalTitle, activePostDate, context.isAdminMode]);
 
 	useEffect(() => {

@@ -69,18 +69,9 @@ export default function App() {
 					</div>
 					<Routes>
 						<Route path='/' element={<HomePage />} />
-						<Route
-							path='/personal-goals/:id'
-							element={<GoalBrowser setPageTitle={setPageTitle} />}
-						/>
-						<Route
-							path='/settings'
-							element={<SettingsPage setPageTitle={setPageTitle} />}
-						/>
-						<Route
-							path='/manual-ping-tracker'
-							element={<ManualPingTracker setPageTitle={setPageTitle} />}
-						/>
+						<Route path='/personal-goals/:id' element={<GoalBrowser />} />
+						<Route path='/settings' element={<SettingsPage />} />
+						<Route path='/manual-ping-tracker' element={<ManualPingTracker />} />
 						<Route path='/personal-goals-search' element={<PersonalGoalsSearch />} />
 					</Routes>
 				</HashRouter>

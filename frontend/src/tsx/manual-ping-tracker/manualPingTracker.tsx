@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
 import { HeaderRow, Row } from './table';
 import type { GoalPostSearchIndexingHeader } from 'src/typescript/apiTypes';
+import { AppContext } from 'src/tsx/context';
 
-export default function ManualPingTracker(props: { setPageTitle: (title: string) => void }) {
+export default function ManualPingTracker() {
+	const context = useContext(AppContext);
 	const [urlPings, setUrlPings] = useState<Array<GoalPostSearchIndexingHeader>>([]);
 	const [manuallyPingedVisible, setManuallyPingedVisible] = useState(true);
 	async function loadUrlPings() {
@@ -14,7 +16,7 @@ export default function ManualPingTracker(props: { setPageTitle: (title: string)
 		return urlPings;
 	}
 	useEffect(() => {
-		props.setPageTitle('Manual URL ping tracker');
+		context.setPageTitle('Manual URL ping tracker');
 		loadUrlPings();
 	}, []);
 	return (

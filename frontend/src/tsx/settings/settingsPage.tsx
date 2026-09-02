@@ -1,14 +1,16 @@
-import { CSSProperties, useEffect, useReducer } from 'react';
+import { CSSProperties, useContext, useEffect, useReducer } from 'react';
 import { Info } from 'react-feather';
+import { AppContext } from 'src/tsx/context';
 import { APP_TITLE, AUTHOR_NAME, COPYRIGHT_YEARS } from 'src/typescript/global';
 import { SupportedLanguage, supportedLanguageNames } from 'src/typescript/language';
 import { settingsStorage, Theme } from 'src/typescript/settings';
 
-export default function SettingsPage(props: { setPageTitle: (title: string) => void }) {
+export default function SettingsPage() {
+	const context = useContext(AppContext);
 	const [, forceUpdate] = useReducer((key) => key + 1, 0);
 
 	useEffect(() => {
-		props.setPageTitle('Settings');
+		context.setPageTitle('Settings');
 	}, []);
 
 	function setTheme(theme: Theme) {
