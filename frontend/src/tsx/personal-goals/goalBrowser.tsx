@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
-import { AppContext } from 'src/tsx/appContext';
 import { apiClient } from 'src/typescript/apiClient';
+import { AppContext } from 'src/typescript/appContext';
 import type { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
 import GoalBrowserNarrow from './goalBrowser.narrow';
 import GoalCalendarPanel from './goalCalendarPanel';

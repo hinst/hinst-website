@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { AppContext } from 'src/tsx/appContext';
+import { AppContext } from 'src/typescript/appContext';
 import GoalListPanel from './personal-goals/goalListPanel';
 
 export default function HomePage() {

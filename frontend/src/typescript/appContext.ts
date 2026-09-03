@@ -5,5 +5,5 @@ export const AppContext = createContext({
 	currentLanguage: settingsStorage.resolvedLanguage,
 	windowWidth: window.innerWidth,
 	isAdminMode: false,
-	setPageTitle: (title: string) => {}
+	setPageTitle: (title: string) => {},
 });

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
-import { AppContext } from 'src/tsx/appContext';
 import { apiClient } from 'src/typescript/apiClient';
 import type { GoalPostObject } from 'src/typescript/apiTypes';
+import { AppContext } from 'src/typescript/appContext';
 import GoalPostManagementPanel from './goalPostManagementPanel';
 import GoalPostView from './goalPostView';
 
