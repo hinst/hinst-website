@@ -83,7 +83,7 @@ export default function GoalBrowser() {
 			<GoalCalendarPanel
 				id={goalId}
 				receivePosts={receivePosts}
-				activePostDate={parseInt(activePostDate) || 0}
+				activePostDate={parseInt(activePostDate, 10) || 0}
 				reload={reloadGoalCalendar}
 			/>
 		);
@@ -92,8 +92,8 @@ export default function GoalBrowser() {
 	function getGoalPostPanel() {
 		return (
 			<GoalPostPanel
-				goalId={parseInt(goalId)}
-				postDate={parseInt(activePostDate)}
+				goalId={parseInt(goalId, 10)}
+				postDate={parseInt(activePostDate, 10)}
 				onChange={() => setReloadGoalCalendar(Math.random())}
 			/>
 		);
