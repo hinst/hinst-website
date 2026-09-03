@@ -1,5 +1,5 @@
 import { Calendar } from 'react-feather';
-import { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
 export default function GoalBrowserNarrow(props: {
 	activePostDate: string;

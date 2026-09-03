@@ -1,4 +1,4 @@
-import { CSSProperties, useContext, useEffect, useReducer } from 'react';
+import { type CSSProperties, useContext, useEffect, useReducer } from 'react';
 import { Info } from 'react-feather';
 import { AppContext } from 'src/tsx/context';
 import { APP_TITLE, AUTHOR_NAME, COPYRIGHT_YEARS } from 'src/typescript/global';

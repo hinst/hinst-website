@@ -3,7 +3,7 @@ import Header from './header';
 import { useEffect, useState } from 'react';
 import HomePage from './homePage';
 import GoalBrowser from './personal-goals/goalBrowser';
-import { SupportedLanguage } from 'src/typescript/language';
+import type { SupportedLanguage } from 'src/typescript/language';
 import { AppContext } from './context';
 import SettingsPage from './settings/settingsPage';
 import { APP_TITLE } from 'src/typescript/global';

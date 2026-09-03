@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
-import { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
+import type { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
 import GoalCalendar from './goalCalendar';
 
 export default function GoalCalendarPanel(props: {
@@ -13,7 +13,7 @@ export default function GoalCalendarPanel(props: {
 	const isLoadingRef = useRef(0);
 	isLoadingRef.current = isLoading;
 
-	const [posts, setPosts] = useState(new Array<GoalPostHeaderEx>());
+	const [posts, setPosts] = useState([] as GoalPostHeaderEx[]);
 
 	async function loadPosts() {
 		setIsLoading(isLoadingRef.current + 1);

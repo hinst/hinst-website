@@ -1,4 +1,4 @@
-//@ts-ignore
+//@ts-expect-error
 import icon from 'url:images/icon.webp';
 import { NavLink } from 'react-router';
 

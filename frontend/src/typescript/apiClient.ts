@@ -1,7 +1,7 @@
 import createClient from 'openapi-fetch';
 import type { paths } from 'src/typescript/generated/openapi';
-import { createGoalObjectEx, GoalObjectEx } from './rest_objects/goalObjectEx';
-import { createGoalPostHeaderEx, GoalPostHeaderEx } from './rest_objects/goalPostHeaderEx';
+import { createGoalObjectEx, type GoalObjectEx } from './rest_objects/goalObjectEx';
+import { createGoalPostHeaderEx, type GoalPostHeaderEx } from './rest_objects/goalPostHeaderEx';
 import type { GoalPostObject, GoalPostSearchIndexingHeader } from './apiTypes';
 import { settingsStorage } from './settings';
 

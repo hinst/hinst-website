@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { CSSProperties, useState } from 'react';
+import { type CSSProperties, useState } from 'react';
 import { Check, CheckCircle, Copy } from 'react-feather';
 import { apiClient } from 'src/typescript/apiClient';
 import type { GoalPostSearchIndexingHeader } from 'src/typescript/apiTypes';
