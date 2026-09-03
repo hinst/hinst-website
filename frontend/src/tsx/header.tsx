@@ -70,7 +70,7 @@ export default function Header(props: { title: PageTitle }) {
 						overflowY: 'clip'
 					}}
 				>
-					{APP_TITLE}
+					{APP_TITLE} {props.title.main}
 				</b>
 				<span
 					style={{
@@ -79,7 +79,7 @@ export default function Header(props: { title: PageTitle }) {
 						overflowY: 'clip'
 					}}
 				>
-					{props.title}
+					{props.title.secondary}
 				</span>
 			</div>
 

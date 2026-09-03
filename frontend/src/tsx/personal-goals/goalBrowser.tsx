@@ -3,6 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { apiClient } from 'src/typescript/apiClient';
 import { AppContext } from 'src/typescript/appContext';
+import { PageTitle } from 'src/typescript/pageTitle';
 import type { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
 import GoalBrowserNarrow from './goalBrowser.narrow';
 import GoalCalendarPanel from './goalCalendarPanel';
@@ -49,7 +50,7 @@ export default function GoalBrowser() {
 	}
 
 	useEffect(() => {
-		loadGoal(goalId);
+		const _ = loadGoal(goalId);
 	}, [goalId]);
 
 	useEffect(() => {
@@ -62,8 +63,7 @@ export default function GoalBrowser() {
 		const dateText = context.isAdminMode
 			? dateTime.toLocaleString({ dateStyle: 'short', timeStyle: 'short' })
 			: dateTime.toLocaleString({ dateStyle: 'short' });
-		const components = [goalTitle, dateText].filter((s) => s.length);
-		context.setPageTitle(components.join(' • '));
+		context.setPageTitle(new PageTitle(goalTitle, dateText));
 	}, [goalTitle, activePostDate, context.isAdminMode]);
 
 	useEffect(() => {

@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { apiClient } from 'src/typescript/apiClient';
 import type { GoalPostSearchIndexingHeader } from 'src/typescript/apiTypes';
 import { AppContext } from 'src/typescript/appContext';
+import { PageTitle } from 'src/typescript/pageTitle';
 import { HeaderRow, Row } from './table';
 
 export default function ManualPingTracker() {
@@ -16,8 +17,8 @@ export default function ManualPingTracker() {
 		return urlPings;
 	}
 	useEffect(() => {
-		context.setPageTitle('Manual URL ping tracker');
-		loadUrlPings();
+		context.setPageTitle(new PageTitle('Administrator', 'Manual URL ping tracker'));
+		const _promise = loadUrlPings();
 	}, []);
 	return (
 		<div>

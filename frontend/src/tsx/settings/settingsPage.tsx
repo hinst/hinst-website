@@ -3,6 +3,7 @@ import { Info } from 'react-feather';
 import { AppContext } from 'src/typescript/appContext';
 import { APP_TITLE, AUTHOR_NAME, COPYRIGHT_YEARS } from 'src/typescript/global';
 import { SupportedLanguage, supportedLanguageNames } from 'src/typescript/language';
+import { PageTitle } from 'src/typescript/pageTitle';
 import { settingsStorage, Theme } from 'src/typescript/settings';
 
 export default function SettingsPage() {
@@ -10,7 +11,7 @@ export default function SettingsPage() {
 	const [, forceUpdate] = useReducer((key) => key + 1, 0);
 
 	useEffect(() => {
-		context.setPageTitle('Settings');
+		context.setPageTitle(new PageTitle('', 'Settings'));
 	}, []);
 
 	function setTheme(theme: Theme) {
