@@ -54,33 +54,28 @@ export default function Header(props: { title: PageTitle }) {
 			</div>
 			<div
 				style={{
+					// TODO fix this layout. This div has width 0, but the intended width for it is to fill all available space of its parent
 					display: 'flex',
 					flexDirection: 'column',
 					overflowY: 'clip',
 					gap: 4,
 					flexShrink: 0,
 					flexBasis: 0,
-					minWidth: 0
+					minWidth: 0,
+					textWrap: 'nowrap',
+					textOverflow: 'ellipsis'
 				}}
 			>
-				<b
-					style={{
-						textWrap: 'nowrap',
-						textOverflow: 'ellipsis',
-						overflowY: 'clip'
-					}}
-				>
-					{APP_TITLE} {props.title.main}
-				</b>
-				<span
-					style={{
-						textWrap: 'nowrap',
-						textOverflow: 'ellipsis',
-						overflowY: 'clip'
-					}}
-				>
+				<div>
+					<b>{APP_TITLE}</b>
+					{props.title.main ? (
+						<span style={{ opacity: 0.5 }}>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+					) : undefined}
+					{props.title.main}
+				</div>
+				<div style={{ textWrap: 'nowrap', textOverflow: 'ellipsis', overflowY: 'clip' }}>
 					{props.title.secondary}
-				</span>
+				</div>
 			</div>
 
 			<div style={{ flexGrow: 1 }}></div>
