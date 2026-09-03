@@ -36,12 +36,11 @@ export default function App() {
 
 	const [isAdminMode, setAdminMode] = useState(false);
 	useEffect(() => {
+		async function loadAdminMode() {
+			setAdminMode(await apiClient.isAdminModeEnabled());
+		}
 		loadAdminMode();
 	}, []);
-
-	async function loadAdminMode() {
-		setAdminMode(await apiClient.isAdminModeEnabled());
-	}
 
 	return (
 		<AppContext.Provider
