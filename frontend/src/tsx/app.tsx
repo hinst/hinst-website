@@ -1,16 +1,16 @@
-import { HashRouter, Route, Routes } from 'react-router';
-import Header from './header';
 import { useEffect, useState } from 'react';
-import HomePage from './homePage';
-import GoalBrowser from './personal-goals/goalBrowser';
-import type { SupportedLanguage } from 'src/typescript/language';
-import { AppContext } from './context';
-import SettingsPage from './settings/settingsPage';
-import { APP_TITLE } from 'src/typescript/global';
-import { settingsStorage } from 'src/typescript/settings';
-import ManualPingTracker from './manual-ping-tracker/manualPingTracker';
-import { PersonalGoalsSearch } from './personal-goals-search/personalGoalsSearch';
+import { HashRouter, Route, Routes } from 'react-router';
 import { apiClient } from 'src/typescript/apiClient';
+import { APP_TITLE } from 'src/typescript/global';
+import type { SupportedLanguage } from 'src/typescript/language';
+import { settingsStorage } from 'src/typescript/settings';
+import { AppContext } from './context';
+import Header from './header';
+import HomePage from './homePage';
+import ManualPingTracker from './manual-ping-tracker/manualPingTracker';
+import GoalBrowser from './personal-goals/goalBrowser';
+import { PersonalGoalsSearch } from './personal-goals-search/personalGoalsSearch';
+import SettingsPage from './settings/settingsPage';
 
 export default function App() {
 	settingsStorage.initialize();
@@ -39,7 +39,7 @@ export default function App() {
 		async function loadAdminMode() {
 			setAdminMode(await apiClient.isAdminModeEnabled());
 		}
-		loadAdminMode();
+		const _promise = loadAdminMode();
 	}, []);
 
 	return (

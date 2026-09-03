@@ -1,6 +1,6 @@
 class PageTitle {
 	constructor(
 		public readonly main: string,
-		public readonly secondary: string
+		public readonly secondary: string,
 	) {}
 }
