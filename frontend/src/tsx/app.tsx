@@ -4,7 +4,7 @@ import { apiClient } from 'src/typescript/apiClient';
 import { APP_TITLE } from 'src/typescript/global';
 import type { SupportedLanguage } from 'src/typescript/language';
 import { settingsStorage } from 'src/typescript/settings';
-import { AppContext } from './context';
+import { AppContext } from './appContext';
 import Header from './header';
 import HomePage from './homePage';
 import ManualPingTracker from './manual-ping-tracker/manualPingTracker';

@@ -1,6 +1,6 @@
 import { type CSSProperties, useContext, useEffect, useReducer } from 'react';
 import { Info } from 'react-feather';
-import { AppContext } from 'src/tsx/context';
+import { AppContext } from 'src/tsx/appContext';
 import { APP_TITLE, AUTHOR_NAME, COPYRIGHT_YEARS } from 'src/typescript/global';
 import { SupportedLanguage, supportedLanguageNames } from 'src/typescript/language';
 import { settingsStorage, Theme } from 'src/typescript/settings';

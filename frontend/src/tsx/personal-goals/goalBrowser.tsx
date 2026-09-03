@@ -1,12 +1,12 @@
-import { useParams, useSearchParams } from 'react-router';
-import GoalCalendarPanel from './goalCalendarPanel';
-import type { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { AppContext } from 'src/tsx/context';
-import GoalPostPanel from './goalPostPanel';
-import GoalBrowserNarrow from './goalBrowser.narrow';
 import { DateTime } from 'luxon';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router';
+import { AppContext } from 'src/tsx/appContext';
 import { apiClient } from 'src/typescript/apiClient';
+import type { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
+import GoalBrowserNarrow from './goalBrowser.narrow';
+import GoalCalendarPanel from './goalCalendarPanel';
+import GoalPostPanel from './goalPostPanel';
 
 const ARTICLE_PADDING = 20;
 const ARTICLE_WIDTH = 1000 + ARTICLE_PADDING * 2;

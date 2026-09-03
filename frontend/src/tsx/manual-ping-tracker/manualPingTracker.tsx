@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
+import { AppContext } from 'src/tsx/appContext';
 import { apiClient } from 'src/typescript/apiClient';
-import { HeaderRow, Row } from './table';
 import type { GoalPostSearchIndexingHeader } from 'src/typescript/apiTypes';
-import { AppContext } from 'src/tsx/context';
+import { HeaderRow, Row } from './table';
 
 export default function ManualPingTracker() {
 	const context = useContext(AppContext);

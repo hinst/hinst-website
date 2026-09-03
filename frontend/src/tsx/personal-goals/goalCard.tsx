@@ -1,8 +1,8 @@
-import { NavLink } from 'react-router';
-import type { GoalObjectEx } from 'src/typescript/rest_objects/goalObjectEx';
-import { AppContext } from '../context';
 import { useContext } from 'react';
+import { NavLink } from 'react-router';
 import { apiClient } from 'src/typescript/apiClient';
+import type { GoalObjectEx } from 'src/typescript/rest_objects/goalObjectEx';
+import { AppContext } from '../appContext';
 
 export function GoalCard(props: { goal: GoalObjectEx }) {
 	const context = useContext(AppContext);

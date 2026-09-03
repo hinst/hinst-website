@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
-import type { GoalPostObject } from 'src/typescript/apiTypes';
-import GoalPostView from './goalPostView';
-import GoalPostManagementPanel from './goalPostManagementPanel';
-import { AppContext } from 'src/tsx/context';
+import { AppContext } from 'src/tsx/appContext';
 import { apiClient } from 'src/typescript/apiClient';
+import type { GoalPostObject } from 'src/typescript/apiTypes';
+import GoalPostManagementPanel from './goalPostManagementPanel';
+import GoalPostView from './goalPostView';
 
 export default function GoalPostPanel(props: {
 	goalId: number;
