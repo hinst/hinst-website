@@ -1,2 +1,2 @@
-for (const directory in ['.parcel-cache', 'compiled', 'dist'])
+for (const directory of ['.parcel-cache', 'compiled', 'dist'])
 	require('node:fs').rmSync(directory, { recursive: true, force: true });
