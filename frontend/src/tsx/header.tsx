@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { MenuButton } from './header/menuButton';
+import { APP_TITLE } from 'src/typescript/global';
+import { PageTitle } from 'src/typescript/pageTitle';
 import { HomeButton } from './header/homeButton';
 import { HomeMenu } from './header/homeMenu';
-import { APP_TITLE } from 'src/typescript/global';
+import { MenuButton } from './header/menuButton';
 
-export default function Header(props: { title: string }) {
+export default function Header(props: { title: PageTitle }) {
 	const [menuVisible, setMenuVisible] = useState(false);
 	return (
 		<div

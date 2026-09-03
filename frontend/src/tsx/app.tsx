@@ -3,6 +3,7 @@ import { HashRouter, Route, Routes } from 'react-router';
 import { apiClient } from 'src/typescript/apiClient';
 import { APP_TITLE } from 'src/typescript/global';
 import type { SupportedLanguage } from 'src/typescript/language';
+import { PageTitle } from 'src/typescript/pageTitle';
 import { settingsStorage } from 'src/typescript/settings';
 import { AppContext } from '../typescript/appContext';
 import Header from './header';
@@ -29,9 +30,9 @@ export default function App() {
 		return () => clearInterval(timer);
 	}, []);
 
-	const [pageTitle, setPageTitle] = useState(APP_TITLE);
+	const [pageTitle, setPageTitle] = useState(new PageTitle('', ''));
 	useEffect(() => {
-		document.title = pageTitle;
+		document.title = pageTitle.main;
 	}, [pageTitle]);
 
 	const [isAdminMode, setAdminMode] = useState(false);
