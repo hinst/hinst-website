@@ -16,7 +16,8 @@
 			},
 			"complexity": {
 				"useArrowFunction": "off"
-			}
+			},
+			"a11y": "info"
 		}
 	},
 	"formatter": {
