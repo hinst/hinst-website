@@ -59,11 +59,13 @@ export default function GoalBrowser() {
 	}, [activePostDate]);
 
 	useEffect(() => {
-		const dateTime = DateTime.fromMillis(parseInt(activePostDate) * 1000);
-		const dateText = context.isAdminMode
-			? dateTime.toLocaleString({ dateStyle: 'short', timeStyle: 'short' })
-			: dateTime.toLocaleString({ dateStyle: 'short' });
-		context.setPageTitle(new PageTitle(goalTitle, dateText));
+		const activePostDateTime = DateTime.fromMillis(parseInt(activePostDate, 10) * 1000);
+		const activePostDateTimeText = activePostDateTime.isValid
+			? context.isAdminMode
+				? activePostDateTime.toLocaleString({ dateStyle: 'short', timeStyle: 'short' })
+				: activePostDateTime.toLocaleString({ dateStyle: 'short' })
+			: '';
+		context.setPageTitle(new PageTitle(goalTitle, activePostDateTimeText));
 	}, [goalTitle, activePostDate, context.isAdminMode]);
 
 	useEffect(() => {
