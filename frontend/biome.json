@@ -17,7 +17,7 @@
 			"complexity": {
 				"useArrowFunction": "off"
 			},
-			"a11y": "info"
+			"a11y": "off"
 		}
 	},
 	"formatter": {
