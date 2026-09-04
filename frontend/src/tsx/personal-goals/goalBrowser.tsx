@@ -5,6 +5,7 @@ import { apiClient } from 'src/typescript/apiClient';
 import { AppContext } from 'src/typescript/appContext';
 import { PageTitle } from 'src/typescript/pageTitle';
 import type { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
+import { requireString } from 'src/typescript/string';
 import GoalBrowserNarrow from './goalBrowser.narrow';
 import GoalCalendarPanel from './goalCalendarPanel';
 import GoalPostPanel from './goalPostPanel';
@@ -23,7 +24,7 @@ const STRIPES_MIN_WIDTH = 100;
 export default function GoalBrowser() {
 	const context = useContext(AppContext);
 	const params = useParams();
-	const goalId: string = params.id!;
+	const goalId: string = requireString(params.id);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const activePostDate = searchParams.get('activePostDate') || '';
 	const articleContainerRef = useRef<HTMLDivElement>(null);
