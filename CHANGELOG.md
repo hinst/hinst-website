@@ -47,3 +47,13 @@
 
 ## 2026.03
 * Using latest Parcel.js bundler version
+
+## 2026.08
+* Integrated Huma Rest framework with built-in OpenAPI specification generator
+
+## 2026.09
+* Improved Prettier server: instead of spawning a process for every file, use Prettier API directly
+	* As a result, the time to generate static HTML pages got reduced from 16 minutes to 2 minutes
+* Extend page title
+	* Now both main title and secondary title are dynamic
+* Fixed and optimized page title for Search page
