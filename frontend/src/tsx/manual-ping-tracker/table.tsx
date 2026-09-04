@@ -43,7 +43,14 @@ export function Row(props: { record: GoalPostSearchIndexingHeader; onPinged: () 
 			</td>
 			<td>
 				<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-					<div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'row',
+							gap: 8,
+							alignItems: 'center'
+						}}
+					>
 						{isPinged ? (
 							<button
 								type='button'
@@ -80,7 +87,7 @@ export function Row(props: { record: GoalPostSearchIndexingHeader; onPinged: () 
 					</div>
 					<div>
 						Indexing status:{' '}
-						<code>{props.record.googleSearchIndexingStatus || '?'}</code>, checked at
+						<code>{props.record.googleSearchIndexingStatus || '?'}</code> checked at
 						&nbsp;
 						<code>
 							{props.record.googlePingedAt
