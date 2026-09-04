@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { HashRouter, Route, Routes } from 'react-router';
 import { apiClient } from 'src/typescript/apiClient';
-import { APP_TITLE } from 'src/typescript/global';
 import type { SupportedLanguage } from 'src/typescript/language';
 import { PageTitle } from 'src/typescript/pageTitle';
 import { settingsStorage } from 'src/typescript/settings';
