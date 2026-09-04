@@ -1,8 +1,8 @@
 import createClient from 'openapi-fetch';
 import type { paths } from 'src/typescript/generated/openapi';
+import type { GoalPostObject, GoalPostSearchIndexingHeader } from './apiTypes';
 import { createGoalObjectEx, type GoalObjectEx } from './rest_objects/goalObjectEx';
 import { createGoalPostHeaderEx, type GoalPostHeaderEx } from './rest_objects/goalPostHeaderEx';
-import type { GoalPostObject, GoalPostSearchIndexingHeader } from './apiTypes';
 import { settingsStorage } from './settings';
 
 const API_URL = '/hinst-website/api';
@@ -13,7 +13,7 @@ const baseApiUrl = apiUrl.endsWith(API_URL)
 
 const client = createClient<paths>({
 	baseUrl: baseApiUrl,
-	bodySerializer: (body) => (typeof body === 'string' ? body : JSON.stringify(body))
+	bodySerializer: (body) => (typeof body === 'string' ? body : JSON.stringify(body)),
 });
 
 client.use({
@@ -24,9 +24,9 @@ client.use({
 	onResponse: (params) => {
 		if (!params.response.ok)
 			throw new Error(
-				params.request.url + ' ' + params.response.status + ' ' + params.response.statusText
+				params.request.url + ' ' + params.response.status + ' ' + params.response.statusText,
 			);
-	}
+	},
 });
 
 class ApiClient {
@@ -34,7 +34,7 @@ class ApiClient {
 
 	async getGoal(id: number): Promise<GoalObjectEx> {
 		const { data } = await client.GET('/hinst-website/api/goal', {
-			params: { query: { id } }
+			params: { query: { id } },
 		});
 		return createGoalObjectEx(data!);
 	}
@@ -47,10 +47,10 @@ class ApiClient {
 	async goalPostSetPublic(
 		goalId: number,
 		postDateTime: number,
-		isPublic: boolean
+		isPublic: boolean,
 	): Promise<Response> {
 		const { response } = await client.PUT('/hinst-website/api/goalPost/setPublic', {
-			params: { query: { goalId, postDateTime, isPublic } }
+			params: { query: { goalId, postDateTime, isPublic } },
 		});
 		return response;
 	}
@@ -58,20 +58,17 @@ class ApiClient {
 	async goalPostSetSearchIndexingEnabled(
 		goalId: number,
 		postDateTime: number,
-		enabled: boolean
+		enabled: boolean,
 	): Promise<Response> {
-		const { response } = await client.PUT(
-			'/hinst-website/api/goalPost/setSearchIndexingEnabled',
-			{
-				params: { query: { goalId, postDateTime, enabled } }
-			}
-		);
+		const { response } = await client.PUT('/hinst-website/api/goalPost/setSearchIndexingEnabled', {
+			params: { query: { goalId, postDateTime, enabled } },
+		});
 		return response;
 	}
 
 	async getGoalPost(goalId: number, postDateTime: number): Promise<GoalPostObject> {
 		const { data } = await client.GET('/hinst-website/api/goalPost', {
-			params: { query: { goalId, postDateTime } }
+			params: { query: { goalId, postDateTime } },
 		});
 		return data!;
 	}
@@ -80,12 +77,12 @@ class ApiClient {
 		goalId: number,
 		postDateTime: number,
 		languageTag: string,
-		text: string
+		text: string,
 	): Promise<Response> {
 		const { response } = await client.POST('/hinst-website/api/goalPost/setText', {
 			params: { query: { goalId, postDateTime, languageTag } },
 			body: text,
-			headers: { 'Content-Type': 'text/plain;charset=UTF-8' }
+			headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
 		});
 		return response;
 	}
@@ -97,7 +94,7 @@ class ApiClient {
 			new URLSearchParams({
 				goalId: '' + goalId,
 				postDateTime: '' + postDateTime,
-				index: '' + index
+				index: '' + index,
 			})
 		);
 	}
@@ -113,18 +110,17 @@ class ApiClient {
 
 	async getGoalPosts(goalId: number): Promise<GoalPostHeaderEx[]> {
 		const { data } = await client.GET('/hinst-website/api/goalPosts', {
-			params: { query: { id: goalId } }
+			params: { query: { id: goalId } },
 		});
-		return data!
-			.filter((post) => post.type === 'post')
-			.map((post) => createGoalPostHeaderEx(post));
+		return data!.filter((post) => post.type === 'post').map((post) => createGoalPostHeaderEx(post));
 	}
 
 	async searchGoalPosts(query: string): Promise<GoalPostHeaderEx[]> {
 		const { data } = await client.GET('/hinst-website/api/goalPosts/search', {
-			params: { query: { query } }
+			params: { query: { query } },
 		});
-		return data!.map((post) => createGoalPostHeaderEx(post));
+		const items = data || [];
+		return items.map((post) => createGoalPostHeaderEx(post));
 	}
 
 	async isAdminModeEnabled(): Promise<boolean> {
@@ -134,7 +130,7 @@ class ApiClient {
 
 	async setGoalPostGooglePingedAt(goalId: number, postDateTime: number): Promise<boolean> {
 		const { data } = await client.PUT('/hinst-website/api/goalPosts/googlePingedAt', {
-			params: { query: { goalId, postDateTime } }
+			params: { query: { goalId, postDateTime } },
 		});
 		return data!;
 	}
