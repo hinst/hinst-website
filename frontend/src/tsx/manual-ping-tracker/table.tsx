@@ -43,43 +43,51 @@ export function Row(props: { record: GoalPostSearchIndexingHeader; onPinged: () 
 			</td>
 			<td>
 				<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+					<div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
+						{isPinged ? (
+							<button
+								type='button'
+								className='ms-btn ms-outline'
+								style={BUTTON_STYLE}
+								disabled={true}
+							>
+								<CheckCircle /> &nbsp; Done
+							</button>
+						) : isCopied ? (
+							<PingUrlButton
+								onDone={() => {
+									setIsPinged(true);
+									props.onPinged();
+								}}
+								goalId={props.record.goalId}
+								postDateTime={props.record.dateTime}
+							/>
+						) : (
+							<CopyUrlButton
+								onDone={() => setIsCopied(true)}
+								url={'' + props.record.publicUrl}
+							/>
+						)}{' '}
+						<div>
+							pinged at &nbsp;
+							<code>
+								{' '}
+								{props.record.googlePingedAt
+									? formatDate(props.record.googlePingedAt)
+									: 'never'}
+							</code>
+						</div>
+					</div>
 					<div>
-						Pinged at{' '}
+						Indexing status:{' '}
+						<code>{props.record.googleSearchIndexingStatus || '?'}</code>, checked at
+						&nbsp;
 						<code>
-							{' '}
 							{props.record.googlePingedAt
 								? formatDate(props.record.googlePingedAt)
 								: 'never'}
 						</code>
 					</div>
-					<div>
-						Indexing status:{' '}
-						<code>{props.record.googleSearchIndexingStatus || '?'}</code>
-					</div>
-					{isPinged ? (
-						<button
-							type='button'
-							className='ms-btn ms-outline'
-							style={BUTTON_STYLE}
-							disabled={true}
-						>
-							<CheckCircle /> &nbsp; Done
-						</button>
-					) : isCopied ? (
-						<PingUrlButton
-							onDone={() => {
-								setIsPinged(true);
-								props.onPinged();
-							}}
-							goalId={props.record.goalId}
-							postDateTime={props.record.dateTime}
-						/>
-					) : (
-						<CopyUrlButton
-							onDone={() => setIsCopied(true)}
-							url={'' + props.record.publicUrl}
-						/>
-					)}
 				</div>
 			</td>
 		</tr>
