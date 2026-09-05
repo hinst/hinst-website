@@ -10,7 +10,6 @@ import (
 
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
-	"github.com/microcosm-cc/bluemonday"
 	"golang.org/x/text/language"
 )
 
@@ -65,8 +64,4 @@ func formatHtml(text string) (string, error) {
 
 func getUrlBase64(contentType string, array []byte) string {
 	return "data:" + contentType + ";base64," + base64.StdEncoding.EncodeToString(array)
-}
-
-func stripHtml(text string) string {
-	return bluemonday.StrictPolicy().Sanitize(text)
 }

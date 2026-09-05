@@ -186,7 +186,7 @@ func (me *database) searchGoalPosts(
 			return true
 		}
 		var title = strings.ToUpper(row.GetTranslatedTitle(supportedLanguage))
-		var text = stripHtml(strings.ToUpper(row.GetTranslatedText(supportedLanguage)))
+		var text = strings.ToUpper(row.GetTranslatedText(supportedLanguage))
 		if strings.Contains(title, queryText) || strings.Contains(text, queryText) {
 			results = append(results, row)
 		}
