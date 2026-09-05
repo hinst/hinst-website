@@ -1,8 +1,10 @@
 package server
 
 import (
+	"errors"
 	"flag"
 	"log"
+	"strings"
 
 	"github.com/hinst/go-gophers"
 	"github.com/joho/godotenv"
@@ -16,6 +18,7 @@ func Main() {
 	var wwwPtr = flag.String("www", programTemplate.webFilesPath, "")
 	var translatorApiPtr = flag.String("translatorApi", programTemplate.translatorApiUrl, "")
 	var backupDirectoryPtr = flag.String("backup-directory", programTemplate.savedGoalsPath+"/backup", "")
+	var goalIdsPtr = flag.String("goalIds", "", "example: -goalIds 123,456")
 	flag.Parse()
 
 	switch *modePtr {
@@ -23,6 +26,14 @@ func Main() {
 		var theProgram = new(program).create()
 		theProgram.webFilesPath = *wwwPtr
 		theProgram.runWeb()
+	case "importSmartProgress":
+		// Import blog posts from SmartProgress
+		var theProgram = new(program).create()
+		gophers.AssertCondition(goalIdsPtr != nil && len(*goalIdsPtr) > 0, func() error {
+			return errors.New("-goalIds is required")
+		})
+		var goalIds = strings.Split(*goalIdsPtr, ",")
+		theProgram.importSmartProgress(goalIds)
 	case "update":
 		// All-in-one update: Update translations, generate titles, generate static files, upload static files.
 		var theProgram = new(program).create()

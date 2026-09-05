@@ -30,8 +30,8 @@ type imageRecord struct {
 }
 
 type smartProgressImporter struct {
-	goalIds []string
-	db      *database
+	goalIds  []string
+	database *database
 }
 
 func (me *smartProgressImporter) run() {
@@ -69,7 +69,7 @@ func (me *smartProgressImporter) syncPosts(goalId string) {
 func (me *smartProgressImporter) checkPostExists(goalId string, post smart_progress.Post) (result bool) {
 	var goalIdInt = gophers.GetInt64FromString(goalId)
 	var dateEpoch = me.parseDateTime(post.Date).UTC().Unix()
-	var row = me.db.pool.QueryRow(context.Background(),
+	var row = me.database.pool.QueryRow(context.Background(),
 		"SELECT COUNT(*) FROM goalPosts WHERE goalId = $1 AND dateTime = $2", goalIdInt, dateEpoch)
 	var count int
 	gophers.AssertError(row.Scan(&count))
@@ -92,7 +92,7 @@ func (me *smartProgressImporter) saveComments(post smart_progress.Post, comments
 		var dateTime = me.parseDateTime(comment.Date).UTC().Unix()
 		var smartProgressUserId = gophers.GetInt64FromString(comment.UserId)
 		var htmlText = me.unpackRedirects(comment.Msg)
-		gophers.AssertResultError(me.db.pool.Exec(context.Background(),
+		gophers.AssertResultError(me.database.pool.Exec(context.Background(),
 			"INSERT INTO goalPostComments (goalId, parentDateTime, dateTime, smartProgressUserId, username, text)"+
 				" VALUES ($1, $2, $3, $4, $5, $6)"+
 				" ON CONFLICT (goalId, parentDateTime, dateTime, smartProgressUserId)"+
@@ -129,7 +129,7 @@ func (me *smartProgressImporter) savePost(goalId string, post smart_progress.Pos
 	var goalIdInt = gophers.GetInt64FromString(goalId)
 	var dateEpoch = me.parseDateTime(post.Date).UTC().Unix()
 	var htmlText = me.unpackRedirects(post.Msg)
-	gophers.AssertResultError(me.db.pool.Exec(context.Background(),
+	gophers.AssertResultError(me.database.pool.Exec(context.Background(),
 		"INSERT INTO goalPosts (goalId, dateTime, type, text) VALUES ($1, $2, $3, $4)"+
 			" ON CONFLICT(goalId, dateTime) DO UPDATE SET type = excluded.type, text = excluded.text",
 		goalIdInt, dateEpoch, post.Type, convertHtmlToMarkdown(htmlText)))
@@ -139,7 +139,7 @@ func (me *smartProgressImporter) saveImages(post smart_progress.Post, imageRecor
 	var goalId = gophers.GetInt64FromString(post.ObjId)
 	var dateEpoch = me.parseDateTime(post.Date).UTC().Unix()
 	for index, image := range imageRecords {
-		gophers.AssertResultError(me.db.pool.Exec(context.Background(),
+		gophers.AssertResultError(me.database.pool.Exec(context.Background(),
 			"INSERT INTO goalPostImages (goalId, parentDateTime, sequenceIndex, contentType, file)"+
 				" VALUES ($1, $2, $3, $4, $5)"+
 				" ON CONFLICT(goalId, parentDateTime, sequenceIndex)"+
@@ -205,7 +205,7 @@ func (me *smartProgressImporter) readGoalImage(document *html.Node) (result imag
 }
 
 func (me *smartProgressImporter) saveGoalInfo(goalRecord goalRecord) {
-	gophers.AssertResultError(me.db.pool.Exec(context.Background(),
+	gophers.AssertResultError(me.database.pool.Exec(context.Background(),
 		"INSERT INTO goals (id, title, description, authorName, imageData, imageContentType) "+
 			"VALUES ($1, $2, $3, $4, $5, $6) "+
 			"ON CONFLICT(id) DO UPDATE SET "+

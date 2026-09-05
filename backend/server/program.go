@@ -60,6 +60,14 @@ func (me *program) runWeb() {
 	me.database.close()
 }
 
+func (me *program) importSmartProgress(goalIds []string) {
+	me.database.init()
+	var importer = smartProgressImporter{goalIds: goalIds}
+	importer.database = me.database
+	importer.run()
+	me.database.close()
+}
+
 func (me *program) update() {
 	me.database.init()
 	me.updateTranslations()
