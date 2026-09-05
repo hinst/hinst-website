@@ -6,6 +6,7 @@
 		"github",
 		"godotenv",
 		"gohtml",
+		"gomarkdown",
 		"gwrap",
 		"hinst",
 		"huma",

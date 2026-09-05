@@ -1,9 +1,11 @@
 package server
 
 import (
+	html_to_markdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/hinst/go-gophers"
 )
 
 func convertMarkdownToHtml(text string) string {
@@ -24,4 +26,8 @@ func convertMarkdownBytesToHtml(md []byte) []byte {
 	renderer := html.NewRenderer(opts)
 
 	return markdown.Render(doc, renderer)
+}
+
+func convertHtmlToMarkdown(text string) string {
+	return gophers.AssertResultError(html_to_markdown.ConvertString(text))
 }

@@ -98,7 +98,7 @@ func (me *smartProgressImporter) saveComments(post smart_progress.Post, comments
 				" ON CONFLICT (goalId, parentDateTime, dateTime, smartProgressUserId)"+
 				" DO UPDATE SET username = excluded.username, text = excluded.text",
 			goalId, parentDateTime, dateTime, smartProgressUserId,
-			comment.Username, htmlToMarkdown(htmlText)))
+			comment.Username, convertHtmlToMarkdown(htmlText)))
 	}
 }
 
@@ -132,7 +132,7 @@ func (me *smartProgressImporter) savePost(goalId string, post smart_progress.Pos
 	gophers.AssertResultError(me.db.pool.Exec(context.Background(),
 		"INSERT INTO goalPosts (goalId, dateTime, type, text) VALUES ($1, $2, $3, $4)"+
 			" ON CONFLICT(goalId, dateTime) DO UPDATE SET type = excluded.type, text = excluded.text",
-		goalIdInt, dateEpoch, post.Type, htmlToMarkdown(htmlText)))
+		goalIdInt, dateEpoch, post.Type, convertHtmlToMarkdown(htmlText)))
 }
 
 func (me *smartProgressImporter) saveImages(post smart_progress.Post, imageRecords []imageRecord) {
@@ -168,7 +168,7 @@ func (me *smartProgressImporter) readGoalInfo(goalId string) (result goalRecord)
 	}
 	var description = ""
 	if descriptionHtml != "" {
-		description = htmlToMarkdown(descriptionHtml)
+		description = convertHtmlToMarkdown(descriptionHtml)
 	}
 
 	var authorName = ""
@@ -261,11 +261,6 @@ func (me *smartProgressImporter) readPosts(goalId string, startId string) (resul
 	var body, _ = me.httpGet("Could not load blog posts", url, map[string]string{"Accept": "application/json"})
 	gophers.AssertError(json.Unmarshal(body, &result))
 	return
-}
-
-// TODO: implement html to markdown conversion, currently returns the input unchanged
-func htmlToMarkdown(htmlText string) string {
-	return htmlText
 }
 
 func (me *smartProgressImporter) httpGet(contextMessage string, url string, headers map[string]string) (body []byte, contentType string) {
