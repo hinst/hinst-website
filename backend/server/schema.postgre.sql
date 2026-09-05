@@ -29,9 +29,6 @@ CREATE TABLE IF NOT EXISTS goalPosts (
 	googleSearchIndexingStatusCheckedAt BIGINT NOT NULL DEFAULT 0 /* Unix seconds UTC */
 );
 
-ALTER TABLE goalPosts ADD COLUMN IF NOT EXISTS googleSearchIndexingStatus TEXT NOT NULL DEFAULT '';
-ALTER TABLE goalPosts ADD COLUMN IF NOT EXISTS googleSearchIndexingStatusCheckedAt BIGINT NOT NULL DEFAULT 0;
-
 CREATE TABLE IF NOT EXISTS goalPostImages (
 	goalId BIGINT NOT NULL,
 	parentDateTime BIGINT NOT NULL, /* Unix seconds UTC */
