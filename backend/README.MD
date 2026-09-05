@@ -24,6 +24,7 @@ There are two versions of website:
 - `POSTGRES_URL` (Required): Database connection URL.
 - `POSTGRES_MAX_CONNS` (Optional, default: `2`): Maximum number of database connections.
 - `PRETTIER_SERVER_URL` (Required): URL of the Prettier server. (Used in `web`, `update`, and `generateStatic` modes).
+	- Source code for Prettier server: https://github.com/hinst/prettier-server
 - `ALLOW_ORIGIN` (Optional, default: `""`): Allowed origin for CORS. (Used in `web` mode).
 - `ADMIN_PASSWORD` (Optional, default: `""`): Password for admin access. (Used in `web` mode).
 - `GIT_TOKEN` (Required): GitHub token for static files update. (Used in `update` mode).
