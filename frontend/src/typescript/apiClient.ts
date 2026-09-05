@@ -29,6 +29,11 @@ client.use({
 	},
 });
 
+function requireData<T>(data: T | undefined | null): T {
+	if (data === null || data === undefined) throw new Error('API client: data is missing');
+	return data;
+}
+
 class ApiClient {
 	readonly url: string = apiUrl;
 
@@ -36,12 +41,12 @@ class ApiClient {
 		const { data } = await client.GET('/hinst-website/api/goal', {
 			params: { query: { id } },
 		});
-		return createGoalObjectEx(data!);
+		return createGoalObjectEx(requireData(data));
 	}
 
 	async getGoals(): Promise<GoalObjectEx[]> {
 		const { data } = await client.GET('/hinst-website/api/goals');
-		return data!.map((goal) => createGoalObjectEx(goal));
+		return requireData(data).map((goal) => createGoalObjectEx(goal));
 	}
 
 	async goalPostSetPublic(
@@ -70,7 +75,7 @@ class ApiClient {
 		const { data } = await client.GET('/hinst-website/api/goalPost', {
 			params: { query: { goalId, postDateTime } },
 		});
-		return data!;
+		return requireData(data);
 	}
 
 	async setGoalPostText(
@@ -105,14 +110,16 @@ class ApiClient {
 
 	async getUrlPings(): Promise<GoalPostSearchIndexingHeader[]> {
 		const { data } = await client.GET('/hinst-website/api/urlPings');
-		return data!;
+		return requireData(data);
 	}
 
 	async getGoalPosts(goalId: number): Promise<GoalPostHeaderEx[]> {
 		const { data } = await client.GET('/hinst-website/api/goalPosts', {
 			params: { query: { id: goalId } },
 		});
-		return data!.filter((post) => post.type === 'post').map((post) => createGoalPostHeaderEx(post));
+		return requireData(data)
+			.filter((post) => post.type === 'post')
+			.map((post) => createGoalPostHeaderEx(post));
 	}
 
 	async searchGoalPosts(query: string): Promise<GoalPostHeaderEx[]> {
@@ -125,14 +132,14 @@ class ApiClient {
 
 	async isAdminModeEnabled(): Promise<boolean> {
 		const { data } = await client.GET('/hinst-website/api/isAdminModeEnabled');
-		return data!;
+		return requireData(data);
 	}
 
 	async setGoalPostGooglePingedAt(goalId: number, postDateTime: number): Promise<boolean> {
 		const { data } = await client.PUT('/hinst-website/api/goalPosts/googlePingedAt', {
 			params: { query: { goalId, postDateTime } },
 		});
-		return data!;
+		return requireData(data);
 	}
 }
 
