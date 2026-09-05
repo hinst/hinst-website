@@ -187,7 +187,7 @@ func (me *webAppGoals) searchGoalPosts(ctx context.Context, input *struct {
 	const resultLimit = 100
 	var rows = me.db.searchGoalPosts(input.Query, webContext.getLanguage(ctx),
 		webContext.isAdminMode(ctx), resultLimit)
-	var records []rest_objects.GoalPostHeader
+	var records = []rest_objects.GoalPostHeader{}
 	for _, row := range rows {
 		var record rest_objects.GoalPostHeader
 		record.Read(row, webContext.getLanguage(ctx))

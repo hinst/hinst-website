@@ -119,8 +119,8 @@ class ApiClient {
 		const { data } = await client.GET('/hinst-website/api/goalPosts/search', {
 			params: { query: { query } },
 		});
-		const items = data || [];
-		return items.map((post) => createGoalPostHeaderEx(post));
+		if (!data) throw new Error('Missing data');
+		return data.map((post) => createGoalPostHeaderEx(post));
 	}
 
 	async isAdminModeEnabled(): Promise<boolean> {
