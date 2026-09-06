@@ -50,7 +50,7 @@ func (me *smartProgressImporter) syncPosts(goalId string) {
 	var posts = me.readAllPosts(goalId)
 	var newCount = 0
 	for _, post := range posts {
-		var isNew = !me.checkPostExists(goalId, post)
+		var isNew = !me.checkPostExists(post)
 		me.savePost(goalId, post)
 		var comments = me.readComments(post.Id)
 		me.saveComments(post, comments)
@@ -66,14 +66,10 @@ func (me *smartProgressImporter) syncPosts(goalId string) {
 	log.Printf("Sync complete: goal=%s posts=%d new=%d", goalId, len(posts), newCount)
 }
 
-func (me *smartProgressImporter) checkPostExists(goalId string, post smart_progress.Post) (result bool) {
-	var goalIdInt = gophers.GetInt64FromString(goalId)
-	var dateEpoch = me.parseDateTime(post.Date).UTC().Unix()
-	var row = me.database.pool.QueryRow(context.Background(),
-		"SELECT COUNT(*) FROM goalPosts WHERE goalId = $1 AND dateTime = $2", goalIdInt, dateEpoch)
-	var count int
-	gophers.AssertError(row.Scan(&count))
-	return count >= 1
+func (me *smartProgressImporter) checkPostExists(post smart_progress.Post) (result bool) {
+	var goalIdInt = gophers.GetInt64FromString(post.ObjId)
+	var dateTime = me.parseDateTime(post.Date)
+	return me.database.getGoalPost(goalIdInt, dateTime) != nil
 }
 
 func (me *smartProgressImporter) parseDateTime(text string) (result time.Time) {
