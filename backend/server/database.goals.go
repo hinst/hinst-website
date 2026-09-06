@@ -138,16 +138,19 @@ func (me *database) saveGoal(row db_objects.GoalRow) {
 		row.Description, row.AuthorName, row.ImageData, row.ImageContentType))
 }
 
-func (me *database) insertGoalPost(row db_objects.GoalPostRow) {
+// Returns true if the goal post was inserted, i.e. it did not exist before
+func (me *database) insertGoalPost(row db_objects.GoalPostRow) (isNew bool) {
 	var columnNames = row.GetAllColumns()
 	var query = "INSERT INTO " + row.GetTableName() +
 		" (" + strings.Join(columnNames, ",") + ")" +
-		" VALUES (" + me.buildPlaceholders(len(columnNames)) + ")"
-	gophers.AssertResultError(me.pool.Exec(context.Background(), query,
+		" VALUES (" + me.buildPlaceholders(len(columnNames)) + ")" +
+		" ON CONFLICT (goalId, dateTime) DO NOTHING"
+	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query,
 		row.GoalId, row.DateTime, row.IsPublic, row.SearchIndexingEnabled,
 		row.Text, row.TextEnglish, row.TextGerman, row.Type,
 		row.Title, row.TitleEnglish, row.TitleGerman,
 		row.GooglePingedAt, row.GoogleSearchIndexingStatus, row.GoogleSearchIndexingStatusCheckedAt))
+	return result.RowsAffected() == 1
 }
 
 func (me *database) saveGoalPostComment(row db_objects.GoalPostCommentRow) {

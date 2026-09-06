@@ -118,17 +118,14 @@ func (me *smartProgressImporter) unpackRedirects(htmlText string) (result string
 func (me *smartProgressImporter) savePost(post smart_progress.Post) bool {
 	var goalIdInt = gophers.GetInt64FromString(post.ObjId)
 	var dateTime = me.parseDateTime(post.Date).UTC()
-	var isNew = nil == me.database.getGoalPost(goalIdInt, dateTime)
 	var text = convertHtmlToMarkdown(me.unpackRedirects(post.Msg))
-	if isNew {
-		var row = db_objects.GoalPostRow{
-			GoalId:   goalIdInt,
-			DateTime: dateTime.Unix(),
-			Type:     post.Type,
-			Text:     text,
-		}
-		me.database.insertGoalPost(row)
-	} else {
+	var isNew = me.database.insertGoalPost(db_objects.GoalPostRow{
+		GoalId:   goalIdInt,
+		DateTime: dateTime.Unix(),
+		Type:     post.Type,
+		Text:     text,
+	})
+	if !isNew {
 		var defaultLanguage = base.SupportedLanguages[0]
 		me.database.setGoalPostText(goalIdInt, dateTime, defaultLanguage, text)
 	}
