@@ -52,8 +52,7 @@ func (me *smartProgressImporter) syncPosts(goalId string) {
 	var posts = me.readAllPosts(goalId)
 	var newCount = 0
 	for _, post := range posts {
-		var isNew = !me.checkPostExists(post)
-		me.savePost(goalId, post, isNew)
+		var isNew = me.savePost(goalId, post)
 		var comments = me.readComments(post.Id)
 		me.saveComments(post, comments)
 		if isNew {
@@ -122,7 +121,9 @@ func (me *smartProgressImporter) unpackRedirects(htmlText string) (result string
 	return htmlInnerHtml(document)
 }
 
-func (me *smartProgressImporter) savePost(goalId string, post smart_progress.Post, isNew bool) {
+// Returns true if the blog post is new
+func (me *smartProgressImporter) savePost(goalId string, post smart_progress.Post) bool {
+	var isNew = !me.checkPostExists(post)
 	var goalIdInt = gophers.GetInt64FromString(goalId)
 	var dateTime = me.parseDateTime(post.Date).UTC()
 	var text = convertHtmlToMarkdown(me.unpackRedirects(post.Msg))
@@ -138,6 +139,7 @@ func (me *smartProgressImporter) savePost(goalId string, post smart_progress.Pos
 		var defaultLanguage = base.SupportedLanguages[0]
 		me.database.setGoalPostText(goalIdInt, dateTime, defaultLanguage, text)
 	}
+	return isNew
 }
 
 func (me *smartProgressImporter) saveImages(post smart_progress.Post, imageRecords []imageRecord) {
