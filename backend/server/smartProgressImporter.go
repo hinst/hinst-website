@@ -161,10 +161,10 @@ func (me *smartProgressImporter) readGoalInfo(goalId string) (result goalRecord)
 	}
 
 	var descriptionHtml = ""
-	if goalDescr := htmlFindElement(document, func(node *html.Node) bool {
+	if goalDescription := htmlFindElement(document, func(node *html.Node) bool {
 		return node.Data == "div" && htmlAttrValue(node, "id") == "goal_descr"
-	}); goalDescr != nil {
-		if div := htmlFindElement(goalDescr, func(node *html.Node) bool { return node.Data == "div" }); div != nil {
+	}); goalDescription != nil {
+		if div := htmlFindElement(goalDescription, func(node *html.Node) bool { return node.Data == "div" }); div != nil {
 			descriptionHtml = strings.TrimSpace(htmlInnerHtml(div))
 		}
 	}
