@@ -42,7 +42,7 @@ func (me GoalPostImageRow) SaveToDirectory(directory string) {
 	var filePath = directory + "/" + gophers.GetStringFromInt64(me.SequenceIndex) + extension
 	gophers.WriteBytesFile(filePath, me.File)
 	me.File = nil
-	gophers.WriteBytesFile(directory+"/row.yml", base.EncodeYaml(me))
+	gophers.WriteBytesFile(directory+"/row.yaml", base.EncodeYaml(me))
 }
 
 func (me *GoalPostImageRow) GetParentDateTime() time.Time {

@@ -33,7 +33,7 @@ func (me GoalRow) SaveToDirectory(directory string) {
 	var imagePath = basePath + fileExtension
 	gophers.WriteBytesFile(imagePath, me.ImageData)
 	me.ImageData = nil
-	gophers.WriteBytesFile(basePath+".yml", base.EncodeYaml(me))
+	gophers.WriteBytesFile(basePath+".yaml", base.EncodeYaml(me))
 }
 
 func (me *GoalRow) Scan(rows pgx.Rows) {
