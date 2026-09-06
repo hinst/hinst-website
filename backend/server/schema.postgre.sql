@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS goalPosts (
 	titleGerman TEXT NOT NULL DEFAULT '',
 	googlePingedAt BIGINT NOT NULL DEFAULT 0, /* Unix seconds UTC, 0 means never pinged */
 	googleSearchIndexingStatus TEXT NOT NULL DEFAULT '',
-	googleSearchIndexingStatusCheckedAt BIGINT NOT NULL DEFAULT 0 /* Unix seconds UTC */
+	googleSearchIndexingStatusCheckedAt BIGINT NOT NULL DEFAULT 0, /* Unix seconds UTC */
+	PRIMARY KEY (goalId, dateTime)
 );
 
 CREATE TABLE IF NOT EXISTS goalPostImages (
