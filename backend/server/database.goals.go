@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/hinst/go-gophers/file_mode"
 	"github.com/hinst/hinst-website/server/db_objects"
 	"github.com/hinst/hinst-website/server/rest_objects"
+	"github.com/samber/lo"
 	"golang.org/x/text/language"
 )
 
@@ -121,14 +123,11 @@ func (me *database) getGoalImage(goalId int64) (imageData []byte, imageContentTy
 }
 
 func (me *database) saveGoalPostComment(row db_objects.GoalPostCommentRow) {
-	var tableName = row.GetTableName()
-	var columnList = row.GetAllColumns()
-	var columns = strings.Join(columnList, ",")
-	var placeholders = make([]string, len(columnList))
-	for i := range columnList {
-		placeholders[i] = "$" + gophers.GetStringFromInt(i+1)
-	}
-	var query = "INSERT INTO " + tableName + " (" + columns + ")" +
+	var columnNames = row.GetAllColumns()
+	var placeholders = lo.Map(columnNames, func(item string, index int) string {
+		return "$" + strconv.Itoa(index+1)
+	})
+	var query = "INSERT INTO " + row.GetTableName() + " (" + strings.Join(columnNames, ",") + ")" +
 		" VALUES (" + strings.Join(placeholders, ",") + ")" +
 		" ON CONFLICT (goalId, parentDateTime, dateTime, smartProgressUserId)" +
 		" DO UPDATE SET username = excluded.username, text = excluded.text"
