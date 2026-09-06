@@ -52,7 +52,7 @@ func (me *smartProgressImporter) syncPosts(goalId string) {
 	var posts = me.readAllPosts(goalId)
 	var newCount = 0
 	for _, post := range posts {
-		var isNew = me.savePost(goalId, post)
+		var isNew = me.savePost(post)
 		var comments = me.readComments(post.Id)
 		me.saveComments(post, comments)
 		if isNew {
@@ -65,12 +65,6 @@ func (me *smartProgressImporter) syncPosts(goalId string) {
 		}
 	}
 	log.Printf("Sync complete: goal=%s posts=%d new=%d", goalId, len(posts), newCount)
-}
-
-func (me *smartProgressImporter) checkPostExists(post smart_progress.Post) (result bool) {
-	var goalIdInt = gophers.GetInt64FromString(post.ObjId)
-	var dateTime = me.parseDateTime(post.Date)
-	return me.database.getGoalPost(goalIdInt, dateTime) != nil
 }
 
 func (me *smartProgressImporter) parseDateTime(text string) (result time.Time) {
@@ -122,10 +116,10 @@ func (me *smartProgressImporter) unpackRedirects(htmlText string) (result string
 }
 
 // Returns true if the blog post is new
-func (me *smartProgressImporter) savePost(goalId string, post smart_progress.Post) bool {
-	var isNew = !me.checkPostExists(post)
-	var goalIdInt = gophers.GetInt64FromString(goalId)
+func (me *smartProgressImporter) savePost(post smart_progress.Post) bool {
+	var goalIdInt = gophers.GetInt64FromString(post.ObjId)
 	var dateTime = me.parseDateTime(post.Date).UTC()
+	var isNew = nil == me.database.getGoalPost(goalIdInt, dateTime)
 	var text = convertHtmlToMarkdown(me.unpackRedirects(post.Msg))
 	if isNew {
 		var row = db_objects.GoalPostRow{
