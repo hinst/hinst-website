@@ -12,7 +12,6 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/muir/gwrap v0.4.0
 	github.com/rs/cors v1.11.1
-	github.com/samber/lo v1.53.0
 	golang.org/x/net v0.57.0
 	golang.org/x/text v0.40.0
 	google.golang.org/api v0.292.0

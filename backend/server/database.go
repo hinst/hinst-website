@@ -2,6 +2,8 @@ package server
 
 import (
 	"context"
+	"strconv"
+	"strings"
 	"time"
 
 	_ "embed"
@@ -37,4 +39,13 @@ func (me *database) close() {
 		me.pool.Close()
 		me.pool = nil
 	}
+}
+
+func (database) buildPlaceholders(count int) string {
+	var items []string
+	for i := range count {
+		var index = i + 1
+		items = append(items, "$"+strconv.Itoa(index))
+	}
+	return strings.Join(items, ",")
 }
