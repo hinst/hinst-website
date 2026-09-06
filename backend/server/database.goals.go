@@ -122,6 +122,20 @@ func (me *database) getGoalImage(goalId int64) (imageData []byte, imageContentTy
 	return
 }
 
+func (me *database) saveGoalPost(row db_objects.GoalPostRow) {
+	var columnNames = row.GetAllColumns()
+	var placeholders = lo.Map(columnNames, func(item string, index int) string {
+		return "$" + strconv.Itoa(index+1)
+	})
+	var query = "INSERT INTO " + row.GetTableName() + " (" + strings.Join(columnNames, ",") + ")" +
+		" VALUES (" + strings.Join(placeholders, ",") + ")"
+	gophers.AssertResultError(me.pool.Exec(context.Background(), query,
+		row.GoalId, row.DateTime, row.IsPublic, row.SearchIndexingEnabled,
+		row.Text, row.TextEnglish, row.TextGerman, row.Type,
+		row.Title, row.TitleEnglish, row.TitleGerman,
+		row.GooglePingedAt, row.GoogleSearchIndexingStatus, row.GoogleSearchIndexingStatusCheckedAt))
+}
+
 func (me *database) saveGoalPostComment(row db_objects.GoalPostCommentRow) {
 	var columnNames = row.GetAllColumns()
 	var placeholders = lo.Map(columnNames, func(item string, index int) string {

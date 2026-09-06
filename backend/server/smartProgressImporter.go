@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/hinst/go-gophers"
+	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
 	"github.com/hinst/hinst-website/server/smart_progress"
 	"golang.org/x/net/html"
@@ -52,7 +53,7 @@ func (me *smartProgressImporter) syncPosts(goalId string) {
 	var newCount = 0
 	for _, post := range posts {
 		var isNew = !me.checkPostExists(post)
-		me.savePost(goalId, post)
+		me.savePost(goalId, post, isNew)
 		var comments = me.readComments(post.Id)
 		me.saveComments(post, comments)
 		if isNew {
@@ -121,14 +122,22 @@ func (me *smartProgressImporter) unpackRedirects(htmlText string) (result string
 	return htmlInnerHtml(document)
 }
 
-func (me *smartProgressImporter) savePost(goalId string, post smart_progress.Post) {
+func (me *smartProgressImporter) savePost(goalId string, post smart_progress.Post, isNew bool) {
 	var goalIdInt = gophers.GetInt64FromString(goalId)
-	var dateEpoch = me.parseDateTime(post.Date).UTC().Unix()
-	var htmlText = me.unpackRedirects(post.Msg)
-	gophers.AssertResultError(me.database.pool.Exec(context.Background(),
-		"INSERT INTO goalPosts (goalId, dateTime, type, text) VALUES ($1, $2, $3, $4)"+
-			" ON CONFLICT(goalId, dateTime) DO UPDATE SET type = excluded.type, text = excluded.text",
-		goalIdInt, dateEpoch, post.Type, convertHtmlToMarkdown(htmlText)))
+	var dateTime = me.parseDateTime(post.Date).UTC()
+	var text = convertHtmlToMarkdown(me.unpackRedirects(post.Msg))
+	if isNew {
+		var row = db_objects.GoalPostRow{
+			GoalId:   goalIdInt,
+			DateTime: dateTime.Unix(),
+			Type:     post.Type,
+			Text:     text,
+		}
+		me.database.saveGoalPost(row)
+	} else {
+		var defaultLanguage = base.SupportedLanguages[0]
+		me.database.setGoalPostText(goalIdInt, dateTime, defaultLanguage, text)
+	}
 }
 
 func (me *smartProgressImporter) saveImages(post smart_progress.Post, imageRecords []imageRecord) {
