@@ -16,7 +16,7 @@ type GoalPostCommentRow struct {
 	ParentDateTime int64
 	/* Unix seconds UTC */
 	DateTime            int64
-	SmartProgressUserId int64
+	SmartProgressUserId *int64
 	Username            string
 	Text                string
 }
