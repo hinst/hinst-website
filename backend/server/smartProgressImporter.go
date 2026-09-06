@@ -2,7 +2,6 @@ package server
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"io"
 	"log"
@@ -207,17 +206,14 @@ func (me *smartProgressImporter) readGoalImage(document *html.Node) (result imag
 }
 
 func (me *smartProgressImporter) saveGoalInfo(goalRecord goalRecord) {
-	gophers.AssertResultError(me.database.pool.Exec(context.Background(),
-		"INSERT INTO goals (id, title, description, authorName, imageData, imageContentType) "+
-			"VALUES ($1, $2, $3, $4, $5, $6) "+
-			"ON CONFLICT(id) DO UPDATE SET "+
-			"title = excluded.title, "+
-			"description = excluded.description, "+
-			"authorName = excluded.authorName, "+
-			"imageData = excluded.imageData, "+
-			"imageContentType = excluded.imageContentType",
-		goalRecord.Id, goalRecord.Title, goalRecord.Description, goalRecord.AuthorName,
-		goalRecord.Image.Data, goalRecord.Image.ContentType))
+	me.database.saveGoal(db_objects.GoalRow{
+		Id:               goalRecord.Id,
+		Title:            goalRecord.Title,
+		Description:      goalRecord.Description,
+		AuthorName:       goalRecord.AuthorName,
+		ImageData:        goalRecord.Image.Data,
+		ImageContentType: goalRecord.Image.ContentType,
+	})
 }
 
 func (me *smartProgressImporter) readAllPosts(goalId string) (allPosts []smart_progress.Post) {

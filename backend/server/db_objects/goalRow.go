@@ -12,6 +12,8 @@ type GoalRow struct {
 	Title            string
 	TitleEnglish     string
 	TitleGerman      string
+	Description      string
+	AuthorName       string
 	ImageData        []byte
 	ImageContentType string
 }
@@ -42,6 +44,8 @@ func (me *GoalRow) Scan(rows pgx.Rows) {
 		&me.Title,
 		&me.TitleEnglish,
 		&me.TitleGerman,
+		&me.Description,
+		&me.AuthorName,
 		&me.ImageData,
 		&me.ImageContentType,
 	))

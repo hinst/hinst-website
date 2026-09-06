@@ -120,6 +120,24 @@ func (me *database) getGoalImage(goalId int64) (imageData []byte, imageContentTy
 	return
 }
 
+func (me *database) saveGoal(row db_objects.GoalRow) {
+	var columnNames = row.GetAllColumns()
+	var query = "INSERT INTO " + row.GetTableName() +
+		" (" + strings.Join(columnNames, ",") + ")" +
+		" VALUES (" + me.buildPlaceholders(len(columnNames)) + ")" +
+		" ON CONFLICT (id)" +
+		" DO UPDATE SET title = excluded.title," +
+		" titleEnglish = excluded.titleEnglish," +
+		" titleGerman = excluded.titleGerman," +
+		" description = excluded.description," +
+		" authorName = excluded.authorName," +
+		" imageData = excluded.imageData," +
+		" imageContentType = excluded.imageContentType"
+	gophers.AssertResultError(me.pool.Exec(context.Background(), query,
+		row.Id, row.Title, row.TitleEnglish, row.TitleGerman,
+		row.Description, row.AuthorName, row.ImageData, row.ImageContentType))
+}
+
 func (me *database) insertGoalPost(row db_objects.GoalPostRow) {
 	var columnNames = row.GetAllColumns()
 	var query = "INSERT INTO " + row.GetTableName() +
