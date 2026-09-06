@@ -140,12 +140,13 @@ func (me *smartProgressImporter) saveImages(post smart_progress.Post, imageRecor
 	var goalId = gophers.GetInt64FromString(post.ObjId)
 	var dateEpoch = me.parseDateTime(post.Date).UTC().Unix()
 	for index, image := range imageRecords {
-		gophers.AssertResultError(me.database.pool.Exec(context.Background(),
-			"INSERT INTO goalPostImages (goalId, parentDateTime, sequenceIndex, contentType, file)"+
-				" VALUES ($1, $2, $3, $4, $5)"+
-				" ON CONFLICT(goalId, parentDateTime, sequenceIndex)"+
-				" DO UPDATE SET contentType = excluded.contentType, file = excluded.file",
-			goalId, dateEpoch, index, image.ContentType, image.Data))
+		me.database.saveGoalPostImage(db_objects.GoalPostImageRow{
+			GoalId:         goalId,
+			ParentDateTime: dateEpoch,
+			SequenceIndex:  int64(index),
+			ContentType:    image.ContentType,
+			File:           image.Data,
+		})
 	}
 }
 

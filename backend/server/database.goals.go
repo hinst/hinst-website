@@ -152,6 +152,20 @@ func (me *database) saveGoalPostComment(row db_objects.GoalPostCommentRow) {
 		row.Username, row.Text))
 }
 
+func (me *database) saveGoalPostImage(row db_objects.GoalPostImageRow) {
+	var columnNames = row.GetAllColumns()
+	var placeholders = lo.Map(columnNames, func(item string, index int) string {
+		return "$" + strconv.Itoa(index+1)
+	})
+	var query = "INSERT INTO " + row.GetTableName() +
+		" (" + strings.Join(columnNames, ",") + ")" +
+		" VALUES (" + strings.Join(placeholders, ",") + ")" +
+		" ON CONFLICT (goalId, parentDateTime, sequenceIndex)" +
+		" DO UPDATE SET contentType = excluded.contentType, file = excluded.file"
+	gophers.AssertResultError(me.pool.Exec(context.Background(), query,
+		row.GoalId, row.ParentDateTime, row.SequenceIndex, row.ContentType, row.File))
+}
+
 func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_objects.GoalPostRow) {
 	var tableName = (db_objects.GoalPostRow{}).GetTableName()
 	var fields = db_objects.GoalPostRow{}.GetAllFieldSelector()
