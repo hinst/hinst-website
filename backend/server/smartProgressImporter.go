@@ -82,14 +82,6 @@ func (me *smartProgressImporter) parseDateTime(text string) (result time.Time) {
 	return
 }
 
-func getNullableInt64FromString(text string) (result *int64) {
-	if text == "" {
-		return
-	}
-	var value = gophers.GetInt64FromString(text)
-	return &value
-}
-
 func (me *smartProgressImporter) saveComments(post smart_progress.Post, comments []smart_progress.Comment) {
 	var parentDateTime = me.parseDateTime(post.Date).UTC().Unix()
 	var goalId = gophers.GetInt64FromString(post.ObjId)
@@ -98,7 +90,7 @@ func (me *smartProgressImporter) saveComments(post smart_progress.Post, comments
 			GoalId:              goalId,
 			ParentDateTime:      parentDateTime,
 			DateTime:            me.parseDateTime(comment.Date).UTC().Unix(),
-			SmartProgressUserId: getNullableInt64FromString(comment.UserId),
+			SmartProgressUserId: gophers.GetInt64FromStringOptional(comment.UserId),
 			Username:            comment.Username,
 			Text:                convertHtmlToMarkdown(me.unpackRedirects(comment.Msg)),
 		}
