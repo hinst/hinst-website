@@ -133,7 +133,7 @@ func (me *smartProgressImporter) savePost(goalId string, post smart_progress.Pos
 			Type:     post.Type,
 			Text:     text,
 		}
-		me.database.saveGoalPost(row)
+		me.database.insertGoalPost(row)
 	} else {
 		var defaultLanguage = base.SupportedLanguages[0]
 		me.database.setGoalPostText(goalIdInt, dateTime, defaultLanguage, text)
