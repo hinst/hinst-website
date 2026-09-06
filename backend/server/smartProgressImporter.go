@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/hinst/go-gophers"
+	"github.com/hinst/hinst-website/server/db_objects"
 	"github.com/hinst/hinst-website/server/smart_progress"
 	"golang.org/x/net/html"
 )
@@ -85,16 +86,15 @@ func (me *smartProgressImporter) saveComments(post smart_progress.Post, comments
 	var parentDateTime = me.parseDateTime(post.Date).UTC().Unix()
 	var goalId = gophers.GetInt64FromString(post.ObjId)
 	for _, comment := range comments {
-		var dateTime = me.parseDateTime(comment.Date).UTC().Unix()
-		var smartProgressUserId = gophers.GetInt64FromString(comment.UserId)
-		var htmlText = me.unpackRedirects(comment.Msg)
-		gophers.AssertResultError(me.database.pool.Exec(context.Background(),
-			"INSERT INTO goalPostComments (goalId, parentDateTime, dateTime, smartProgressUserId, username, text)"+
-				" VALUES ($1, $2, $3, $4, $5, $6)"+
-				" ON CONFLICT (goalId, parentDateTime, dateTime, smartProgressUserId)"+
-				" DO UPDATE SET username = excluded.username, text = excluded.text",
-			goalId, parentDateTime, dateTime, smartProgressUserId,
-			comment.Username, convertHtmlToMarkdown(htmlText)))
+		var row = db_objects.GoalPostCommentRow{
+			GoalId:              goalId,
+			ParentDateTime:      parentDateTime,
+			DateTime:            me.parseDateTime(comment.Date).UTC().Unix(),
+			SmartProgressUserId: gophers.GetInt64FromString(comment.UserId),
+			Username:            comment.Username,
+			Text:                convertHtmlToMarkdown(me.unpackRedirects(comment.Msg)),
+		}
+		me.database.saveGoalPostComment(row)
 	}
 }
 

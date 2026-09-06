@@ -120,6 +120,18 @@ func (me *database) getGoalImage(goalId int64) (imageData []byte, imageContentTy
 	return
 }
 
+func (me *database) saveGoalPostComment(row db_objects.GoalPostCommentRow) {
+	var tableName = row.GetTableName()
+	var columns = strings.Join(row.GetAllColumns(), ",")
+	var query = "INSERT INTO " + tableName + " (" + columns + ")" +
+		" VALUES ($1, $2, $3, $4, $5, $6)" +
+		" ON CONFLICT (goalId, parentDateTime, dateTime, smartProgressUserId)" +
+		" DO UPDATE SET username = excluded.username, text = excluded.text"
+	gophers.AssertResultError(me.pool.Exec(context.Background(), query,
+		row.GoalId, row.ParentDateTime, row.DateTime, row.SmartProgressUserId,
+		row.Username, row.Text))
+}
+
 func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_objects.GoalPostRow) {
 	var tableName = (db_objects.GoalPostRow{}).GetTableName()
 	var fields = db_objects.GoalPostRow{}.GetAllFieldSelector()
