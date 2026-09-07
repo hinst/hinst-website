@@ -138,7 +138,8 @@ func (me *database) saveGoal(row db_objects.GoalRow) {
 		row.Description, row.AuthorName, row.ImageData, row.ImageContentType))
 }
 
-// Returns true if the goal post was inserted, i.e. it did not exist before
+// Returns true if the goal post was inserted;
+// Returns false if goal post with this key already exists;
 func (me *database) insertGoalPost(row db_objects.GoalPostRow) (isNew bool) {
 	var columnNames = row.GetAllColumns()
 	var query = "INSERT INTO " + row.GetTableName() +

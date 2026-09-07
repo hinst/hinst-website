@@ -116,20 +116,21 @@ func (me *smartProgressImporter) unpackRedirects(htmlText string) (result string
 
 // Returns true if the blog post is new
 func (me *smartProgressImporter) savePost(post smart_progress.Post) bool {
-	var goalIdInt = gophers.GetInt64FromString(post.ObjId)
+	var goalId = gophers.GetInt64FromString(post.ObjId)
 	var dateTime = me.parseDateTime(post.Date).UTC()
 	var text = convertHtmlToMarkdown(me.unpackRedirects(post.Msg))
-	var isNew = me.database.insertGoalPost(db_objects.GoalPostRow{
-		GoalId:   goalIdInt,
-		DateTime: dateTime.Unix(),
-		Type:     post.Type,
-		Text:     text,
-	})
-	if !isNew {
-		var defaultLanguage = base.SupportedLanguages[0]
-		me.database.setGoalPostText(goalIdInt, dateTime, defaultLanguage, text)
+	var goalPostRow = db_objects.GoalPostRow{
+		GoalId: goalId,
+		Type:   post.Type,
+		Text:   text,
 	}
-	return isNew
+	goalPostRow.SetDateTime(dateTime)
+	var isInserted = me.database.insertGoalPost(goalPostRow)
+	if !isInserted {
+		var defaultLanguage = base.SupportedLanguages[0]
+		me.database.setGoalPostText(goalId, dateTime, defaultLanguage, text)
+	}
+	return isInserted
 }
 
 func (me *smartProgressImporter) saveImages(post smart_progress.Post, imageRecords []imageRecord) {

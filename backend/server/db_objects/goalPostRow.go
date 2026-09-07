@@ -112,6 +112,10 @@ func (me *GoalPostRow) GetDateTime() time.Time {
 	return time.Unix(me.DateTime, 0)
 }
 
+func (me *GoalPostRow) SetDateTime(dateTime time.Time) {
+	me.DateTime = dateTime.Unix()
+}
+
 func (me *GoalPostRow) GetGoogleSearchIndexingStatusCheckedAt() time.Time {
 	return time.Unix(me.GoogleSearchIndexingStatusCheckedAt, 0)
 }
