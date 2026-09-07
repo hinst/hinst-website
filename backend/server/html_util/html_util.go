@@ -74,12 +74,7 @@ func ParseHtmlFragment(htmlText string) (result *html.Node) {
 	buffer.WriteString(htmlText)
 	buffer.WriteString("</body>")
 	var document = gophers.AssertResultError(html.Parse(&buffer))
-	var bodyNode *html.Node
-	Walk(document, func(node *html.Node) {
-		if bodyNode == nil && node.Type == html.ElementNode && node.Data == "body" {
-			bodyNode = node
-		}
-	})
+	var bodyNode = FindElement(document, func(node *html.Node) bool { return node.Data == "body" })
 	if bodyNode == nil {
 		panic("Cannot find <body>")
 	}
