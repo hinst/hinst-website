@@ -133,9 +133,7 @@ func (me *database) saveGoal(row db_objects.GoalRow) {
 		" authorName = excluded.authorName," +
 		" imageData = excluded.imageData," +
 		" imageContentType = excluded.imageContentType"
-	gophers.AssertResultError(me.pool.Exec(context.Background(), query,
-		row.Id, row.Title, row.TitleEnglish, row.TitleGerman,
-		row.Description, row.AuthorName, row.ImageData, row.ImageContentType))
+	gophers.AssertResultError(me.pool.Exec(context.Background(), query, db_objects.GetAllColumnValues(&row)...))
 }
 
 // Returns true if the goal post was inserted;
@@ -158,9 +156,7 @@ func (me *database) saveGoalPostComment(row db_objects.GoalPostCommentRow) {
 		" VALUES (" + me.buildPlaceholders(len(columnNames)) + ")" +
 		" ON CONFLICT (goalId, parentDateTime, dateTime, smartProgressUserId)" +
 		" DO UPDATE SET username = excluded.username, text = excluded.text"
-	gophers.AssertResultError(me.pool.Exec(context.Background(), query,
-		row.GoalId, row.ParentDateTime, row.DateTime, row.SmartProgressUserId,
-		row.Username, row.Text))
+	gophers.AssertResultError(me.pool.Exec(context.Background(), query, db_objects.GetAllColumnValues(&row)...))
 }
 
 func (me *database) saveGoalPostImage(row db_objects.GoalPostImageRow) {
@@ -170,8 +166,7 @@ func (me *database) saveGoalPostImage(row db_objects.GoalPostImageRow) {
 		" VALUES (" + me.buildPlaceholders(len(columnNames)) + ")" +
 		" ON CONFLICT (goalId, parentDateTime, sequenceIndex)" +
 		" DO UPDATE SET contentType = excluded.contentType, file = excluded.file"
-	gophers.AssertResultError(me.pool.Exec(context.Background(), query,
-		row.GoalId, row.ParentDateTime, row.SequenceIndex, row.ContentType, row.File))
+	gophers.AssertResultError(me.pool.Exec(context.Background(), query, db_objects.GetAllColumnValues(&row)...))
 }
 
 func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_objects.GoalPostRow) {
