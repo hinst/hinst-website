@@ -126,9 +126,10 @@ func (me *database) saveGoal(row db_objects.GoalRow) {
 		" (" + strings.Join(columnNames, ",") + ")" +
 		" VALUES (" + me.buildPlaceholders(len(columnNames)) + ")" +
 		" ON CONFLICT (id)" +
+		// Note: titleEnglish/titleGerman are NOT updated here,
+		// because the importer does not provide translated titles;
+		// updating them would wipe the existing translations.
 		" DO UPDATE SET title = excluded.title," +
-		" titleEnglish = excluded.titleEnglish," +
-		" titleGerman = excluded.titleGerman," +
 		" description = excluded.description," +
 		" authorName = excluded.authorName," +
 		" imageData = excluded.imageData," +
