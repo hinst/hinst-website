@@ -53,20 +53,25 @@ func (database) buildPlaceholders(count int) string {
 	return strings.Join(items, ",")
 }
 
-func (me *database) backup(directory string) {
+// Save all registered database objects from their tables to the specified directory
+func (me *database) saveTables(directory string) {
 	gophers.AssertError(os.MkdirAll(directory, file_mode.USER_RWX))
 	for _, dbObjectConstructor := range db_objects.DbObjects {
-		var dbObject = dbObjectConstructor()
-		var tableName = dbObject.GetTableName()
-		var selector = strings.Join(dbObject.GetAllColumns(), ",")
-		var queryText = "SELECT " + selector + " FROM " + tableName
-		var tableDirectory = directory + "/" + tableName
-		gophers.AssertError(os.MkdirAll(tableDirectory, file_mode.USER_RWX))
-		var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText))
-		defer rows.Close()
-		for rows.Next() {
-			dbObject.Scan(rows)
-			dbObject.SaveToDirectory(tableDirectory)
-		}
+		me.saveTable(directory, dbObjectConstructor)
+	}
+}
+
+func (me *database) saveTable(directory string, dbObjectConstructor db_objects.DbObjectConstructor) {
+	var dbObject = dbObjectConstructor()
+	var tableName = dbObject.GetTableName()
+	var selector = strings.Join(dbObject.GetAllColumns(), ",")
+	var queryText = "SELECT " + selector + " FROM " + tableName
+	var tableDirectory = directory + "/" + tableName
+	gophers.AssertError(os.MkdirAll(tableDirectory, file_mode.USER_RWX))
+	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText))
+	defer rows.Close()
+	for rows.Next() {
+		dbObject.Scan(rows)
+		dbObject.SaveToDirectory(tableDirectory)
 	}
 }

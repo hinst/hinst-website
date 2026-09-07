@@ -122,7 +122,7 @@ func (me *program) generateStatic(folder string) {
 
 func (me *program) backup(directory string) {
 	me.database.init()
-	me.database.backup(directory)
+	me.database.saveTables(directory)
 }
 
 // Register all API routes and write the OpenAPI schema to the specified file
