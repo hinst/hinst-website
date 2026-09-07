@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -9,6 +10,8 @@ import (
 	_ "embed"
 
 	"github.com/hinst/go-gophers"
+	"github.com/hinst/go-gophers/file_mode"
+	"github.com/hinst/hinst-website/server/db_objects"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -48,4 +51,22 @@ func (database) buildPlaceholders(count int) string {
 		items = append(items, "$"+strconv.Itoa(index))
 	}
 	return strings.Join(items, ",")
+}
+
+func (me *database) backup(directory string) {
+	gophers.AssertError(os.MkdirAll(directory, file_mode.USER_RWX))
+	for _, dbObjectConstructor := range db_objects.DbObjects {
+		var dbObject = dbObjectConstructor()
+		var tableName = dbObject.GetTableName()
+		var selector = strings.Join(dbObject.GetAllColumns(), ",")
+		var queryText = "SELECT " + selector + " FROM " + tableName
+		var tableDirectory = directory + "/" + tableName
+		gophers.AssertError(os.MkdirAll(tableDirectory, file_mode.USER_RWX))
+		var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText))
+		defer rows.Close()
+		for rows.Next() {
+			dbObject.Scan(rows)
+			dbObject.SaveToDirectory(tableDirectory)
+		}
+	}
 }
