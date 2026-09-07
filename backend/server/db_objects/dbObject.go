@@ -1,6 +1,10 @@
 package db_objects
 
-import "github.com/jackc/pgx/v5"
+import (
+	"reflect"
+
+	"github.com/jackc/pgx/v5"
+)
 
 type DbObject interface {
 	GetTableName() string
@@ -16,4 +20,16 @@ var DbObjects []DbObjectConstructor
 func registerDbObject(constructor DbObjectConstructor) int {
 	DbObjects = append(DbObjects, constructor)
 	return len(DbObjects)
+}
+
+func getAllFields(object DbObject) (items []any) {
+	var columns = object.GetAllColumns()
+	var value = reflect.ValueOf(object)
+	if value.Kind() == reflect.Ptr {
+		value = value.Elem()
+	}
+	for _, column := range columns {
+		items = append(items, value.FieldByName(column).Interface())
+	}
+	return
 }
