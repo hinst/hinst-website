@@ -17,19 +17,6 @@ import (
 	"golang.org/x/net/html"
 )
 
-type goalRecord struct {
-	Id          int64
-	Title       string
-	Description string
-	AuthorName  string
-	Image       imageRecord
-}
-
-type imageRecord struct {
-	ContentType string
-	Data        []byte
-}
-
 type smartProgressImporter struct {
 	goalIds  []string
 	database *database
@@ -91,8 +78,6 @@ func (me *smartProgressImporter) saveComments(post smart_progress.Post, comments
 	}
 }
 
-const smartProgressRedirectPrefix = "http://smartprogress.do/site/redirect/?url="
-
 func (me *smartProgressImporter) unpackRedirects(htmlText string) (result string) {
 	var document = me.parseHtmlFragment(htmlText)
 	htmlWalk(document, func(node *html.Node) {
@@ -102,8 +87,8 @@ func (me *smartProgressImporter) unpackRedirects(htmlText string) (result string
 				return
 			}
 			var href = hrefAttr.Val
-			if strings.HasPrefix(href, smartProgressRedirectPrefix) {
-				href = strings.TrimSuffix(strings.TrimPrefix(href, smartProgressRedirectPrefix), "%")
+			if strings.HasPrefix(href, smart_progress.RedirectPrefix) {
+				href = strings.TrimSuffix(strings.TrimPrefix(href, smart_progress.RedirectPrefix), "%")
 				if decoded, err := url.PathUnescape(href); err == nil {
 					href = decoded
 				}
@@ -133,7 +118,7 @@ func (me *smartProgressImporter) savePost(post smart_progress.Post) bool {
 	return isInserted
 }
 
-func (me *smartProgressImporter) saveImages(post smart_progress.Post, imageRecords []imageRecord) {
+func (me *smartProgressImporter) saveImages(post smart_progress.Post, imageRecords []smart_progress.ImageRecord) {
 	var goalId = gophers.GetInt64FromString(post.ObjId)
 	var dateEpoch = me.parseDateTime(post.Date).UTC().Unix()
 	for index, image := range imageRecords {
@@ -147,7 +132,7 @@ func (me *smartProgressImporter) saveImages(post smart_progress.Post, imageRecor
 	}
 }
 
-func (me *smartProgressImporter) readGoalInfo(goalId string) (result goalRecord) {
+func (me *smartProgressImporter) readGoalInfo(goalId string) (result smart_progress.GoalRecord) {
 	var url = smart_progress.Url + "/goal/" + url.PathEscape(goalId)
 	var body, _ = me.httpGet("Could not load goal title", url, nil)
 	var document = gophers.AssertResultError(html.Parse(bytes.NewReader(body)))
@@ -187,7 +172,7 @@ func (me *smartProgressImporter) readGoalInfo(goalId string) (result goalRecord)
 	return
 }
 
-func (me *smartProgressImporter) readGoalImage(document *html.Node) (result imageRecord) {
+func (me *smartProgressImporter) readGoalImage(document *html.Node) (result smart_progress.ImageRecord) {
 	var imageUrl = ""
 	if link := htmlFindElement(document, func(node *html.Node) bool {
 		return node.Data == "link" && htmlAttrValue(node, "rel") == "image_src"
@@ -203,7 +188,7 @@ func (me *smartProgressImporter) readGoalImage(document *html.Node) (result imag
 	return
 }
 
-func (me *smartProgressImporter) saveGoalInfo(goalRecord goalRecord) {
+func (me *smartProgressImporter) saveGoalInfo(goalRecord smart_progress.GoalRecord) {
 	me.database.saveGoal(db_objects.GoalRow{
 		Id:               goalRecord.Id,
 		Title:            goalRecord.Title,
@@ -235,11 +220,11 @@ func (me *smartProgressImporter) readComments(postId string) (result []smart_pro
 	return responseObject.Comments
 }
 
-func (me *smartProgressImporter) readImages(post smart_progress.Post) (imageRecords []imageRecord) {
+func (me *smartProgressImporter) readImages(post smart_progress.Post) (imageRecords []smart_progress.ImageRecord) {
 	for _, image := range post.Images {
 		var url = smart_progress.Url + image.Url
 		var body, contentType = me.httpGet("Cannot read image", url, nil)
-		imageRecords = append(imageRecords, imageRecord{ContentType: contentType, Data: body})
+		imageRecords = append(imageRecords, smart_progress.ImageRecord{ContentType: contentType, Data: body})
 	}
 	return
 }
