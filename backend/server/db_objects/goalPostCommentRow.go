@@ -45,6 +45,11 @@ func (me *GoalPostCommentRow) Scan(rows pgx.Rows) {
 func (me GoalPostCommentRow) SaveToDirectory(directory string) {
 	directory += "/" + gophers.GetStringFromInt64(me.GoalId) + "/" +
 		me.GetParentDateTime().UTC().Format("2006-01-02_15-04-05")
+	var userId = "null"
+	if me.SmartProgressUserId != nil {
+		userId = gophers.GetStringFromInt64(*me.SmartProgressUserId)
+	}
+	directory += "/" + userId
 	gophers.AssertError(os.MkdirAll(directory, file_mode.USER_RWX))
 	var filePath = directory + "/" + me.GetDateTime().UTC().Format("2006-01-02_15-04-05") + ".yaml"
 	gophers.WriteBytesFile(filePath, base.EncodeYaml(me))
