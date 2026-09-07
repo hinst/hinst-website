@@ -13,6 +13,7 @@ import (
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
+	"github.com/hinst/hinst-website/server/html_util"
 	"github.com/hinst/hinst-website/server/smart_progress"
 	"golang.org/x/net/html"
 )
@@ -80,9 +81,9 @@ func (me *smartProgressImporter) saveComments(post smart_progress.Post, comments
 
 func (me *smartProgressImporter) unpackRedirects(htmlText string) (result string) {
 	var document = me.parseHtmlFragment(htmlText)
-	htmlWalk(document, func(node *html.Node) {
+	html_util.Walk(document, func(node *html.Node) {
 		if node.Type == html.ElementNode && node.Data == "a" {
-			var hrefAttr = htmlAttr(node, "href")
+			var hrefAttr = html_util.Attr(node, "href")
 			if hrefAttr == nil {
 				return
 			}
@@ -96,7 +97,7 @@ func (me *smartProgressImporter) unpackRedirects(htmlText string) (result string
 			}
 		}
 	})
-	return htmlInnerHtml(document)
+	return html_util.InnerHtml(document)
 }
 
 // Returns true if the blog post is new
@@ -138,16 +139,16 @@ func (me *smartProgressImporter) readGoalInfo(goalId string) (result smart_progr
 	var document = gophers.AssertResultError(html.Parse(bytes.NewReader(body)))
 
 	var title = ""
-	if titleNode := htmlFindElement(document, func(node *html.Node) bool { return node.Data == "title" }); titleNode != nil {
-		title = htmlNodeText(titleNode)
+	if titleNode := html_util.FindElement(document, func(node *html.Node) bool { return node.Data == "title" }); titleNode != nil {
+		title = html_util.NodeText(titleNode)
 	}
 
 	var descriptionHtml = ""
-	if goalDescription := htmlFindElement(document, func(node *html.Node) bool {
-		return node.Data == "div" && htmlAttrValue(node, "id") == "goal_descr"
+	if goalDescription := html_util.FindElement(document, func(node *html.Node) bool {
+		return node.Data == "div" && html_util.AttrValue(node, "id") == "goal_descr"
 	}); goalDescription != nil {
-		if div := htmlFindElement(goalDescription, func(node *html.Node) bool { return node.Data == "div" }); div != nil {
-			descriptionHtml = strings.TrimSpace(htmlInnerHtml(div))
+		if div := html_util.FindElement(goalDescription, func(node *html.Node) bool { return node.Data == "div" }); div != nil {
+			descriptionHtml = strings.TrimSpace(html_util.InnerHtml(div))
 		}
 	}
 	var description = ""
@@ -156,11 +157,11 @@ func (me *smartProgressImporter) readGoalInfo(goalId string) (result smart_progr
 	}
 
 	var authorName = ""
-	if authorWidget := htmlFindElement(document, func(node *html.Node) bool {
-		return htmlNodeHasClass(node, "user-widget__name")
+	if authorWidget := html_util.FindElement(document, func(node *html.Node) bool {
+		return html_util.NodeHasClass(node, "user-widget__name")
 	}); authorWidget != nil {
-		if link := htmlFindElement(authorWidget, func(node *html.Node) bool { return node.Data == "a" }); link != nil {
-			authorName = strings.TrimSpace(htmlNodeText(link))
+		if link := html_util.FindElement(authorWidget, func(node *html.Node) bool { return node.Data == "a" }); link != nil {
+			authorName = strings.TrimSpace(html_util.NodeText(link))
 		}
 	}
 
@@ -174,10 +175,10 @@ func (me *smartProgressImporter) readGoalInfo(goalId string) (result smart_progr
 
 func (me *smartProgressImporter) readGoalImage(document *html.Node) (result smart_progress.ImageRecord) {
 	var imageUrl = ""
-	if link := htmlFindElement(document, func(node *html.Node) bool {
-		return node.Data == "link" && htmlAttrValue(node, "rel") == "image_src"
+	if link := html_util.FindElement(document, func(node *html.Node) bool {
+		return node.Data == "link" && html_util.AttrValue(node, "rel") == "image_src"
 	}); link != nil {
-		imageUrl = htmlAttrValue(link, "href")
+		imageUrl = html_util.AttrValue(link, "href")
 	}
 	if imageUrl == "" {
 		panic("Cannot find image")
@@ -273,7 +274,7 @@ func (me *smartProgressImporter) parseHtmlFragment(htmlText string) (result *htm
 	buffer.WriteString("</body>")
 	var document = gophers.AssertResultError(html.Parse(&buffer))
 	var bodyNode *html.Node
-	htmlWalk(document, func(node *html.Node) {
+	html_util.Walk(document, func(node *html.Node) {
 		if bodyNode == nil && node.Type == html.ElementNode && node.Data == "body" {
 			bodyNode = node
 		}
@@ -282,64 +283,4 @@ func (me *smartProgressImporter) parseHtmlFragment(htmlText string) (result *htm
 		panic("Cannot find <body>")
 	}
 	return bodyNode
-}
-
-func htmlWalk(root *html.Node, callback func(*html.Node)) {
-	callback(root)
-	for node := range root.Descendants() {
-		callback(node)
-	}
-}
-
-func htmlFindElement(root *html.Node, predicate func(*html.Node) bool) (result *html.Node) {
-	htmlWalk(root, func(node *html.Node) {
-		if result == nil && node.Type == html.ElementNode && predicate(node) {
-			result = node
-		}
-	})
-	return
-}
-
-func htmlAttr(node *html.Node, key string) (result *html.Attribute) {
-	for i := range node.Attr {
-		if node.Attr[i].Key == key {
-			result = &node.Attr[i]
-			return
-		}
-	}
-	return
-}
-
-func htmlAttrValue(node *html.Node, key string) (result string) {
-	if attr := htmlAttr(node, key); attr != nil {
-		result = attr.Val
-	}
-	return
-}
-
-func htmlNodeHasClass(node *html.Node, className string) (result bool) {
-	for _, class := range strings.Fields(htmlAttrValue(node, "class")) {
-		if class == className {
-			return true
-		}
-	}
-	return false
-}
-
-func htmlNodeText(node *html.Node) (result string) {
-	if node.Type == html.TextNode {
-		return node.Data
-	}
-	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		result += htmlNodeText(child)
-	}
-	return
-}
-
-func htmlInnerHtml(node *html.Node) (result string) {
-	var buffer bytes.Buffer
-	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		html.Render(&buffer, child)
-	}
-	return buffer.String()
 }
