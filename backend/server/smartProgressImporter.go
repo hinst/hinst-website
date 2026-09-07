@@ -104,7 +104,7 @@ func (me *smartProgressImporter) savePost(post smart_progress.Post) bool {
 	var goalId = gophers.GetInt64FromString(post.ObjId)
 	var dateTime = me.parseDateTime(post.Date).UTC()
 	var text = convertHtmlToMarkdown(me.unpackRedirects(post.Msg))
-	var goalPostRow = db_objects.GoalPostRow{
+	var goalPostRow = &db_objects.GoalPostRow{
 		GoalId: goalId,
 		Type:   post.Type,
 		Text:   text,
@@ -189,14 +189,18 @@ func (me *smartProgressImporter) readGoalImage(document *html.Node) (result smar
 }
 
 func (me *smartProgressImporter) saveGoalInfo(goalRecord smart_progress.GoalRecord) {
-	me.database.saveGoal(db_objects.GoalRow{
+	var goalRow = &db_objects.GoalRow{
 		Id:               goalRecord.Id,
 		Title:            goalRecord.Title,
 		Description:      goalRecord.Description,
 		AuthorName:       goalRecord.AuthorName,
 		ImageData:        goalRecord.Image.Data,
 		ImageContentType: goalRecord.Image.ContentType,
-	})
+	}
+	var isInserted = me.database.insertGoal(goalRow)
+	if !isInserted {
+		me.database.updateGoalSmart(goalRow)
+	}
 }
 
 func (me *smartProgressImporter) readAllPosts(goalId string) (allPosts []smart_progress.Post) {

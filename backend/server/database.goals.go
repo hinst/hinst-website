@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -120,33 +121,43 @@ func (me *database) getGoalImage(goalId int64) (imageData []byte, imageContentTy
 	return
 }
 
-func (me *database) saveGoal(row db_objects.GoalRow) {
+func (me *database) insertGoal(row *db_objects.GoalRow) (isInserted bool) {
 	var columnNames = row.GetAllColumns()
 	var query = "INSERT INTO " + row.GetTableName() +
 		" (" + strings.Join(columnNames, ",") + ")" +
 		" VALUES (" + me.buildPlaceholders(len(columnNames)) + ")" +
-		" ON CONFLICT (id)" +
-		// Note: titleEnglish/titleGerman are NOT updated here,
-		// because the importer does not provide translated titles;
-		// updating them would wipe the existing translations.
-		" DO UPDATE SET title = excluded.title," +
-		" description = excluded.description," +
-		" authorName = excluded.authorName," +
-		" imageData = excluded.imageData," +
-		" imageContentType = excluded.imageContentType"
-	gophers.AssertResultError(me.pool.Exec(context.Background(), query, db_objects.GetAllColumnValues(&row)...))
+		" ON CONFLICT DO NOTHING"
+	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query,
+		db_objects.GetAllColumnValues(row)...))
+	return result.RowsAffected() == 1
+}
+
+func (me *database) updateGoalSmart(row *db_objects.GoalRow) (isUpdated bool) {
+	var columnNames = row.GetSmartColumns()
+	var values = gophers.AssertResultError(gophers.GetFieldValuesByNames(row, columnNames))
+	values = append(values, row.Id)
+	var assignments = make([]string, len(columnNames))
+	for i, columnName := range columnNames {
+		assignments[i] = columnName + " = $" + strconv.Itoa(i+1)
+	}
+	var idPlaceholder = "$" + strconv.Itoa(len(columnNames)+1)
+	var query = "UPDATE " + row.GetTableName() +
+		" SET " + strings.Join(assignments, ",") +
+		" WHERE id = " + idPlaceholder
+	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query, values...))
+	return result.RowsAffected() == 1
 }
 
 // Returns true if the goal post was inserted;
 // Returns false if goal post with this key already exists;
-func (me *database) insertGoalPost(row db_objects.GoalPostRow) (isNew bool) {
+func (me *database) insertGoalPost(row *db_objects.GoalPostRow) (isInserted bool) {
 	var columnNames = row.GetAllColumns()
 	var query = "INSERT INTO " + row.GetTableName() +
 		" (" + strings.Join(columnNames, ",") + ")" +
 		" VALUES (" + me.buildPlaceholders(len(columnNames)) + ")" +
-		" ON CONFLICT (goalId, dateTime) DO NOTHING"
+		" ON CONFLICT DO NOTHING"
 	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query,
-		db_objects.GetAllColumnValues(&row)...))
+		db_objects.GetAllColumnValues(row)...))
 	return result.RowsAffected() == 1
 }
 

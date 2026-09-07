@@ -7,7 +7,7 @@ require (
 	github.com/danielgtaylor/huma/v2 v2.39.1
 	github.com/goccy/go-yaml v1.19.2
 	github.com/gomarkdown/markdown v0.0.0-20260614204949-e08cff860f76
-	github.com/hinst/go-gophers v0.1.27
+	github.com/hinst/go-gophers v0.1.29
 	github.com/jackc/pgx/v5 v5.10.0
 	github.com/joho/godotenv v1.5.1
 	github.com/muir/gwrap v0.4.0

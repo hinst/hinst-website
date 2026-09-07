@@ -8,20 +8,24 @@ import (
 )
 
 type GoalRow struct {
-	Id               int64
-	Title            string
+	Id               int64  `smartProgressImport:"true"`
+	Title            string `smartProgressImport:"true"`
 	TitleEnglish     string
 	TitleGerman      string
-	Description      string
-	AuthorName       string
-	ImageData        []byte
-	ImageContentType string
+	Description      string `smartProgressImport:"true"`
+	AuthorName       string `smartProgressImport:"true"`
+	ImageData        []byte `smartProgressImport:"true"`
+	ImageContentType string `smartProgressImport:"true"`
 }
 
 var _ = registerDbObject(func() DbObject { return new(GoalRow) })
 
 func (GoalRow) GetAllColumns() []string {
 	return gophers.GetFieldNames[GoalRow]()
+}
+
+func (GoalRow) GetSmartColumns() (columns []string) {
+	return gophers.GetFieldNamesByTag[GoalRow]("smartProgressImport", "true")
 }
 
 func (GoalRow) GetTableName() string {
