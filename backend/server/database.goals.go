@@ -147,10 +147,7 @@ func (me *database) insertGoalPost(row db_objects.GoalPostRow) (isNew bool) {
 		" VALUES (" + me.buildPlaceholders(len(columnNames)) + ")" +
 		" ON CONFLICT (goalId, dateTime) DO NOTHING"
 	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query,
-		row.GoalId, row.DateTime, row.IsPublic, row.SearchIndexingEnabled,
-		row.Text, row.TextEnglish, row.TextGerman, row.Type,
-		row.Title, row.TitleEnglish, row.TitleGerman,
-		row.GooglePingedAt, row.GoogleSearchIndexingStatus, row.GoogleSearchIndexingStatusCheckedAt))
+		db_objects.GetAllColumnValues(&row)...))
 	return result.RowsAffected() == 1
 }
 

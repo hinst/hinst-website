@@ -22,7 +22,7 @@ func registerDbObject(constructor DbObjectConstructor) int {
 	return len(DbObjects)
 }
 
-func getAllFields(object DbObject) (items []any) {
+func GetAllColumnValues(object DbObject) (items []any) {
 	var columns = object.GetAllColumns()
 	var value = reflect.ValueOf(object)
 	if value.Kind() == reflect.Ptr {
