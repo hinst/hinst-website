@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"strings"
 
+	"github.com/hinst/go-gophers"
 	"golang.org/x/net/html"
 )
 
@@ -65,4 +66,22 @@ func InnerHtml(node *html.Node) (result string) {
 		html.Render(&buffer, child)
 	}
 	return buffer.String()
+}
+
+func ParseHtmlFragment(htmlText string) (result *html.Node) {
+	var buffer bytes.Buffer
+	buffer.WriteString("<body>")
+	buffer.WriteString(htmlText)
+	buffer.WriteString("</body>")
+	var document = gophers.AssertResultError(html.Parse(&buffer))
+	var bodyNode *html.Node
+	Walk(document, func(node *html.Node) {
+		if bodyNode == nil && node.Type == html.ElementNode && node.Data == "body" {
+			bodyNode = node
+		}
+	})
+	if bodyNode == nil {
+		panic("Cannot find <body>")
+	}
+	return bodyNode
 }

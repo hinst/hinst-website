@@ -80,7 +80,7 @@ func (me *smartProgressImporter) saveComments(post smart_progress.Post, comments
 }
 
 func (me *smartProgressImporter) unpackRedirects(htmlText string) (result string) {
-	var document = me.parseHtmlFragment(htmlText)
+	var document = html_util.ParseHtmlFragment(htmlText)
 	html_util.Walk(document, func(node *html.Node) {
 		if node.Type == html.ElementNode && node.Data == "a" {
 			var hrefAttr = html_util.Attr(node, "href")
@@ -265,22 +265,4 @@ func (me *smartProgressImporter) httpGet(contextMessage string, url string, head
 		panic(contextMessage + ": " + response.Status + "\n" + string(body))
 	}
 	return
-}
-
-func (me *smartProgressImporter) parseHtmlFragment(htmlText string) (result *html.Node) {
-	var buffer bytes.Buffer
-	buffer.WriteString("<body>")
-	buffer.WriteString(htmlText)
-	buffer.WriteString("</body>")
-	var document = gophers.AssertResultError(html.Parse(&buffer))
-	var bodyNode *html.Node
-	html_util.Walk(document, func(node *html.Node) {
-		if bodyNode == nil && node.Type == html.ElementNode && node.Data == "body" {
-			bodyNode = node
-		}
-	})
-	if bodyNode == nil {
-		panic("Cannot find <body>")
-	}
-	return bodyNode
 }
