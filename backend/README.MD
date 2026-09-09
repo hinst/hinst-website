@@ -12,21 +12,21 @@ There are two versions of website:
 ### Command Line Flags
 - `-mode`: Execution mode. Supported values:
     - `web` (default): Runs the web server.
-    - `importSmartProgress`: Imports blog posts from SmartProgress. Requires `-goalIds`.
-    - `update`: All-in-one update: updates translations, generates titles, generate and upload static files, and update search indexing status.
+    - `importSmartProgress`: Imports blog posts from SmartProgress. Requires `GOAL_IDS`.
+    - `update`: All-in-one update: imports Smart Progress posts, updates translations, generates titles, generate and upload static files, and update search indexing status. Requires `GOAL_IDS`.
     - `migrate`: Runs database migrations.
     - `generateStatic`: Generates static files locally for testing.
     - `backup`: Creates a database backup.
     - `generateSchema`: Saves the OpenAPI schema to disk (`schema.yaml`).
 - `-www`: Path to web files (default: `./www`). Used when `-mode=web`.
 - `-backup-directory`: Directory for database backups (default: `./saved-goals/backup`). Used when `-mode=backup`.
-- `-goalIds`: Comma-separated list of goal IDs. Required when `-mode=importSmartProgress`. Example: `-goalIds 123,456`.
 
 ### Environment Variables
 - `POSTGRES_URL` (Required): Connection string for PostgreSQL. Used by almost all modes.
 - `POSTGRES_MAX_CONNS` (Optional, default: `2`): Maximum number of database connections.
 - `ALLOW_ORIGIN` (Optional, default: ``): Allowed origins for CORS. Used when `-mode=web`.
 - `AI_URL` (Optional, default: `http://localhost:11434`): Translator API URL. Used when `-mode=update`.
+- `GOAL_IDS` (Required in `importSmartProgress` and `update` modes): Comma-separated list of Smart Progress goal IDs to import. Example: `247488,416007`.
 - `ADMIN_PASSWORD` (Optional, default: ``): Password for admin access. Used when `-mode=web`.
 - `PRETTIER_SERVER_URL` (Required if HTML formatting is used): URL of the Prettier server. Used during static file generation (`update`, `generateStatic`).
 	- Source code for Prettier server: https://github.com/hinst/prettier-server
