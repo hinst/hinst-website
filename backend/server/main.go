@@ -16,7 +16,6 @@ func Main() {
 	}
 	var modePtr = flag.String("mode", "web", "")
 	var wwwPtr = flag.String("www", programTemplate.webFilesPath, "")
-	var translatorApiPtr = flag.String("translatorApi", programTemplate.translatorApiUrl, "")
 	var backupDirectoryPtr = flag.String("backup-directory", programTemplate.savedGoalsPath+"/backup", "")
 	var goalIdsPtr = flag.String("goalIds", "", "example: -goalIds 123,456")
 	flag.Parse()
@@ -37,7 +36,7 @@ func Main() {
 	case "update":
 		// All-in-one update: Update translations, generate titles, generate static files, upload static files.
 		var theProgram = new(program).create()
-		theProgram.translatorApiUrl = *translatorApiPtr
+		theProgram.translatorApiUrl = gophers.ReadEnvVar("AI_URL", programTemplate.translatorApiUrl)
 		theProgram.update()
 	case "migrate":
 		var theProgram = new(program).create()

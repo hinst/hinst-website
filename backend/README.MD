@@ -19,7 +19,6 @@ There are two versions of website:
     - `backup`: Creates a database backup.
     - `generateSchema`: Saves the OpenAPI schema to disk (`schema.yaml`).
 - `-www`: Path to web files (default: `./www`). Used when `-mode=web`.
-- `-translatorApi`: Translator API URL (default: `http://localhost:11434`). Used when `-mode=update`.
 - `-backup-directory`: Directory for database backups (default: `./saved-goals/backup`). Used when `-mode=backup`.
 - `-goalIds`: Comma-separated list of goal IDs. Required when `-mode=importSmartProgress`. Example: `-goalIds 123,456`.
 
@@ -27,6 +26,7 @@ There are two versions of website:
 - `POSTGRES_URL` (Required): Connection string for PostgreSQL. Used by almost all modes.
 - `POSTGRES_MAX_CONNS` (Optional, default: `2`): Maximum number of database connections.
 - `ALLOW_ORIGIN` (Optional, default: ``): Allowed origins for CORS. Used when `-mode=web`.
+- `AI_URL` (Optional, default: `http://localhost:11434`): Translator API URL. Used when `-mode=update`.
 - `ADMIN_PASSWORD` (Optional, default: ``): Password for admin access. Used when `-mode=web`.
 - `PRETTIER_SERVER_URL` (Required if HTML formatting is used): URL of the Prettier server. Used during static file generation (`update`, `generateStatic`).
 	- Source code for Prettier server: https://github.com/hinst/prettier-server
