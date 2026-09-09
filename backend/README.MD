@@ -10,24 +10,29 @@ There are two versions of website:
 ## Config
 
 ### Command Line Flags
-- `-mode`: Execution mode. Options:
+- `-mode`: Execution mode. Supported values:
     - `web` (default): Runs the web server.
-    - `update`: Updates translations, generates static files, and uploads them to GitHub.
+    - `importSmartProgress`: Imports blog posts from SmartProgress. Requires `-goalIds`.
+    - `update`: All-in-one update: updates translations, generates titles, generate and upload static files, and update search indexing status.
     - `migrate`: Runs database migrations.
-    - `generateStatic`: Generates static files locally.
+    - `generateStatic`: Generates static files locally for testing.
     - `backup`: Creates a database backup.
-- `-www`: Path to web files. (Used in `web` mode).
-- `-translatorApi`: Translator API URL. (Used in `update` mode).
-- `-backup-directory`: Directory to store backups. (Used in `backup` mode).
+    - `generateSchema`: Saves the OpenAPI schema to disk (`schema.yaml`).
+- `-www`: Path to web files (default: `./www`). Used when `-mode=web`.
+- `-translatorApi`: Translator API URL (default: `http://localhost:11434`). Used when `-mode=update`.
+- `-backup-directory`: Directory for database backups (default: `./saved-goals/backup`). Used when `-mode=backup`.
+- `-goalIds`: Comma-separated list of goal IDs. Required when `-mode=importSmartProgress`. Example: `-goalIds 123,456`.
 
 ### Environment Variables
-- `POSTGRES_URL` (Required): Database connection URL.
+- `POSTGRES_URL` (Required): Connection string for PostgreSQL. Used by almost all modes.
 - `POSTGRES_MAX_CONNS` (Optional, default: `2`): Maximum number of database connections.
-- `PRETTIER_SERVER_URL` (Required): URL of the Prettier server. (Used in `web`, `update`, and `generateStatic` modes).
+- `ALLOW_ORIGIN` (Optional, default: ``): Allowed origins for CORS. Used when `-mode=web`.
+- `ADMIN_PASSWORD` (Optional, default: ``): Password for admin access. Used when `-mode=web`.
+- `PRETTIER_SERVER_URL` (Required if HTML formatting is used): URL of the Prettier server. Used during static file generation (`update`, `generateStatic`).
 	- Source code for Prettier server: https://github.com/hinst/prettier-server
-- `ALLOW_ORIGIN` (Optional, default: `""`): Allowed origin for CORS. (Used in `web` mode).
-- `ADMIN_PASSWORD` (Optional, default: `""`): Password for admin access. (Used in `web` mode).
-- `GIT_TOKEN` (Required): GitHub token for static files update. (Used in `update` mode).
-- `GIT_BOT_NAME` (Required): Bot name for GitHub commits. (Used in `update` mode).
-- `GIT_EMAIL` (Required): Email for GitHub commits. (Used in `update` mode).
-- `PUBLIC_URL` (Optional, default: `https://hinst.github.io`): Public URL for sitemap generation. (Used in `update` mode).
+- `PUBLIC_URL` (Optional, default: `https://hinst.github.io`): Base public URL for the website. Used when generating static files (`update`, `generateStatic`).
+- `GIT_TOKEN` (Required in `update` mode): GitHub token for uploading static files.
+- `GIT_BOT_NAME` (Required in `update` mode): Bot name for Git commits.
+- `GIT_EMAIL` (Required in `update` mode): Bot email for Git commits.
+- `GOOGLE_ACCOUNT_JSON` (Optional in `update` mode): Path to JSON file containing authentication data for Google service account, used to update search indexing status.
+
