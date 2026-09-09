@@ -1,5 +1,7 @@
-# smartProgressUserId schema update
+# Parameter update
 
-Looking at `C:\Dev\hinst-website\backend\server\schema.postgre.sql`.
-Change field smartProgressUserId: null value no longer allowed.
-Also update all usages in Golang code.
+Looking at projects:
+* C:\Dev\hinst-website\backend\README.MD
+* C:\Dev\orange-pi-kubernetes
+
+Please replace parameter --translatorApi with environment variable AI_URL
