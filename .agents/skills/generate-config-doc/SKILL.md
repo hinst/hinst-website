@@ -5,7 +5,7 @@ description: Generate config documentation for Golang backend
 
 # Generate backend config documentation
 
-This skill concerns only `backend` subproject in the repository.
+This skill concerns only `backend` subproject in the repository. When listing files, always exclude `node_modules`.
 
 Gather information about environment variables referenced in code. Search all `.go` files for these calls:
 
