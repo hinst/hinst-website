@@ -37,7 +37,7 @@ func (me *GoalPostHeader) Read(row *db_objects.GoalPostRow, languageTag language
 	me.Type = row.Type
 	me.Title = row.GetTranslatedTitle(languageTag)
 	if me.Title == "" {
-		me.Title = row.TitleEnglish
+		me.Title = row.GetTranslatedTitle(language.English)
 	}
 }
 

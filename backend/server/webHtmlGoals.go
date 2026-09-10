@@ -89,7 +89,7 @@ func (me *webHtmlGoals) renderGoalPostPage(lang language.Tag, goalId int64, date
 	if lang != base.SupportedLanguages[0] {
 		if text == "" {
 			data.IsTranslationPending = true
-			data.Text = template.HTML(convertMarkdownToHtml(goalPostRecord.Text))
+			data.Text = template.HTML(convertMarkdownToHtml(goalPostRecord.GetTranslatedText(base.SupportedLanguages[0])))
 		} else {
 			data.IsAutoTranslated = true
 		}

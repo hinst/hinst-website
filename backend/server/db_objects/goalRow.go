@@ -7,15 +7,14 @@ import (
 	"golang.org/x/text/language"
 )
 
+// Title is aligned with base.SupportedLanguages: Title[0] is Russian, Title[1] is English, Title[2] is German
 type GoalRow struct {
-	Id               int64  `smartProgressImport:"true"`
-	Title            string `smartProgressImport:"true"`
-	TitleEnglish     string
-	TitleGerman      string
-	Description      string `smartProgressImport:"true"`
-	AuthorName       string `smartProgressImport:"true"`
-	ImageData        []byte `smartProgressImport:"true"`
-	ImageContentType string `smartProgressImport:"true"`
+	Id               int64    `smartProgressImport:"true"`
+	Title            []string `smartProgressImport:"true"`
+	Description      string   `smartProgressImport:"true"`
+	AuthorName       string   `smartProgressImport:"true"`
+	ImageData        []byte   `smartProgressImport:"true"`
+	ImageContentType string   `smartProgressImport:"true"`
 }
 
 var _ = registerDbObject(func() DbObject { return new(GoalRow) })
@@ -46,8 +45,6 @@ func (me *GoalRow) Scan(rows pgx.Rows) {
 	gophers.AssertError(rows.Scan(
 		&me.Id,
 		&me.Title,
-		&me.TitleEnglish,
-		&me.TitleGerman,
 		&me.Description,
 		&me.AuthorName,
 		&me.ImageData,
@@ -56,12 +53,9 @@ func (me *GoalRow) Scan(rows pgx.Rows) {
 }
 
 func (me GoalRow) GetTranslatedTitle(languageTag language.Tag) string {
-	switch languageTag {
-	case language.English:
-		return me.TitleEnglish
-	case language.German:
-		return me.TitleGerman
-	default:
-		return me.Title
+	var index = base.GetLanguageIndex(languageTag)
+	if index < len(me.Title) {
+		return me.Title[index]
 	}
+	return ""
 }

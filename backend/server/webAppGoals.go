@@ -88,7 +88,7 @@ func (me *webAppGoals) getGoalPost(ctx context.Context, input *struct {
 	var goalPostObject rest_objects.GoalPostObject
 	goalPostObject.GoalId = goalPostRow.GoalId
 	goalPostObject.DateTime = goalPostRow.GetDateTime().UTC().Unix()
-	goalPostObject.Text = goalPostRow.Text
+	goalPostObject.Text = goalPostRow.GetTranslatedText(base.SupportedLanguages[0])
 	goalPostObject.LanguageTag = requestedLanguage.String()
 	goalPostObject.LanguageName = base.GetLanguageName(requestedLanguage)
 	if requestedLanguage != base.SupportedLanguages[0] {

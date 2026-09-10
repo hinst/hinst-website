@@ -2,7 +2,6 @@ package db_objects
 
 import (
 	"os"
-	"slices"
 	"strings"
 	"time"
 
@@ -19,15 +18,13 @@ type GoalPostRow struct {
 	DateTime              int64
 	IsPublic              bool
 	SearchIndexingEnabled bool
-	Text                  string
-	TextEnglish           string
-	TextGerman            string
+	// Text is aligned with base.SupportedLanguages: Text[0] is Russian, Text[1] is English, Text[2] is German
+	Text []string
 
 	Type string
 
-	Title        string
-	TitleEnglish string
-	TitleGerman  string
+	// Title is aligned with base.SupportedLanguages: Title[0] is Russian, Title[1] is English, Title[2] is German
+	Title []string
 	/* Unix seconds UTC, 0 means never pinged */
 	GooglePingedAt             int64
 	GoogleSearchIndexingStatus string
@@ -56,12 +53,8 @@ func (me *GoalPostRow) Scan(rows pgx.Rows) {
 		&me.IsPublic,
 		&me.SearchIndexingEnabled,
 		&me.Text,
-		&me.TextEnglish,
-		&me.TextGerman,
 		&me.Type,
 		&me.Title,
-		&me.TitleEnglish,
-		&me.TitleGerman,
 		&me.GooglePingedAt,
 		&me.GoogleSearchIndexingStatus,
 		&me.GoogleSearchIndexingStatusCheckedAt,
@@ -72,40 +65,8 @@ func (GoalPostRow) GetAllColumns() (fields []string) {
 	return gophers.GetFieldNames[GoalPostRow]()
 }
 
-func (GoalPostRow) getFieldsForLanguage(desiredLanguage language.Tag) (fields []string) {
-	var allFields = GoalPostRow{}.GetAllColumns()
-	for _, field := range allFields {
-		var includeField = true
-		for _, supportedLanguage := range base.SupportedLanguages {
-			if supportedLanguage == desiredLanguage {
-				continue
-			}
-			var postfix = GetLanguagePostfix(supportedLanguage)
-			if field == "Text"+postfix || field == "Title"+postfix {
-				includeField = false
-			}
-		}
-		if includeField {
-			fields = append(fields, field)
-		}
-	}
-	return fields
-}
-
 func (GoalPostRow) GetAllFieldSelector() string {
 	return strings.Join(GoalPostRow{}.GetAllColumns(), ",")
-}
-
-func (GoalPostRow) GetSelectorForLanguage(supportedLanguage language.Tag) string {
-	var requiredFields = GoalPostRow{}.getFieldsForLanguage(supportedLanguage)
-	var fields = GoalPostRow{}.GetAllColumns()
-	for index, field := range fields {
-		var isIncluded = slices.Contains(requiredFields, field)
-		if !isIncluded {
-			fields[index] = "''"
-		}
-	}
-	return strings.Join(fields, ",")
 }
 
 func (me *GoalPostRow) GetDateTime() time.Time {
@@ -127,31 +88,17 @@ func (me *GoalPostRow) String() string {
 }
 
 func (me *GoalPostRow) GetTranslatedText(languageTag language.Tag) string {
-	switch languageTag {
-	case language.English:
-		if me.TextEnglish != "" {
-			return me.TextEnglish
-		} else {
-			return ""
-		}
-	case language.German:
-		if me.TextGerman != "" {
-			return me.TextGerman
-		} else {
-			return ""
-		}
-	default:
-		return me.Text
+	var index = base.GetLanguageIndex(languageTag)
+	if index < len(me.Text) {
+		return me.Text[index]
 	}
+	return ""
 }
 
 func (me *GoalPostRow) GetTranslatedTitle(languageTag language.Tag) string {
-	switch languageTag {
-	case language.English:
-		return me.TitleEnglish
-	case language.German:
-		return me.TitleGerman
-	default:
-		return me.Title
+	var index = base.GetLanguageIndex(languageTag)
+	if index < len(me.Title) {
+		return me.Title[index]
 	}
+	return ""
 }

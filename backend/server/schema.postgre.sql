@@ -2,9 +2,7 @@
 
 CREATE TABLE IF NOT EXISTS goals (
 	id BIGINT NOT NULL PRIMARY KEY,
-	title TEXT NOT NULL,
-	titleEnglish TEXT NOT NULL,
-	titleGerman TEXT NOT NULL,
+	title TEXT[] NOT NULL DEFAULT '{}', /* [russian, english, german] */
 	description TEXT NOT NULL, /* HTML */
 	authorName TEXT NOT NULL,
 
@@ -17,13 +15,9 @@ CREATE TABLE IF NOT EXISTS goalPosts (
 	dateTime BIGINT NOT NULL, /* Unix seconds UTC */
 	isPublic BOOLEAN NOT NULL DEFAULT FALSE,
 	searchIndexingEnabled BOOLEAN NOT NULL DEFAULT FALSE,
-	text TEXT NOT NULL,  /* HTML */
-	textEnglish TEXT NOT NULL DEFAULT '',  /* HTML */
-	textGerman TEXT NOT NULL DEFAULT '',  /* HTML */
+	text TEXT[] NOT NULL DEFAULT '{}',  /* HTML, [russian, english, german] */
 	type TEXT NOT NULL,
-	title TEXT NOT NULL DEFAULT '',
-	titleEnglish TEXT NOT NULL DEFAULT '',
-	titleGerman TEXT NOT NULL DEFAULT '',
+	title TEXT[] NOT NULL DEFAULT '{}',  /* [russian, english, german] */
 	googlePingedAt BIGINT NOT NULL DEFAULT 0, /* Unix seconds UTC, 0 means never pinged */
 	googleSearchIndexingStatus TEXT NOT NULL DEFAULT '',
 	googleSearchIndexingStatusCheckedAt BIGINT NOT NULL DEFAULT 0, /* Unix seconds UTC */

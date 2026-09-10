@@ -77,4 +77,43 @@ func (me *database) saveTable(directory string, dbObjectConstructor db_objects.D
 }
 
 func (me *database) migrate() {
+	// Migrate goals.title, goalPosts.text, goalPosts.title from three separate columns
+	// (title, titleEnglish, titleGerman) to a single Postgres array column,
+	// where elements are aligned with base.SupportedLanguages.
+	// This migration is idempotent and does nothing if the columns are already arrays.
+	var migrationSql = `
+DO $$
+BEGIN
+	IF EXISTS (SELECT 1 FROM information_schema.columns
+		WHERE table_name = 'goals' AND column_name = 'title' AND data_type <> 'ARRAY') THEN
+		ALTER TABLE goals ADD COLUMN "titleArray" TEXT[] NOT NULL DEFAULT '{}';
+		UPDATE goals SET "titleArray" = ARRAY[title, "titleEnglish", "titleGerman"];
+		ALTER TABLE goals DROP COLUMN "titleEnglish";
+		ALTER TABLE goals DROP COLUMN "titleGerman";
+		ALTER TABLE goals DROP COLUMN title;
+		ALTER TABLE goals RENAME COLUMN "titleArray" TO "title";
+	END IF;
+
+	IF EXISTS (SELECT 1 FROM information_schema.columns
+		WHERE table_name = 'goalPosts' AND column_name = 'text' AND data_type <> 'ARRAY') THEN
+		ALTER TABLE goalPosts ADD COLUMN "textArray" TEXT[] NOT NULL DEFAULT '{}';
+		UPDATE goalPosts SET "textArray" = ARRAY["text", "textEnglish", "textGerman"];
+		ALTER TABLE goalPosts DROP COLUMN "textEnglish";
+		ALTER TABLE goalPosts DROP COLUMN "textGerman";
+		ALTER TABLE goalPosts DROP COLUMN "text";
+		ALTER TABLE goalPosts RENAME COLUMN "textArray" TO "text";
+	END IF;
+
+	IF EXISTS (SELECT 1 FROM information_schema.columns
+		WHERE table_name = 'goalPosts' AND column_name = 'title' AND data_type <> 'ARRAY') THEN
+		ALTER TABLE goalPosts ADD COLUMN "titleArray" TEXT[] NOT NULL DEFAULT '{}';
+		UPDATE goalPosts SET "titleArray" = ARRAY[title, "titleEnglish", "titleGerman"];
+		ALTER TABLE goalPosts DROP COLUMN "titleEnglish";
+		ALTER TABLE goalPosts DROP COLUMN "titleGerman";
+		ALTER TABLE goalPosts DROP COLUMN title;
+		ALTER TABLE goalPosts RENAME COLUMN "titleArray" TO "title";
+	END IF;
+END $$;
+`
+	gophers.AssertResultError(me.pool.Exec(context.Background(), migrationSql))
 }

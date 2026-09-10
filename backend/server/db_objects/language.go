@@ -1,19 +1,13 @@
 package db_objects
 
 import (
-	"slices"
-
-	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"golang.org/x/text/language"
 )
 
-func GetLanguagePostfix(supportedLanguage language.Tag) string {
-	gophers.AssertCondition(slices.Contains(base.SupportedLanguages, supportedLanguage),
-		func() string { return "Unsupported language: " + supportedLanguage.String() })
-	var languageName = ""
-	if supportedLanguage != base.SupportedLanguages[0] {
-		languageName = base.GetLanguageName(supportedLanguage)
-	}
-	return languageName
+// Returns a slice aligned with base.SupportedLanguages, where value is stored at the given language position
+func NewLocalizedStringSlice(value string, languageTag language.Tag) []string {
+	var result = make([]string, len(base.SupportedLanguages))
+	result[base.GetLanguageIndex(languageTag)] = value
+	return result
 }

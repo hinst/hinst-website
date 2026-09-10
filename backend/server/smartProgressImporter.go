@@ -105,10 +105,11 @@ func (me *smartProgressImporter) savePost(post smart_progress.Post) bool {
 	var goalId = gophers.GetInt64FromString(post.ObjId)
 	var dateTime = me.parseDateTime(post.Date).UTC()
 	var text = convertHtmlToMarkdown(me.unpackRedirects(post.Msg))
+	var defaultLanguage = base.SupportedLanguages[0]
 	var goalPostRow = &db_objects.GoalPostRow{
 		GoalId: goalId,
 		Type:   post.Type,
-		Text:   text,
+		Text:   db_objects.NewLocalizedStringSlice(text, defaultLanguage),
 	}
 	goalPostRow.SetDateTime(dateTime)
 	var isInserted = me.database.insertGoalPost(goalPostRow)
@@ -190,9 +191,10 @@ func (me *smartProgressImporter) readGoalImage(document *html.Node) (result smar
 }
 
 func (me *smartProgressImporter) saveGoalInfo(goalRecord smart_progress.GoalRecord) {
+	var defaultLanguage = base.SupportedLanguages[0]
 	var goalRow = &db_objects.GoalRow{
 		Id:               goalRecord.Id,
-		Title:            goalRecord.Title,
+		Title:            db_objects.NewLocalizedStringSlice(goalRecord.Title, defaultLanguage),
 		Description:      goalRecord.Description,
 		AuthorName:       goalRecord.AuthorName,
 		ImageData:        goalRecord.Image.Data,

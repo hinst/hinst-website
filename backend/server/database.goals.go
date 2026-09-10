@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/hinst/go-gophers"
+	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
 	"github.com/hinst/hinst-website/server/rest_objects"
 	"golang.org/x/text/language"
@@ -45,21 +46,37 @@ func (me *database) setGoalPostGooglePingedAt(goalId int64, dateTime time.Time, 
 	return result.RowsAffected()
 }
 
+// Sets the element of the text array that corresponds to the given language
 func (me *database) setGoalPostText(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) int64 {
-	var textField = "text" + db_objects.GetLanguagePostfix(supportedLanguage)
-	var tableName = (db_objects.GoalPostRow{}).GetTableName()
-	var queryText = "UPDATE " + tableName + " SET " + textField + " = $1 WHERE goalId = $2 AND dateTime = $3"
-	var dateTimeEpoch = dateTime.UTC().Unix()
-	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
-	return result.RowsAffected()
+	return me.setGoalPostLanguageArrayElement("text", goalId, dateTime, supportedLanguage, text)
 }
 
 func (me *database) setGoalPostTitle(goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string) int64 {
+	return me.setGoalPostLanguageArrayElement("title", goalId, dateTime, supportedLanguage, text)
+}
+
+// columnName is either "text" or "title"; the array elements are aligned with base.SupportedLanguages
+func (me *database) setGoalPostLanguageArrayElement(
+	columnName string, goalId int64, dateTime time.Time, supportedLanguage language.Tag, text string,
+) int64 {
+	var languageIndex = base.GetLanguageIndex(supportedLanguage)
+	var ctx = context.Background()
+	var tx = gophers.AssertResultError(me.pool.Begin(ctx))
+	defer tx.Rollback(ctx) // Safe to ignore the result; Rollback after Commit is a no-op
 	var tableName = (db_objects.GoalPostRow{}).GetTableName()
-	var titleField = "title" + db_objects.GetLanguagePostfix(supportedLanguage)
-	var queryText = "UPDATE " + tableName + " SET " + titleField + " = $1 WHERE goalId = $2 AND dateTime = $3"
 	var dateTimeEpoch = dateTime.UTC().Unix()
-	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), queryText, text, goalId, dateTimeEpoch))
+	var current []string
+	gophers.AssertError(tx.QueryRow(ctx,
+		"SELECT "+columnName+" FROM "+tableName+" WHERE goalId = $1 AND dateTime = $2",
+		goalId, dateTimeEpoch).Scan(&current))
+	for len(current) <= languageIndex {
+		current = append(current, "")
+	}
+	current[languageIndex] = text
+	var result = gophers.AssertResultError(tx.Exec(ctx,
+		"UPDATE "+tableName+" SET "+columnName+" = $1 WHERE goalId = $2 AND dateTime = $3",
+		current, goalId, dateTimeEpoch))
+	gophers.AssertError(tx.Commit(ctx))
 	return result.RowsAffected()
 }
 
@@ -215,17 +232,21 @@ func (me *database) getGoalPostImageCount(goalId int64, dateTime time.Time) (cou
 
 func (me *database) getGoalPosts(goalId int64, includePrivate bool, language language.Tag) (results []rest_objects.GoalPostHeader) {
 	var tableName = (db_objects.GoalPostRow{}).GetTableName()
-	var titleField = "title" + db_objects.GetLanguagePostfix(language)
-	var queryText = "SELECT goalId, dateTime, isPublic, type, " + titleField + " FROM " + tableName + " WHERE goalId = $1"
+	var queryText = "SELECT goalId, dateTime, isPublic, type, title FROM " + tableName + " WHERE goalId = $1"
 	if !includePrivate {
 		queryText += " AND isPublic = TRUE"
 	}
 	queryText += " ORDER BY dateTime DESC"
+	var languageIndex = base.GetLanguageIndex(language)
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	for rows.Next() {
 		var record rest_objects.GoalPostHeader
-		gophers.AssertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.Type, &record.Title))
+		var title []string
+		gophers.AssertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.Type, &title))
+		if languageIndex < len(title) {
+			record.Title = title[languageIndex]
+		}
 		results = append(results, record)
 	}
 	return
@@ -250,6 +271,6 @@ func (me *database) searchGoalPosts(
 			results = append(results, row)
 		}
 		return true
-	}, (db_objects.GoalPostRow{}).GetSelectorForLanguage(supportedLanguage), -1)
+	}, (db_objects.GoalPostRow{}).GetAllFieldSelector(), -1)
 	return
 }
