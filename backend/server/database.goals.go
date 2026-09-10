@@ -253,6 +253,3 @@ func (me *database) searchGoalPosts(
 	}, (db_objects.GoalPostRow{}).GetSelectorForLanguage(supportedLanguage), -1)
 	return
 }
-
-func (me *database) migrate() {
-}

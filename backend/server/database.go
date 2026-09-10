@@ -75,3 +75,6 @@ func (me *database) saveTable(directory string, dbObjectConstructor db_objects.D
 		dbObject.SaveToDirectory(tableDirectory)
 	}
 }
+
+func (me *database) migrate() {
+}
