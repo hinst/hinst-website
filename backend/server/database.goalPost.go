@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"strconv"
 	"strings"
 	"time"
 
@@ -99,72 +98,6 @@ func (me *database) forEachGoalPost(callback func(row *db_objects.GoalPostRow) b
 	}
 }
 
-func (me *database) getGoals() (results []db_objects.GoalRow) {
-	var tableName = (db_objects.GoalRow{}).GetTableName()
-	var fields = strings.Join(gophers.GetFieldNames[db_objects.GoalRow](), ",")
-	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), "SELECT "+fields+" FROM "+tableName+" ORDER BY id"))
-	defer rows.Close()
-	for rows.Next() {
-		var record db_objects.GoalRow
-		record.Scan(rows)
-		results = append(results, record)
-	}
-	return
-}
-
-func (me *database) getGoal(goalId int64) (result *db_objects.GoalRow) {
-	var tableName = (db_objects.GoalRow{}).GetTableName()
-	var fields = strings.Join(gophers.GetFieldNames[db_objects.GoalRow](), ",")
-	var queryText = "SELECT " + fields + " FROM " + tableName + " WHERE id = $1"
-	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
-	defer rows.Close()
-	if rows.Next() {
-		result = new(db_objects.GoalRow)
-		result.Scan(rows)
-	}
-	return
-}
-
-func (me *database) getGoalImage(goalId int64) (imageData []byte, imageContentType string) {
-	var tableName = (db_objects.GoalRow{}).GetTableName()
-	var queryText = "SELECT imageData, imageContentType FROM " + tableName + " WHERE id = $1"
-	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
-	defer rows.Close()
-	if rows.Next() {
-		gophers.AssertError(rows.Scan(&imageData, &imageContentType))
-	}
-	return
-}
-
-func (me *database) insertGoal(row *db_objects.GoalRow) (isInserted bool) {
-	var columnNames = row.GetAllColumns()
-	var query = "INSERT INTO " + row.GetTableName() +
-		" (" + strings.Join(columnNames, ",") + ")" +
-		" VALUES (" + me.buildPlaceholders(len(columnNames)) + ")" +
-		" ON CONFLICT DO NOTHING"
-	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query,
-		db_objects.GetAllColumnValues(row)...))
-	return result.RowsAffected() == 1
-}
-
-func (me *database) updateGoalSmart(row *db_objects.GoalRow) (isUpdated bool) {
-	var columnNames = row.GetSmartColumns()
-	var values = gophers.AssertResultError(gophers.GetFieldValuesByNames(row, columnNames))
-	values = append(values, row.Id)
-	var assignments = make([]string, len(columnNames))
-	for i, columnName := range columnNames {
-		assignments[i] = columnName + " = $" + strconv.Itoa(i+1)
-	}
-	var idPlaceholder = "$" + strconv.Itoa(len(columnNames)+1)
-	var query = "UPDATE " + row.GetTableName() +
-		" SET " + strings.Join(assignments, ",") +
-		" WHERE id = " + idPlaceholder
-	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query, values...))
-	return result.RowsAffected() == 1
-}
-
-// Returns true if the goal post was inserted;
-// Returns false if goal post with this key already exists;
 func (me *database) insertGoalPost(row *db_objects.GoalPostRow) (isInserted bool) {
 	var columnNames = row.GetAllColumns()
 	var query = "INSERT INTO " + row.GetTableName() +
@@ -174,26 +107,6 @@ func (me *database) insertGoalPost(row *db_objects.GoalPostRow) (isInserted bool
 	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query,
 		db_objects.GetAllColumnValues(row)...))
 	return result.RowsAffected() == 1
-}
-
-func (me *database) saveGoalPostComment(row db_objects.GoalPostCommentRow) {
-	var columnNames = row.GetAllColumns()
-	var query = "INSERT INTO " + row.GetTableName() +
-		" (" + strings.Join(columnNames, ",") + ")" +
-		" VALUES (" + me.buildPlaceholders(len(columnNames)) + ")" +
-		" ON CONFLICT (goalId, parentDateTime, dateTime, smartProgressUserId)" +
-		" DO UPDATE SET username = excluded.username, text = excluded.text"
-	gophers.AssertResultError(me.pool.Exec(context.Background(), query, db_objects.GetAllColumnValues(&row)...))
-}
-
-func (me *database) saveGoalPostImage(row db_objects.GoalPostImageRow) {
-	var columnNames = row.GetAllColumns()
-	var query = "INSERT INTO " + row.GetTableName() +
-		" (" + strings.Join(columnNames, ",") + ")" +
-		" VALUES (" + me.buildPlaceholders(len(columnNames)) + ")" +
-		" ON CONFLICT (goalId, parentDateTime, sequenceIndex)" +
-		" DO UPDATE SET contentType = excluded.contentType, file = excluded.file"
-	gophers.AssertResultError(me.pool.Exec(context.Background(), query, db_objects.GetAllColumnValues(&row)...))
 }
 
 func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_objects.GoalPostRow) {
@@ -206,27 +119,6 @@ func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_ob
 		result = new(db_objects.GoalPostRow)
 		result.Scan(rows)
 	}
-	return
-}
-
-func (me *database) getGoalPostImage(goalId int64, dateTime time.Time, index int) (result *db_objects.GoalPostImageRow) {
-	var tableName = (db_objects.GoalPostImageRow{}).GetTableName()
-	var queryText = "SELECT contentType, file FROM " + tableName +
-		" WHERE goalId = $1 AND parentDateTime = $2 AND sequenceIndex = $3"
-	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix(), index))
-	defer rows.Close()
-	if rows.Next() {
-		result = new(db_objects.GoalPostImageRow)
-		gophers.AssertError(rows.Scan(&result.ContentType, &result.File))
-	}
-	return
-}
-
-func (me *database) getGoalPostImageCount(goalId int64, dateTime time.Time) (count int) {
-	var tableName = (db_objects.GoalPostImageRow{}).GetTableName()
-	var queryText = "SELECT COUNT(*) FROM " + tableName + " WHERE goalId = $1 AND parentDateTime = $2"
-	var row = me.pool.QueryRow(context.Background(), queryText, goalId, dateTime.UTC().Unix())
-	gophers.AssertError(row.Scan(&count))
 	return
 }
 
