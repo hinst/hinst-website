@@ -5,10 +5,13 @@ CREATE TABLE IF NOT EXISTS goals (
 	title TEXT[] NOT NULL DEFAULT '{}',
 	description TEXT NOT NULL, /* HTML */
 	authorName TEXT NOT NULL,
-
 	imageData BYTEA NOT NULL,
-	imageContentType TEXT NOT NULL
+	imageContentType TEXT NOT NULL,
+	isSmartProgressMirror BOOLEAN NOT NULL DEFAULT FALSE
 );
+
+/* Migration: add isSmartProgressMirror to existing installations */
+ALTER TABLE goals ADD COLUMN IF NOT EXISTS isSmartProgressMirror BOOLEAN NOT NULL DEFAULT FALSE;
 
 CREATE TABLE IF NOT EXISTS goalPosts (
 	goalId BIGINT NOT NULL,

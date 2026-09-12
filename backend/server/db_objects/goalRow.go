@@ -14,6 +14,7 @@ type GoalRow struct {
 	AuthorName       string   `smartProgressImport:"true"`
 	ImageData        []byte   `smartProgressImport:"true"`
 	ImageContentType string   `smartProgressImport:"true"`
+	IsSmartProgressMirror bool
 }
 
 var _ = registerDbObject(func() DbObject { return new(GoalRow) })
@@ -48,6 +49,7 @@ func (me *GoalRow) Scan(rows pgx.Rows) {
 		&me.AuthorName,
 		&me.ImageData,
 		&me.ImageContentType,
+		&me.IsSmartProgressMirror,
 	))
 }
 
