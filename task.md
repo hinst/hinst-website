@@ -1,30 +1,12 @@
-# Use array for localized titles
+# Refactoring database.goals.go
 
-See these files in folder `C:\Dev\hinst-website\backend\server\db_objects`:
-* `goalRow.go`
-* `goalPostRow.go`
+See files:
+* C:\Dev\hinst-website\backend\server\schema.postgre.sql
+* C:\Dev\hinst-website\backend\server\database.go
+* C:\Dev\hinst-website\backend\server\database.goals.go
 
-Currently the structures have fields named:
-* `title`
-* `titleEnglish`
-* `titleGerman`
-
-Also:
-* `text`
-* `textEnglish`
-* `textGerman`
-
-The goal is to refactor these fields: instead of three fields, use Postgres array type.
-
-See list of supported languages in file: `C:\Dev\hinst-website\backend\server\base\language.go`:
-```go
-var SupportedLanguages = []language.Tag{language.Russian, language.English, language.German}
-```
-
-
-See also: `C:\Dev\hinst-website\backend\server\database.go`
-```go
-func (me *database) migrate() {
-	// Put migration code here
-}
-
+We want to refactor `database.goals.go`.
+Move functions into separated files, grouped by table.
+For example, function `setGoalPostPublic` goes into file `database.goalPost.go`.
+Golang has no restriction on function placement within package, therefore the refactoring should be easy.
+If a function touches different tables, then put them into file `database.compound.go`.
