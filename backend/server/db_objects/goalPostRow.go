@@ -13,23 +13,16 @@ import (
 )
 
 type GoalPostRow struct {
-	GoalId int64
-	/* Unix seconds UTC */
-	DateTime              int64
-	IsPublic              bool
-	SearchIndexingEnabled bool
-	// Text is aligned with base.SupportedLanguages: Text[0] is Russian, Text[1] is English, Text[2] is German
-	Text []string
-
-	Type string
-
-	// Title is aligned with base.SupportedLanguages: Title[0] is Russian, Title[1] is English, Title[2] is German
-	Title []string
-	/* Unix seconds UTC, 0 means never pinged */
-	GooglePingedAt             int64
-	GoogleSearchIndexingStatus string
-	/* Unix seconds UTC */
-	GoogleSearchIndexingStatusCheckedAt int64
+	GoalId                              int64
+	DateTime                            int64 // Unix seconds UTC
+	IsPublic                            bool
+	SearchIndexingEnabled               bool
+	Text                                []string // base.SupportedLanguages
+	Type                                string
+	Title                               []string // base.SupportedLanguages
+	GooglePingedAt                      int64    // Unix seconds UTC, 0 means never pinged
+	GoogleSearchIndexingStatus          string
+	GoogleSearchIndexingStatusCheckedAt int64 // Unix seconds UTC
 }
 
 var _ = registerDbObject(func() DbObject { return new(GoalPostRow) })

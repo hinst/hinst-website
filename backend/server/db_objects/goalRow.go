@@ -7,10 +7,9 @@ import (
 	"golang.org/x/text/language"
 )
 
-// Title is aligned with base.SupportedLanguages: Title[0] is Russian, Title[1] is English, Title[2] is German
 type GoalRow struct {
 	Id               int64    `smartProgressImport:"true"`
-	Title            []string `smartProgressImport:"true"`
+	Title            []string `smartProgressImport:"true"` // base.SupportedLanguages
 	Description      string   `smartProgressImport:"true"`
 	AuthorName       string   `smartProgressImport:"true"`
 	ImageData        []byte   `smartProgressImport:"true"`
