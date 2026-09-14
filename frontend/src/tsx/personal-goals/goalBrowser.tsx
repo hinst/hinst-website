@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { apiClient } from 'src/typescript/apiClient';
 import { AppContext } from 'src/typescript/appContext';
@@ -8,7 +8,7 @@ import type { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeade
 import { requireString } from 'src/typescript/string';
 import GoalBrowserNarrow from './goalBrowser.narrow';
 import GoalBrowserWide from './goalBrowser.wide';
-import GoalCalendarPanel from './goalCalendarPanel';
+import GoalCalendar from './goalCalendar';
 import GoalPostPanel from './goalPostPanel';
 
 export default function GoalBrowser() {
@@ -20,6 +20,12 @@ export default function GoalBrowser() {
 
 	const [goalTitle, setGoalTitle] = useState('');
 	const [reloadGoalCalendar, setReloadGoalCalendar] = useState(0);
+
+	const [isLoading, setIsLoading] = useState(0);
+	const isLoadingRef = useRef(0);
+	isLoadingRef.current = isLoading;
+
+	const [posts, setPosts] = useState([] as GoalPostHeaderEx[]);
 
 	const isFullMode = context.windowWidth >= 700;
 
@@ -42,6 +48,20 @@ export default function GoalBrowser() {
 		const _ = loadGoal(goalId);
 	}, [goalId]);
 
+	async function loadPosts() {
+		setIsLoading(isLoadingRef.current + 1);
+		try {
+			const posts = await apiClient.getGoalPosts(parseInt(goalId, 10) || 0);
+			setPosts(posts);
+			receivePosts(posts);
+		} finally {
+			setIsLoading(isLoadingRef.current - 1);
+		}
+	}
+	useEffect(() => {
+		const _ = loadPosts();
+	}, [goalId, reloadGoalCalendar]);
+
 	useEffect(() => {
 		if (activePostDate) setCalendarVisible(false);
 		setTimeout(() => setCalendarTransition('transform 0.3s'));
@@ -59,12 +79,10 @@ export default function GoalBrowser() {
 
 	function getGoalCalendarPanel() {
 		return (
-			<GoalCalendarPanel
-				id={goalId}
-				receivePosts={receivePosts}
-				activePostDate={parseInt(activePostDate, 10) || 0}
-				reload={reloadGoalCalendar}
-			/>
+			<div>
+				{isLoading ? <div className='ms-loading' /> : undefined}
+				<GoalCalendar posts={posts} activePostDate={parseInt(activePostDate, 10) || 0} />
+			</div>
 		);
 	}
 
