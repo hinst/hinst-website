@@ -1,5 +1,8 @@
 # Frontend refactoring
 
-See file: frontend\src\tsx\personal-goals\goalBrowser.tsx
-We already have frontend\src\tsx\personal-goals\goalBrowser.narrow.tsx
-Similarly, we should extract function getWideLayout() into file frontend\src\tsx\personal-goals\goalBrowser.wide.tsx
+See files:
+* frontend\src\tsx\personal-goals\goalBrowser.tsx
+* frontend\src\tsx\personal-goals\goalCalendarPanel.tsx
+
+Please proceed with merging `GoalCalendarPanel` into `GoalBrowser`
+Afterwards, delete frontend\src\tsx\personal-goals\goalCalendarPanel.tsx
