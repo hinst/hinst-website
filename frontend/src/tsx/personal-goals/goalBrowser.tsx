@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { apiClient } from 'src/typescript/apiClient';
 import { AppContext } from 'src/typescript/appContext';
@@ -7,19 +7,9 @@ import { PageTitle } from 'src/typescript/pageTitle';
 import type { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
 import { requireString } from 'src/typescript/string';
 import GoalBrowserNarrow from './goalBrowser.narrow';
+import GoalBrowserWide from './goalBrowser.wide';
 import GoalCalendarPanel from './goalCalendarPanel';
 import GoalPostPanel from './goalPostPanel';
-
-const ARTICLE_PADDING = 20;
-const ARTICLE_WIDTH = 1000 + ARTICLE_PADDING * 2;
-const STRIPES_BACKGROUND = `repeating-linear-gradient(
-	45deg,
-	rgba(var(--main-bg), 1),
-	rgba(var(--main-bg), 1) 10px,
-	rgba(var(--light-bg-color), 1) 10px,
-	rgba(var(--light-bg-color), 1) 20px
-)`;
-const STRIPES_MIN_WIDTH = 100;
 
 export default function GoalBrowser() {
 	const context = useContext(AppContext);
@@ -27,8 +17,6 @@ export default function GoalBrowser() {
 	const goalId: string = requireString(params.id);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const activePostDate = searchParams.get('activePostDate') || '';
-	const articleContainerRef = useRef<HTMLDivElement>(null);
-	const [articleContainerWidth, setArticleContainerWidth] = useState(0);
 
 	const [goalTitle, setGoalTitle] = useState('');
 	const [reloadGoalCalendar, setReloadGoalCalendar] = useState(0);
@@ -69,16 +57,6 @@ export default function GoalBrowser() {
 		context.setPageTitle(new PageTitle(goalTitle, activePostDateTimeText));
 	}, [goalTitle, activePostDate, context.isAdminMode]);
 
-	useEffect(() => {
-		const element = articleContainerRef.current;
-		if (!element) return;
-		const ro = new ResizeObserver(([entry]) =>
-			setArticleContainerWidth(entry.contentRect.width)
-		);
-		ro.observe(element);
-		return () => ro.disconnect();
-	}, [isFullMode]);
-
 	function getGoalCalendarPanel() {
 		return (
 			<GoalCalendarPanel
@@ -100,61 +78,12 @@ export default function GoalBrowser() {
 		);
 	}
 
-	function getWideLayout() {
-		return (
-			<div
-				style={{
-					display: 'flex',
-					gap: 20,
-					minHeight: 0,
-					height: '100%'
-				}}
-			>
-				<div
-					style={{
-						display: 'flex',
-						overflowY: 'auto',
-						flexShrink: 0,
-						flexBasis: 'fit-content'
-					}}
-				>
-					{getGoalCalendarPanel()}
-				</div>
-				<div
-					ref={articleContainerRef}
-					style={{
-						flexGrow: 1,
-						justifyContent: 'center',
-						display: 'flex',
-						minHeight: 0,
-						maxHeight: '100%',
-						background:
-							articleContainerWidth > ARTICLE_WIDTH + STRIPES_MIN_WIDTH
-								? STRIPES_BACKGROUND
-								: undefined
-					}}
-				>
-					<div
-						className='ms-bg-main'
-						style={{
-							paddingLeft: ARTICLE_PADDING,
-							paddingRight: ARTICLE_PADDING,
-							flexGrow: 1,
-							maxWidth: ARTICLE_WIDTH,
-							backgroundAttachment: 'fixed',
-							minHeight: 0,
-							overflowY: 'auto'
-						}}
-					>
-						{activePostDate ? getGoalPostPanel() : undefined}
-					</div>
-				</div>
-			</div>
-		);
-	}
-
 	return isFullMode ? (
-		getWideLayout()
+		<GoalBrowserWide
+			activePostDate={activePostDate}
+			getGoalCalendarPanel={getGoalCalendarPanel}
+			getGoalPostPanel={getGoalPostPanel}
+		/>
 	) : (
 		<GoalBrowserNarrow
 			activePostDate={activePostDate}
