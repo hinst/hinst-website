@@ -14,20 +14,17 @@ import GoalPostPanel from './goalPostPanel';
 export default function GoalBrowser() {
 	const context = useContext(AppContext);
 	const params = useParams();
+	const isFullMode = context.windowWidth >= 700;
 	const goalId: string = requireString(params.id);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const activePostDate = searchParams.get('activePostDate') || '';
-
 	const [goalTitle, setGoalTitle] = useState('');
-	const [reloadGoalCalendar, setReloadGoalCalendar] = useState(0);
-
+	const [reloadGoalCalendar, setReloadPosts] = useState(0);
 	const [isLoading, setIsLoading] = useState(0);
 	const isLoadingRef = useRef(0);
 	isLoadingRef.current = isLoading;
 
 	const [posts, setPosts] = useState([] as GoalPostHeaderEx[]);
-
-	const isFullMode = context.windowWidth >= 700;
 
 	const [calendarVisible, setCalendarVisible] = useState(isFullMode);
 	const [calendarTransition, setCalendarTransition] = useState('');
@@ -91,7 +88,7 @@ export default function GoalBrowser() {
 			<GoalPostPanel
 				goalId={parseInt(goalId, 10)}
 				postDate={parseInt(activePostDate, 10)}
-				onChange={() => setReloadGoalCalendar(Math.random())}
+				onChange={() => setReloadPosts(Math.random())}
 			/>
 		);
 	}
