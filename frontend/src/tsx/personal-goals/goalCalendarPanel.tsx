@@ -18,7 +18,7 @@ export default function GoalCalendarPanel(props: {
 	async function loadPosts() {
 		setIsLoading(isLoadingRef.current + 1);
 		try {
-			const posts = await apiClient.getGoalPosts(parseInt(props.id) || 0);
+			const posts = await apiClient.getGoalPosts(parseInt(props.id, 10) || 0);
 			setPosts(posts);
 			if (props.receivePosts) props.receivePosts(posts);
 		} finally {
@@ -26,7 +26,7 @@ export default function GoalCalendarPanel(props: {
 		}
 	}
 	useEffect(() => {
-		loadPosts();
+		const _ = loadPosts();
 	}, [props.id, props.reload]);
 
 	return (
