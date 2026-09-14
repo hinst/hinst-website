@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { apiClient } from 'src/typescript/apiClient';
 import { AppContext } from 'src/typescript/appContext';
@@ -21,11 +21,7 @@ export default function GoalBrowser() {
 	const [goalTitle, setGoalTitle] = useState('');
 	const [reloadGoalCalendar, setReloadPosts] = useState(0);
 	const [isLoading, setIsLoading] = useState(0);
-	const isLoadingRef = useRef(0);
-	isLoadingRef.current = isLoading;
-
 	const [posts, setPosts] = useState([] as GoalPostHeaderEx[]);
-
 	const [calendarVisible, setCalendarVisible] = useState(isFullMode);
 	const [calendarTransition, setCalendarTransition] = useState('');
 
@@ -46,13 +42,13 @@ export default function GoalBrowser() {
 	}, [goalId]);
 
 	async function loadPosts() {
-		setIsLoading(isLoadingRef.current + 1);
+		setIsLoading((n) => n + 1);
 		try {
-			const posts = await apiClient.getGoalPosts(parseInt(goalId, 10) || 0);
+			const posts = await apiClient.getGoalPosts(parseInt(goalId, 10));
 			setPosts(posts);
 			receivePosts(posts);
 		} finally {
-			setIsLoading(isLoadingRef.current - 1);
+			setIsLoading((n) => n - 1);
 		}
 	}
 	useEffect(() => {
