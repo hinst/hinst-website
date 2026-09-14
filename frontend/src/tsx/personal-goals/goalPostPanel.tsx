@@ -33,12 +33,12 @@ export default function GoalPostPanel(props: {
 	}
 
 	function receiveChange() {
-		load();
+		const _ = load();
 		props.onChange();
 	}
 
 	useEffect(() => {
-		load();
+		const _ = load();
 	}, [props.goalId, props.postDate]);
 
 	return (
