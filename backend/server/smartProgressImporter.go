@@ -110,6 +110,7 @@ func (me *smartProgressImporter) savePost(post smart_progress.Post) bool {
 		GoalId: goalId,
 		Type:   post.Type,
 		Text:   db_objects.NewLocalizedStringSlice(text, defaultLanguage),
+		Title:  db_objects.NewLocalizedStringSlice("", defaultLanguage),
 	}
 	goalPostRow.SetDateTime(dateTime)
 	var isInserted = me.database.insertGoalPost(goalPostRow)
