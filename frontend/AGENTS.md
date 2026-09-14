@@ -1,0 +1,1 @@
+Ignore Biome.js linter;
