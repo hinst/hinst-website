@@ -11,6 +11,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/
 ## How to deploy
 1. Call `build && push` in the root folder to build Docker image and push it to registry
 	1. Call `deploy` in `orange-pi-kubernetes` folder to deploy backend container to my Orange-Pi single board computer
+	1. Call `docker run --rm --privileged multiarch/qemu-user-static --reset -p yes` if Docker refuses to build for a different architecture.
 2. Call `node build.mjs` in `frontend` folder
 	1. Commit and push `hinst.github.io` repository to make frontend available on GitHub pages
 
