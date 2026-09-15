@@ -63,6 +63,12 @@ func (me *database) updateGoalSmart(row *db_objects.GoalRow) (isUpdated bool) {
 	values = append(values, row.Id)
 	var assignments = make([]string, len(columnNames))
 	for i, columnName := range columnNames {
+		if columnName == "Title" && len(row.Title) > 0 {
+			// Update only the base language title, keep existing translations
+			assignments[i] = columnName + "[1] = $" + strconv.Itoa(i+1)
+			values[i] = row.Title[0]
+			continue
+		}
 		assignments[i] = columnName + " = $" + strconv.Itoa(i+1)
 	}
 	var idPlaceholder = "$" + strconv.Itoa(len(columnNames)+1)
