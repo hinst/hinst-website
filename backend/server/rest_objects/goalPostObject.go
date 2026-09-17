@@ -1,5 +1,7 @@
 package rest_objects
 
+import "github.com/hinst/hinst-website/server/db_objects"
+
 type GoalPostObject struct {
 	GoalId int64 `json:"goalId"`
 	// Unix epoch seconds
@@ -13,4 +15,7 @@ type GoalPostObject struct {
 	IsPublic              bool   `json:"isPublic"`
 	SearchIndexingEnabled bool   `json:"searchIndexingEnabled,omitempty"`
 	ImageCount            int    `json:"imageCount"`
+}
+
+func (me *GoalPostObject) Read(goalPostRow *db_objects.GoalPostRow) {
 }
