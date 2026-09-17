@@ -8,7 +8,6 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/hinst/go-gophers"
-	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
 	"github.com/hinst/hinst-website/server/rest_objects"
 	"golang.org/x/text/language"
@@ -86,24 +85,7 @@ func (me *webAppGoals) getGoalPost(ctx context.Context, input *struct {
 	}
 	var requestedLanguage = webContext.getLanguage(ctx)
 	var goalPostObject rest_objects.GoalPostObject
-	goalPostObject.GoalId = goalPostRow.GoalId
-	goalPostObject.DateTime = goalPostRow.GetDateTime().UTC().Unix()
-	goalPostObject.Text = goalPostRow.GetTranslatedText(base.SupportedLanguages[0])
-	goalPostObject.LanguageTag = requestedLanguage.String()
-	goalPostObject.LanguageName = base.GetLanguageName(requestedLanguage)
-	if requestedLanguage != base.SupportedLanguages[0] {
-		var translatedText = goalPostRow.GetTranslatedText(requestedLanguage)
-		if translatedText != "" {
-			goalPostObject.IsAutoTranslated = true
-			goalPostObject.Text = translatedText
-		} else {
-			goalPostObject.IsTranslationPending = true
-		}
-	}
-	goalPostObject.IsPublic = goalPostRow.IsPublic
-	if webContext.isAdminMode(ctx) {
-		goalPostObject.SearchIndexingEnabled = goalPostRow.SearchIndexingEnabled
-	}
+	goalPostObject.Read(goalPostRow, requestedLanguage, webContext.isAdminMode(ctx))
 	goalPostObject.ImageCount = me.db.getGoalPostImageCount(input.GoalId, postDateTime)
 	return rest_objects.NewSimpleResponse(&goalPostObject), nil
 }
