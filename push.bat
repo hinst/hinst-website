@@ -1,1 +1,1 @@
-docker push 192.168.0.23:5000/hinst/hinst-website
+docker push 192.168.178.29:5000/hinst/hinst-website
