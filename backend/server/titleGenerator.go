@@ -69,12 +69,12 @@ func (me *titleGenerator) summarizeText(text string, theLanguage language.Tag) s
 		},
 		Stream: false,
 	})
-	var requestFactory = gophers.RequestFactory(func() *http.Request {
+	var requestFactory = func() *http.Request {
 		var requestHttp = gophers.AssertResultError(
 			http.NewRequest(http.MethodPost, me.apiUrl, bytes.NewBuffer(requestObject)))
 		requestHttp.Header.Set(gophers.ContentTypeHeader, gophers.ContentTypeJson)
 		return requestHttp
-	})
+	}
 	var response = gophers.AssertResultError(
 		gophers.WebRetry{}.Run(&http.Client{Timeout: 1 * time.Hour}, requestFactory))
 	defer gophers.IoCloseSilently(response.Body)
