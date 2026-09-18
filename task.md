@@ -1,4 +1,5 @@
-# Refactoring: extract function.
+# Gophers update: request factory
 
-Please complete this function: `func (me *GoalPostObject) Read(goalPostRow *db_objects.GoalPostRow)`.
-To see what code needs to be filled in, look at function: `func (me *webAppGoals) getGoalPost(ctx context.Context, input *struct {`
+There was a recent update in package go-gophers.
+Function WebRetry now accepts request factory function instead of direct request.
+Please run `go build` to see what needs to be updated in our code and proceed with the update.
