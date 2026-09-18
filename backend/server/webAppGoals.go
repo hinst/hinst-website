@@ -67,6 +67,9 @@ func (me *webAppGoals) getGoalPosts(ctx context.Context, input *struct {
 	Id int64 `query:"id" required:"true"`
 }) (*rest_objects.Response[[]rest_objects.GoalPostHeader], error) {
 	var posts = me.db.getGoalPosts(input.Id, webContext.isAdminMode(ctx), webContext.getLanguage(ctx))
+	for i := range posts {
+		posts[i].Title = ""
+	}
 	return rest_objects.NewSimpleResponse(posts), nil
 }
 
