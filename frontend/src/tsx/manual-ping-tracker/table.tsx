@@ -90,8 +90,8 @@ export function Row(props: { record: GoalPostSearchIndexingHeader; onPinged: () 
 						<code>{props.record.googleSearchIndexingStatus || '?'}</code> checked at
 						&nbsp;
 						<code>
-							{props.record.googlePingedAt
-								? formatDate(props.record.googlePingedAt)
+							{props.record.googleSearchIndexingStatusCheckedAt
+								? formatDate(props.record.googleSearchIndexingStatusCheckedAt)
 								: 'never'}
 						</code>
 					</div>
