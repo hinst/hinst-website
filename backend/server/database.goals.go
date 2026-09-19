@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"strconv"
 	"strings"
 
 	"github.com/hinst/go-gophers"
@@ -59,28 +58,23 @@ func (me *database) insertGoal(row *db_objects.GoalRow) (isInserted bool) {
 
 func (me *database) updateGoalSmart(row *db_objects.GoalRow) (isUpdated bool) {
 	var columnNames = row.GetSmartColumns()
-	var values = gophers.AssertResultError(gophers.GetFieldValuesByNames(row, columnNames))
+	var values gophers.SqlValues
 	var assignments []string
-	var columnIndex int
-	var columnName string
-	for columnIndex, columnName = range columnNames {
-		var assignment = columnName + " = $" + strconv.Itoa(columnIndex+1)
+	for _, columnName := range columnNames {
+		var assignment = ""
 		if columnName == "Title" && len(row.Title) > 0 {
 			// Update only the base language title, keep existing translations
-			assignment = columnName + "[1] = $" + strconv.Itoa(columnIndex+1)
-			values[columnIndex] = row.Title[0]
+			assignment = columnName + "[1]=" + values.Add(row.Title[0])
+		} else {
+			var value = gophers.AssertResultError(gophers.GetFieldValueByName(row, columnName))
+			assignment = columnName + "=" + values.Add(value)
 		}
 		assignments = append(assignments, assignment)
 	}
-	columnIndex++
-	assignments = append(assignments, "IsSmartProgressMirror = $"+strconv.Itoa(columnIndex+1))
-	values = append(values, true)
-	columnIndex++
-	var idPlaceholder = "$" + strconv.Itoa(columnIndex+1)
-	values = append(values, row.Id)
+	assignments = append(assignments, "IsSmartProgressMirror = "+values.Add(true))
 	var query = "UPDATE " + row.GetTableName() +
 		" SET " + strings.Join(assignments, ",") +
-		" WHERE id = " + idPlaceholder
-	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query, values...))
+		" WHERE id=" + values.Add(row.Id)
+	var result = gophers.AssertResultError(me.pool.Exec(context.Background(), query, values.Values()...))
 	return result.RowsAffected() == 1
 }
