@@ -35,7 +35,7 @@ func (me *titleGenerator) run() {
 	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
 		totalCount++
 		var isUpdated = false
-		if row.GetTranslatedTitle(defaultLanguage) == "" {
+		if row.GetTranslatedTitle(defaultLanguage) == "" && row.GetTranslatedText(defaultLanguage) != "" {
 			var title = me.summarizeText(row.GetTranslatedText(defaultLanguage), defaultLanguage)
 			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.Russian, title)
 			isUpdated = true

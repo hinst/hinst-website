@@ -27,16 +27,16 @@ func (me *translator) run() {
 	var totalCount = 0
 	var translatedCount = 0
 	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
-		var isChanged = false
+		var isUpdated = false
 		for languageIndex := 1; languageIndex < len(base.SupportedLanguages); languageIndex++ {
 			var languageTag = base.SupportedLanguages[languageIndex]
 			if row.GetTranslatedText(languageTag) == "" && row.GetTranslatedText(me.defaultLanguage()) != "" {
 				me.translate(row, languageTag)
-				isChanged = true
+				isUpdated = true
 			}
 		}
 		totalCount++
-		if isChanged {
+		if isUpdated {
 			translatedCount++
 		}
 		return true
