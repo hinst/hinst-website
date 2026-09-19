@@ -8,12 +8,12 @@ import (
 )
 
 type GoalRow struct {
-	Id               int64    `smartProgressImport:"true"`
-	Title            []string `smartProgressImport:"true"` // base.SupportedLanguages
-	Description      string   `smartProgressImport:"true"`
-	AuthorName       string   `smartProgressImport:"true"`
-	ImageData        []byte   `smartProgressImport:"true"`
-	ImageContentType string   `smartProgressImport:"true"`
+	Id                    int64    `smartProgressImport:"true"`
+	Title                 []string `smartProgressImport:"true"` // base.SupportedLanguages
+	Description           string   `smartProgressImport:"true"`
+	AuthorName            string   `smartProgressImport:"true"`
+	ImageData             []byte   `smartProgressImport:"true"`
+	ImageContentType      string   `smartProgressImport:"true"`
 	IsSmartProgressMirror bool
 }
 

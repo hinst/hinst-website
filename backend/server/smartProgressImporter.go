@@ -194,12 +194,13 @@ func (me *smartProgressImporter) readGoalImage(document *html.Node) (result smar
 func (me *smartProgressImporter) saveGoalInfo(goalRecord smart_progress.GoalRecord) {
 	var defaultLanguage = base.SupportedLanguages[0]
 	var goalRow = &db_objects.GoalRow{
-		Id:               goalRecord.Id,
-		Title:            db_objects.NewLocalizedStringSlice(goalRecord.Title, defaultLanguage),
-		Description:      goalRecord.Description,
-		AuthorName:       goalRecord.AuthorName,
-		ImageData:        goalRecord.Image.Data,
-		ImageContentType: goalRecord.Image.ContentType,
+		Id:                    goalRecord.Id,
+		Title:                 db_objects.NewLocalizedStringSlice(goalRecord.Title, defaultLanguage),
+		Description:           goalRecord.Description,
+		AuthorName:            goalRecord.AuthorName,
+		ImageData:             goalRecord.Image.Data,
+		ImageContentType:      goalRecord.Image.ContentType,
+		IsSmartProgressMirror: true,
 	}
 	var isInserted = me.database.insertGoal(goalRow)
 	if !isInserted {

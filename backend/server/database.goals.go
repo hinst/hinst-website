@@ -60,18 +60,24 @@ func (me *database) insertGoal(row *db_objects.GoalRow) (isInserted bool) {
 func (me *database) updateGoalSmart(row *db_objects.GoalRow) (isUpdated bool) {
 	var columnNames = row.GetSmartColumns()
 	var values = gophers.AssertResultError(gophers.GetFieldValuesByNames(row, columnNames))
-	values = append(values, row.Id)
-	var assignments = make([]string, len(columnNames))
-	for i, columnName := range columnNames {
+	var assignments []string
+	var columnIndex int
+	var columnName string
+	for columnIndex, columnName = range columnNames {
+		var assignment = columnName + " = $" + strconv.Itoa(columnIndex+1)
 		if columnName == "Title" && len(row.Title) > 0 {
 			// Update only the base language title, keep existing translations
-			assignments[i] = columnName + "[1] = $" + strconv.Itoa(i+1)
-			values[i] = row.Title[0]
-			continue
+			assignment = columnName + "[1] = $" + strconv.Itoa(columnIndex+1)
+			values[columnIndex] = row.Title[0]
 		}
-		assignments[i] = columnName + " = $" + strconv.Itoa(i+1)
+		assignments = append(assignments, assignment)
 	}
-	var idPlaceholder = "$" + strconv.Itoa(len(columnNames)+1)
+	columnIndex++
+	assignments = append(assignments, "IsSmartProgressMirror = $"+strconv.Itoa(columnIndex+1))
+	values = append(values, true)
+	columnIndex++
+	var idPlaceholder = "$" + strconv.Itoa(columnIndex+1)
+	values = append(values, row.Id)
 	var query = "UPDATE " + row.GetTableName() +
 		" SET " + strings.Join(assignments, ",") +
 		" WHERE id = " + idPlaceholder
