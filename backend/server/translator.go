@@ -26,19 +26,17 @@ type translator struct {
 func (me *translator) run() {
 	var totalCount = 0
 	var translatedCount = 0
-	var defaultLanguage = base.SupportedLanguages[0]
 	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
-		var isDone = false
-		if row.GetTranslatedText(language.English) == "" && row.GetTranslatedText(defaultLanguage) != "" {
-			me.translate(row, language.English)
-			isDone = true
-		}
-		if row.GetTranslatedText(language.German) == "" && row.GetTranslatedText(defaultLanguage) != "" {
-			me.translate(row, language.German)
-			isDone = true
+		var isChanged = false
+		for languageIndex := 1; languageIndex < len(base.SupportedLanguages); languageIndex++ {
+			var languageTag = base.SupportedLanguages[languageIndex]
+			if row.GetTranslatedText(languageTag) == "" && row.GetTranslatedText(me.defaultLanguage()) != "" {
+				me.translate(row, languageTag)
+				isChanged = true
+			}
 		}
 		totalCount++
-		if isDone {
+		if isChanged {
 			translatedCount++
 		}
 		return true
@@ -47,7 +45,7 @@ func (me *translator) run() {
 }
 
 func (me *translator) translate(row *db_objects.GoalPostRow, tag language.Tag) {
-	var text = me.translateText(row.GetTranslatedText(base.SupportedLanguages[0]), tag)
+	var text = me.translateText(row.GetTranslatedText(me.defaultLanguage()), tag)
 	me.db.setGoalPostText(row.GoalId, row.GetDateTime(), tag, text)
 }
 
@@ -77,4 +75,8 @@ func (me *translator) translateText(text string, tag language.Tag) string {
 	var responseText = gophers.AssertResultError(io.ReadAll(response.Body))
 	var responseObject = gophers.DecodeJson(responseText, new(openAiResponse))
 	return responseObject.Choices[0].Message.Content
+}
+
+func (me translator) defaultLanguage() language.Tag {
+	return base.SupportedLanguages[0]
 }
