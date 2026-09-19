@@ -31,24 +31,16 @@ var titleGeneratorPreset = titleGenerator{
 func (me *titleGenerator) run() {
 	var totalCount int64
 	var updatedCount int64
-	var defaultLanguage = base.SupportedLanguages[0]
 	me.db.forEachGoalPost(func(row *db_objects.GoalPostRow) bool {
 		totalCount++
 		var isUpdated = false
-		if row.GetTranslatedTitle(defaultLanguage) == "" && row.GetTranslatedText(defaultLanguage) != "" {
-			var title = me.summarizeText(row.GetTranslatedText(defaultLanguage), defaultLanguage)
-			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.Russian, title)
-			isUpdated = true
-		}
-		if row.GetTranslatedTitle(language.English) == "" && row.GetTranslatedText(language.English) != "" {
-			var title = me.summarizeText(row.GetTranslatedText(language.English), language.English)
-			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.English, title)
-			isUpdated = true
-		}
-		if row.GetTranslatedTitle(language.German) == "" && row.GetTranslatedText(language.German) != "" {
-			var title = me.summarizeText(row.GetTranslatedText(language.German), language.German)
-			me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), language.German, title)
-			isUpdated = true
+		for _, languageTag := range base.SupportedLanguages {
+			var translatedText = row.GetTranslatedText(languageTag)
+			if row.GetTranslatedTitle(languageTag) == "" && translatedText != "" {
+				var title = me.summarizeText(translatedText, languageTag)
+				me.db.setGoalPostTitle(row.GoalId, row.GetDateTime(), languageTag, title)
+				isUpdated = true
+			}
 		}
 		if isUpdated {
 			updatedCount++
