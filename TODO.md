@@ -5,4 +5,3 @@
 1. Show comments
 1. Allow creating new comments
 	1. AI-powered comment checker, blocking offensive and illegal comments
-1. Put translated texts into separate tables
