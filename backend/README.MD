@@ -35,4 +35,3 @@ There are two versions of website:
 - `GIT_BOT_NAME` (Required in `update` mode): Bot name for Git commits.
 - `GIT_EMAIL` (Required in `update` mode): Bot email for Git commits.
 - `GOOGLE_ACCOUNT_JSON` (Optional in `update` mode): Path to JSON file containing authentication data for Google service account, used to update search indexing status.
-
