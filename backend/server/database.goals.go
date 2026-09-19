@@ -62,7 +62,7 @@ func (me *database) updateGoalSmart(row *db_objects.GoalRow) (isUpdated bool) {
 	var assignments []string
 	for _, columnName := range columnNames {
 		var assignment = ""
-		if columnName == "Title" && len(row.Title) > 0 {
+		if columnName == "Title" {
 			// Update only the base language title, keep existing translations
 			assignment = columnName + "[1]=" + values.Add(row.Title[0])
 		} else {
