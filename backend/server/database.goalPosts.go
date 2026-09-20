@@ -122,7 +122,7 @@ func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_ob
 	return
 }
 
-func (me *database) getGoalPosts(goalId int64, includePrivate bool, language language.Tag) (results []rest_objects.GoalPostHeader) {
+func (me *database) getGoalPostHeaders(goalId int64, includePrivate bool, language language.Tag) (results []rest_objects.GoalPostHeader) {
 	var tableName = (db_objects.GoalPostRow{}).GetTableName()
 	var queryText = "SELECT goalId, dateTime, isPublic, type, title FROM " + tableName + " WHERE goalId = $1"
 	if !includePrivate {
