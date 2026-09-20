@@ -70,6 +70,9 @@ func (me *webAppGoals) getGoalPosts(ctx context.Context, input *struct {
 	for i := range posts {
 		posts[i].Title = ""
 	}
+	if nil == posts {
+		posts = make([]rest_objects.GoalPostHeader, 0)
+	}
 	return rest_objects.NewSimpleResponse(posts), nil
 }
 
