@@ -69,7 +69,7 @@ func (me *webStaticGoals) generateGoal(lang language.Tag, goalsPath string, goal
 
 	var path = goalsPath + "/" + gophers.GetStringFromInt64(goal.Id)
 	gophers.AssertError(os.MkdirAll(path, file_mode.USER_RWX))
-	var posts = me.db.getGoalPostHeaders(goal.Id, false)
+	var posts = me.db.getPostsOfGoal(goal.Id, false)
 	for _, post := range posts {
 		me.generateGoalPost(lang, goalsPath, goal.Id, post.DateTime)
 	}

@@ -66,7 +66,7 @@ func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct {
 func (me *webAppGoals) getGoalPosts(ctx context.Context, input *struct {
 	Id int64 `query:"id" required:"true"`
 }) (*rest_objects.Response[[]*rest_objects.GoalPostHeader], error) {
-	var rows = me.db.getGoalPostHeaders(input.Id, webContext.isAdminMode(ctx))
+	var rows = me.db.getPostsOfGoal(input.Id, webContext.isAdminMode(ctx))
 	var posts = rest_objects.GoalPostHeader{}.ReadMany(rows, webContext.getLanguage(ctx))
 	return rest_objects.NewSimpleResponse(posts), nil
 }
@@ -166,15 +166,13 @@ func (me *webAppGoals) setGoalTitleText(ctx context.Context, input *struct {
 
 func (me *webAppGoals) searchGoalPosts(ctx context.Context, input *struct {
 	Query string `query:"query"`
-}) (*rest_objects.Response[[]rest_objects.GoalPostHeader], error) {
+}) (*rest_objects.Response[[]*rest_objects.GoalPostHeader], error) {
 	const resultLimit = 100
-	var rows = me.db.searchGoalPosts(input.Query, webContext.getLanguage(ctx),
-		webContext.isAdminMode(ctx), resultLimit)
-	var records = []rest_objects.GoalPostHeader{}
-	for _, row := range rows {
-		var record rest_objects.GoalPostHeader
-		record.Read(row, webContext.getLanguage(ctx))
-		records = append(records, record)
-	}
-	return rest_objects.NewSimpleResponse(records), nil
+	var rows = me.db.searchGoalPosts(
+		input.Query,
+		webContext.getLanguage(ctx),
+		webContext.isAdminMode(ctx),
+		resultLimit)
+	var headers = rest_objects.GoalPostHeader{}.ReadMany(rows, webContext.getLanguage(ctx))
+	return rest_objects.NewSimpleResponse(headers), nil
 }

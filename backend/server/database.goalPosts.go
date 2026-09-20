@@ -121,7 +121,7 @@ func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_ob
 	return
 }
 
-func (me *database) getGoalPostHeaders(goalId int64, includePrivate bool) (results []*db_objects.GoalPostRow) {
+func (me *database) getPostsOfGoal(goalId int64, includePrivate bool) (results []*db_objects.GoalPostRow) {
 	var queryText = "SELECT " + db_objects.GoalPostRow{}.GetAllFieldSelector() +
 		" FROM " + db_objects.GoalPostRow{}.GetTableName() +
 		" WHERE goalId = $1"
