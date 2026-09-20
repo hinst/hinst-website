@@ -17,6 +17,8 @@ func GetLanguageName(tag language.Tag) string {
 
 func GetLanguageIndex(tag language.Tag) int {
 	var index = slices.Index(SupportedLanguages, tag)
-	gophers.AssertCondition(index >= 0, func() string { return "Unsupported language: " + tag.String() })
+	gophers.AssertCondition(index >= 0, func() string {
+		return "Unsupported language: " + tag.String()
+	})
 	return index
 }
