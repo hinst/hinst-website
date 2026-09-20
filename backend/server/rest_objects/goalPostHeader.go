@@ -25,3 +25,13 @@ func (me *GoalPostHeader) Read(row *db_objects.GoalPostRow, languageTag language
 		me.Title = row.GetTranslatedTitle(language.English)
 	}
 }
+
+func (me GoalPostHeader) ReadMany(rows []*db_objects.GoalPostRow, languageTag language.Tag) (outputs []*GoalPostHeader) {
+	outputs = make([]*GoalPostHeader, 0, len(rows))
+	for _, row := range rows {
+		var output = new(GoalPostHeader)
+		output.Read(row, languageTag)
+		outputs = append(outputs, output)
+	}
+	return
+}

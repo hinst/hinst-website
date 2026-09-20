@@ -65,14 +65,9 @@ func (me *webAppGoals) getGoalImage(ctx context.Context, input *struct {
 
 func (me *webAppGoals) getGoalPosts(ctx context.Context, input *struct {
 	Id int64 `query:"id" required:"true"`
-}) (*rest_objects.Response[[]rest_objects.GoalPostHeader], error) {
-	var posts = me.db.getGoalPostHeaders(input.Id, webContext.isAdminMode(ctx), webContext.getLanguage(ctx))
-	for i := range posts {
-		posts[i].Title = ""
-	}
-	if nil == posts {
-		posts = make([]rest_objects.GoalPostHeader, 0)
-	}
+}) (*rest_objects.Response[[]*rest_objects.GoalPostHeader], error) {
+	var rows = me.db.getGoalPostHeaders(input.Id, webContext.isAdminMode(ctx))
+	var posts = rest_objects.GoalPostHeader{}.ReadMany(rows, webContext.getLanguage(ctx))
 	return rest_objects.NewSimpleResponse(posts), nil
 }
 

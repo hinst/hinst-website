@@ -8,7 +8,6 @@ import (
 	"github.com/hinst/go-gophers"
 	"github.com/hinst/hinst-website/server/base"
 	"github.com/hinst/hinst-website/server/db_objects"
-	"github.com/hinst/hinst-website/server/rest_objects"
 	"golang.org/x/text/language"
 )
 
@@ -62,7 +61,7 @@ func (me *database) setGoalPostLanguageArrayElement(
 	var ctx = context.Background()
 	var tx = gophers.AssertResultError(me.pool.Begin(ctx))
 	defer tx.Rollback(ctx) // Safe to ignore the result; Rollback after Commit is a no-op
-	var tableName = (db_objects.GoalPostRow{}).GetTableName()
+	var tableName = db_objects.GoalPostRow{}.GetTableName()
 	var dateTimeEpoch = dateTime.UTC().Unix()
 	var current []string
 	gophers.AssertError(tx.QueryRow(ctx,
@@ -81,9 +80,8 @@ func (me *database) setGoalPostLanguageArrayElement(
 
 // Callback should return true to continue the loop, return false to break the loop early.
 func (me *database) forEachGoalPost(callback func(row *db_objects.GoalPostRow) bool, sortByDate int) {
-	var tableName = (db_objects.GoalPostRow{}).GetTableName()
-	var selector = (db_objects.GoalPostRow{}).GetAllFieldSelector()
-	var querySql = "SELECT " + selector + " FROM " + tableName
+	var querySql = "SELECT " + db_objects.GoalPostRow{}.GetAllFieldSelector() +
+		" FROM " + db_objects.GoalPostRow{}.GetTableName()
 	if sortByDate != 0 {
 		querySql += " ORDER BY dateTime " + gophers.IfElse(sortByDate > 0, "ASC", "DESC")
 	}
@@ -111,9 +109,9 @@ func (me *database) insertGoalPost(row *db_objects.GoalPostRow) (isInserted bool
 }
 
 func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_objects.GoalPostRow) {
-	var tableName = (db_objects.GoalPostRow{}).GetTableName()
-	var fields = db_objects.GoalPostRow{}.GetAllFieldSelector()
-	var queryText = "SELECT " + fields + " FROM " + tableName + " WHERE goalId = $1 AND dateTime = $2"
+	var queryText = "SELECT " + db_objects.GoalPostRow{}.GetAllFieldSelector() +
+		" FROM " + db_objects.GoalPostRow{}.GetTableName() +
+		" WHERE goalId = $1 AND dateTime = $2"
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText, goalId, dateTime.UTC().Unix()))
 	defer rows.Close()
 	if rows.Next() {
@@ -123,24 +121,20 @@ func (me *database) getGoalPost(goalId int64, dateTime time.Time) (result *db_ob
 	return
 }
 
-func (me *database) getGoalPostHeaders(goalId int64, includePrivate bool, language language.Tag) (results []rest_objects.GoalPostHeader) {
-	var tableName = (db_objects.GoalPostRow{}).GetTableName()
-	var queryText = "SELECT goalId, dateTime, isPublic, type, title FROM " + tableName + " WHERE goalId = $1"
+func (me *database) getGoalPostHeaders(goalId int64, includePrivate bool) (results []*db_objects.GoalPostRow) {
+	var queryText = "SELECT " + db_objects.GoalPostRow{}.GetAllFieldSelector() +
+		" FROM " + db_objects.GoalPostRow{}.GetTableName() +
+		" WHERE goalId = $1"
 	if !includePrivate {
 		queryText += " AND isPublic = TRUE"
 	}
 	queryText += " ORDER BY dateTime DESC"
-	var languageIndex = base.GetLanguageIndex(language)
 	var rows = gophers.AssertResultError(me.pool.Query(context.Background(), queryText, goalId))
 	defer rows.Close()
 	for rows.Next() {
-		var record rest_objects.GoalPostHeader
-		var title []string
-		gophers.AssertError(rows.Scan(&record.GoalId, &record.DateTime, &record.IsPublic, &record.Type, &title))
-		if languageIndex < len(title) {
-			record.Title = title[languageIndex]
-		}
-		results = append(results, record)
+		var row = new(db_objects.GoalPostRow)
+		row.Scan(rows)
+		results = append(results, row)
 	}
 	return
 }
