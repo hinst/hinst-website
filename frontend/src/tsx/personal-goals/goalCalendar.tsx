@@ -1,12 +1,12 @@
 import lodash from 'lodash';
+import { DateTime } from 'luxon';
+import { Calendar } from 'react-feather';
 import { NavLink } from 'react-router';
+import { getPaddedChunks } from 'src/typescript/array';
+import { getMonthName, parseMonthlyDate } from 'src/typescript/date';
+import { createRandomId } from 'src/typescript/react';
 import type { GoalPostHeaderEx } from 'src/typescript/rest_objects/goalPostHeaderEx';
 import { compareStrings } from 'src/typescript/string';
-import { getMonthName, parseMonthlyDate } from 'src/typescript/date';
-import { getPaddedChunks } from 'src/typescript/array';
-import { Calendar } from 'react-feather';
-import { createRandomId } from 'src/typescript/react';
-import { DateTime } from 'luxon';
 
 const ROWS_PER_MONTH = 3;
 
@@ -104,7 +104,7 @@ function DaysOfMonthRow(props: {
 	activePostDate: number;
 }) {
 	return props.posts.map((post) => (
-		<div key={post?.dateTime || createRandomId()}>
+		<div key={post?.dateTime || createRandomId()} title={post?.title}>
 			{post ? (
 				<NavLinkDay
 					date={post.dateTime}
