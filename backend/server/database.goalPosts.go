@@ -80,8 +80,9 @@ func (me *database) setGoalPostLanguageArrayElement(
 }
 
 // Callback should return true to continue the loop, return false to break the loop early.
-func (me *database) forEachGoalPost(callback func(row *db_objects.GoalPostRow) bool, selector string, sortByDate int) {
+func (me *database) forEachGoalPost(callback func(row *db_objects.GoalPostRow) bool, sortByDate int) {
 	var tableName = (db_objects.GoalPostRow{}).GetTableName()
+	var selector = (db_objects.GoalPostRow{}).GetAllFieldSelector()
 	var querySql = "SELECT " + selector + " FROM " + tableName
 	if sortByDate != 0 {
 		querySql += " ORDER BY dateTime " + gophers.IfElse(sortByDate > 0, "ASC", "DESC")
@@ -163,6 +164,6 @@ func (me *database) searchGoalPosts(
 			results = append(results, row)
 		}
 		return true
-	}, (db_objects.GoalPostRow{}).GetAllFieldSelector(), -1)
+	}, -1)
 	return
 }

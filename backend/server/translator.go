@@ -40,7 +40,7 @@ func (me *translator) run() {
 			translatedCount++
 		}
 		return true
-	}, (db_objects.GoalPostRow{}).GetAllFieldSelector(), 0)
+	}, 0)
 	log.Printf("Generated translated text for %v of %v posts", translatedCount, totalCount)
 }
 

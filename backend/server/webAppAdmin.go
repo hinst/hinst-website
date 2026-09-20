@@ -38,7 +38,7 @@ func (me *webAppAdmin) getUrlPings(ctx context.Context, input *struct{}) (*rest_
 		header.PublicUrl = webStaticGoals{}.getPublicUrl(row, webLanguage)
 		objects = append(objects, header)
 		return true
-	}, (db_objects.GoalPostRow{}).GetAllFieldSelector(), -1)
+	}, -1)
 	return rest_objects.NewSimpleResponse(objects), nil
 }
 

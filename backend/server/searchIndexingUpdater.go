@@ -44,7 +44,7 @@ func (me *searchIndexingUpdater) run() {
 		me.db.setGoalPostSearchIndexingStatus(
 			row.GoalId, row.GetDateTime(), searchIndexingStatus, time.Now().UTC())
 		return true
-	}, (db_objects.GoalPostRow{}).GetAllFieldSelector(), -1)
+	}, -1)
 }
 
 func (me *searchIndexingUpdater) checkSearchIndexing(ctx context.Context, url string) (string, error) {

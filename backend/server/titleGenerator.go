@@ -46,7 +46,7 @@ func (me *titleGenerator) run() {
 			updatedCount++
 		}
 		return true
-	}, (db_objects.GoalPostRow{}).GetAllFieldSelector(), 0)
+	}, 0)
 	log.Printf("Generated title for %v of %v posts\n", updatedCount, totalCount)
 }
 
