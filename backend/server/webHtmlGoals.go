@@ -40,11 +40,11 @@ func (me *webHtmlGoals) renderHomePage(lang language.Tag) string {
 func (me *webHtmlGoals) renderGoalPage(lang language.Tag, goalId int64) string {
 	var goalRecord = me.db.getGoal(goalId)
 	gophers.AssertCondition(goalRecord != nil, func() string { return "Cannot find goal with id=" + gophers.GetStringFromInt64(goalId) })
-	var goalPostRecords = me.db.getGoalPosts(goalId, false, lang)
+	var goalPostHeaders = me.db.getGoalPosts(goalId, false, lang)
 	var langPath = webStaticGoals{}.getLanguagePath(lang)
 
 	var goalPosts []page_data.GoalPostItem
-	for _, post := range goalPostRecords {
+	for _, post := range goalPostHeaders {
 		if post.Title == "" {
 			continue
 		}
