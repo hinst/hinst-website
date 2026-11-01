@@ -67,7 +67,7 @@ func (me *translator) translateText(text string, tag language.Tag) string {
 		return requestHttp
 	}
 	var response = gophers.AssertResultError(
-		gophers.WebRetry{}.Run(&http.Client{Timeout: 1 * time.Hour}, requestFactory))
+		webRetry.Run(&http.Client{Timeout: 1 * time.Hour}, requestFactory))
 	defer gophers.IoCloseSilently(response.Body)
 	gophers.AssertCondition(response.StatusCode == http.StatusOK, func() error {
 		return errors.New("Cannot translate text. Status: " + response.Status)

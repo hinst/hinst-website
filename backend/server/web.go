@@ -24,6 +24,11 @@ func webRouter() *http.ServeMux {
 	return _webRouter
 }
 
+var webRetry = gophers.WebRetry{
+	AttemptLimit: 8,
+	Delay:        2 * time.Second,
+}
+
 func parseLanguageHeader(text string) language.Tag {
 	var tags, _, parsedError = language.ParseAcceptLanguage(text)
 	if parsedError != nil {
