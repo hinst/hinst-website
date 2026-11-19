@@ -10,11 +10,8 @@ const subDirectory = '/dynamic';
 const targetDirectory = path.join(frontendRoot, '..', '..', 'hinst.github.io', 'dynamic');
 const API_URL = 'https://orangepizero2w-1.taile07783.ts.net/hinst-website/api';
 
-fs.readdirSync(targetDirectory).forEach(file => {
-	const filePath = targetDirectory + '/' + file;
-	if (fs.lstatSync(filePath).isFile())
-		fs.unlinkSync(filePath);
-});
+fs.rmSync(targetDirectory, { recursive: true, force: true });
+fs.mkdirSync(targetDirectory, { recursive: true });
 
 const command = 'npm run build -- --no-cache ' +
 	'--dist-dir=' + targetDirectory +
