@@ -8,6 +8,8 @@ import (
 	"golang.org/x/text/language/display"
 )
 
+const GOALS_TITLE = "Journals"
+
 var SupportedLanguages = []language.Tag{language.Russian, language.English, language.German}
 var SupportedLanguagesMatcher = language.NewMatcher(SupportedLanguages)
 
