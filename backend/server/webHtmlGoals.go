@@ -32,7 +32,7 @@ func (me *webHtmlGoals) renderHomePage(lang language.Tag) string {
 	var content = executeTemplateFile("pages/html/templates/goalList.html", data)
 	return me.wrapTemplatePage(langPath, page_data.Content{
 		LanguageTag: lang.String(),
-		Title:       base.GOALS_TITLE,
+		Title:       base.JOURNALS_TITLE,
 		Content:     template.HTML(content),
 	})
 }
