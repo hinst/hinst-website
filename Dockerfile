@@ -1,7 +1,7 @@
 FROM golang AS backend
 ADD backend /app
 WORKDIR /app
-ENV CGO_ENABLED=1
+ENV CGO_ENABLED=0
 RUN go mod download -x
 ENV GOCACHE=/root/.cache/go-build
 RUN --mount=type=cache,target="/root/.cache/go-build" go build
