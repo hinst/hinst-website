@@ -15,7 +15,7 @@ type Goal struct {
 }
 
 type PostsResponse struct {
-	Data []Post `json:"data"`
+	Data []Post     `json:"data"`
 	Meta CursorMeta `json:"meta"`
 }
 
@@ -27,9 +27,9 @@ type CursorMeta struct {
 
 type Post struct {
 	Id          int64        `json:"id"`
-	GoalId      int64        `json:"goal_id"` // Parent goal id
-	Type        string       `json:"type"`    // Can be: 'post'
-	Message     string       `json:"message"` // HTML
+	GoalId      int64        `json:"goal_id"`    // Parent goal id
+	Type        string       `json:"type"`       // Can be: 'post'
+	Message     string       `json:"message"`    // HTML
 	CreatedAt   string       `json:"created_at"` // RFC3339, example: 2026-11-15T23:13:44.000000Z
 	User        User         `json:"user"`
 	Attachments []Attachment `json:"attachments"`
