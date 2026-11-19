@@ -1,12 +1,12 @@
 package server
 
 import (
-	"bytes"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -45,7 +45,7 @@ func (me *smartProgressImporter) syncPosts(goalId string) {
 		if isNew {
 			newCount += 1
 		}
-		var age = time.Since(me.parseDateTime(post.Date))
+		var age = time.Since(me.parseDateTime(post.CreatedAt))
 		if isNew || age < 30*24*time.Hour {
 			var images = me.readImages(post)
 			me.saveImages(post, images)
@@ -56,7 +56,7 @@ func (me *smartProgressImporter) syncPosts(goalId string) {
 
 func (me *smartProgressImporter) parseDateTime(text string) (result time.Time) {
 	var err error
-	result, err = time.ParseInLocation("2006-01-02 15:04:05", text, time.UTC)
+	result, err = time.Parse(time.RFC3339, text)
 	if err != nil {
 		panic("Cannot parse date time: \"" + text + "\"")
 	}
@@ -64,16 +64,19 @@ func (me *smartProgressImporter) parseDateTime(text string) (result time.Time) {
 }
 
 func (me *smartProgressImporter) saveComments(post smart_progress.Post, comments []smart_progress.Comment) {
-	var parentDateTime = me.parseDateTime(post.Date).UTC().Unix()
-	var goalId = gophers.GetInt64FromString(post.ObjId)
+	var parentDateTime = me.parseDateTime(post.CreatedAt).UTC().Unix()
 	for _, comment := range comments {
+		var smartProgressUserId *int64
+		if comment.UserId != 0 {
+			smartProgressUserId = &comment.UserId
+		}
 		var row = db_objects.GoalPostCommentRow{
-			GoalId:              goalId,
+			GoalId:              post.GoalId,
 			ParentDateTime:      parentDateTime,
-			DateTime:            me.parseDateTime(comment.Date).UTC().Unix(),
-			SmartProgressUserId: gophers.GetInt64FromStringOptional(comment.UserId),
-			Username:            comment.Username,
-			Text:                convertHtmlToMarkdown(me.unpackRedirects(comment.Msg)),
+			DateTime:            me.parseDateTime(comment.CreatedAt).UTC().Unix(),
+			SmartProgressUserId: smartProgressUserId,
+			Username:            comment.User.Username,
+			Text:                convertHtmlToMarkdown(me.unpackRedirects(comment.Message)),
 		}
 		me.database.saveGoalPostComment(row)
 	}
@@ -102,12 +105,11 @@ func (me *smartProgressImporter) unpackRedirects(htmlText string) (result string
 
 // Returns true if the blog post is new
 func (me *smartProgressImporter) savePost(post smart_progress.Post) bool {
-	var goalId = gophers.GetInt64FromString(post.ObjId)
-	var dateTime = me.parseDateTime(post.Date).UTC()
-	var text = convertHtmlToMarkdown(me.unpackRedirects(post.Msg))
+	var dateTime = me.parseDateTime(post.CreatedAt).UTC()
+	var text = convertHtmlToMarkdown(me.unpackRedirects(post.Message))
 	var defaultLanguage = base.SupportedLanguages[0]
 	var goalPostRow = &db_objects.GoalPostRow{
-		GoalId: goalId,
+		GoalId: post.GoalId,
 		Type:   post.Type,
 		Text:   db_objects.NewLocalizedStringSlice(text, defaultLanguage),
 		Title:  db_objects.NewLocalizedStringSlice("", defaultLanguage),
@@ -116,17 +118,16 @@ func (me *smartProgressImporter) savePost(post smart_progress.Post) bool {
 	var isInserted = me.database.insertGoalPost(goalPostRow)
 	if !isInserted {
 		var defaultLanguage = base.SupportedLanguages[0]
-		me.database.setGoalPostText(goalId, dateTime, defaultLanguage, text)
+		me.database.setGoalPostText(post.GoalId, dateTime, defaultLanguage, text)
 	}
 	return isInserted
 }
 
 func (me *smartProgressImporter) saveImages(post smart_progress.Post, imageRecords []smart_progress.ImageRecord) {
-	var goalId = gophers.GetInt64FromString(post.ObjId)
-	var dateEpoch = me.parseDateTime(post.Date).UTC().Unix()
+	var dateEpoch = me.parseDateTime(post.CreatedAt).UTC().Unix()
 	for index, image := range imageRecords {
 		me.database.saveGoalPostImage(db_objects.GoalPostImageRow{
-			GoalId:         goalId,
+			GoalId:         post.GoalId,
 			ParentDateTime: dateEpoch,
 			SequenceIndex:  int64(index),
 			ContentType:    image.ContentType,
@@ -136,58 +137,33 @@ func (me *smartProgressImporter) saveImages(post smart_progress.Post, imageRecor
 }
 
 func (me *smartProgressImporter) readGoalInfo(goalId string) (result smart_progress.GoalRecord) {
-	var url = smart_progress.Url + "/goal/" + url.PathEscape(goalId)
-	var body, _ = me.httpGet("Could not load goal title", url, nil)
-	var document = gophers.AssertResultError(html.Parse(bytes.NewReader(body)))
+	var url = smart_progress.Url + "/api/v1/goals/" + url.PathEscape(goalId)
+	var body, _ = me.httpGet("Could not load goal", url, map[string]string{"Accept": "application/json"})
+	var response smart_progress.GoalResponse
+	gophers.AssertError(json.Unmarshal(body, &response))
 
-	var title = ""
-	if titleNode := html_util.FindElement(document, func(node *html.Node) bool { return node.Data == "title" }); titleNode != nil {
-		title = html_util.NodeText(titleNode)
-	}
-
-	var descriptionHtml = ""
-	if goalDescription := html_util.FindElement(document, func(node *html.Node) bool {
-		return node.Data == "div" && html_util.AttrValue(node, "id") == "goal_descr"
-	}); goalDescription != nil {
-		if div := html_util.FindElement(goalDescription, func(node *html.Node) bool { return node.Data == "div" }); div != nil {
-			descriptionHtml = strings.TrimSpace(html_util.InnerHtml(div))
-		}
-	}
 	var description = ""
-	if descriptionHtml != "" {
-		description = convertHtmlToMarkdown(descriptionHtml)
+	if response.Data.Description != "" {
+		description = convertHtmlToMarkdown(response.Data.Description)
 	}
-
-	var authorName = ""
-	if authorWidget := html_util.FindElement(document, func(node *html.Node) bool {
-		return html_util.NodeHasClass(node, "user-widget__name")
-	}); authorWidget != nil {
-		if link := html_util.FindElement(authorWidget, func(node *html.Node) bool { return node.Data == "a" }); link != nil {
-			authorName = strings.TrimSpace(html_util.NodeText(link))
-		}
-	}
-
-	result.Image = me.readGoalImage(document)
-	result.Id = gophers.GetInt64FromString(goalId)
-	result.Title = title
+	result.Image = me.readGoalImage(response.Data.Attachments)
+	result.Id = response.Data.Id
+	result.Title = response.Data.Name
 	result.Description = description
-	result.AuthorName = authorName
+	result.AuthorName = response.Data.User.Username
 	return
 }
 
-func (me *smartProgressImporter) readGoalImage(document *html.Node) (result smart_progress.ImageRecord) {
-	var imageUrl = ""
-	if link := html_util.FindElement(document, func(node *html.Node) bool {
-		return node.Data == "link" && html_util.AttrValue(node, "rel") == "image_src"
-	}); link != nil {
-		imageUrl = html_util.AttrValue(link, "href")
+func (me *smartProgressImporter) readGoalImage(attachments []smart_progress.Attachment) (result smart_progress.ImageRecord) {
+	for _, attachment := range attachments {
+		if attachment.Kind != "goal_image" || attachment.Url == "" {
+			continue
+		}
+		var body, contentType = me.httpGet("Cannot read goal image", attachment.Url, nil)
+		result.ContentType = contentType
+		result.Data = body
+		return
 	}
-	if imageUrl == "" {
-		panic("Cannot find image")
-	}
-	var body, contentType = me.httpGet("Cannot read image", imageUrl, nil)
-	result.ContentType = contentType
-	result.Data = body
 	return
 }
 
@@ -209,53 +185,60 @@ func (me *smartProgressImporter) saveGoalInfo(goalRecord smart_progress.GoalReco
 }
 
 func (me *smartProgressImporter) readAllPosts(goalId string) (allPosts []smart_progress.Post) {
-	var startId = "0"
+	var cursor = ""
 	for {
-		var posts = me.readPosts(goalId, startId)
-		if len(posts.Blog) == 0 {
+		var postsResponse = me.readPosts(goalId, cursor)
+		if len(postsResponse.Data) == 0 {
 			break
 		}
-		allPosts = append(allPosts, posts.Blog...)
-		startId = posts.Blog[len(posts.Blog)-1].Id
+		allPosts = append(allPosts, postsResponse.Data...)
+		if !postsResponse.Meta.HasMore || postsResponse.Meta.NextCursor == "" {
+			break
+		}
+		cursor = postsResponse.Meta.NextCursor
 	}
 	return
 }
 
-func (me *smartProgressImporter) readComments(postId string) (result []smart_progress.Comment) {
-	var url = smart_progress.Url + "/blog/getComments?post_id=" + postId
-	var body, _ = me.httpGet("Cannot read comments", url, map[string]string{"Accept": "application/json"})
-	var responseObject smart_progress.GetCommentsResponse
-	gophers.AssertError(json.Unmarshal(body, &responseObject))
-	return responseObject.Comments
+func (me *smartProgressImporter) readComments(postId int64) (result []smart_progress.Comment) {
+	var page = 1
+	for {
+		var url = smart_progress.Url + "/api/v1/posts/" + strconv.FormatInt(postId, 10) + "/comments?page=" + strconv.Itoa(page)
+		var body, _ = me.httpGet("Cannot read comments", url, map[string]string{"Accept": "application/json"})
+		var commentsResponse smart_progress.CommentsResponse
+		gophers.AssertError(json.Unmarshal(body, &commentsResponse))
+		result = append(result, commentsResponse.Data...)
+		if page >= commentsResponse.Meta.LastPage || len(commentsResponse.Data) == 0 {
+			break
+		}
+		page += 1
+	}
+	return
 }
 
 func (me *smartProgressImporter) readImages(post smart_progress.Post) (imageRecords []smart_progress.ImageRecord) {
-	for _, image := range post.Images {
-		var url = smart_progress.Url + image.Url
-		var body, contentType = me.httpGet("Cannot read image", url, nil)
+	for _, attachment := range post.Attachments {
+		if attachment.Kind != "post_image" || attachment.Url == "" {
+			continue
+		}
+		var body, contentType = me.httpGet("Cannot read image", attachment.Url, nil)
 		imageRecords = append(imageRecords, smart_progress.ImageRecord{ContentType: contentType, Data: body})
 	}
 	return
 }
 
-func (me *smartProgressImporter) readPosts(goalId string, startId string) (result smart_progress.Posts) {
-	var url = smart_progress.Url + "/blog/getPosts" +
-		"?obj_id=" + goalId +
-		"&sorting=old_top" +
-		"&start_id=" + startId +
-		"&end_id=0" +
-		"&step_id=0" +
-		"&only_author=0" +
-		"&change_sorting=0" +
-		"&obj_type=0"
-	var body, _ = me.httpGet("Could not load blog posts", url, map[string]string{"Accept": "application/json"})
+func (me *smartProgressImporter) readPosts(goalId string, cursor string) (result smart_progress.PostsResponse) {
+	var requestUrl = smart_progress.Url + "/api/v1/goals/" + url.PathEscape(goalId) + "/posts"
+	if cursor != "" {
+		requestUrl += "?cursor=" + url.QueryEscape(cursor)
+	}
+	var body, _ = me.httpGet("Could not load blog posts", requestUrl, map[string]string{"Accept": "application/json"})
 	gophers.AssertError(json.Unmarshal(body, &result))
 	return
 }
 
 func (me *smartProgressImporter) httpGet(contextMessage string, url string, headers map[string]string) (body []byte, contentType string) {
 	var request = gophers.AssertResultError(http.NewRequest(http.MethodGet, url, nil))
-	request.Host = smart_progress.Host
 	for name, value := range headers {
 		request.Header.Set(name, value)
 	}
